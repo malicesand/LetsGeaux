@@ -4,7 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.tsx',
+  entry: path.resolve(__dirname, 'src', 'index.tsx'),
   mode: 'development',
   output: {
     filename: 'bundle.js',
@@ -50,7 +50,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       path: path.resolve(__dirname, 'dist'),
       filename: 'index.html',
-      template: 'template.ejs'
+      template: 'index.ejs'
     })
   ]
 };
