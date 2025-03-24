@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+/* NOTES: introspect CLI command: npx prisma db pull
+ DATABASE BASELINE COMMAND: prisma migrate diff
+ this  tells Prisma Migrate to assume that one or more migrations have already been applied to the database.
+-------- initial arguments to first migrate diff cmd----------
+1  --from-empty: assumes the data model you're migrating from is empty
+2  --to-schema-datamodel: the current database state using the URL in the datasource block
+3  --script: output a SQL script
+npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/migrations/0_init/migration.sql
+This will generate a migration that looks like a sql script
+*/
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+CREATE TABLE User (
+  id: INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  username: VARCHAR(255),
+  email: VARCHAR(255),
+  isVerified: BOOLEAN,
+  phoneNum: VARCHAR(255),
+  isNotified: BOOLEAN,
+);
