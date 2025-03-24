@@ -2,11 +2,11 @@ import { urlencoded } from "express";
 import express from 'express';
 import path from 'path';
 import passport from 'passport';
-import session from 'express-session';
+const session = require ('express-session');
 require('dotenv').config();
 
 //* import route modules here
-import usersroute from './routes/users';
+const usersRoute = require ('./routes/users');
 
 const DIST_DIR = path.resolve(__dirname, 'dist');
 const port = 8000;
