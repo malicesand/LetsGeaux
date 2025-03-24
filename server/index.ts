@@ -1,10 +1,12 @@
 import { urlencoded } from "express";
-const express = require('express');
-const path = require('path');
-const passport = require('passport');
-const session = require('express-session');
+import express from 'express';
+import path from 'path';
+import passport from 'passport';
+import session from 'express-session';
 require('dotenv').config();
 
+//* import route modules here
+import usersroute from './routes/users';
 
 const DIST_DIR = path.resolve(__dirname, 'dist');
 const port = 8000;
@@ -64,6 +66,9 @@ app.get('/logout', (req:any, res:any) => {
     res.redirect('/')
   })
 });
+
+//* Link routers to express server
+app.use('/users', isLoggedIn, usersRoute);
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'dist')));
