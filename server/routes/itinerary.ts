@@ -17,5 +17,5 @@ res.status(500).json({error: 'Error fetching itinerary'})
 })
 
 route.post('/', async (req: Request, res: Response) =>{
-  
+
 }) 
