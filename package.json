@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "npx tsx server/index.ts",
+    "start": "nodemon server/index.ts ",
     "pack": "webpack"
   },
   "repository": {
@@ -26,6 +26,7 @@
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.26.0",
     "@prisma/client": "^6.5.0",
+    "@types/express-session": "^1.18.1",
     "@types/node": "^22.13.13",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
