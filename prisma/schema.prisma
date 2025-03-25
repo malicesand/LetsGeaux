@@ -20,13 +20,53 @@ model user {
 
 model suggestion {
   id Int @id @default(autoincrement())
-  title String @db.VarChar(50)
+  title String @db.VarChar(120)
   priority Int
   upVotes Int
   downVotes Int
   timeAvailable DateTime
   location_id Int
   user_id Int
+  cost Int
   created_at DateTime
+}
+
+model  itinerary {
+  id Int @id @default(autoincrement())
+  creator_id Int
+  member_id Int
+  name String @db.VarChar(50)
+  begin DateTime
+  end DateTime
+  upVotes Int
+  downVotes Int
+  createdAt DateTime
+}
+
+model activity {
+  id Int @id @default(autoincrement())
+  creatorId Int
+  participant Int
+  suggestion_id Int
+  name String @db.VarChar(50)
+  description String @db.MediumText
+  notes String @db.Text
+  location_id Int
+}
+
+model location {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(70)
+  description String @db.MediumText
+  address String @db.VarChar(35)
+  latitude Decimal
+  longitude Decimal
+}
+model Route {
+  id Int @id @default(autoincrement())
+  user_id Int
+startLocation_id Int
+endLocation_id Int
+timeToLocation DateTime
 }
 
