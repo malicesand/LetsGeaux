@@ -22,4 +22,4 @@ const route = express.Router()
 }) */
 
 // export the route for use in server/index.ts
-module.exports = route;
+export default  route;
