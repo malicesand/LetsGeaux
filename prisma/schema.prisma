@@ -70,3 +70,44 @@ endLocation_id Int
 timeToLocation DateTime
 }
 
+model vote {
+  id Int @id @default(autoincrement())
+  user_id Int
+  vote_polarity Boolean
+  vote_topic String @db.Text
+  voted_item_id Int
+}
+model interest {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(25)
+}
+
+model group {
+  itinerary_id Int @unique
+  activity_id Int
+}
+
+model reminder {
+  id Int @id @default(autoincrement())
+  user_id Int
+  activity_id Int
+  call_time DateTime
+  call_message String @db.TinyText
+}
+
+model image {
+  id Int @id @default(autoincrement())
+  user_id Int
+  url String @db.LongText
+  activity_id Int //ties to suggestion through activity
+  notes String @db.Text
+}
+
+model budget {
+  id Int @id @default(autoincrement())
+  category String @db.VarChar(30)
+  group_id Int
+  spent Int
+  limit Int
+  notes String @db.MediumText
+}
