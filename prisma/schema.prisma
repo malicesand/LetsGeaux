@@ -17,3 +17,16 @@ model user {
   phoneNum String @db.VarChar(10)
   isNotified Boolean
 }
+
+model suggestion {
+  id Int @id @default(autoincrement())
+  title String @db.VarChar(50)
+  priority Int
+  upVotes Int
+  downVotes Int
+  timeAvailable DateTime
+  location_id Int
+  user_id Int
+  created_at DateTime
+}
+
