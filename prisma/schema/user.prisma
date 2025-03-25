@@ -6,3 +6,4 @@ model user {
   phoneNum String @db.VarChar(10)
   isNotified Boolean
 }
+
