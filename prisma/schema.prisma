@@ -1,7 +1,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["prismaSchemaFolder"]
+  // previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
@@ -9,3 +9,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model user {
+  id Int @id @default(autoincrement())
+  username String @db.VarChar(50)
+  email String @db.VarChar(50)
+  isVerified Boolean
+  phoneNum String @db.VarChar(10)
+  isNotified Boolean
+}
