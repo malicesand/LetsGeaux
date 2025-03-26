@@ -2,7 +2,7 @@
 -- ALTER TABLE `user` ADD COLUMN `groupItinerary_id` INTEGER NULL;
 
 -- CreateTable
-CREATE TABLE `suggestion` (
+CREATE TABLE IF NOT EXISTS `suggestion` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(120) NOT NULL,
     `priority` INTEGER NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE `suggestion` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `itinerary` (
+CREATE TABLE IF NOT EXISTS `itinerary` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `creator_id` INTEGER NOT NULL,
     `member_id` INTEGER NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE `itinerary` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `activity` (
+CREATE TABLE IF NOT EXISTS `activity` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `creatorId` INTEGER NOT NULL,
     `participant` INTEGER NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE `activity` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `location` (
+CREATE TABLE IF NOT EXISTS `location` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(70) NOT NULL,
     `description` MEDIUMTEXT NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE `location` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `route` (
+CREATE TABLE IF NOT EXISTS `route` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
     `startLocation_id` INTEGER NOT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE `route` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `vote` (
+CREATE TABLE IF NOT EXISTS `vote` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
     `vote_polarity` BOOLEAN NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE `vote` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `interest` (
+CREATE TABLE IF NOT EXISTS `interest` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(25) NOT NULL,
 
@@ -90,7 +90,7 @@ CREATE TABLE `interest` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `group` (
+CREATE TABLE IF NOT EXISTS `group` (
     `itinerary_id` INTEGER NOT NULL,
     `activity_id` INTEGER NOT NULL,
 
@@ -98,7 +98,7 @@ CREATE TABLE `group` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `reminder` (
+CREATE TABLE IF NOT EXISTS `reminder` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
     `activity_id` INTEGER NOT NULL,
@@ -109,7 +109,7 @@ CREATE TABLE `reminder` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `image` (
+CREATE TABLE IF NOT EXISTS `image` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
     `url` LONGTEXT NOT NULL,
@@ -120,7 +120,7 @@ CREATE TABLE `image` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `budget` (
+CREATE TABLE IF NOT EXISTS `budget` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `category` VARCHAR(30) NOT NULL,
     `group_id` INTEGER NOT NULL,
