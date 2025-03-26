@@ -4,7 +4,6 @@ import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import { urlencoded } from 'express';
-
 import budgetRoute from './routes/budget';
 
 
@@ -81,6 +80,8 @@ app.use('api/chats/', chatsRoute);
 app.use('/api/maps/', mapsRoute);
 app.use('/api/suggestions', suggestionRouter);
 //! add other app.use routes for features BELOW this line
+// Securely link budget routes with authentication middleware
+app.use('/budget', isLoggedIn, budgetRoute);
 
 
 
@@ -90,8 +91,6 @@ app.get('*', (req: any, res: any) => {
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 
-// Securely link budget routes with authentication middleware
-app.use('/budget', isLoggedIn, budgetRoute);
 
 // Start the server
 app.listen(port, () => {
