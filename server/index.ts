@@ -4,6 +4,7 @@ import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import { urlencoded } from 'express';
+import suggestionRouter from './routes/suggestions';
 
 // Import route modules
 import usersRoute from './routes/users';
@@ -13,15 +14,13 @@ dotenv.config();
 
 const app = express();
 const port = 8000;
-// Link routers to express server
-app.use('/users', isLoggedIn, usersRoute);
-app.use('/api/maps', mapsRoute);
-// Use session, passport, and body parsers
-app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
+app.use('/api/suggestions', suggestionRouter);
+app.use(session({ secret: 'cats', resave:false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
+// handling routes
 
 // Static files
 app.use(express.static(path.join(__dirname, '..', 'dist')));

@@ -30,7 +30,7 @@ ALTER TABLE `location` MODIFY `name` VARCHAR(50) NOT NULL,
 ALTER TABLE `reminder` MODIFY `call_message` VARCHAR(40) NOT NULL;
 
 -- AlterTable
-ALTER TABLE `user` ADD COLUMN `groupItinerary_id` INTEGER NULL;
+-- ALTER TABLE `user` ADD COLUMN `groupItinerary_id` INTEGER NULL;
 
 -- AlterTable
 ALTER TABLE `vote` MODIFY `vote_topic` VARCHAR(25) NOT NULL;
@@ -50,4 +50,4 @@ CREATE TABLE `route` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `user` ADD CONSTRAINT `user_groupItinerary_id_fkey` FOREIGN KEY (`groupItinerary_id`) REFERENCES `group`(`itinerary_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+-- ALTER TABLE `user` ADD CONSTRAINT `user_groupItinerary_id_fkey` FOREIGN KEY (`groupItinerary_id`) REFERENCES `group`(`itinerary_id`) ON DELETE SET NULL ON UPDATE CASCADE;
