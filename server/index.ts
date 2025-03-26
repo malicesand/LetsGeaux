@@ -6,22 +6,24 @@ import dotenv from 'dotenv';
 import { urlencoded } from 'express';
 
 // Import route modules
+import suggestionRouter from './routes/suggestions';
 import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
+import chatsRoute from './routes/chats';
+//! add other feature route imports BELOW this line
 
-dotenv.config(); 
+
+
+dotenv.config();
 
 const app = express();
 const port = 8000;
-// Link routers to express server
-app.use('/users', isLoggedIn, usersRoute);
-app.use('/api/maps', mapsRoute);
-// Use session, passport, and body parsers
-app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
+app.use(session({ secret: 'cats', resave:false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
+// handling routes
 
 // Static files
 app.use(express.static(path.join(__dirname, '..', 'dist')));
@@ -38,21 +40,27 @@ function isLoggedIn(req: any, res: any, next: any) {
 app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 app.get('/auth/google/callback',
   passport.authenticate('google', {
-    successRedirect: '/home',
+    successRedirect: '/',
     failureRedirect: '/auth/failure',
   })
 );
+
+// Check auth
+app.get('/api/check-auth', (req, res) => {
+  res.json({ isAuthenticated: req.isAuthenticated(), user: req.user });
+});
+
 app.get('/auth/failure', (req: any, res: any) => {
   res.send('Failed to authenticate');
 });
 app.get('/', (req: any, res: any) => {
   if (req.isAuthenticated()) {
-    res.redirect('/home');
+    res.redirect('/');
   } else {
     res.send('<a href="/auth/google">Authenticate with Google</a>');
   }
 });
-app.get('/home', isLoggedIn, (req: any, res: any) => {
+app.get('/', isLoggedIn, (req: any, res: any) => {
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 app.get('/logout', (req: any, res: any) => {
@@ -63,6 +71,13 @@ app.get('/logout', (req: any, res: any) => {
     res.redirect('/');
   });
 });
+
+app.use('/api/users/', usersRoute);
+app.use('api/chats/', chatsRoute);
+app.use('/api/maps/', mapsRoute);
+app.use('/api/suggestions', suggestionRouter);
+//! add other app.use routes for features BELOW this line
+
 
 
 
