@@ -6,6 +6,9 @@ import dotenv from 'dotenv';
 import { urlencoded } from 'express';
 import suggestionRouter from './routes/suggestions';
 
+import budgetRoute from './routes/budget';
+
+
 // Import route modules
 import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
@@ -24,6 +27,7 @@ app.use(urlencoded({ extended: true }));
 
 // Static files
 app.use(express.static(path.join(__dirname, '..', 'dist')));
+
 
 // Google auth setup
 require('./auth.ts');
@@ -69,6 +73,9 @@ app.get('/logout', (req: any, res: any) => {
 app.get('*', (req: any, res: any) => {
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
+
+// Securely link budget routes with authentication middleware
+app.use('/budget', isLoggedIn, budgetRoute);
 
 // Start the server
 app.listen(port, () => {
