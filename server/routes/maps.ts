@@ -7,52 +7,88 @@ import axios from 'axios'
 //prisma goes here
 
 const mapsRoute = express.Router()
-const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-  interface GeocodeResult {
-  formatted_address: string;
-  geometry: {
-    location: {
-      lat: number;
-      lng: number;
-    };
-  };
-}
- mapsRoute.get('/geocode', async (req: any, res: any) => {
-  const { address } = req.query;
-  
-  
-  if (!address || typeof address !== 'string') {
-    return res.status(400).json({ error: 'Address query parameter is required.' });
+
+ // Distance Matrix API request handler (using addresses)
+mapsRoute.get('/distance', async (req: any, res: any) => {
+  const { address1, address2 } = req.query;
+
+  // Validate addresses
+  if (!address1 || !address2 || typeof address1 !== 'string' || typeof address2 !== 'string') {
+    return res.status(400).json({ error: 'Both address1 and address2 query parameters are required.' });
   }
 
   try {
-    // Make request to Google Maps Geocoding API
-    console.log('API Key:', process.env.GOOGLE_MAPS_API_KEY);
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${process.env.GOOGLE_MAPS_API_KEY}`;
-    console.log(url)
-    const response = await axios.get(url);
-    console.log('Full Geocode API response:', response.data);
+    // Create the URL for the Distance Matrix API using addresses
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(address1)}&destinations=${encodeURIComponent(address2)}&key=${process.env.GOOGLE_MAPS_API_KEY}`;
 
-    // Handle Google Maps API response
-    const geocodeData: GeocodeResult[] = response.data.results;
-   
-    if (geocodeData.length === 0) {
-      return res.status(404).json({ error: 'No results found for the provided address.' });
+    // Make the request to the Google Maps Distance Matrix API
+    const response = await axios.get(url);
+
+    // Handle the API response
+    const result = response.data;
+
+    // Check if the API request was successful
+    if (result.status !== 'OK') {
+      return res.status(500).json({ error: 'An error occurred while retrieving distance data.' });
     }
 
-    // Return formatted address and location (latitude, longitude)
-    const result = geocodeData[0];
-    console.log(result)
+    // Get the travel time from the response
+    const travelTime = result.rows[0].elements[0].duration;
+
+    if (!travelTime) {
+      return res.status(404).json({ error: 'Unable to calculate travel time between the provided addresses.' });
+    }
+
+    // Return the travel time between the two addresses
+    // the default is driving
     res.json({
-      formatted_address: result.formatted_address,
-      location: result.geometry.location,
+      from: address1,
+      to: address2,
+      travel_time: travelTime.text,  
+     
     });
-    
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred while retrieving geocode data.' });
+    res.status(500).json({ error: 'An error occurred while retrieving distance data.' });
   }
 });
+mapsRoute.get('/directions', async (req:any, res:any) => {
+  const { origin, destination } = req.query;
+
+  // Validate parameters
+  if (!origin || !destination) {
+    return res.status(400).json({ error: 'Origin and destination are required.' });
+  }
+
+  try {
+    // Use Google Maps Directions API
+    const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin as string)}&destination=${encodeURIComponent(destination as string)}&key=${googleMapsApiKey}`;
+
+    const response = await axios.get(url);
+
+    // Check if the response contains routes
+    const routes = response.data.routes;
+    if (!routes || routes.length === 0) {
+      return res.status(404).json({ error: 'No routes found.' });
+    }
+
+    // Extract the polyline from the first route
+    const polyline = routes[0].overview_polyline?.points;
+
+    if (!polyline) {
+      return res.status(404).json({ error: 'No polyline found.' });
+    }
+
+    // Return the polyline for the frontend to render on the map
+    res.json({ polyline });
+  } catch (error) {
+    console.error('Error fetching directions:', error);
+    res.status(500).json({ error: 'An error occurred while fetching directions.' });
+  }
+});
+
 
 
 export default mapsRoute;
