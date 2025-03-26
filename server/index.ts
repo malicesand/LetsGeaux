@@ -4,17 +4,17 @@ import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import { urlencoded } from 'express';
-import suggestionRouter from './routes/suggestions';
 
 // Import route modules
+import suggestionRouter from './routes/suggestions';
 import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
+import chatsRoute from './routes/chats';
 
 dotenv.config();
 
 const app = express();
 const port = 8000;
-app.use('/api/suggestions', suggestionRouter);
 app.use(session({ secret: 'cats', resave:false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -41,6 +41,12 @@ app.get('/auth/google/callback',
     failureRedirect: '/auth/failure',
   })
 );
+
+// Check auth
+app.get('/api/check-auth', (req, res) => {
+  res.json({ isAuthenticated: req.isAuthenticated(), user: req.user });
+});
+
 app.get('/auth/failure', (req: any, res: any) => {
   res.send('Failed to authenticate');
 });
@@ -62,6 +68,13 @@ app.get('/logout', (req: any, res: any) => {
     res.redirect('/');
   });
 });
+
+app.use('/api/users/', usersRoute);
+app.use('api/chats/', chatsRoute);
+app.use('/api/maps/', mapsRoute);
+app.use('/api/suggestions', suggestionRouter);
+//! add other app.use routes BELOW this line
+
 
 
 

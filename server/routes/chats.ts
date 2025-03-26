@@ -2,8 +2,7 @@ import express, { Request, Response} from 'express';
 import cors from 'cors';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-import { PromptTemplate } from "langchain/prompts";
-import { StringOutputParser } from "langchain/schema/output_parser";
+
 
 
 import axios from 'axios'
@@ -12,10 +11,11 @@ import axios from 'axios'
 const chatsRoute = express.Router()
 const apiKey = process.env.GOOGLE_API_KEY;
 
- const llm = new GoogleGenerativeAI({
-   model: string: "gemini-1.5-flash",
-   temperature: 0,
-   maxRetries: 2,
-   // apiKey: "...",
-   // other params...
- });
+//  const llm = new GoogleGenerativeAI({
+//    model: string: "gemini-1.5-flash",
+//    temperature: 0,
+//    maxRetries: 2,
+//    // apiKey: "...",
+//    // other params...
+//  });
+export default chatsRoute;
