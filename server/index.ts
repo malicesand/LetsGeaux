@@ -12,7 +12,7 @@ const DIST_DIR = path.resolve(__dirname, 'dist');
 const port = 8000;
 const app = express();
 
-app.use(session({ secret: 'cats', resave:false, saveUnitialized: true })); 
+app.use(session({ secret: 'cats', resave:false, saveUnitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 

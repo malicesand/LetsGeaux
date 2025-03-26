@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "npx tsx server/index.ts",
-    "pack": "webpack"
+    "pack": "webpack",
+    "migrate": "npx prisma migrate dev"
   },
   "repository": {
     "type": "git",
