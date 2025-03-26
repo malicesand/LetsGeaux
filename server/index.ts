@@ -38,7 +38,7 @@ function isLoggedIn(req: any, res: any, next: any) {
 app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 app.get('/auth/google/callback',
   passport.authenticate('google', {
-    successRedirect: '/home',
+    successRedirect: '/',
     failureRedirect: '/auth/failure',
   })
 );
@@ -47,12 +47,12 @@ app.get('/auth/failure', (req: any, res: any) => {
 });
 app.get('/', (req: any, res: any) => {
   if (req.isAuthenticated()) {
-    res.redirect('/home');
+    res.redirect('/');
   } else {
     res.send('<a href="/auth/google">Authenticate with Google</a>');
   }
 });
-app.get('/home', isLoggedIn, (req: any, res: any) => {
+app.get('/', isLoggedIn, (req: any, res: any) => {
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 app.get('/logout', (req: any, res: any) => {
