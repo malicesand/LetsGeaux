@@ -19,8 +19,7 @@ import NavDrawer from './NavDrawer.tsx';
 import Maps from './Maps.tsx'
 import Suggestions from './Suggestions.tsx'
 import ChatBot from './ChatBot.tsx'
-
-// TODO other feature imports
+//! add other componenent imports BELOW this line
 
 
 
@@ -64,6 +63,10 @@ const App: React.FC = () => {
         <Route path="/maps" element={<Maps/>}/>
         <Route path="/suggestions" element={<Suggestions/>}/>
         <Route path="/chatbot" element={<ChatBot/>}/>
+        {/* add other paths BELOW this line */}
+        
+
+
       </Routes>
     </div>
   )

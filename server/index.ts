@@ -10,6 +10,9 @@ import suggestionRouter from './routes/suggestions';
 import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
 import chatsRoute from './routes/chats';
+//! add other feature route imports BELOW this line
+
+
 
 dotenv.config();
 
@@ -73,7 +76,7 @@ app.use('/api/users/', usersRoute);
 app.use('api/chats/', chatsRoute);
 app.use('/api/maps/', mapsRoute);
 app.use('/api/suggestions', suggestionRouter);
-//! add other app.use routes BELOW this line
+//! add other app.use routes for features BELOW this line
 
 
 
