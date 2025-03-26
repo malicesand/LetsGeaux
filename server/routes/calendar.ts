@@ -1,14 +1,13 @@
 import express from 'express';
-//import {Request, Response} from 'express'
+import {Request, Response} from 'express'
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const calendarRoute = express.Router();
 //GET
-calendarRoute.get('/', async (req: any, res: any )=>{
-  //const {} = req.params
+calendarRoute.get('/', async (req: Request, res: Response )=>{
   try{
-    //const  = await .find({})
+    
   res.status(200).json()
   }catch(error){
   res.status(500).json({error: 'Error fetching calendar'})
@@ -18,13 +17,18 @@ calendarRoute.get('/', async (req: any, res: any )=>{
   
 
 //POST
-calendarRoute.get('/', async (req: any, res: any )=>{
-  //const {} = req.params
+calendarRoute.post('/', async (req: any, res: any )=>{
+  const {creatorId, date} = req.body
   try{
-    //const itineraries = await .find({})
-  res.status(201).json()
+  //   const newCalendarDate = await prisma.calendarDate.create({
+  //     data: {
+  //       creatorId,
+  //       date: new Date(date),
+  //     }
+  //   })
+  // res.status(201).json(newCalendarDate)
   }catch(error){
-  res.status(500).json({error: 'Error fetching itinerary'})
+  res.status(500).json({error: 'Error creating new date'})
   }
   
   })
@@ -47,10 +51,10 @@ calendarRoute.patch('/:id', async (req: any, res: any )=>{
 
 //DELETE
 
-calendarRoute.delete('/;id', async (req: any, res: any )=>{
-  //const {} = req.params
+calendarRoute.delete('/:id', async (req: Request, res: Response )=>{
+  const {id} = req.params
   try{
-    //const itineraries = await .find({})
+    //const deleteAct= await .find({})
   res.status(200).json()
   }catch(error){
   res.status(500).json({error: 'Error fetching itinerary'})
