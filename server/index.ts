@@ -9,7 +9,7 @@ import { urlencoded } from 'express';
 import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
 
-dotenv.config(); 
+dotenv.config();
 
 const app = express();
 const port = 8000;
