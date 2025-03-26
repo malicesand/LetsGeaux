@@ -10,12 +10,13 @@
     "allowJs": true,
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
-    "allowImportingTsExtensions": true,
+     "allowImportingTsExtensions": true,
     "moduleResolution": "node",
-    // "ts-node": {},
+   
+
 
 },
 
-"include": [ "src/**/*", "server/**/*.js" ],
-  "exclude": ["node_modules", "dist"],
+"include": ["server/**/*.js", "src/**/*.tsx"],
+"exclude": ["node_modules", "dist"],
 }
