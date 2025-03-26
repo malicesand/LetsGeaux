@@ -8,14 +8,14 @@ datasource db {
 }
 
 model user {
-  id                Int     @id @default(autoincrement())
-  username          String  @db.VarChar(50)
-  email             String  @db.VarChar(50)
-  isVerified        Boolean
-  phoneNum          String  @db.VarChar(10)
-  isNotified        Boolean
-  group             group?  @relation(fields: [groupItinerary_id], references: [itinerary_id])
-  groupItinerary_id Int?
+  id         Int     @id @default(autoincrement())
+  username   String  @db.VarChar(50)
+  email      String  @db.VarChar(50)
+  isVerified Boolean
+  phoneNum   String  @db.VarChar(10)
+  isNotified Boolean
+  // group             group?  @relation(fields: [groupItinerary_id], references: [itinerary_id])
+  // groupItinerary_id Int?
 }
 
 model suggestion {
@@ -86,9 +86,9 @@ model interest {
 }
 
 model group {
-  itinerary_id Int    @unique
+  itinerary_id Int @unique
   activity_id  Int
-  user_id      user[]
+  // user_id      user[]
 }
 
 model reminder {
@@ -108,10 +108,34 @@ model image {
 }
 
 model budget {
-  id       Int    @id @default(autoincrement())
-  category String @db.VarChar(30)
-  group_id Int
-  spent    Int
-  limit    Int
-  notes    String @db.VarChar(255)
+  id         Int      @id @default(autoincrement())
+  category   String   @db.VarChar(30)
+  group_id   Int
+  spent      Decimal
+  limit      Decimal
+  notes      String   @db.VarChar(255)
+  created_at DateTime
+}
+
+model post {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.Text
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  authorId  Int
+  location  String
+  latitude  Decimal
+  longitude Decimal
+  category  String
+  Tags      String
+}
+
+model chatHistory {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  userMessage String   @db.Text
+  botResponse String   @db.LongText
+  timeStamp   DateTime
+  sessionId   String   @db.VarChar(100)
 }
