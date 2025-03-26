@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  // previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
@@ -37,7 +36,7 @@ model itinerary {
   creator_id Int
   member_id  Int
   name       String   @db.VarChar(50)
-  notes      String   @db.MediumText
+  notes      String   @db.VarChar(150)
   begin      DateTime
   end        DateTime
   upVotes    Int
@@ -51,16 +50,16 @@ model activity {
   participant   Int
   suggestion_id Int
   name          String @db.VarChar(50)
-  description   String @db.MediumText
-  notes         String @db.Text
+  description   String @db.VarChar(200)
+  notes         String @db.VarChar(150)
   location_id   Int
 }
 
 model location {
   id          Int     @id @default(autoincrement())
-  name        String  @db.VarChar(70)
-  description String  @db.MediumText
-  address     String  @db.VarChar(35)
+  name        String  @db.VarChar(50)
+  description String  @db.VarChar(255)
+  address     String  @db.VarChar(50)
   latitude    Decimal
   longitude   Decimal
 }
@@ -77,7 +76,7 @@ model vote {
   id            Int     @id @default(autoincrement())
   user_id       Int
   vote_polarity Boolean
-  vote_topic    String  @db.Text
+  vote_topic    String  @db.VarChar(25)
   voted_item_id Int
 }
 
@@ -97,15 +96,15 @@ model reminder {
   user_id      Int
   activity_id  Int
   call_time    DateTime
-  call_message String   @db.TinyText
+  call_message String   @db.VarChar(40)
 }
 
 model image {
   id          Int    @id @default(autoincrement())
   user_id     Int
-  url         String @db.LongText
+  url         String @db.TinyText
   activity_id Int //ties to suggestion through activity
-  notes       String @db.Text
+  notes       String @db.VarChar(255)
 }
 
 model budget {
@@ -114,5 +113,5 @@ model budget {
   group_id Int
   spent    Int
   limit    Int
-  notes    String @db.MediumText
+  notes    String @db.VarChar(255)
 }
