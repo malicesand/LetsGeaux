@@ -5,7 +5,8 @@
 
 */
 
--- CreateTable
+
+-- -- CreateTable
 -- CREATE TABLE `user` (
 --     `id` INTEGER NOT NULL AUTO_INCREMENT,
 --     `username` VARCHAR(50) NOT NULL,
