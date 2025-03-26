@@ -6,8 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
+<<<<<<< HEAD
     "start": "nodemon server/index.ts ",
     "pack": "webpack"
+=======
+    "start": "npx tsx server/index.ts",
+    "pack": "webpack",
+    "prismaTest": "npx tsx server/database/index.ts",
+    "migrate": "npx prisma migrate dev"
+>>>>>>> 5d5cbef25c1c21d9180f1e76eca832c4d64ee136
   },
   "repository": {
     "type": "git",

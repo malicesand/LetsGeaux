@@ -8,10 +8,110 @@ datasource db {
 }
 
 model user {
-  id         Int     @id @default(autoincrement())
-  username   String  @db.VarChar(50)
-  email      String  @db.VarChar(50)
-  isVerified Boolean
-  phoneNum   String  @db.VarChar(10)
-  isNotified Boolean
+  id                Int     @id @default(autoincrement())
+  username          String  @db.VarChar(50)
+  email             String  @db.VarChar(50)
+  isVerified        Boolean
+  phoneNum          String  @db.VarChar(10)
+  isNotified        Boolean
+  group             group?  @relation(fields: [groupItinerary_id], references: [itinerary_id])
+  groupItinerary_id Int?
+}
+
+model suggestion {
+  id            Int      @id @default(autoincrement())
+  title         String   @db.VarChar(120)
+  priority      Int
+  upVotes       Int
+  downVotes     Int
+  timeAvailable DateTime
+  location_id   Int
+  user_id       Int
+  cost          Int
+  created_at    DateTime
+}
+
+model itinerary {
+  id         Int      @id @default(autoincrement())
+  creator_id Int
+  member_id  Int
+  name       String   @db.VarChar(50)
+  notes      String   @db.VarChar(150)
+  begin      DateTime
+  end        DateTime
+  upVotes    Int
+  downVotes  Int
+  createdAt  DateTime
+}
+
+model activity {
+  id            Int    @id @default(autoincrement())
+  creatorId     Int
+  participant   Int
+  suggestion_id Int
+  name          String @db.VarChar(50)
+  description   String @db.VarChar(200)
+  notes         String @db.VarChar(150)
+  location_id   Int
+}
+
+model location {
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(50)
+  description String  @db.VarChar(255)
+  address     String  @db.VarChar(50)
+  latitude    Decimal
+  longitude   Decimal
+}
+
+model route {
+  id               Int      @id @default(autoincrement())
+  user_id          Int
+  startLocation_id Int
+  endLocation_id   Int
+  timeToLocation   DateTime
+}
+
+model vote {
+  id            Int     @id @default(autoincrement())
+  user_id       Int
+  vote_polarity Boolean
+  vote_topic    String  @db.VarChar(25)
+  voted_item_id Int
+}
+
+model interest {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(25)
+}
+
+model group {
+  itinerary_id Int    @unique
+  activity_id  Int
+  user_id      user[]
+}
+
+model reminder {
+  id           Int      @id @default(autoincrement())
+  user_id      Int
+  activity_id  Int
+  call_time    DateTime
+  call_message String   @db.VarChar(40)
+}
+
+model image {
+  id          Int    @id @default(autoincrement())
+  user_id     Int
+  url         String @db.TinyText
+  activity_id Int //ties to suggestion through activity
+  notes       String @db.VarChar(255)
+}
+
+model budget {
+  id       Int    @id @default(autoincrement())
+  category String @db.VarChar(30)
+  group_id Int
+  spent    Int
+  limit    Int
+  notes    String @db.VarChar(255)
 }
