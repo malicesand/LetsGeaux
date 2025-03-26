@@ -111,7 +111,8 @@ model budget {
   id       Int    @id @default(autoincrement())
   category String @db.VarChar(30)
   group_id Int
-  spent    Int
+  spent    Decimal
   limit    Int
   notes    String @db.VarChar(255)
+  created_at DateTime
 }
