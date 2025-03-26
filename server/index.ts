@@ -8,6 +8,7 @@ import { urlencoded } from 'express';
 // Import route modules
 import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
+import itineraryRoute from './routes/itinerary';
 
 dotenv.config(); 
 
@@ -16,6 +17,7 @@ const port = 8000;
 // Link routers to express server
 app.use('/users', isLoggedIn, usersRoute);
 app.use('/api/maps', mapsRoute);
+app.use('/api/itinerary', itineraryRoute);
 // Use session, passport, and body parsers
 app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
