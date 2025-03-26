@@ -17,6 +17,8 @@ import Home from './Home.tsx';
 import Login from './Login.tsx';
 import NavDrawer from './NavDrawer.tsx';
 import Maps from './Maps.tsx'
+import Suggestions from './Suggestions.tsx'
+import ChatBot from './ChatBot.tsx'
 
 // TODO other feature imports
 
@@ -57,18 +59,14 @@ const App: React.FC = () => {
   return (
     <div>
       <Routes>
-       { /*<Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" replace />} /> */}
-        <Route path="/"  element={
-          <Home />
-        }/>
-        <Route/>
-        <Route path="/maps"  element={
-          <Maps />
-        }/>
-        <Route/>
+       <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" replace />} /> 
+        <Route path="/" element={ <Home/>}/>
+        <Route path="/maps" element={<Maps/>}/>
+        <Route path="/suggestions" element={<Suggestions/>}/>
+        <Route path="/chatbot" element={<ChatBot/>}/>
       </Routes>
     </div>
   )
-}
+};
 
 export default App;
