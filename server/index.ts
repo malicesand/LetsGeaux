@@ -4,20 +4,23 @@ import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import { urlencoded } from 'express';
-import suggestionRouter from './routes/suggestions';
 
 import budgetRoute from './routes/budget';
 
 
 // Import route modules
+import suggestionRouter from './routes/suggestions';
 import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
+import chatsRoute from './routes/chats';
+//! add other feature route imports BELOW this line
+
+
 
 dotenv.config();
 
 const app = express();
 const port = 8000;
-app.use('/api/suggestions', suggestionRouter);
 app.use(session({ secret: 'cats', resave:false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -41,21 +44,27 @@ function isLoggedIn(req: any, res: any, next: any) {
 app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 app.get('/auth/google/callback',
   passport.authenticate('google', {
-    successRedirect: '/home',
+    successRedirect: '/',
     failureRedirect: '/auth/failure',
   })
 );
+
+// Check auth
+app.get('/api/check-auth', (req, res) => {
+  res.json({ isAuthenticated: req.isAuthenticated(), user: req.user });
+});
+
 app.get('/auth/failure', (req: any, res: any) => {
   res.send('Failed to authenticate');
 });
 app.get('/', (req: any, res: any) => {
   if (req.isAuthenticated()) {
-    res.redirect('/home');
+    res.redirect('/');
   } else {
     res.send('<a href="/auth/google">Authenticate with Google</a>');
   }
 });
-app.get('/home', isLoggedIn, (req: any, res: any) => {
+app.get('/', isLoggedIn, (req: any, res: any) => {
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 app.get('/logout', (req: any, res: any) => {
@@ -66,6 +75,13 @@ app.get('/logout', (req: any, res: any) => {
     res.redirect('/');
   });
 });
+
+app.use('/api/users/', usersRoute);
+app.use('api/chats/', chatsRoute);
+app.use('/api/maps/', mapsRoute);
+app.use('/api/suggestions', suggestionRouter);
+//! add other app.use routes for features BELOW this line
+
 
 
 
