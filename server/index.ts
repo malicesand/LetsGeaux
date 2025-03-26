@@ -4,6 +4,8 @@ import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import { urlencoded } from 'express';
+import budgetRoute from './routes/budget';
+
 
 // Import route modules
 import suggestionRouter from './routes/suggestions';
@@ -27,6 +29,7 @@ app.use(urlencoded({ extended: true }));
 
 // Static files
 app.use(express.static(path.join(__dirname, '..', 'dist')));
+
 
 // Google auth setup
 require('./auth.ts');
@@ -77,6 +80,8 @@ app.use('api/chats/', chatsRoute);
 app.use('/api/maps/', mapsRoute);
 app.use('/api/suggestions', suggestionRouter);
 //! add other app.use routes for features BELOW this line
+// Securely link budget routes with authentication middleware
+app.use('/budget', isLoggedIn, budgetRoute);
 
 
 
@@ -85,6 +90,7 @@ app.use('/api/suggestions', suggestionRouter);
 app.get('*', (req: any, res: any) => {
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
+
 
 // Start the server
 app.listen(port, () => {
