@@ -15,12 +15,13 @@ const center = {
   lng: -90.0715, // New Orleans longitude
 };
 
-const libraries: any = ['geometry', 'marker']; // Include 'marker' library
+const libraries: any = ['geometry', 'marker']; 
 
 const Maps = () => {
   const [origin, setOrigin] = useState<string>("");
   const [destination, setDestination] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [travelTime, setTravelTime] = useState<string | null>(null);  // State to hold the travel time
 
   const mapRef = useRef<google.maps.Map | null>(null);
   const directionsRenderer = useRef<google.maps.DirectionsRenderer | null>(null);
@@ -29,7 +30,7 @@ const Maps = () => {
   const destinationMarker = useRef<google.maps.Marker | null>(null);  // Changed to Marker type
   const polylineRef = useRef<google.maps.Polyline | null>(null);
 
-  // Function to fetch directions
+  // Function to fetch directions and calculate the travel time
   const fetchDirections = async () => {
     if (!origin || !destination) {
       setError("Both origin and destination are required!");
@@ -72,6 +73,11 @@ const Maps = () => {
             if (status === google.maps.DirectionsStatus.OK) {
               directionsRenderer.current.setDirections(result);
               setError(null);
+
+              // Extract travel time from directions result
+              const time = result.routes[0].legs[0].duration.text;
+              setTravelTime(time); // Update the state with the travel time
+
               const originLatLng = result.routes[0].legs[0].start_location;
               const destinationLatLng = result.routes[0].legs[0].end_location;
               placeMarkers(originLatLng, destinationLatLng);
@@ -151,15 +157,18 @@ const Maps = () => {
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
         />
-        <button onClick={fetchDirections}>Get Directions</button>
+        <button onClick={fetchDirections}>View Route</button>
       </div>
 
       {/* Error Message */}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
+      {/* Display the travel time */}
+      {travelTime && <p>Estimated Driving: {travelTime}</p>}
+
       {/* Google Map */}
       <LoadScript
-        googleMapsApiKey={'AIzaSyB9QqOy6HqcZACRrPbKWPd_bH0xnA2lA9w'}
+        googleMapsApiKey={'API_KEY'}
         libraries={libraries}
       >
         <GoogleMap
@@ -167,8 +176,8 @@ const Maps = () => {
           center={center}
           zoom={13}
           onLoad={onLoad}
-          mapIds={['2321123bf55eea3e']}  
         >
+          {/* The markers will be placed automatically after directions are fetched */}
         </GoogleMap>
       </LoadScript>
     </div>
