@@ -20,8 +20,8 @@ import Maps from './Maps.tsx'
 import Suggestions from './Suggestions.tsx'
 import ChatBot from './ChatBot.tsx'
 //! add other componenent imports BELOW this line
-
-
+import Itinerary from './Itineraray.tsx';
+import Calendar from './Calendar.tsx';
 
 interface LocationState {
   message: string;
@@ -65,6 +65,9 @@ const App: React.FC = () => {
         <Route path="/chatbot" element={<ChatBot/>}/>
         {/* add other paths BELOW this line */}
         
+
+        <Route path="/itinerary" element={<Itinerary/>}/>
+        <Route path="/calendar" element={<Calendar />} />
 
 
       </Routes>
