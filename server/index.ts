@@ -4,6 +4,8 @@ import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import { urlencoded } from 'express';
+import budgetRoute from './routes/budget';
+
 
 // Import route modules
 import suggestionRouter from './routes/suggestions';
@@ -26,6 +28,7 @@ app.use(urlencoded({ extended: true }));
 
 // Static files
 app.use(express.static(path.join(__dirname, '..', 'dist')));
+
 
 // Google auth setup
 require('./auth.ts');
@@ -62,20 +65,29 @@ app.get('/', (req: any, res: any) => {
 app.get('/', isLoggedIn, (req: any, res: any) => {
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
+
 app.get('/logout', (req: any, res: any) => {
-  req.session.destroy((err: any) => {
+  req.logout((err: 'error') => {
     if (err) {
-      return res.status(500).send('Failed to logout');
+      return res.status(500).json({ message: 'Error logging out at server', err });
     }
-    res.redirect('/');
+    req.session.destroy((err: any) => {
+      if (err) {
+        console.error('Failed at server', err)
+        return res.status(500).send('Failed to logout');
+      }
+      res.redirect('/');
+    })
   });
 });
 
 app.use('/api/users/', usersRoute);
-app.use('api/chats/', chatsRoute);
+app.use('api/chats/', isLoggedIn, chatsRoute);
 app.use('/api/maps/', mapsRoute);
 app.use('/api/suggestions', suggestionRouter);
 //! add other app.use routes for features BELOW this line
+// Securely link budget routes with authentication middleware
+app.use('/budget', isLoggedIn, budgetRoute);
 app.use('/api/itinerary', itineraryRoute)
 
 
@@ -84,6 +96,7 @@ app.use('/api/itinerary', itineraryRoute)
 app.get('*', (req: any, res: any) => {
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
+
 
 // Start the server
 app.listen(port, () => {
