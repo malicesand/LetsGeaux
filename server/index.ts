@@ -81,7 +81,7 @@ app.use('/api/maps/', mapsRoute);
 app.use('/api/suggestions', suggestionRouter);
 //! add other app.use routes for features BELOW this line
 // Securely link budget routes with authentication middleware
-app.use('/budget', isLoggedIn, budgetRoute);
+app.use('/budget', budgetRoute);
 
 
 

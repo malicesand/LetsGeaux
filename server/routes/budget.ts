@@ -18,6 +18,7 @@ router.get('/', isLoggedIn, async (req, res) => {
     });
     res.json(budgets);
   } catch (error) {
+    console.log("Error getting budgets")
     res.status(500).json({ message: 'Error RETREIVING budgets', error });
   }
 });
