@@ -18,19 +18,22 @@ const API_KEY = process.env.TRAVEL_ADVISOR_API_KEY;
 //  HELPERS //
 
 //This one queries tripadvisor to get the location ids needed for detailed information. these ids are returned in an array.
-const getTripadvisorLocationIds = (query: string = "new-orleans-attraction") => {
-  axios.get(`https://api.content.tripadvisor.com/api/v1/location/search?language=en&searchQuery=${query}&key=${API_KEY}`)
-  .then((attractions) => {
-    let locations = [];
-    const attractionList = attractions.data.data;
-    for (attraction of attractionList) {
-      locations.push(attraction.location_id);
+const getTripadvisorLocationIds = async (query: string = "new-orleans-attraction") => {
+  try {
+
+    const list = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/search?language=en&searchQuery=${query}&key=${API_KEY}`)
+      let locations = [];
+      const attractionList = list.data.data;
+      for (attraction of attractionList) {
+        locations.push(attraction.location_id);
+      }
+      console.log('just before return')
+      console.log(locations);
+      return locations;
+    } catch (err) {
+
+      console.error('failed to get ids', err);
     }
-    console.log(locations)
-    return locations;
-  }).catch((err) => {
-    console.error('failed to get ids', err);
-  });
 }
 
 // This one queries trip advisor with an array of location ids and moves wanted info from the result to an object
@@ -74,17 +77,26 @@ const getTripAdvisorImage = (locationId) => {
 
 
 // SEARCH flavored GET handling
-suggestionRouter.get('/search', async (req:any, res:any) => {
-  getTripadvisorLocationIds()
-  // getTripadvisorLocationIds().then((locations) => {
-  //   console.log("locations");
-  //   console.log(locations);
-  //   getTripadvisorDetailedEntries().then((detailedEntries) => {
-  //     console.log(detailedEntries);
-  //   })
-  // }).catch((err) => {
-  //   console.error('failed to get suggestions', err);
-  //   res.sendStatus(500);
+suggestionRouter.get('/search', (req:any, res:any) => {
+//  try {
+   getTripadvisorLocationIds().then(locations => {
+
+     console.log('after return')
+     console.log(locations);
+    })
+
+   // .then((locations) => {
+    res.status(200).send(locations);
+    // console.log("locations");
+    //   getTripadvisorDetailedEntries().then((detailedEntries) => {
+      //     console.log(detailedEntries);
+      // })
+      // }).catch((err) => {
+      // } catch(err) {
+      //     console.error('failed to get suggestions', err);
+      //       res.sendStatus(500);
+
+      // }
   // })
 })
 
