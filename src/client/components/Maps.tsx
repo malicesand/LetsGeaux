@@ -26,8 +26,8 @@ const Maps = () => {
   const mapRef = useRef<google.maps.Map | null>(null);
   const directionsRenderer = useRef<google.maps.DirectionsRenderer | null>(null);
   const directionsService = useRef<google.maps.DirectionsService | null>(null);
-  const originMarker = useRef<google.maps.Marker | null>(null);  // Changed to Marker type
-  const destinationMarker = useRef<google.maps.Marker | null>(null);  // Changed to Marker type
+  const originMarker = useRef<google.maps.Marker | null>(null);  
+  const destinationMarker = useRef<google.maps.Marker | null>(null);  
   const polylineRef = useRef<google.maps.Polyline | null>(null);
 
   // Function to fetch directions and calculate the travel time
@@ -102,6 +102,25 @@ const Maps = () => {
       suppressMarkers: true,
     });
   };
+  const saveTravel = async (origin: string, destination: string, travelTime: string) => {
+    try {
+      const response = await axios.post('/api/maps', {
+        origin,
+        destination,
+        travelTime,
+      });
+  
+      if (response.status === 200) {
+        console.log('Data saved successfully!');
+      } else {
+        console.log('Failed to save data.');
+      }
+    } catch (error) {
+      console.error('Error saving travel data:', error);
+    }
+  };
+
+
 
   useEffect(() => {
     if (directionsRenderer.current) {
@@ -149,13 +168,13 @@ const Maps = () => {
           type="text"
           placeholder="Enter origin"
           value={origin}
-          onChange={(e) => setOrigin(e.target.value)}
+          onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setOrigin(e.target.value)}
         />
         <input
           type="text"
           placeholder="Enter destination"
           value={destination}
-          onChange={(e) => setDestination(e.target.value)}
+          onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setDestination(e.target.value)}
         />
         <button onClick={fetchDirections}>View Route</button>
       </div>
@@ -165,10 +184,10 @@ const Maps = () => {
 
       {/* Display the travel time */}
       {travelTime && <p>Estimated Driving: {travelTime}</p>}
-
+    <button onClick={()=>saveTravel(origin, destination, travelTime)}>Save Travel Time </button>
       {/* Google Map */}
       <LoadScript
-        googleMapsApiKey={'API_KEY'}
+        googleMapsApiKey={'AIzaSyB9QqOy6HqcZACRrPbKWPd_bH0xnA2lA9w'}
         libraries={libraries}
       >
         <GoogleMap

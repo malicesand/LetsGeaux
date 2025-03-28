@@ -46,9 +46,9 @@ mapsRoute.get('/directions', async (req:any, res:any) => {
 });
 
 mapsRoute.post('/', async(req:any, res:any)=>{
-  console.log(req.body.data)
-  const { origin, destination, travelTime, user_id } = req.body.data;
-console.log(origin, destination, travelTime)
+ 
+  const { origin, destination, travelTime} = req.body;
+
   try {
     
     const routeInfo = await prisma.route.create({
@@ -56,21 +56,31 @@ console.log(origin, destination, travelTime)
         origin,
         destination,
         travelTime,
-        user_id
       },
     });
 
     // Send a success response
-    res.status(200).json({
-      message: 'Travel data saved successfully!',
+    res.status(201).json({
+      message: 'Travel info saved successfully!',
       routeInfo,
     });
   } catch (error) {
-    console.error('Error saving travel data:', error);
+    console.error('Error saving travel info:', error);
     res.status(500).json({
-      message: 'Error saving travel data. Please try again later.',
+      message: 'Error saving travel info. Please try again later.',
     });
   }
 })
+mapsRoute.get('/',async (req:any, res:any)=>{
+  try{
+const routeGet = await prisma.route.findMany()
+console.log('Travel info ')
+res.status(200).send(routeGet)
+  }
+  catch(error){
+console.error('error geting information about your route', error)
+  }
+})
+
 
 export default mapsRoute;
