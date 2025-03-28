@@ -1,45 +1,46 @@
 import React, { useState } from 'react';
 import api from './api';
-import { TextField, Button, Stack } from '@mui/material';
+import { TextField, Button, Stack, Box } from '@mui/material';
 
 const BudgetForm: React.FC = () => {
   const [totalBudget, setTotalBudget] = useState('');
-  const [currency, setCurrency] = useState('USD');
+  const [category, setCategory] = useState('USD');
   const [notes, setNotes] = useState('');
 //allow users to create new budget entries
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    api.post('/', { totalBudget, currency, notes })
+    api.post('/', { totalBudget, category, notes })
       .then(() => window.location.reload())
       .catch(err => console.error(err));
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ p: 2 }}>
       <Stack spacing={2}>
         <TextField
           label="Total Budget"
           value={totalBudget}
-          onChange={e => setTotalBudget(e.target.value)}
           type="number"
           required
+          fullWidth
+          onChange={e => setTotalBudget(e.target.value)}
         />
         <TextField
           label="Category"
-          value={currency}
-          onChange={e => setCurrency(e.target.value)}
+          value={category}
           required
+          fullWidth
+          onChange={e => setCategory(e.target.value)}
         />
         <TextField
           label="Notes"
           value={notes}
+          fullWidth
           onChange={e => setNotes(e.target.value)}
         />
-        <Button variant="contained" type="submit">
-          Add Budget
-        </Button>
+        <Button variant="contained" type="submit">Add Budget</Button>
       </Stack>
-    </form>
+    </Box>
   );
 };
 
