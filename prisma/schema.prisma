@@ -19,7 +19,6 @@ model user {
   image      image[]
   post       post[]
   reminder   reminder[]
-  route      route[]
   suggestion suggestion[]
   group      group?       @relation(fields: [groupId], references: [id])
   vote       vote[]
@@ -58,6 +57,7 @@ model itinerary {
   downVotes  Int
   createdAt  DateTime
   notes      String   @db.VarChar(150)
+  route      route[]
 }
 
 model activity {
@@ -93,14 +93,13 @@ model location {
 }
 
 model route {
-  id          Int    @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   travelTime  String
   destination String
   origin      String
-  userId      Int?
-  user        user?  @relation(fields: [userId], references: [id])
+  itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
 
-  @@index([userId], map: "route_userId_fkey")
+  itineraryId Int?
 }
 
 model vote {
