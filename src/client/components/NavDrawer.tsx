@@ -24,6 +24,7 @@ import AlertIcon from '@mui/icons-material/AddAlert';
 import LogoutIcon from '@mui/icons-material/LogoutSharp';
 import MapIcon from '@mui/icons-material/MapOutlined';
 import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
+import ChatIcon  from '@mui/icons-material/TryOutlined';
 
 const drawerWidth = 240;
 
@@ -132,14 +133,22 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
-             {/* Budget Buddy */}
-             <ListItem key={'BudgetBuddy'} disablePadding>
-  <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
-    <ListItemIcon>💰</ListItemIcon>
-    <ListItemText primary="budgetBuddy" />
-  </ListItemButton>
-</ListItem>
-
+          {/* chat */}
+          <ListItem key={'chat'} disablePadding>
+              <ListItemButton component={Link}to='/chatbot' onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <ChatIcon />
+                </ListItemIcon>
+                <ListItemText primary={`Gata AI Chat`} /> 
+              </ListItemButton>
+            </ListItem>
+            {/* Budget Buddy */}
+            <ListItem key={'BudgetBuddy'} disablePadding>
+              <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
+                <ListItemIcon>💰</ListItemIcon>
+                <ListItemText primary="budgetBuddy" />
+              </ListItemButton>
+            </ListItem>
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
               <ListItemButton onClick={handleLogout}>
