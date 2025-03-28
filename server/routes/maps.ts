@@ -4,55 +4,11 @@ import express from 'express';
 
 import axios from 'axios'
 
-//prisma goes here
-
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
 const mapsRoute = express.Router()
 
- // Distance Matrix API request handler (using addresses)
-mapsRoute.get('/distance', async (req: any, res: any) => {
-  const { address1, address2 } = req.query;
-
-  // Validate addresses
-  if (!address1 || !address2 || typeof address1 !== 'string' || typeof address2 !== 'string') {
-    return res.status(400).json({ error: 'Both address1 and address2 query parameters are required.' });
-  }
-
-  try {
-    // Create the URL for the Distance Matrix API using addresses
-    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(address1)}&destinations=${encodeURIComponent(address2)}&key=${process.env.GOOGLE_MAPS_API_KEY}`;
-
-    // Make the request to the Google Maps Distance Matrix API
-    const response = await axios.get(url);
-
-    // Handle the API response
-    const result = response.data;
-
-    // Check if the API request was successful
-    if (result.status !== 'OK') {
-      return res.status(500).json({ error: 'An error occurred while retrieving distance data.' });
-    }
-
-    // Get the travel time from the response
-    const travelTime = result.rows[0].elements[0].duration;
-
-    if (!travelTime) {
-      return res.status(404).json({ error: 'Unable to calculate travel time between the provided addresses.' });
-    }
-
-    // Return the travel time between the two addresses
-    // the default is driving
-    res.json({
-      from: address1,
-      to: address2,
-      travel_time: travelTime.text,  
-     
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred while retrieving distance data.' });
-  }
-});
+ 
 mapsRoute.get('/directions', async (req:any, res:any) => {
   const { origin, destination } = req.query;
 
@@ -89,6 +45,32 @@ mapsRoute.get('/directions', async (req:any, res:any) => {
   }
 });
 
+mapsRoute.post('/', async(req:any, res:any)=>{
+  console.log(req.body.data)
+  const { origin, destination, travelTime, user_id } = req.body.data;
+console.log(origin, destination, travelTime)
+  try {
+    
+    const routeInfo = await prisma.route.create({
+      data: {
+        origin,
+        destination,
+        travelTime,
+        user_id
+      },
+    });
 
+    // Send a success response
+    res.status(200).json({
+      message: 'Travel data saved successfully!',
+      routeInfo,
+    });
+  } catch (error) {
+    console.error('Error saving travel data:', error);
+    res.status(500).json({
+      message: 'Error saving travel data. Please try again later.',
+    });
+  }
+})
 
 export default mapsRoute;
