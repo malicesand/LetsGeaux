@@ -8,30 +8,39 @@ datasource db {
 }
 
 model user {
-  id         Int     @id @default(autoincrement())
-  username   String  @db.VarChar(50)
-  email      String  @db.VarChar(50)
+  id         Int          @id @default(autoincrement())
+  googleId   String       @unique
+  username   String       @db.VarChar(50)
+  email      String       @db.VarChar(50)
   isVerified Boolean
-  phoneNum   String  @db.VarChar(10)
+  phoneNum   String       @db.VarChar(10)
   isNotified Boolean
-  // group             group?  @relation(fields: [groupItinerary_id], references: [itinerary_id])
-  // groupItinerary_id Int?
+  reminder   reminder[]
+  post       post[]
+  route      route[]
+  vote       vote[]
+  image      image[]
+  suggestion suggestion[]
+  group      group?       @relation(fields: [groupId], references: [id])
+  groupId    Int?
 }
 
 model suggestion {
-  id            Int      @id @default(autoincrement())
-  title         String   @db.VarChar(120)
-  description   String   @db.MediumText
+  id            Int        @id @default(autoincrement())
+  title         String     @db.VarChar(120)
+  description   String     @db.MediumText
   upVotes       Int
   downVotes     Int
   timeAvailable DateTime
-  location_id   Int
-  image         String   @db.TinyText
-  phoneNum      String   @db.VarChar(15)
-  address       String   @db.VarChar(50)
-  user_id       Int
+  image         String     @db.TinyText
+  phoneNum      String     @db.VarChar(15)
+  address       String     @db.VarChar(50)
+  user          user?      @relation(fields: [userId], references: [id])
   cost          Int
-  created_at    DateTime @default(now())
+  created_at    DateTime   @default(now())
+  activity      activity[]
+  userId        Int?
+  location      location[]
 }
 
 model itinerary {
@@ -48,39 +57,48 @@ model itinerary {
 }
 
 model activity {
-  id            Int    @id @default(autoincrement())
-  creatorId     Int
-  participant   Int
-  suggestion_id Int
-  name          String @db.VarChar(50)
-  description   String @db.VarChar(200)
-  notes         String @db.VarChar(150)
-  location_id   Int
+  id           Int         @id @default(autoincrement())
+  creatorId    Int
+  participant  Int
+  suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
+  name         String      @db.VarChar(50)
+  description  String      @db.VarChar(200)
+  notes        String      @db.VarChar(150)
+  location     location?   @relation(fields: [locationId], references: [id])
+  suggestionId Int?
+  locationId   Int?
+  reminder     reminder[]
+  image        image[]
 }
 
 model location {
-  id          Int     @id @default(autoincrement())
-  name        String  @db.VarChar(50)
-  description String  @db.VarChar(255)
-  address     String  @db.VarChar(50)
-  latitude    Decimal
-  longitude   Decimal
+  id           Int         @id @default(autoincrement())
+  name         String      @db.VarChar(50)
+  description  String      @db.VarChar(255)
+  address      String      @db.VarChar(50)
+  suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
+  latitude     Decimal
+  longitude    Decimal
+  activity     activity[]
+  suggestionId Int?
 }
 
 model route {
-  id               Int      @id @default(autoincrement())
-  user_id          Int
-  startLocation_id Int
-  endLocation_id   Int
-  timeToLocation   DateTime
+  id             Int      @id @default(autoincrement())
+  user           user?    @relation(fields: [userId], references: [id])
+  origin         String
+  destination    String
+  timeToLocation DateTime
+  userId         Int?
 }
 
 model vote {
   id            Int     @id @default(autoincrement())
-  user_id       Int
+  user          user?   @relation(fields: [userId], references: [id])
   vote_polarity Boolean
   vote_topic    String  @db.VarChar(25)
   voted_item_id Int
+  userId        Int?
 }
 
 model interest {
@@ -89,47 +107,55 @@ model interest {
 }
 
 model group {
-  itinerary_id Int @unique
+  id           Int      @id @default(autoincrement())
+  itinerary_id Int      @unique
   activity_id  Int
-  // user_id      user[]
+  user_id      user[]
+  budget       budget[]
 }
 
 model reminder {
-  id           Int      @id @default(autoincrement())
-  user_id      Int
-  activity_id  Int
+  id           Int       @id @default(autoincrement())
+  user         user?     @relation(fields: [userId], references: [id])
+  activity     activity? @relation(fields: [activityId], references: [id])
   call_time    DateTime
-  call_message String   @db.VarChar(40)
+  call_message String    @db.VarChar(40)
+  userId       Int?
+  activityId   Int?
 }
 
 model image {
-  id          Int    @id @default(autoincrement())
-  user_id     Int
-  url         String @db.TinyText
-  activity_id Int //ties to suggestion through activity
-  notes       String @db.VarChar(255)
+  id         Int       @id @default(autoincrement())
+  user       user?     @relation(fields: [userId], references: [id])
+  url        String    @db.TinyText
+  activity   activity? @relation(fields: [activityId], references: [id])
+  notes      String    @db.VarChar(255)
+  userId     Int?
+  activityId Int?
 }
 
 model budget {
-  id          Int      @id @default(autoincrement())
-  category    String   @db.VarChar(30)
-  group_id    Int
-  spent       Decimal
-  totalBudget Decimal
-  notes       String   @db.VarChar(255)
-  created_at  DateTime
-  updated_at  DateTime
+  id                Int        @id @default(autoincrement())
+  category          category[]
+  group             group?     @relation(fields: [groupItinerary_id], references: [itinerary_id])
+  spent             Decimal
+  totalBudget       Decimal
+  notes             String     @db.VarChar(255)
+  created_at        DateTime
+  updated_at        DateTime
+  groupItinerary_id Int?
 }
 
 model category {
   id        Int      @id @default(autoincrement())
-  budgetId  Int
+  budget    budget?  @relation(fields: [budgetId], references: [id])
   name      String   @db.VarChar(30)
   allocated Decimal
   spent     Decimal
   notes     String?  @db.VarChar(150)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  budgetId  Int?
 }
 
 model post {
@@ -138,13 +164,14 @@ model post {
   content      String   @db.Text
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now())
-  authorId     Int
+  author       user?    @relation(fields: [authorId], references: [id])
   suggestionId Int?
   location     String?
   latitude     Decimal?
   longitude    Decimal?
   category     String?
   Tags         String?
+  authorId     Int?
 }
 
 model chatHistory {
