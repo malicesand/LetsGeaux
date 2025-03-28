@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import passport from "passport";
 
-const passport = require ('passport');
+const passports = require ('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const prisma = new PrismaClient
 
@@ -10,7 +10,7 @@ const prisma = new PrismaClient
 const GOOGLE_CLIENT_ID: string = process.env.GOOGLE_CLIENT_ID  ;
 const GOOGLE_CLIENT_SECRET: string = process.env.GOOGLE_CLIENT_SECRET
 
-passport.use(new GoogleStrategy ({
+passports.use(new GoogleStrategy ({
   clientID: GOOGLE_CLIENT_ID,
   clientSecret: GOOGLE_CLIENT_SECRET,
   callbackURL: 'http://localhost:8000/auth/google/callback',
@@ -19,7 +19,7 @@ passport.use(new GoogleStrategy ({
 async (token: string, tokenSecret: string, profile: any, done: passport.VerifyCallback) => {
   try {
     // Check if the user already exists by Google ID
-    let user = await prisma.user.findFirst({
+    let user = await prisma.user.findUnique({
       where: { googleId: profile.id },
     });
 
@@ -42,12 +42,12 @@ async (token: string, tokenSecret: string, profile: any, done: passport.VerifyCa
 }));
 
 // Serialize user into the session (store user id)
-passport.serializeUser((user:any , done) => {
+passports.serializeUser((user:any , done) => {
   done(null, user.id); // Storing the user ID in the session
 });
 
 // Deserialize user from the session (retrieve user by id)
-passport.deserializeUser(async (id: any, done) => {
+passports.deserializeUser(async (id: any, done) => {
   try {
     // Fetch the user from the database by ID
     const user = await prisma.user.findUnique({
