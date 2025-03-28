@@ -92,6 +92,8 @@ app.use('/api/suggestions', suggestionRouter);
 // Securely link budget routes with authentication middleware
 app.use('/budget', isLoggedIn, budgetRoute);
 app.use('/api/itinerary', itineraryRoute)
+app.use('/budget', budgetRoute);
+
 
 
 

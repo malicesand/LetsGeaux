@@ -19,8 +19,13 @@ import Maps from './Maps.tsx'
 import Suggestions from './Suggestions.tsx'
 import ChatBot from './ChatBot.tsx'
 //! add other componenent imports BELOW this line
+<<<<<<< HEAD
 import Itinerary from './Itineraray.tsx';
 import Calendar from './Calendar.tsx';
+=======
+import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
+
+>>>>>>> cfd5b4eb8fe7251efdc88bf0f513db1a757e68b4
 
 // interface ISetAuth {
   //   setAuth: 
@@ -79,6 +84,7 @@ import Calendar from './Calendar.tsx';
         <Route path="/itinerary" element={<Itinerary/>}/>
         <Route path="/calendar" element={<Calendar />} />
 
+        <Route path="/budgetbuddy" element={<BudgetBuddy />} />
 
       </Routes>
 // </Router>
