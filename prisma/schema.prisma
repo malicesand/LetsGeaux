@@ -21,14 +21,17 @@ model user {
 model suggestion {
   id            Int      @id @default(autoincrement())
   title         String   @db.VarChar(120)
-  priority      Int
+  description   String   @db.MediumText
   upVotes       Int
   downVotes     Int
   timeAvailable DateTime
   location_id   Int
+  image         String   @db.TinyText
+  phoneNum      String   @db.VarChar(15)
+  address       String   @db.VarChar(50)
   user_id       Int
   cost          Int
-  created_at    DateTime
+  created_at    DateTime @default(now())
 }
 
 model itinerary {
@@ -108,34 +111,47 @@ model image {
 }
 
 model budget {
-  id         Int      @id @default(autoincrement())
-  category   String   @db.VarChar(30)
-  group_id   Int
-  spent      Decimal
-  limit      Decimal
-  notes      String   @db.VarChar(255)
-  created_at DateTime
+  id          Int      @id @default(autoincrement())
+  category    String   @db.VarChar(30)
+  group_id    Int
+  spent       Decimal
+  totalBudget Decimal
+  notes       String   @db.VarChar(255)
+  created_at  DateTime
+  updated_at  DateTime
+}
+
+model category {
+  id        Int      @id @default(autoincrement())
+  budgetId  Int
+  name      String   @db.VarChar(30)
+  allocated Decimal
+  spent     Decimal
+  notes     String?  @db.VarChar(150)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model post {
-  id        Int      @id @default(autoincrement())
-  title     String   @db.Text
-  content   String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  authorId  Int
-  location  String
-  latitude  Decimal
-  longitude Decimal
-  category  String
-  Tags      String
+  id           Int      @id @default(autoincrement())
+  title        String   @db.Text
+  content      String   @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  authorId     Int
+  suggestionId Int?
+  location     String?
+  latitude     Decimal?
+  longitude    Decimal?
+  category     String?
+  Tags         String?
 }
 
 model chatHistory {
   id          Int      @id @default(autoincrement())
-  userId      Int
+  userId      Int?
   userMessage String   @db.Text
   botResponse String   @db.LongText
-  timeStamp   DateTime
-  sessionId   String   @db.VarChar(100)
+  timeStamp   DateTime @default(now())
+  sessionId   String?  @db.VarChar(100)
 }
