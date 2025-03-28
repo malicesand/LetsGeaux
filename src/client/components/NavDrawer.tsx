@@ -24,7 +24,7 @@ import AlertIcon from '@mui/icons-material/AddAlert';
 import LogoutIcon from '@mui/icons-material/LogoutSharp';
 import MapIcon from '@mui/icons-material/MapOutlined';
 import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
-
+import TravelExploreIcon from '@mui/icons-material/TravelExplore'
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -132,6 +132,21 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
+            {/* itinerary */}
+            <ListItem key={'itinerary'} disablePadding>
+              <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <TravelExploreIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Itinerary'} />
+              </ListItemButton>
+            </ListItem>
+
+
+
+
+
+
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
               <ListItemButton onClick={handleLogout}>
@@ -141,6 +156,8 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Logout'} />
               </ListItemButton>
             </ListItem>
+            
+
         </List>
       </Drawer>
     </Box>
