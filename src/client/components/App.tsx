@@ -19,6 +19,8 @@ import Maps from './Maps.tsx'
 import Suggestions from './Suggestions.tsx'
 import ChatBot from './ChatBot.tsx'
 //! add other componenent imports BELOW this line
+import Itinerary from './Itineraray.tsx';
+import Calendar from './Calendar.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 
 
@@ -75,6 +77,10 @@ import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
         <Route path="/suggestions" element={<Suggestions/>}/>
         <Route path="/chatbot" element={<ChatBot/>}/>
         {/* add other paths BELOW this line */}
+        
+        <Route path="/itinerary" element={<Itinerary/>}/>
+        <Route path="/calendar" element={<Calendar />} />
+
         <Route path="/budgetbuddy" element={<BudgetBuddy />} />
 
       </Routes>
