@@ -34,7 +34,7 @@ const NavDrawer: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true)
+  const [Auth, setAuth] = useState<boolean>(true)
 
   const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -54,15 +54,19 @@ const NavDrawer: React.FC = () => {
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-  const handleLogout = () => {
-    axios.post('/logout')
-      .then(() => {
-        setIsAuthenticated(false);
-        navigate('/login');
-      })
-      .catch((error) => {
-        console.error('Error logging out', error);
-      });
+  const handleLogout = async () => {
+    try {
+      
+      await axios.post('/logout')
+        
+          setAuth(false);
+          navigate('/');
+        
+    } catch (error) {
+      
+    
+        console.error('Error logging out at client', error);
+      };
   };
 
   return (
@@ -128,6 +132,14 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
+             {/* Budget Buddy */}
+             <ListItem key={'BudgetBuddy'} disablePadding>
+  <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
+    <ListItemIcon>💰</ListItemIcon>
+    <ListItemText primary="budgetBuddy" />
+  </ListItemButton>
+</ListItem>
+
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
               <ListItemButton onClick={handleLogout}>
@@ -144,3 +156,4 @@ const NavDrawer: React.FC = () => {
 };
 
 export default NavDrawer;
+

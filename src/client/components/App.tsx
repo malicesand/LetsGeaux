@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   Routes,
   Route,
@@ -9,28 +9,32 @@ import {
   useLocation,
   Link  } from 'react-router-dom';
 import axios from 'axios';
-// mui imports
 
 
 // feature routes
 import Home from './Home.tsx';
 import Login from './Login.tsx';
-import NavDrawer from './NavDrawer.tsx';
+import NavDrawer from './NavDrawer.tsx'; // 
 import Maps from './Maps.tsx'
 import Suggestions from './Suggestions.tsx'
 import ChatBot from './ChatBot.tsx'
 //! add other componenent imports BELOW this line
+import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 
 
-
-interface LocationState {
-  message: string;
-}
-
-const App: React.FC = () => {
+// interface ISetAuth {
+  //   setAuth: 
+  // }
+  
+  // const Login = ({ setAuth }: ISetAuth) => {
+    
+  // }
+  
   // States
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  
+  
+  const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   // Check Auth
   useEffect(() => {
     const checkAuth = async (params: any) => { //? type 
@@ -43,10 +47,10 @@ const App: React.FC = () => {
         console.error('Server: Err checking auth status', error);
       }
     };
-
+  
     // checkAuth(); 
   }, []); // ? need empty array?
-
+  
   // Protected Route
   const ProtectedRoute = (children: any) => {
     if (!isAuthenticated) {
@@ -54,21 +58,28 @@ const App: React.FC = () => {
     }
     return children
   };
+  
 
   return (
-    <div>
+    // <div>
+      //  <Router>
+      
       <Routes>
-       <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" replace />} /> 
-        <Route path="/" element={ <Home/>}/>
+        {/* <NavDrawer setIsAuthenticated={setIsAuthenticated} /> */}
+     
+       <Route path="login" element={!isAuthenticated ? <Login /> :  <Navigate to="/" />} /> 
+
+        <Route path="/" element={ <Home/> }/>
+        {/* <Route path="/" element={<NavDrawer/>}/> */}
         <Route path="/maps" element={<Maps/>}/>
         <Route path="/suggestions" element={<Suggestions/>}/>
         <Route path="/chatbot" element={<ChatBot/>}/>
         {/* add other paths BELOW this line */}
-        
-
+        <Route path="/budgetbuddy" element={<BudgetBuddy />} />
 
       </Routes>
-    </div>
+// </Router>
+    /* </div> */
   )
 };
 
