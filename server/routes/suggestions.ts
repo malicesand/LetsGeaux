@@ -27,8 +27,6 @@ const getTripadvisorLocationIds = async (query: string = "new-orleans-attraction
       for (attraction of attractionList) {
         locations.push(attraction.location_id);
       }
-      console.log('just before return')
-      console.log(locations);
       return locations;
     } catch (err) {
 
@@ -37,33 +35,38 @@ const getTripadvisorLocationIds = async (query: string = "new-orleans-attraction
 }
 
 // This one queries trip advisor with an array of location ids and moves wanted info from the result to an object
-const getTripadvisorDetailedEntries = (locations) => {
-  locations.map((location) => {
-    axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`)
-    .then((locationQueryProperties) => {
-      const {
-        name,
-        description,
-        hours,
-        phone,
-        address_obj,
-        latitude,
-        longitude,
-        price_level,
-      } = locationQueryProperties;
-      
-      const product = {
-        title: name,
-        description,
-        timeAvailable: hours.weekday_text,
-        phoneNum: phone,
-        address: address_obj.address_string,
-        latitude,
-        longitude,
-        cost: price_level.length,
-      }
+const getTripadvisorDetailedEntries = async (locations) => {
+  try {
+
+    const detailedEntries = await locations.map((location) => {
+      axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`)
+      .then((locationQueryProperties) => {
+        console.log('entry query Properties from the inside');
+        console.log('yo');
+        const {
+          name,
+          description,
+          // hours,
+          phone,
+          address_obj,
+          latitude,
+          longitude,
+          // price_level,
+        } = locationQueryProperties;
+
+        const product = {
+          title: name,
+          description,
+          // timeAvailable: hours.weekday_text,
+          phoneNum: phone,
+          // address: address_obj.address_string || "new orleans",
+          latitude,
+          longitude,
+          // cost: price_level.length,
+        }
+      })
     })
-  })
+  } catch(err) {console.error(err)}
 }
 // and finally, this one grabs the image url
 const getTripAdvisorImage = (locationId) => {
@@ -80,13 +83,15 @@ const getTripAdvisorImage = (locationId) => {
 suggestionRouter.get('/search', (req:any, res:any) => {
 //  try {
    getTripadvisorLocationIds().then(locations => {
+    getTripadvisorDetailedEntries(locations).then((entries) => {
 
-     console.log('after return')
-     console.log(locations);
+      console.log('after 2nd return')
+      console.log('no yo');
+    })
     })
 
    // .then((locations) => {
-    res.status(200).send(locations);
+    // res.status(200).send(locations);
     // console.log("locations");
     //   getTripadvisorDetailedEntries().then((detailedEntries) => {
       //     console.log(detailedEntries);
