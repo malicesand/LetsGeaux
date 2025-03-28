@@ -136,7 +136,7 @@ const NavDrawer: React.FC = () => {
              <ListItem key={'BudgetBuddy'} disablePadding>
   <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
     <ListItemIcon>💰</ListItemIcon>
-    <ListItemText primary="budgetBuddy" />
+    <ListItemText primary="Budget Buddy" />
   </ListItemButton>
 </ListItem>
 

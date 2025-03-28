@@ -18,7 +18,7 @@ import NavDrawer from './NavDrawer.tsx'; //
 import Maps from './Maps.tsx'
 import Suggestions from './Suggestions.tsx'
 import ChatBot from './ChatBot.tsx'
-//! add other componenent imports BELOW this line
+//! add other component imports BELOW this line
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 
 

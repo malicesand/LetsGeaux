@@ -9,7 +9,7 @@ const BudgetBuddy: React.FC = () => {
   return (
     <Container sx={{ py: 5 }}>
       <Typography variant="h3" gutterBottom align="center">
-        budgetBuddy
+        Budget Buddy
       </Typography>
 
       {/* Budget Summary */}

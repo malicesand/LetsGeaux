@@ -25,7 +25,7 @@ const BudgetForm: React.FC = () => {
           required
         />
         <TextField
-          label="Currency"
+          label="Category"
           value={currency}
           onChange={e => setCurrency(e.target.value)}
           required
