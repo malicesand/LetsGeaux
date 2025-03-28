@@ -24,7 +24,9 @@ import AlertIcon from '@mui/icons-material/AddAlert';
 import LogoutIcon from '@mui/icons-material/LogoutSharp';
 import MapIcon from '@mui/icons-material/MapOutlined';
 import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
-import TravelExploreIcon from '@mui/icons-material/TravelExplore'
+import TravelExploreIcon from '@mui/icons-material/TravelExplore';
+import EventIcon from '@mui/icons-material/Event';
+
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -132,7 +134,6 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
-<<<<<<< HEAD
             {/* itinerary */}
             <ListItem key={'itinerary'} disablePadding>
               <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
@@ -143,11 +144,18 @@ const NavDrawer: React.FC = () => {
               </ListItemButton>
             </ListItem>
 
+            {/* calendar */}
+            <ListItem key={'calendar'} disablePadding>
+              <ListItemButton component={Link}to='/calendar' onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <EventIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Calendar'} />
+              </ListItemButton>
+            </ListItem>
 
 
 
-
-=======
              {/* Budget Buddy */}
              <ListItem key={'BudgetBuddy'} disablePadding>
   <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
@@ -155,7 +163,6 @@ const NavDrawer: React.FC = () => {
     <ListItemText primary="budgetBuddy" />
   </ListItemButton>
 </ListItem>
->>>>>>> cfd5b4eb8fe7251efdc88bf0f513db1a757e68b4
 
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
