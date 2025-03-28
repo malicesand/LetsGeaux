@@ -1,13 +1,19 @@
 import React, { use, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+
 //import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import {Container,Typography, Box } from '@mui/material';
 import axios from 'axios';
+import { List, ListItem, ListItemText } from '@mui/material';
+
 
 const Itinerary: React.FC = () => {
 //const { date } = useParams();
-const[itinerary, setItinerary] = useState<any>(null);
+const { state } = useLocation();
 
+const[itinerary, setItinerary] = useState<any>(null);
+const selectedDates = state?.selectedDates || [];
 
 
 //GET
@@ -20,10 +26,12 @@ const getItinerary = async() =>{
   }
 }
 
-// hook -- unction to perform side effects
+// hook -- function to perform side effects
 useEffect(()=>{
+  if(selectedDates.length > 0 ){
   getItinerary();
-})
+  }
+},[selectedDates])
 //POST
 
 const postItinerary = async() =>{
@@ -39,7 +47,7 @@ const postItinerary = async() =>{
 //PATCH
 const patchtItinerary = async(id: number, updateData: any) =>{
   try{
-  const ressponse = axios.patch(`/api/itinerary/${id}`);
+  const response = axios.patch(`/api/itinerary/${id}`);
 
 }catch(err){
   console.error("Error updating itinerary:", err)
@@ -62,20 +70,58 @@ const deleteItinerary = async(id: number) =>{
 return(
   <Container>
   <Typography variant="h4" gutterBottom>
-    Itinerary Time!
+    Itinerary
   </Typography>
 
   <Box my={2}>
+  {/* {selectedDates.length > 0 && (
+  <Typography variant="h6" color="primary">
+    Selected Dates: {selectedDates.map((date: { toLocaleDateString: () => any; }) => date.toLocaleDateString()).join(", ")}
+  </Typography>
+)} */}
+
+
+
+
+
+
     {itinerary ? (
       <div>
         <Typography variant="h6">Activity: {itinerary.name}</Typography>
         <Typography variant="body1">Description: {itinerary.notes}</Typography>
-        {/* Render more itinerary details here */}
+        {/* willRender more itinerary details here */}
       </div>
     ) : (
       <Typography variant="h6">Loading itinerary...</Typography>
+      
     )}
+
+
+
+
   </Box>
+  <Box my={3}>
+        {selectedDates.length > 0 ? (
+          <div>
+            <Typography variant="h6" color="primary" gutterBottom>
+              Selected Dates:
+            </Typography>
+            <List>
+              {selectedDates.map((date: any, index: any) => (
+                <ListItem key={index}>
+                  <ListItemText primary={date.toLocaleDateString()} />
+                </ListItem>
+              ))}
+            </List>
+          </div>
+        ) : (
+          <Typography variant="body1">No dates selected.</Typography>
+        )}
+              </Box>
+
+
+
+
 </Container>
 );
 }

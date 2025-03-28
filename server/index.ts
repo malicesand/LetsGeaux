@@ -81,6 +81,9 @@ app.get('/logout', (req: any, res: any) => {
   });
 });
 
+
+
+
 app.use('/api/users/', usersRoute);
 app.use('api/chats/', isLoggedIn, chatsRoute);
 app.use('/api/maps/', mapsRoute);
