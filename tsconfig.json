@@ -11,7 +11,7 @@
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
      "allowImportingTsExtensions": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
    
 
 

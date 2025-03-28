@@ -1,5 +1,146 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { styled, useTheme } from '@mui/material/styles';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Drawer,
+  Divider
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ProfileIcon from '@mui/icons-material/AccountCircle';
+import AlertIcon from '@mui/icons-material/AddAlert';
+import LogoutIcon from '@mui/icons-material/LogoutSharp';
+import MapIcon from '@mui/icons-material/MapOutlined';
+import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
 
-function NavDrawer() {}
+const drawerWidth = 240;
+
+type Anchor = 'left';
+
+
+const NavDrawer: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true)
+
+  const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-end'
+  }));
+
+  const theme = useTheme();
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+  const handleLogout = () => {
+    axios.post('/logout')
+      .then(() => {
+        setIsAuthenticated(false);
+        navigate('/login');
+      })
+      .catch((error) => {
+        console.error('Error logging out', error);
+      });
+  };
+
+  return (
+    <Box sx={{ display: 'flex' }}>
+     
+      
+          <IconButton
+            color='inherit'
+            aria-label='open drawer'
+            onClick={handleDrawerOpen}
+            edge='start'
+            sx={[
+              {
+                mr: 2
+              },
+              open && { display: 'none' }
+            ]}
+          >
+            <MenuIcon />
+          </IconButton>
+        
+        
+      
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box'
+          }
+        }}
+        variant='persistent'
+        anchor='left'
+        open={open}
+      >
+        <DrawerHeader>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === 'ltr' ? (
+              <ChevronLeftIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
+          </IconButton>
+        </DrawerHeader>
+        <Divider />
+        <List>
+          {/* suggestions */}
+          <ListItem key={'suggestions'} disablePadding>
+              <ListItemButton component={Link}to='/suggestions' onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <TipsIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Suggestions'} />
+              </ListItemButton>
+            </ListItem>
+          {/* maps */}
+          <ListItem key={'maps'} disablePadding>
+              <ListItemButton component={Link}to='/maps' onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <MapIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Maps'} />
+              </ListItemButton>
+            </ListItem>
+          {/* logout */}
+          <ListItem key={'logout'} disablePadding>
+              <ListItemButton onClick={handleLogout}>
+                <ListItemIcon>
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Logout'} />
+              </ListItemButton>
+            </ListItem>
+        </List>
+      </Drawer>
+    </Box>
+  );
+};
 
 export default NavDrawer;
