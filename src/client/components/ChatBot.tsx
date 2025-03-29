@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 
-
-import Prompt from '../types/prompt.ts';
 
 
 
@@ -12,9 +11,9 @@ interface ChatMessage {
 }
 
 
-export const sendPrompt = async (prompt: Prompt) => {
-  // ...
-};
+
+
+
 
 
 
@@ -22,11 +21,8 @@ const ChatBot: React.FC = () => {
   const [message, setMessage] = useState<string>('');
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
   const chatLogRef = useRef<HTMLDivElement>(null);
-
-  const handleSendPrompt = (promptText: string) => {
-    const prompt: Prompt = { query: promptText };
-    sendPrompt(prompt);
-  };
+  
+ 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,9 +31,21 @@ const ChatBot: React.FC = () => {
     setChatLog([...chatLog, { text: message, user: true }]);
     setMessage('');
 
-    // try response.data
-  };
+    try {
+      const response = await axios.post('/api/chats', { message });
+        setChatLog(prevChatLog => [...prevChatLog, { text: response.data, user: false }]);
+    } catch (error: any) { // Type the error
+        console.error("Error sending message:", error);
+        setChatLog(prevChatLog => [...prevChatLog, {text: "Error: Could not get response.", user: false }]);
+    }
+};
 
+useEffect(() => {
+    // Scroll to bottom of chat log on update
+    if (chatLogRef.current) {
+        chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
+    }
+}, [chatLog]);
   
   return (
     <div
@@ -51,7 +59,7 @@ const ChatBot: React.FC = () => {
           border: '1px solid #ccc',
           padding: '10px',
           height: '400px',
-          overflowY: 'scroll'
+          // overflowY: 'scroll'
         }}
         ref={chatLogRef}
       >
