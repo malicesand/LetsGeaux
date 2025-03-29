@@ -187,7 +187,7 @@ const Maps = () => {
     <button onClick={()=>saveTravel(origin, destination, travelTime)}>Save Travel Time </button>
       {/* Google Map */}
       <LoadScript
-        googleMapsApiKey={'AIzaSyB9QqOy6HqcZACRrPbKWPd_bH0xnA2lA9w'}
+        googleMapsApiKey={'API_KEY'}
         libraries={libraries}
       >
         <GoogleMap
