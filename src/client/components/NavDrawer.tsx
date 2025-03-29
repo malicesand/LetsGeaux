@@ -25,6 +25,8 @@ import LogoutIcon from '@mui/icons-material/LogoutSharp';
 import MapIcon from '@mui/icons-material/MapOutlined';
 import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
 import ChatIcon  from '@mui/icons-material/TryOutlined';
+import TravelExploreIcon from '@mui/icons-material/TravelExplore';
+import EventIcon from '@mui/icons-material/Event';
 
 const drawerWidth = 240;
 
@@ -133,6 +135,28 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
+            {/* itinerary */}
+            <ListItem key={'itinerary'} disablePadding>
+              <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <TravelExploreIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Itinerary'} />
+              </ListItemButton>
+            </ListItem>
+
+            {/* calendar */}
+            <ListItem key={'calendar'} disablePadding>
+              <ListItemButton component={Link}to='/calendar' onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <EventIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Calendar'} />
+              </ListItemButton>
+            </ListItem>
+
+
+
           {/* chat */}
           <ListItem key={'chat'} disablePadding>
               <ListItemButton component={Link}to='/chatbot' onClick={handleDrawerClose}>
@@ -158,6 +182,8 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Logout'} />
               </ListItemButton>
             </ListItem>
+            
+
         </List>
       </Drawer>
     </Box>
