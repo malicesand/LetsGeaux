@@ -7,8 +7,6 @@ import { urlencoded } from 'express';
 import cors from 'cors';
 import budgetRoute from './routes/budget';
 
-import cors from 'cors'
-
 // Import route modules
 import suggestionRouter from './routes/suggestions';
 import usersRoute from './routes/users';
