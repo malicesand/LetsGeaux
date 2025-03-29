@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { urlencoded } from 'express';
 import budgetRoute from './routes/budget';
 
+import cors from 'cors'
 
 // Import route modules
 import suggestionRouter from './routes/suggestions';
@@ -19,6 +20,12 @@ dotenv.config();
 
 const app = express();
 const port = 8000;
+app.use(cors({
+  origin: 'http://localhost:8000', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // 
+}));
+app.options('*', cors());
 app.use(session({ secret: 'cats', resave:false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
