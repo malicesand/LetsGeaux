@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 const itineraryRoute = express.Router();
 
-itineraryRoute.get('/', async (req: Request, res: Response )=>{
+itineraryRoute.get('/', async (req: any, res: any )=>{
 try{
   const itineraries = await prisma.itinerary.findMany()
 res.status(200).json(itineraries)
@@ -15,8 +15,14 @@ res.status(500).json({error: 'Error fetching itinerary'})
 
 })
 
-itineraryRoute.post('/', async (req: Request, res: Response) =>{
+itineraryRoute.post('/', async (req: any, res: any) =>{
 const {creator_id, member_id, name, notes, begin, end, upVotes, downVotes} = req.body
+
+if (!creator_id || !name || !begin || !end) {
+  return res.status(400).json({ error: "Missing required fields" });
+}
+
+
 try{
   const newItinerary = await prisma.itinerary.create({
 data: {
@@ -26,8 +32,9 @@ name,
 notes, 
 begin: new Date(begin),
 end: new Date(end),
-upVotes,
-downVotes,
+upVotes: upVotes ?? 0,  
+downVotes: downVotes ?? 0,
+
 createdAt: new Date()
 }
 
@@ -39,7 +46,7 @@ res.status(500).json({error: 'Error creating itinerary'})
 
 }) 
 
-itineraryRoute.patch('/:id  ', async (req: Request, res: Response )=>{
+itineraryRoute.patch('/:id', async (req: Request, res: Response )=>{
   const {id } = req.params;
   const {name, notes, begin, end, upVotes, downVotes} = req.body
  
