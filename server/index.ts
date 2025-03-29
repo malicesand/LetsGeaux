@@ -13,8 +13,7 @@ import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
 import chatsRoute from './routes/chats';
 //! add other feature route imports BELOW this line
-
-
+import itineraryRoute from './routes/itinerary';
 
 dotenv.config();
 
@@ -82,6 +81,9 @@ app.get('/logout', (req: any, res: any) => {
   });
 });
 
+
+
+
 app.use('/api/users/', usersRoute);
 app.use('api/chats/', isLoggedIn, chatsRoute);
 app.use('/api/maps/', mapsRoute);
@@ -89,6 +91,8 @@ app.use('/api/suggestions', suggestionRouter);
 //! add other app.use routes for features BELOW this line
 // Securely link budget routes with authentication middleware
 app.use('/budget', isLoggedIn, budgetRoute);
+app.use('/api/itinerary', itineraryRoute)
+app.use('/budget', budgetRoute);
 
 
 
