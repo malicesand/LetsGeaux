@@ -47,8 +47,8 @@ mapsRoute.get('/directions', async (req:any, res:any) => {
 
 mapsRoute.post('/', async(req:any, res:any)=>{
  
-  const { origin, destination, travelTime} = req.body;
-
+  const { origin, destination, travelTime, itineraryId} = req.body.data;
+console.log(itineraryId)
   try {
     
     const routeInfo = await prisma.route.create({
