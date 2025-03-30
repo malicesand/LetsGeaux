@@ -4,9 +4,8 @@ import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import { urlencoded } from 'express';
+import cors from 'cors';
 import budgetRoute from './routes/budget';
-
-import cors from 'cors'
 
 // Import route modules
 import suggestionRouter from './routes/suggestions';
@@ -35,7 +34,7 @@ app.use(urlencoded({ extended: true }));
 
 // Static files
 app.use(express.static(path.join(__dirname, '..', 'dist')));
-
+app.use(cors());
 
 // Google auth setup
 require('./auth.ts');
@@ -92,7 +91,7 @@ app.get('/logout', (req: any, res: any) => {
 
 
 app.use('/api/users/', usersRoute);
-app.use('api/chats/', isLoggedIn, chatsRoute);
+app.use('/api/chats/', chatsRoute);
 app.use('/api/maps/', mapsRoute);
 app.use('/api/suggestions', suggestionRouter);
 //! add other app.use routes for features BELOW this line
