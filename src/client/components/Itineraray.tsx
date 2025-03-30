@@ -1,172 +1,243 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 //import { useParams } from 'react-router-dom';
-import {Container,Typography, Box, List, ListItem, ListItemText, Button, TextField, Dialog, DialogContent  } from '@mui/material';
+import {Container,Typography, Box, List, ListItem, ListItemText, Button, TextField, Dialog, DialogContent, DialogActions, Modal  } from '@mui/material';
 import axios from 'axios';
  import { DialogTitle }
-from '@mui/material'
+from '@mui/material';
 
 
 const Itinerary: React.FC = () => {
-//const { date } = useParams();
+ 
+  const [activityName, setActivityName] = useState('');
+  const [activityNotes, setActivityNotes] = useState('');
+  const [itineraries, setItineraries] = useState<{ [date: string]: any[] }>({});
+
+
+
+// Modal state
+const [openModal, setOpenModal] = useState(false);
+const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+
+  
+
+// Get selected dates from state
 const { state } = useLocation();
-
-const[itinerary, setItinerary] = useState<any>(null);
 const selectedDates = state?.selectedDates || [];
-const [isModalOpen, setIsModalOpen] = useState(false)
-const [activityName, setActivityName] = useState('');
-const[activityNotes, setActivityNotes] = useState('')
 
-//GET
-const getItinerary = async() =>{
-  try{
-    const response = axios.get('/api/itinerary');
+  
+
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { selectedDates: any } = location.state || { selectedDates: [] };
+
+
+
+   // Post itinerary data for the selected date
+  const postItinerary = async () => {
+    if (!selectedDate) {
+      console.error('No date selected for itinerary.');
+      return;
+    }
+
+    try {
+      const itineraryData = {
+        name: activityName,
+        notes: activityNotes,
+        begin: new Date(selectedDate).toISOString(),
+        end: new Date(selectedDate).toISOString(),
+        upVotes: 0,
+        downVotes: 0,
+        creator_id: 1,  
+        member_id: 2,   
+      };
+
+      const response = await axios.post('/api/itinerary', itineraryData);
+      console.log('Itinerary Created:', response.data);
+
+      // Convert the selected date to YYYY-MM-DD format to use as key
+      const dateKey = selectedDate.toISOString().split('T')[0];
+
+      // Update the itineraries state with the new activity for the selected date
+      setItineraries((prevItineraries) => {
+        const updatedActivities = prevItineraries[dateKey] || [];
+        return {
+          ...prevItineraries,
+          [dateKey]: [...updatedActivities, response.data], // Add new activity for the date
+        };
+      });
+
+      // Close the modal after saving the activity
+      handleCloseModal();
+
+      // Clear form fields after submission
+      setActivityName('');
+      setActivityNotes('');
+    } catch (err) {
+      console.error('Error creating itinerary:', err);
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const generateDateRange = (startDate: Date, endDate: Date) => {
+    const dates: Date[] = [];
+    let currentDate = new Date(startDate);
+  
+    while (currentDate <= endDate) {
+      dates.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1); // Move to next day
+    }
+  
+    return dates;
+  };
+  
+  const dateRange = selectedDates.length === 2
+  ? generateDateRange(selectedDates[0], selectedDates[1])
+  : [];
+
+
+  // Open modal with the clicked date
+  const handleDateClick = (date: Date) => {
+    setSelectedDate(date);
+    setOpenModal(true);
+  };
+ // Close the modal
+ const handleCloseModal = () => {
+  setOpenModal(false);
+  setSelectedDate(null); // Clear the selected date when closing the modal
+};
+
+
+
+  
+  
+
+
+
+  // Render activities for the selected date
+  const renderActivitiesForSelectedDate = () => {
+    if (!selectedDate) return null;
     
-  }catch(err){
-    console.error("Error fecthing itinerary:", err)
-  }
-}
+    const dateKey = selectedDate.toISOString().split('T')[0]; 
+    const activitiesForSelectedDate = itineraries[dateKey] || [];
 
-// hook -- function to perform side effects
-useEffect(()=>{
-  if(selectedDates.length > 0 ){
-  getItinerary();
-  }
-},[selectedDates])
-
-const handleOpenModal = () => setIsModalOpen(true)
-const handleCloseModal = () => setIsModalOpen(false)
-
-
-
-
-//POST
-
-const postItinerary = async() =>{
-  try{
-  const response = axios.post('/api/itinerary');
-
-}catch(err){
-  console.error("Error fetching itinerary:", err)
-}
-} 
+    return (
+      <Box>
+        {activitiesForSelectedDate.length > 0 ? (
+          activitiesForSelectedDate.map((activity, index) => (
+            <Box key={index} mb={2}>
+              <Typography variant="body1">{activity.name}</Typography>
+              <Typography variant="body2">{activity.notes}</Typography>
+              <Typography variant="body2">Begin: {new Date(activity.begin).toLocaleString()}</Typography>
+              <Typography variant="body2">End: {new Date(activity.end).toLocaleString()}</Typography>
+            </Box>
+          ))
+        ) : (
+          <Typography>No activities for this date</Typography>
+        )}
+      </Box>
+    );
+  };
 
 
-//PATCH
-const patchtItinerary = async(id: number, updateData: any) =>{
-  try{
-  const response = axios.patch(`/api/itinerary/${id}`);
+// Render selected dates with buttons
+const renderSelectedDates = () => {
+return selectedDates.map((date: Date, index: number) => (
+  <Button
+    key={index}
+    variant="outlined"
+    color="primary"
+    onClick={() => handleDateClick(date)}
+    sx={{ margin: 1 }}
+  >
+    {date.toLocaleDateString()}
+  </Button>
+));
+};
 
-}catch(err){
-  console.error("Error updating itinerary:", err)
-}
-}
+return (
+<Container>
+      <Typography variant="h4" gutterBottom>
+        Your Itinerary
+      </Typography>
 
+      <Box display="flex" justifyContent="center" flexDirection="column" my={2}>
+        <Typography variant="h6" align="center">
+          Selected Dates:
+        </Typography>
+        <Box display="flex" flexWrap="wrap" justifyContent="center">
+          {renderSelectedDates()}
+        </Box>
+      </Box>
 
-//DELETE
+      {/* Modal for the selected date */}
+      <Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogTitle>Selected Date</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            {selectedDate ? `You clicked on: ${selectedDate.toLocaleDateString()}` : 'No date selected'}
+          </Typography>
 
-const deleteItinerary = async(id: number) =>{
-  try{
-  const response = axios.delete(`/api/itinerary/${id}`);
-
-}catch(err){
-  console.error("Error deleting itinerary:", err)
-}
-}
-
-
-return(
-  <Container>
-  <Typography variant="h4" gutterBottom>
-    Itinerary
-  </Typography>
-
-  <Box my={2}>
-    {itinerary ? (
-      <div>
-        <Typography variant="h6">Activity: {itinerary.name}</Typography>
-        <Typography variant="body1">Description: {itinerary.notes}</Typography>
-      </div>
-    ) : (
-      <Typography variant="h6">Loading itinerary...</Typography>
-      
-    )}
-  </Box>
-
-    {/*  Add Modal */}
-    <Dialog open={isModalOpen} onClose={handleCloseModal}>
-
-{/* <DialogTitle component="h6" align="center">Add Activity</DialogTitle> */}
-    <DialogContent>
-      {/* <TextField
-      autoFocus
-      margin="Activit Name"
-      fullWidth
-      value={ativityName}
-      onChange={(e)=> setActivityName(e.target.value)}
-      
-      </TextField>
-       <TextField
-            margin="dense"
+          {/* Form--- new itinerary for the selected date */}
+          <TextField
+            label="Activity Name"
+            fullWidth
+            value={activityName}
+            onChange={(e) => setActivityName(e.target.value)}
+          />
+          <TextField
             label="Activity Notes"
             fullWidth
             multiline
             rows={4}
             value={activityNotes}
             onChange={(e) => setActivityNotes(e.target.value)}
-      
-      */}
-    </DialogContent>
-        {/* <DialogActions>
-        <Button onclick={handleCloseModal} color="secondary">
-        Cancel
-        </Button>
-        <Button onclick={handleSaveActivity} color="primary">
-        Save
-        </Button>
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="primary">
+            Close
+          </Button>
+          <Button onClick={postItinerary} color="primary">
+            Save Activity
+          </Button>
         </DialogActions>
-         */}
-</Dialog>
+      </Dialog>
 
-
-
-  <Box my={3}>
-        {selectedDates.length > 0 ? (
-          <div>
-            <Typography variant="h6" color="primary" gutterBottom>
-              Selected Dates:
-            </Typography>
-            <List>
-              {selectedDates.map((date: any, index: number) => (
-                <ListItem key={index}>
-                  <ListItemText primary={date.toLocaleDateString()} />
-                </ListItem>
-              ))}
-            </List>
-          </div>
-        ) : (
-          <Typography variant="body1">No dates selected.</Typography>
-        )}
+      {/* show itineraries */}
+      <Box>
+        <Typography variant="h6">Itineraries</Typography>
+        {Object.keys(itineraries).map((dateKey) => (
+          <Box key={dateKey} mb={2}>
+            <Typography variant="h6">{dateKey}</Typography>
+            {itineraries[dateKey].map((activity, index) => (
+              <Box key={index} mb={2}>
+                <Typography variant="body1">{activity.name}</Typography>
+                <Typography variant="body2">{activity.notes}</Typography>
+                <Typography variant="body2">Begin: {new Date(activity.begin).toLocaleString()}</Typography>
+                <Typography variant="body2">End: {new Date(activity.end).toLocaleString()}</Typography>
               </Box>
-              {/* add activity button */}
-  <Box>
-    <Button variant="contained" color="primary" onClick={()=> setIsModalOpen(true)}>Add Activity</Button>
-  </Box>
-{/* add activities */}
-
-
-<TextField>
-  autofocus
-  margin="dense"
-  label="Activity Name"
-  fullWidth
-  value={activityName}
-  {/* onChange={(e)=> setActivityName(e.target.value) } */}
-</TextField>
-
-
-</Container>
-);
+            ))}
+          </Box>
+        ))}
+      </Box>
+    </Container>
+  );
 }
 export default Itinerary;
