@@ -17,6 +17,6 @@
 
 },
 
-"include": ["server/**/*.js", "src/**/*.tsx"],
+"include": ["server/**/*.js", "src/**/*.tsx", "prisma/**/*.ts"],
 "exclude": ["node_modules", "dist"],
 }
