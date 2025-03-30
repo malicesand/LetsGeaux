@@ -3,6 +3,7 @@ import { Container, Typography, Paper, Box } from '@mui/material';
 import BudgetOverview from './BudgetOverview';
 import BudgetForm from './BudgetForm';
 import BudgetPieChart from './BudgetPieChart';
+
 //layout for budget page
 //keep track of organizing sub components
 const BudgetBuddy: React.FC = () => {

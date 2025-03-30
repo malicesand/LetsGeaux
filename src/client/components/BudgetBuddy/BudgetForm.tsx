@@ -4,7 +4,7 @@ import { TextField, Button, Stack, Box } from '@mui/material';
 
 const BudgetForm: React.FC = () => {
   const [totalBudget, setTotalBudget] = useState('');
-  const [category, setCategory] = useState('USD');
+  const [category, setCategory] = useState('i.e Food, Travel');
   const [notes, setNotes] = useState('');
 //allow users to create new budget entries
   const handleSubmit = (e: React.FormEvent) => {
