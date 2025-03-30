@@ -18,7 +18,7 @@ const API_KEY = process.env.TRAVEL_ADVISOR_API_KEY;
 //  HELPERS //
 
 //This one queries tripadvisor to get the location ids needed for detailed information. these ids are returned in an array.
-const getTripadvisorLocationIds = async (query: string = "new-orleans-attraction") => {
+const getTripadvisorLocationIds = async (query: string = "restaurant") => {
   try {
 
     const list = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/search?language=en&searchQuery=${query}&key=${API_KEY}`)
@@ -35,15 +35,16 @@ const getTripadvisorLocationIds = async (query: string = "new-orleans-attraction
 }
 
 // This one queries trip advisor with an array of location ids and moves wanted info from the result to an object
-const getTripadvisorDetailedEntries = async (locations) => {
-  console.log('deez loc', locations)
+const getTripadvisorDetailedEntries = async (locations: number[]) => {
+  // console.log('deez loc', locations)
   try {
 
-    // const detailedEntries = await locations.map((location) => {
-      const detailedEntry = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${locations[0]}/details?language=en&currency=USD&key=${API_KEY}`)
+    const detailedEntries = await locations.map(async (location) => {
+      
+      const detailedEntry = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`)
       // .then((locationQueryProperties) => {
         // if (locationQueryProperties.hasOwnProperty('location_id')) {
-
+          
         //   console.log('entry query Properties from the inside');
         //   console.log('yo');
         const {
@@ -56,7 +57,7 @@ const getTripadvisorDetailedEntries = async (locations) => {
           longitude,
           // price_level,
         } = detailedEntry.data;
-
+        // console.log('DE.D', detailedEntry.data)
         const locationQueryDetailedEntry = {
           title: name,
           description,
@@ -67,13 +68,15 @@ const getTripadvisorDetailedEntries = async (locations) => {
           longitude,
           // cost: price_level.length,
         }
-        console.log('LQDE', locationQueryDetailedEntry)
+        // console.log('LQDE', locationQueryDetailedEntry)
         // }
-      // })
-    // })
-    // console.log('Deetz!!');
-    // console.log(detailedEntry);
-    return locationQueryDetailedEntry;
+        // })
+        // })
+        // console.log('Deetz!!');
+        // console.log(detailedEntry);
+        return locationQueryDetailedEntry;
+      });
+      const allDetailedEntries = Promise.all(detailedEntries);
   } catch(err) {console.error(err)}
 }
 // and finally, this one grabs the image url
