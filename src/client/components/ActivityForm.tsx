@@ -11,80 +11,81 @@ import {
   FormControl,
   Grid,
   Input,
-
+  InputLabel,
 } from '@mui/material';
 
-const ActivityForm = (props) => {
-  const [formValues, setFormValues] = useState({
-    title: '',
-    description: '',
-    time: null,
-    date: null,
-    location: '',
-    image: '',
-    phoneNum: '',
-    address: '',
+type FormFields = {
+  title: string,
+  description: string,
+  time: string,
+  date: Date,
+  location: string,
+  image: string,
+  phoneNum: string,
+  address: string,
 
-  })
-  const [inputValues, setInputValues] = useState([
-    {
-      label: 'Title',
-      value: '',
-      collection: 'title',
-      helperText: 'event name',
-    },
-    {
-      label: 'Description',
-      value:  '',
-      collection: 'description',
-      helperText: 'describe the activity',
-    },
-    {
-      label: 'Time',
-      value: '',
-      collection: 'time',
-      helperText: 'When we should be there',
-    },
-    {
-      label: 'Date',
-      value: '',
-      collection: 'date',
-      helperText: 'what day',
-    },
-    {
-      label: 'Location',
-      value: '',
-      collection: 'location',
-      helperText: 'where',
-    },
-    {
-      label: 'Phone/contact',
-      value: '',
-      collection: 'phone',
-      helperText: 'how do we contact the venue',
-    },
-    {
-      label: 'Address',
-      value: '',
-      collection: 'address',
-      helperText: 'street address',
-    },
-  ])
+}
+const inputKeys = ['title', 'description', 'time', 'date', 'location', 'image', 'phoneNum', 'address',]
+const ActivityForm = (props: any) => {
+  const [chosenTitle, setChosenTitle] = useState('');
+  const [chosenDescription, setChosenDescription] = useState('');
+  const [chosenTime, setChosenTime] = useState('');
+  const [chosenDate, setChosenDate] = useState(null);
+  const [chosenLocation, setChosenLocation] = useState('');
+  const [chosenImage, setChosenImage] = useState('');
+  const [chosenPhone, setChosenPhone] = useState('');
+  const [chosenAddress, setChosenAddress] = useState('');
+  const [editMode, setEditMode] = useState(false);
+
+
+  const { register, handleSubmit, setError, formState: {errors, isSubmitting}} = useForm<FormFields>({
+    defaultValues: {
+      title: chosenTitle,
+    description: chosenDescription,
+    time: chosenTime,
+    date: chosenDate,
+    location: chosenLocation,
+    image: chosenImage,
+    phoneNum: chosenPhone,
+    address: chosenAddress,
+    }
+  });
+  // const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+
+  const postActivity: SubmitHandler<FormFields> = async (data) => {
+    const details = {
+      details: data
+    }
+    try{
+      await axios.post("/api/activity", details);
+      console.log(data)
+      throw new Error();
+    } catch(error) {
+      console.error('failed to post activity', error);
+    }
+  }
   return (
     <Container>
       <FormControl>
         <Grid container spacing={4}>
-          {inputValues.map((value, i) => (
-            <Input
-            key={`${value.label}`}
-            value={input}
-            index={index}
-            formValues={formValues}
-            setFormValues={setFormValues}
-            />
-          ))}
+          <form className="activity-form" onSubmit={handleSubmit(postActivity)}>
+            {errors.title && <span className="text-red-500">{errors.title.message}</span>}
+            <Input {...register("title", {required: "event must have title"})} type="text" placeholder='title'></Input>
+            <Input {...register("description")} type="text" placeholder='description'></Input>
+            {errors.title && <span className="text-red-500">{errors.time.message}</span>}
+            <Input {...register("time", {required: "must specify time"})} type="text" placeholder='time'></Input>
+            {errors.title && <span className="text-red-500">{errors.date.message}</span>}
+            <Input {...register("date", {required: "must specify date"})} type="date" placeholder='date'></Input>
+            <Input {...register("location")} type="text" placeholder='location'></Input>
+            <Input {...register("image")} type="text" placeholder="Add url"></Input>
+            <Input {...register("phoneNum")} type="text" placeholder='contact number'></Input>
+            <Input {...register("address")} type="text" placeholder='address'></Input>
+            <Button disabled={isSubmitting} type="submit">{isSubmitting ? "submitting" : "Submit"}</Button>
+          </form>
         </Grid>
       </FormControl>
     </Container>
   )
 }
+
+export default ActivityForm;
