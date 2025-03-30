@@ -3,53 +3,84 @@
 import express from 'express';
 
 import axios from 'axios'
-//prisma goes here
 
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
 const mapsRoute = express.Router()
-const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
- interface GeocodeResult {
-  formatted_address: string;
-  geometry: {
-    location: {
-      lat: number;
-      lng: number;
-    };
-  };
-}
- mapsRoute.get('/geocode', async (req: any, res: any) => {
-  const { address } = req.query;
-  console.log(address)
-  
-  if (!address || typeof address !== 'string') {
-    return res.status(400).json({ error: 'Address query parameter is required.' });
+ 
+mapsRoute.get('/directions', async (req:any, res:any) => {
+  const { origin, destination } = req.query;
+
+  // Validate parameters
+  if (!origin || !destination) {
+    return res.status(400).json({ error: 'Origin and destination are required.' });
   }
 
   try {
-    // Make request to Google Maps Geocoding API
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
-    const response = await axios.get(url);
-console.log("helo wold")
-    // Handle Google Maps API response
-    const geocodeData: GeocodeResult[] = response.data.results;
+    // Use Google Maps Directions API
+    const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin as string)}&destination=${encodeURIComponent(destination as string)}&key=${googleMapsApiKey}`;
 
-    if (geocodeData.length === 0) {
-      return res.status(404).json({ error: 'No results found for the provided address.' });
+    const response = await axios.get(url);
+
+    // Check if the response contains routes
+    const routes = response.data.routes;
+    if (!routes || routes.length === 0) {
+      return res.status(404).json({ error: 'No routes found.' });
     }
 
-    // Return formatted address and location (latitude, longitude)
-    const result = geocodeData[0];
-    console.log(result)
-    res.json({
-      formatted_address: result.formatted_address,
-      location: result.geometry.location,
-    });
-    
+    // Extract the polyline from the first route
+    const polyline = routes[0].overview_polyline?.points;
+
+    if (!polyline) {
+      return res.status(404).json({ error: 'No polyline found.' });
+    }
+
+    // Return the polyline for the frontend to render on the map
+    res.json({ polyline });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred while retrieving geocode data.' });
+    console.error('Error fetching directions:', error);
+    res.status(500).json({ error: 'An error occurred while fetching directions.' });
   }
 });
 
+mapsRoute.post('/', async(req:any, res:any)=>{
+ 
+  const { origin, destination, travelTime, itineraryId} = req.body.data;
+console.log(itineraryId)
+  try {
+    
+    const routeInfo = await prisma.route.create({
+      data: {
+        origin,
+        destination,
+        travelTime,
+      },
+    });
 
-export default  mapsRoute;
+    // Send a success response
+    res.status(201).json({
+      message: 'Travel info saved successfully!',
+      routeInfo,
+    });
+  } catch (error) {
+    console.error('Error saving travel info:', error);
+    res.status(500).json({
+      message: 'Error saving travel info. Please try again later.',
+    });
+  }
+})
+mapsRoute.get('/',async (req:any, res:any)=>{
+  try{
+const routeGet = await prisma.route.findMany()
+console.log('Travel info ')
+res.status(200).send(routeGet)
+  }
+  catch(error){
+console.error('error geting information about your route', error)
+  }
+})
+
+
+export default mapsRoute;

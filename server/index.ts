@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { urlencoded } from 'express';
 import budgetRoute from './routes/budget';
 
+import cors from 'cors'
 
 // Import route modules
 import suggestionRouter from './routes/suggestions';
@@ -13,13 +14,18 @@ import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
 import chatsRoute from './routes/chats';
 //! add other feature route imports BELOW this line
-
-
+import itineraryRoute from './routes/itinerary';
 
 dotenv.config();
 
 const app = express();
 const port = 8000;
+app.use(cors({
+  origin: 'http://localhost:8000', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // 
+}));
+app.options('*', cors());
 app.use(session({ secret: 'cats', resave:false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -82,12 +88,17 @@ app.get('/logout', (req: any, res: any) => {
   });
 });
 
+
+
+
 app.use('/api/users/', usersRoute);
 app.use('api/chats/', isLoggedIn, chatsRoute);
 app.use('/api/maps/', mapsRoute);
 app.use('/api/suggestions', suggestionRouter);
 //! add other app.use routes for features BELOW this line
 // Securely link budget routes with authentication middleware
+app.use('/budget', isLoggedIn, budgetRoute);
+app.use('/api/itinerary', itineraryRoute)
 app.use('/budget', budgetRoute);
 
 
