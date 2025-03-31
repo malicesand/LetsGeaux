@@ -35,7 +35,7 @@ const ActivityForm = (props: any) => {
   const [chosenImage, setChosenImage] = useState('');
   const [chosenPhone, setChosenPhone] = useState('');
   const [chosenAddress, setChosenAddress] = useState('');
-  const [editMode, setEditMode] = useState(false);
+  
 
 
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({

@@ -50,4 +50,28 @@ activityRouter.delete('/:id', async (req:any, res:any) => {
   }
 })
 
+activityRouter.patch('/:id', async (req: any, res: any) => {
+  const {id } = req.params;
+  const {name, description, time, date, location, image, phone, address} = req.body;
+  console.log(req.body);
+  try {
+    const changeActivity = await prisma.activity.update({
+      where: {id: Number(id)},
+      data: {
+        name, 
+        description, 
+        time, date,
+        location,
+        image,
+        phone, 
+        address,
+      }
+    })
+    res.status(200).send(changeActivity)
+  } catch(err) {
+    console.error('unable to amend', err);
+    res.sendStatus(500);
+  }
+})
+
 export default activityRouter;
