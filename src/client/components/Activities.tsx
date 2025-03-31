@@ -15,7 +15,7 @@ const Activities = () => {
   }
 
   useEffect(() => {
-    getAllActivities;
+    getAllActivities();
   }, []);
   return (
     <Container>

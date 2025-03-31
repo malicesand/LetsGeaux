@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Container, Card, Box, Button, Typography } from '@mui/material';
 
-const Activity = (props) => {
+const Activity = ({act, getAllActivities}) => {
   return (
     <Container>
       <div className="activity-title">{act.name}</div>
