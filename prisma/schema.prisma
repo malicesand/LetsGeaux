@@ -62,13 +62,14 @@ model itinerary {
 
 model activity {
   id           Int         @id @default(autoincrement())
-  participant  Int
+  participant  Int?
   name         String      @db.VarChar(50)
   description  String      @db.VarChar(200)
-  notes        String      @db.VarChar(150)
-  creatorId    Int
+  phone        String?     @db.VarChar(150)
+  creatorId    Int?
   suggestionId Int?
   locationId   Int?
+  address      String?
   location     location?   @relation(fields: [locationId], references: [id])
   suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
   image        image[]

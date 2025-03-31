@@ -15,6 +15,7 @@ import mapsRoute from './routes/maps';
 import chatsRoute from './routes/chats';
 //! add other feature route imports BELOW this line
 import itineraryRoute from './routes/itinerary';
+import activityRouter from './routes/activities';
 
 dotenv.config();
 
@@ -100,6 +101,7 @@ app.use('/api/suggestions', suggestionRouter);
 app.use('/budget', isLoggedIn, budgetRoute);
 app.use('/api/itinerary', itineraryRoute)
 app.use('/budget', budgetRoute);
+app.use('/api/activity', activityRouter);
 
 
 
