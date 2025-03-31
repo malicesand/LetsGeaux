@@ -39,7 +39,7 @@ model suggestion {
   image         String     @db.TinyText
   phoneNum      String     @db.VarChar(15)
   userId        Int?
-  activity      activity[]
+  // activity      activity[]
   location      location[]
   user          user?      @relation(fields: [userId], references: [id])
 
@@ -61,22 +61,26 @@ model itinerary {
 }
 
 model activity {
-  id           Int         @id @default(autoincrement())
-  participant  Int?
-  name         String      @db.VarChar(50)
-  description  String      @db.VarChar(200)
-  phone        String?     @db.VarChar(150)
-  creatorId    Int?
-  suggestionId Int?
-  locationId   Int?
-  address      String?
-  location     location?   @relation(fields: [locationId], references: [id])
-  suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
-  image        image[]
-  reminder     reminder[]
+  id          Int     @id @default(autoincrement())
+  // participant  Int?
+  name        String? @db.VarChar(50)
+  description String  @db.VarChar(200)
+  phone       String? @db.VarChar(150)
+  // creatorId    Int?
+  // suggestionId Int?
+  // locationId   Int?
+  time        String?
+  date        String?
+  address     String?
+  location    String?
+  image       String?
+  // location     location?   @relation(fields: [locationId], references: [id])
+  // suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
+  // image        image[]
+  // reminder     reminder[]
 
-  @@index([locationId], map: "activity_locationId_fkey")
-  @@index([suggestionId], map: "activity_suggestionId_fkey")
+  // @@index([locationId], map: "activity_locationId_fkey")
+  // @@index([suggestionId], map: "activity_suggestionId_fkey")
 }
 
 model location {
@@ -87,7 +91,7 @@ model location {
   latitude     Decimal
   longitude    Decimal
   suggestionId Int?
-  activity     activity[]
+  // activity     activity[]
   suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
 
   @@index([suggestionId], map: "location_suggestionId_fkey")
@@ -128,26 +132,26 @@ model group {
 }
 
 model reminder {
-  id           Int       @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   call_time    DateTime
-  call_message String    @db.VarChar(40)
+  call_message String   @db.VarChar(40)
   userId       Int?
   activityId   Int?
-  activity     activity? @relation(fields: [activityId], references: [id])
-  user         user?     @relation(fields: [userId], references: [id])
+  // activity     activity? @relation(fields: [activityId], references: [id])
+  user         user?    @relation(fields: [userId], references: [id])
 
   @@index([activityId], map: "reminder_activityId_fkey")
   @@index([userId], map: "reminder_userId_fkey")
 }
 
 model image {
-  id         Int       @id @default(autoincrement())
-  url        String    @db.TinyText
-  notes      String    @db.VarChar(255)
+  id         Int    @id @default(autoincrement())
+  url        String @db.TinyText
+  notes      String @db.VarChar(255)
   activityId Int?
   userId     Int?
-  activity   activity? @relation(fields: [activityId], references: [id])
-  user       user?     @relation(fields: [userId], references: [id])
+  // activity   activity? @relation(fields: [activityId], references: [id])
+  user       user?  @relation(fields: [userId], references: [id])
 
   @@index([activityId], map: "image_activityId_fkey")
   @@index([userId], map: "image_userId_fkey")
