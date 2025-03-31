@@ -34,4 +34,20 @@ activityRouter.get('/', async (req:any, res:any) => {
   }
 })
 
+// DELETE
+
+activityRouter.delete('/:id', async (req:any, res:any) => {
+  const {id } = req.params;
+  try {
+    const killAct = await prisma.activity.delete({
+      where: {
+        id: Number(id),
+      }});
+    res.status(200).send(killAct);
+  } catch(err) {
+    console.error('could not delete Activity', err);
+    res.sendStatus(500)
+  }
+})
+
 export default activityRouter;
