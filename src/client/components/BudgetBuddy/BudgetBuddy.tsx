@@ -14,7 +14,7 @@ const BudgetBuddy: React.FC = () => {
 
       {/* Budget Summary */}
       <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-        <BudgetOverview />
+        
       </Paper>
 
       {/* Budget creation form */}
