@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-
+import { PromptKey } from '../types/prompt.ts'
 
 
 
@@ -21,6 +21,7 @@ const ChatBot: React.FC = () => {
   const [message, setMessage] = useState<string>('');
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
   const chatLogRef = useRef<HTMLDivElement>(null);
+  const [context, setContext] = useState<PromptKey>('default');
   
  
 
@@ -39,6 +40,7 @@ const ChatBot: React.FC = () => {
         setChatLog(prevChatLog => [...prevChatLog, {text: "Error: Could not get response.", user: false }]);
     }
 };
+
 
 useEffect(() => {
     // Scroll to bottom of chat log on update
@@ -71,7 +73,7 @@ useEffect(() => {
               marginBottom: '5px'
             }}
           >
-            <strong>{msg.user ? 'You:' : 'Bot:'}</strong> {msg.text}
+            <strong>{msg.user ? 'You:' : 'Gata:'}</strong> {msg.text}
           </div>
         ))}
       </div>
