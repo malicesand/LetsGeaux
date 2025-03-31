@@ -38,29 +38,41 @@ const ActivityForm = (props: any) => {
   const [editMode, setEditMode] = useState(false);
 
 
-  const { register, handleSubmit, setError, formState: {errors, isSubmitting}} = useForm<FormFields>({
+  const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({
     defaultValues: {
       title: chosenTitle,
-    description: chosenDescription,
-    time: chosenTime,
-    date: chosenDate,
-    location: chosenLocation,
-    image: chosenImage,
-    phoneNum: chosenPhone,
-    address: chosenAddress,
+      description: chosenDescription,
+      time: chosenTime,
+      date: chosenDate,
+      location: chosenLocation,
+      image: chosenImage,
+      phoneNum: chosenPhone,
+      address: chosenAddress,
     }
   });
   // const { register, handleSubmit, setValue, formState: { errors } } = useForm();
 
-  const postActivity: SubmitHandler<FormFields> = async (data) => {
+  const postActivity: SubmitHandler<FormFields> = async (formValues) => {
+    const { title, description, time, date, location, image, phoneNum, address } = formValues
     const details = {
-      details: data
+
+      data: {
+
+        name: title,
+        description,
+        time,
+        date,
+        location,
+        image,
+        phone: phoneNum,
+        address,
+      }
     }
-    try{
+    try {
       await axios.post("/api/activity", details);
-      console.log(data)
+      console.log(formValues)
       throw new Error();
-    } catch(error) {
+    } catch (error) {
       console.error('failed to post activity', error);
     }
   }
@@ -70,12 +82,12 @@ const ActivityForm = (props: any) => {
         <Grid container spacing={4}>
           <form className="activity-form" onSubmit={handleSubmit(postActivity)}>
             {errors.title && <span className="text-red-500">{errors.title.message}</span>}
-            <Input {...register("title", {required: "event must have title"})} type="text" placeholder='title'></Input>
+            <Input {...register("title", { required: "event must have title" })} type="text" placeholder='name'></Input>
             <Input {...register("description")} type="text" placeholder='description'></Input>
             {errors.title && <span className="text-red-500">{errors.time.message}</span>}
-            <Input {...register("time", {required: "must specify time"})} type="text" placeholder='time'></Input>
+            <Input {...register("time", { required: "must specify time" })} type="text" placeholder='time'></Input>
             {errors.title && <span className="text-red-500">{errors.date.message}</span>}
-            <Input {...register("date", {required: "must specify date"})} type="date" placeholder='date'></Input>
+            <Input {...register("date", { required: "must specify date" })} type="date" placeholder='date'></Input>
             <Input {...register("location")} type="text" placeholder='location'></Input>
             <Input {...register("image")} type="text" placeholder="Add url"></Input>
             <Input {...register("phoneNum")} type="text" placeholder='contact number'></Input>
