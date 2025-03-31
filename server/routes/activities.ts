@@ -21,4 +21,17 @@ activityRouter.post('/', async (req:any, res:any) => {
 
 })
 
+// GET
+
+activityRouter.get('/', async (req:any, res:any) => {
+  try {
+    const activitySet = await prisma.activity.findMany();
+    res.status(200).send(activitySet);
+
+  } catch(error) {
+    console.error('unable to get activities', error);
+    res.sendStatus(500);
+  }
+})
+
 export default activityRouter;
