@@ -71,14 +71,12 @@ const ActivityForm = (props: any) => {
     try {
       await axios.post("/api/activity", details);
       console.log(formValues)
-      throw new Error();
     } catch (error) {
       console.error('failed to post activity', error);
     }
   }
   return (
     <Container>
-      <FormControl>
         <Grid container spacing={4}>
           <form className="activity-form" onSubmit={handleSubmit(postActivity)}>
             {errors.title && <span className="text-red-500">{errors.title.message}</span>}
@@ -95,7 +93,6 @@ const ActivityForm = (props: any) => {
             <Button disabled={isSubmitting} type="submit">{isSubmitting ? "submitting" : "Submit"}</Button>
           </form>
         </Grid>
-      </FormControl>
     </Container>
   )
 }
