@@ -21,6 +21,7 @@ import Itinerary from './Itineraray.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 import Activities from './Activities.tsx';
 import ActivitiesChoices from './ActivityChoices';
+import Calendar from './Calendar.tsx';
 
 // interface ISetAuth {
   //   setAuth:
@@ -95,7 +96,7 @@ import ActivitiesChoices from './ActivityChoices';
       }/>
       <Route path="/calendar" element={
         <ProtectedRoute>
-          <Calendar />
+          <Calendar/>
         </ProtectedRoute> 
       }/>
       <Route path="/budgetbuddy" element={
