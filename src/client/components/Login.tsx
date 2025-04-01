@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
   return <div>
-    
+    <a href="/auth/google">Authenticate with Google</a>
   </div>;
 };
 

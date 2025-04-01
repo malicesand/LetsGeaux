@@ -1,13 +1,19 @@
 import express from 'express';
 // import Users db model
-// ? import { Users } from '..database/index.ts' 
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
 
-const route = express.Router()
+const usersRoute = express.Router()
 
 // Example Requests
-/* route.get('/', (req: any, res:any) => {
-  
-}) */
+usersRoute.get('/', async (req: any, res:any) => {
+  try {
+    const users = await prisma.user.findMany()
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json
+({error: 'Error fetching users'})  }
+}) 
 
 /* route.post('/', (req: any, res:any) => {
 
@@ -22,4 +28,4 @@ const route = express.Router()
 }) */
 
 // export the route for use in server/index.ts
-export default  route;
+export default  usersRoute;
