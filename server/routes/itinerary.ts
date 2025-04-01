@@ -88,7 +88,15 @@ itineraryRoute.patch('/:id', async (req: any, res: any) => {
   }) 
 
 
+// adding routes to make itinerary shareable 
+// itineraryRoute.post('/:id', async(req: any, res: any)=>{
 
+//   try{
+//     res.status
+//   }catch(error){
+//     res.status(500).json({error: 'Error sharing itinerary'})
+//   } 
+// })
 
 
 
