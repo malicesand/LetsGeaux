@@ -27,11 +27,19 @@ const BudgetPieChart: React.FC = () => {
   
 
   // Convert to MUI PieChart format
-  const pieData = categories.map((item) => ({
-    id: item.id,
-    value: item.spent,
-    label: item.category,
-  }));
+  const pieData = categories.map((item) => {
+    const fallbackLabel = `Category ${item.id}`;
+    const label = typeof item.category === 'string' && item.category.trim() !== ''
+      ? item.category
+      : fallbackLabel;
+  
+    return {
+      id: item.id,
+      value: item.spent,
+      label
+    };
+  });
+  
 
   return (
     <Box sx={{ width: '100%', height: 300 }}>
