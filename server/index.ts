@@ -6,6 +6,8 @@ import dotenv from 'dotenv';
 import { urlencoded } from 'express';
 import budgetRoute from './routes/budget';
 
+import groupRoute from './routes/group';
+
 import cors from 'cors'
 
 // Import route modules
@@ -24,6 +26,7 @@ app.use(cors({
   origin: 'http://localhost:8000', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // 
+  credentials: true, // missing so cookies werent sent which breaks session based auth
 }));
 app.options('*', cors());
 app.use(session({ secret: 'cats', resave:false, saveUninitialized: true }));
@@ -97,10 +100,10 @@ app.use('/api/maps/', mapsRoute);
 app.use('/api/suggestions', suggestionRouter);
 //! add other app.use routes for features BELOW this line
 // Securely link budget routes with authentication middleware
-app.use('/budget', isLoggedIn, budgetRoute);
 app.use('/api/itinerary', itineraryRoute)
 app.use('/budget', budgetRoute);
 
+app.use('/api/group', groupRoute);
 
 
 

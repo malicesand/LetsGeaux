@@ -3,13 +3,17 @@ import api from './api';
 import { TextField, Button, Stack, Box } from '@mui/material';
 
 const BudgetForm: React.FC = () => {
-  const [totalBudget, setTotalBudget] = useState('');
+  const [limit, setLimit] = useState('');
   const [category, setCategory] = useState('i.e Food, Travel');
   const [notes, setNotes] = useState('');
 //allow users to create new budget entries
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    api.post('/', { totalBudget, category, notes })
+    const parsedLimit = parseFloat(limit);
+  if (isNaN(parsedLimit)) {
+    return alert("Please enter a valid number for the budget.");
+  }
+    api.post('/', { limit: parsedLimit, category, notes })
       .then(() => window.location.reload())
       .catch(err => console.error(err));
   };
@@ -19,11 +23,11 @@ const BudgetForm: React.FC = () => {
       <Stack spacing={2}>
         <TextField
           label="Total Budget"
-          value={totalBudget}
+          value={limit}
           type="number"
           required
           fullWidth
-          onChange={e => setTotalBudget(e.target.value)}
+          onChange={e => setLimit(e.target.value)}
         />
         <TextField
           label="Category"

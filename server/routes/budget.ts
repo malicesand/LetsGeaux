@@ -11,51 +11,81 @@ function isLoggedIn(req, res, next) {
 
 // Get budget info
 // Retrieve user's budget and categories from DB
-router.get('/', isLoggedIn, async (req, res) => {
+// get all budget categories and totals used in pie chart
+router.get('/categories', async (req, res) => {
+  const groupId = 1; // hardcoded for local testing
   try {
     const budgets = await prisma.budget.findMany({
-      where: { group_id: req.user.groupId },
+      // filter by group ID
+      //hardcoded but thats 
+      where: { groupItinerary_id: 6 }, 
+      select: {
+        id: true,
+        category: true,
+        limit: true, //could include or just use `spent`
+      },
     });
-    res.json(budgets);
+
+    // map each budget entry to format required by PieChart
+    const formatted = budgets.map(budget => ({
+      id: budget.id,
+      category: budget.category,
+      spent: budget.limit, // this is what shows up in the chart
+    }));
+
+    res.json(formatted);
   } catch (error) {
-    console.log("Error getting budgets")
-    res.status(500).json({ message: 'Error RETREIVING budgets', error });
+    res.status(500).json({ message: 'Error FETCHING categories', error });
   }
 });
 
 // Create a new budget entry
 // Initialize budget with total amount and currency
-router.post('/', isLoggedIn, async (req, res) => {
-  const { category, limit, notes } = req.body;
+router.post('/', async (req, res) => {
+  const { limit, spent, notes, groupItinerary_id } = req.body;
+
+  if (isNaN(limit)) {
+    return res.status(400).json({ message: 'Invalid limit value' });
+  }
+
   try {
     const budget = await prisma.budget.create({
       data: {
-        category,
         limit,
+        spent,
         notes,
-        group_id: req.user.groupId,
-      },
+        groupItinerary_id,
+        updatedAt: new Date(),
+        createdAt: new Date()
+      }
     });
+
     res.status(201).json(budget);
   } catch (error) {
+    console.error('Error CREATING budget:', error);
     res.status(500).json({ message: 'Error CREATING budget', error });
   }
 });
 
+
 // Add category to budget
 // Update budget details
-router.put('/:id', isLoggedIn, async (req, res) => {
+router.put('/:id', async (req, res) => {
+  //grab budget id from url
+  const { id } =req.params;
   const { category, limit, notes } = req.body;
   try {
-    const budget = await prisma.budget.create({
+    const budget = await prisma.budget.update({
+      //match by primary key
+      where: { id: parseInt(id) },
       data: {
         category,
         limit,
         notes,
-        group_id: req.user.groupId,
       },
     });
-    res.status(201).json(budget);
+    //return updated record
+    res.status(200).json(budget);
   } catch (error) {
     res.status(500).json({ message: 'Error UPDATING budget', error });
   }
@@ -68,7 +98,7 @@ router.put('/:id', isLoggedIn, async (req, res) => {
 
 
 // Remove a budget entry
-router.delete('/:id', isLoggedIn, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await prisma.budget.delete({

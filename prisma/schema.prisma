@@ -156,9 +156,9 @@ model budget {
   id                Int        @id @default(autoincrement())
   spent             Decimal
   notes             String     @db.VarChar(255)
-  created_at        DateTime
-  totalBudget       Decimal
-  updated_at        DateTime
+  createdAt        DateTime @default(now())
+  limit       Decimal
+  updatedAt        DateTime @updatedAt
   groupItinerary_id Int?
   group             group?     @relation(fields: [groupItinerary_id], references: [itinerary_id])
   category          category[]
