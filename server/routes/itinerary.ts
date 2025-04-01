@@ -1,5 +1,4 @@
 import express from 'express';
-import {Request, Response} from 'express'
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
@@ -46,30 +45,33 @@ res.status(500).json({error: 'Error creating itinerary'})
 
 }) 
 
-itineraryRoute.patch('/:id', async (req: Request, res: Response )=>{
-  const {id } = req.params;
-  const {name, notes, begin, end, upVotes, downVotes} = req.body
+itineraryRoute.patch('/:id', async (req: any, res: any) => {
+  const { id } = req.params;
+  const { name, notes, begin, end, upVotes, downVotes } = req.body;
+
  
-  try{
+
+  try {
     const updateItinerary = await prisma.itinerary.update({
-      where: {id: Number(id)},
+      where: { id: Number(id) },
       data: {
-        name, 
-        notes, 
+        name,
+        notes,
         begin: new Date(begin),
         end: new Date(end),
-        upVotes, 
-        downVotes
-      }
-    })
-  res.status(200).json(updateItinerary)
-  }catch(error){
-  res.status(500).json({error: 'Error updating itinerary'})
+        upVotes,
+        downVotes,
+      },
+    });
+
+    res.status(200).json(updateItinerary);
+  } catch (error) {
+    console.error('Error updating itinerary:', error);
+    res.status(500).json({ error: 'Error updating itinerary' });
   }
-  
-  })
-  
-  itineraryRoute.delete('/:id', async (req: Request, res: Response) =>{
+});
+
+  itineraryRoute.delete('/:id', async (req: any, res: any) =>{
   const {id } = req.params
   try{
     const deleteIntinerary = await prisma.itinerary.delete({
