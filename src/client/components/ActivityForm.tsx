@@ -26,7 +26,7 @@ type FormFields = {
 
 }
 const inputKeys = ['title', 'description', 'time', 'date', 'location', 'image', 'phoneNum', 'address',]
-const ActivityForm = (props: any) => {
+const ActivityForm = () => {
   const [chosenTitle, setChosenTitle] = useState('');
   const [chosenDescription, setChosenDescription] = useState('');
   const [chosenTime, setChosenTime] = useState('');
@@ -35,7 +35,7 @@ const ActivityForm = (props: any) => {
   const [chosenImage, setChosenImage] = useState('');
   const [chosenPhone, setChosenPhone] = useState('');
   const [chosenAddress, setChosenAddress] = useState('');
-  
+
 
 
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({
@@ -70,7 +70,6 @@ const ActivityForm = (props: any) => {
     }
     try {
       await axios.post("/api/activity", details);
-      console.log(formValues)
     } catch (error) {
       console.error('failed to post activity', error);
     }

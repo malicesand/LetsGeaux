@@ -47,25 +47,26 @@ model suggestion {
 }
 
 model itinerary {
-  id         Int      @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   creator_id Int
   member_id  Int
-  name       String   @db.VarChar(50)
+  name       String     @db.VarChar(50)
   begin      DateTime
   end        DateTime
   upVotes    Int
   downVotes  Int
   createdAt  DateTime
-  notes      String   @db.VarChar(150)
+  notes      String     @db.VarChar(150)
   route      route[]
+  activity   activity[]
 }
 
 model activity {
-  id          Int     @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   // participant  Int?
-  name        String? @db.VarChar(50)
-  description String  @db.VarChar(200)
-  phone       String? @db.VarChar(150)
+  name        String?    @db.VarChar(50)
+  description String     @db.VarChar(200)
+  phone       String?    @db.VarChar(150)
   // creatorId    Int?
   // suggestionId Int?
   // locationId   Int?
@@ -74,6 +75,7 @@ model activity {
   address     String?
   location    String?
   image       String?
+  itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
   // location     location?   @relation(fields: [locationId], references: [id])
   // suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
   // image        image[]
@@ -81,6 +83,7 @@ model activity {
 
   // @@index([locationId], map: "activity_locationId_fkey")
   // @@index([suggestionId], map: "activity_suggestionId_fkey")
+  itineraryId Int?
 }
 
 model location {
@@ -98,11 +101,12 @@ model location {
 }
 
 model route {
-  id          Int        @id @default(autoincrement())
-  travelTime  String
-  destination String
-  origin      String
-  itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
+  id                Int        @id @default(autoincrement())
+  travelTime        String
+  walkingTravelTime String
+  destination       String
+  origin            String
+  itinerary         itinerary? @relation(fields: [itineraryId], references: [id])
 
   itineraryId Int?
 }
