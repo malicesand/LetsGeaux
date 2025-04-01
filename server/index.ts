@@ -16,6 +16,7 @@ import mapsRoute from './routes/maps';
 import chatsRoute from './routes/chats';
 //! add other feature route imports BELOW this line
 import itineraryRoute from './routes/itinerary';
+import activityRouter from './routes/activities';
 
 dotenv.config();
 
@@ -101,6 +102,7 @@ app.use('/api/suggestions', suggestionRouter);
 // Securely link budget routes with authentication middleware
 app.use('/api/itinerary', itineraryRoute)
 app.use('/budget', budgetRoute);
+app.use('/api/activity', activityRouter);
 
 app.use('/api/group', groupRoute);
 
