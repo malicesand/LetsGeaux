@@ -1,5 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -12,32 +13,32 @@ function isLoggedIn(req, res, next) {
 // Get budget info
 // Retrieve user's budget and categories from DB
 // get all budget categories and totals used in pie chart
+// Get data for PieChart categories + spent totals
 router.get('/categories', async (req, res) => {
-  const groupId = 1; // hardcoded for local testing
   try {
-    const budgets = await prisma.budget.findMany({
-      // filter by group ID
-      //hardcoded but thats 
-      where: { groupItinerary_id: 6 }, 
+    const categories = await prisma.budget.findMany({
       select: {
         id: true,
         category: true,
-        limit: true, //could include or just use `spent`
-      },
+        spent: true
+      }
     });
 
-    // map each budget entry to format required by PieChart
-    const formatted = budgets.map(budget => ({
-      id: budget.id,
-      category: budget.category,
-      spent: budget.limit, // this is what shows up in the chart
+    // Prisma returns Decimal for spent.. convert to number
+    const parsed = categories.map((item) => ({
+      id: item.id,
+      category: item.category,
+      spent: Number(item.spent || 0),
     }));
 
-    res.json(formatted);
+    res.json(parsed);
   } catch (error) {
-    res.status(500).json({ message: 'Error FETCHING categories', error });
+    console.error('Error fetching budget categories:', error);
+    res.status(500).json({ message: 'Error fetching categories', error });
   }
 });
+
+
 
 // Create a new budget entry
 // Initialize budget with total amount and currency

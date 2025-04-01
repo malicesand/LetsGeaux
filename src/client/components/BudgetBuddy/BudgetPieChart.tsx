@@ -16,9 +16,15 @@ const BudgetPieChart: React.FC = () => {
 
   useEffect(() => {
     api.get('/categories')
-      .then(res => setCategories(res.data))
-      .catch(err => console.error('Error fetching categories:', err));
+      .then(res => {
+        console.log("Fetched category data:", res.data); //debugg
+        setCategories(res.data);
+      })
+      .catch(err => {
+        console.error(' Error fetching categories:', err);
+      });
   }, []);
+  
 
   // Convert to MUI PieChart format
   const pieData = categories.map((item) => ({

@@ -12,7 +12,7 @@ const prisma = new PrismaClient
 import groupRoute from './routes/group';
 
 // Import route modules
-import budgetRoute from './routes/budget';
+import budgetRoutes from './routes/budget';
 import suggestionRouter from './routes/suggestions';
 import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
@@ -154,7 +154,7 @@ app.use('/api/suggestions', suggestionRouter);
 
 
 app.use('/api/itinerary', itineraryRoute)
-app.use('/budget', budgetRoute);
+app.use('/api/budget', budgetRoutes);
 app.use('/api/activity', activityRouter);
 
 app.use('/api/group', groupRoute);
