@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { 
   Routes,
   Route,
-  Navigate, } from 'react-router-dom';
+  BrowserRouter as Router,
+  useParams,
+  useNavigate,
+  Navigate,
+  useLocation,
+  Link  } from 'react-router-dom';
 import axios from 'axios';
 
 
@@ -15,10 +20,21 @@ import ChatBot from './ChatBot.tsx'
 import Itinerary from './Itineraray.tsx';
 import Calendar from './Calendar.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
+import Activities from './Activities.tsx';
+import ActivitiesChoices from './ActivityChoices';
 
-  
-  
-const App: React.FC = () => {
+// interface ISetAuth {
+  //   setAuth:
+  // }
+
+  // const Login = ({ setAuth }: ISetAuth) => {
+
+  // }
+
+  // States
+
+
+  const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   // Check Auth
   useEffect(() => {
@@ -46,7 +62,7 @@ const App: React.FC = () => {
     }
     return <>{children}</>
   };
-  
+
 
   return (
     <Routes>

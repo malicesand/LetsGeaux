@@ -16,6 +16,7 @@ import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
 import chatsRoute from './routes/chats';
 import itineraryRoute from './routes/itinerary';
+import activityRouter from './routes/activities';
 
 dotenv.config();
 
@@ -151,6 +152,7 @@ app.use('/api/suggestions', suggestionRouter);
 
 app.use('/api/itinerary', itineraryRoute)
 app.use('/budget', budgetRoute);
+app.use('/api/activity', activityRouter);
 
 
 app.get('/login', (req, res) => {

@@ -1,17 +1,3 @@
-// import React from 'react';
-// import axios from 'axios';
-// import ActivityForm from './ActivityForm';
-// import { Container, Card, Typography, Dialog, Grid, Avatar, } from '@mui/material'
-// import Suggestion from './Suggestion';
-
-// // const Grid = Grid2;
-// const Suggestions = () => {
-//   return (
-//     <Container>
-//       <Suggestion />
-//     </Container>
-//   )
-// }
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Card, Button, Input, InputLabel, Typography, Accordion, Grid,  } from '@mui/material';
@@ -40,11 +26,9 @@ const Activities = () => {
       <Activity act={act} getAllActivities={getAllActivities} editMode={editMode} />
       </Card>
       ))}
-      {/* <ActivityForm act={act}/> */}
-<ActivityForm />
+      <ActivityForm act={act}/>
     </Container>
   )
 }
 
-// export default Activities;
 export default Activities;

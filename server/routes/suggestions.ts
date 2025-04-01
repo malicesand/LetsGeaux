@@ -18,13 +18,13 @@ const API_KEY = process.env.TRAVEL_ADVISOR_API_KEY;
 //  HELPERS //
 
 //This one queries tripadvisor to get the location ids needed for detailed information. these ids are returned in an array.
-const getTripadvisorLocationIds = async (query: string = "new-orleans-attraction") => {
+const getTripadvisorLocationIds = async (query: string = "restaurant") => {
   try {
 
     const list = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/search?language=en&searchQuery=${query}&key=${API_KEY}`)
       let locations = [];
       const attractionList = list.data.data;
-      for (attraction of attractionList) {
+      for (let attraction of attractionList) {
         locations.push(attraction.location_id);
       }
       return locations;
@@ -35,14 +35,18 @@ const getTripadvisorLocationIds = async (query: string = "new-orleans-attraction
 }
 
 // This one queries trip advisor with an array of location ids and moves wanted info from the result to an object
-const getTripadvisorDetailedEntries = async (locations) => {
+const getTripadvisorDetailedEntries = async (locations: number[]) => {
+  // console.log('deez loc', locations)
   try {
 
-    const detailedEntries = await locations.map((location) => {
-      axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`)
-      .then((locationQueryProperties) => {
-        console.log('entry query Properties from the inside');
-        console.log('yo');
+    const detailedEntries = await locations.map(async (location) => {
+      
+      const detailedEntry = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`)
+      // .then((locationQueryProperties) => {
+        // if (locationQueryProperties.hasOwnProperty('location_id')) {
+          
+        //   console.log('entry query Properties from the inside');
+        //   console.log('yo');
         const {
           name,
           description,
@@ -52,9 +56,9 @@ const getTripadvisorDetailedEntries = async (locations) => {
           latitude,
           longitude,
           // price_level,
-        } = locationQueryProperties;
-
-        const product = {
+        } = detailedEntry.data;
+        // console.log('DE.D', detailedEntry.data)
+        const locationQueryDetailedEntry = {
           title: name,
           description,
           // timeAvailable: hours.weekday_text,
@@ -64,8 +68,15 @@ const getTripadvisorDetailedEntries = async (locations) => {
           longitude,
           // cost: price_level.length,
         }
-      })
-    })
+        // console.log('LQDE', locationQueryDetailedEntry)
+        // }
+        // })
+        // })
+        // console.log('Deetz!!');
+        // console.log(detailedEntry);
+        return locationQueryDetailedEntry;
+      });
+      const allDetailedEntries = Promise.all(detailedEntries);
   } catch(err) {console.error(err)}
 }
 // and finally, this one grabs the image url
@@ -80,15 +91,22 @@ const getTripAdvisorImage = (locationId) => {
 
 
 // SEARCH flavored GET handling
-suggestionRouter.get('/search', (req:any, res:any) => {
-//  try {
-   getTripadvisorLocationIds().then(locations => {
-    getTripadvisorDetailedEntries(locations).then((entries) => {
-
-      console.log('after 2nd return')
-      console.log('no yo');
-    })
-    })
+suggestionRouter.get('/search', async (req:any, res:any) => {
+ try {
+   const locations = await getTripadvisorLocationIds()
+   const entries = await getTripadvisorDetailedEntries(locations)
+   console.log('ent', entries);
+  res.status(200).send(entries);
+ } catch (err) {
+  console.error('had a hard time', err);
+  res.sendStatus(500);
+ }
+  //    console.log('after 2nd return')
+  //    console.log(entries); 
+  //    console.log('no yo');
+  //   })
+    // .then(locations => {
+    // })
 
    // .then((locations) => {
     // res.status(200).send(locations);
