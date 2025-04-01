@@ -134,16 +134,6 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
-            {/* itinerary */}
-            <ListItem key={'itinerary'} disablePadding>
-              <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
-                <ListItemIcon>
-                  <TravelExploreIcon />
-                </ListItemIcon>
-                <ListItemText primary={'Itinerary'} />
-              </ListItemButton>
-            </ListItem>
-
             {/* calendar */}
             <ListItem key={'calendar'} disablePadding>
               <ListItemButton component={Link}to='/calendar' onClick={handleDrawerClose}>
@@ -153,9 +143,15 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Calendar'} />
               </ListItemButton>
             </ListItem>
-
-
-
+            {/* itinerary */}
+            <ListItem key={'itinerary'} disablePadding>
+              <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <TravelExploreIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Itinerary'} />
+              </ListItemButton>
+            </ListItem>
              {/* Budget Buddy */}
              <ListItem key={'BudgetBuddy'} disablePadding>
   <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
