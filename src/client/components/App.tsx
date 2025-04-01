@@ -36,6 +36,7 @@ import ActivitiesChoices from './ActivityChoices';
 
   const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState({})
   // Check Auth
   useEffect(() => {
     const checkAuth = async () => { //? type 
@@ -44,7 +45,8 @@ import ActivitiesChoices from './ActivityChoices';
         setIsAuthenticated(response.data.isAuthenticated);
 
         if (response.data.isAuthenticated) {
-          console.log(response.data.user);
+          setUser(response.data.user)
+         
         }
       }
       catch (error) {
@@ -71,7 +73,7 @@ import ActivitiesChoices from './ActivityChoices';
       
       <Route path="/" element={ 
         <ProtectedRoute>
-          <Home /> 
+          <Home user={user}/> 
         </ProtectedRoute>
       }/>
       <Route path="/maps" element={
