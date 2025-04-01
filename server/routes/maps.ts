@@ -47,8 +47,8 @@ mapsRoute.get('/directions', async (req:any, res:any) => {
 
 mapsRoute.post('/', async(req:any, res:any)=>{
  
-  const { origin, destination, travelTime, itineraryId} = req.body.data;
-console.log(itineraryId)
+  const { origin, destination, travelTime} = req.body;
+
   try {
     
     const routeInfo = await prisma.route.create({
@@ -81,6 +81,20 @@ res.status(200).send(routeGet)
 console.error('error geting information about your route', error)
   }
 })
+mapsRoute.delete('/:id', async (req:any, res:any)=>{
+const {id} = req.params
 
+try {
+  const deleteRoute = await prisma.route.delete({
+    where:{
+      id: parseInt(id)
+    }
+  })
+  res.status(200).json({ message: 'Route deleted successfully', deleteRoute });
+  } catch (error) {
+    console.error('Error deleting route:', error);
+    res.status(500).json({ message: 'Error deleting route. Please try again later.' });
+  }
+})
 
 export default mapsRoute;

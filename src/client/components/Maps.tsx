@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import axios from "axios";
+import { TextField, Button, Box, Typography } from '@mui/material'; // MUI imports
 
 // Container style for the map
 const containerStyle = {
@@ -102,6 +103,7 @@ const Maps = () => {
       suppressMarkers: true,
     });
   };
+
   const saveTravel = async (origin: string, destination: string, travelTime: string) => {
     try {
       const response = await axios.post('/api/maps', {
@@ -119,8 +121,6 @@ const Maps = () => {
       console.error('Error saving travel data:', error);
     }
   };
-
-
 
   useEffect(() => {
     if (directionsRenderer.current) {
@@ -160,31 +160,49 @@ const Maps = () => {
 
   return (
     <div>
-      <h1>Google Maps Directions</h1>
+      <Typography variant="h4" gutterBottom>
+        Google Maps Directions
+      </Typography>
 
       {/* Input Fields */}
-      <div>
-        <input
-          type="text"
-          placeholder="Enter origin"
+      <Box display="flex" flexDirection="column" gap={2} mb={2}>
+        <TextField
+          label="Enter origin"
+          variant="outlined"
           value={origin}
-          onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setOrigin(e.target.value)}
+          onChange={(e) => setOrigin(e.target.value)}
         />
-        <input
-          type="text"
-          placeholder="Enter destination"
+        <TextField
+          label="Enter destination"
+          variant="outlined"
           value={destination}
-          onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setDestination(e.target.value)}
+          onChange={(e) => setDestination(e.target.value)}
         />
-        <button onClick={fetchDirections}>View Route</button>
-      </div>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={fetchDirections}
+        >
+          View Route
+        </Button>
+      </Box>
 
       {/* Error Message */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <Typography color="error">{error}</Typography>}
 
       {/* Display the travel time */}
-      {travelTime && <p>Estimated Driving: {travelTime}</p>}
-    <button onClick={()=>saveTravel(origin, destination, travelTime)}>Save Travel Time </button>
+      {travelTime && <Typography variant="h6">Estimated Driving: {travelTime}</Typography>}
+
+      <Box mt={2}>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={() => saveTravel(origin, destination, travelTime || "")}
+        >
+          Save Travel Time
+        </Button>
+      </Box>
+
       {/* Google Map */}
       <LoadScript
         googleMapsApiKey={'API_KEY'}
