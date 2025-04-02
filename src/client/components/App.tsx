@@ -24,7 +24,7 @@ import ActivitiesChoices from './ActivityChoices';
 import Logout from './Logout.tsx';
 import Calendar from './Calendar.tsx';
 
-import { User } from '../types/models.ts';
+import { User } from '../../../types/models.ts';
 
 
 

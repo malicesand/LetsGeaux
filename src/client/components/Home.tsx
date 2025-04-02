@@ -1,5 +1,5 @@
 import React from 'react';
-import { User } from '../types/models.ts';
+import { User } from '../../../types/models.ts';
 
 interface HomeProps {
   user: User;
