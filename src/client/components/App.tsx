@@ -18,11 +18,12 @@ import Maps from './Maps.tsx'
 import Suggestions from './Suggestions.tsx'
 import ChatBot from './ChatBot.tsx'
 import Itinerary from './Itineraray.tsx';
-import Calendar from './Calendar.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 import Activities from './Activities.tsx';
 import ActivitiesChoices from './ActivityChoices';
 import Logout from './Logout.tsx';
+import Calendar from './Calendar.tsx';
+
 // interface ISetAuth {
   //   setAuth:
   // }
@@ -96,7 +97,7 @@ import Logout from './Logout.tsx';
       }/>
       <Route path="/calendar" element={
         <ProtectedRoute>
-          <Calendar />
+          <Calendar/>
         </ProtectedRoute> 
       }/>
       <Route path="/budgetbuddy" element={
