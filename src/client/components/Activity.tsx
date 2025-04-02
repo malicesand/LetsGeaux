@@ -1,18 +1,11 @@
 import React, { FC, useState } from 'react';
 import axios from 'axios';
 import { Container, Card, Box, Button, Typography } from '@mui/material';
-type ActivityType = {
-  id: string;
-  description: string;
-  time: string;
-  date: string;
-  location: string;
-  image: string;
-  phone: string;
-  address: string;
-};
+
+import { Activity } from '../../../types/models.ts';
+
 type ActivityProps = {
-  act: ActivityType;
+  act: Activity;
   getAllActivities: () => void;
 };
 

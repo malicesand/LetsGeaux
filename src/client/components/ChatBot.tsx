@@ -12,12 +12,14 @@ interface ChatMessage {
 
 
 
+interface ChatProps {
+  user: User;
+}
 
 
 
 
-
-const ChatBot: React.FC = () => {
+const ChatBot: React.FC <ChatProps> = ({user}) => {
   const [message, setMessage] = useState<string>('');
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
   const chatLogRef = useRef<HTMLDivElement>(null);
