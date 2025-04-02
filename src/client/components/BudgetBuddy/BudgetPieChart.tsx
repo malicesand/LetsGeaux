@@ -102,7 +102,7 @@ const BudgetPieChart: React.FC = () => {
         />
       )}
 
-      {/* Entries from selected category */}
+      {/* Entries from clicked slice */}
       {selectedCategory && (
         <Box mt={3}>
           <Typography variant="h6">Entries for: {selectedCategory}</Typography>
@@ -146,6 +146,50 @@ const BudgetPieChart: React.FC = () => {
             ))}
         </Box>
       )}
+
+      {/* 🔽 Full list of all entries */}
+      <Box mt={4}>
+        <Typography variant="h6" gutterBottom>All Budget Entries</Typography>
+        {categories.length === 0 ? (
+          <Typography>No entries yet.</Typography>
+        ) : (
+          categories.map((entry) => (
+            <Box
+              key={entry.id}
+              sx={{
+                mb: 2,
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: 2,
+                backgroundColor: '#eef',
+              }}
+            >
+              <Typography><strong>Category:</strong> {entry.category || `Category ${entry.id}`}</Typography>
+              <Typography><strong>Limit:</strong> ${entry.limit}</Typography>
+              <Typography><strong>Spent:</strong> ${entry.spent}</Typography>
+              <Typography><strong>Notes:</strong> {entry.notes || 'None'}</Typography>
+              <Box mt={1}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => handleUpdate(entry)}
+                  sx={{ mr: 1 }}
+                >
+                  Update
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  color="error"
+                  onClick={() => handleDelete(entry.id)}
+                >
+                  Delete
+                </Button>
+              </Box>
+            </Box>
+          ))
+        )}
+      </Box>
     </Box>
   );
 };
