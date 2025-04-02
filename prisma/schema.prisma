@@ -101,12 +101,12 @@ model location {
 }
 
 model route {
-  id                Int        @id @default(autoincrement())
-  travelTime        String
-  walkingTravelTime String
-  destination       String
-  origin            String
-  itinerary         itinerary? @relation(fields: [itineraryId], references: [id])
+  id          Int        @id @default(autoincrement())
+  travelTime  String
+  // walkingTravelTime String?
+  destination String
+  origin      String
+  itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
 
   itineraryId Int?
 }
