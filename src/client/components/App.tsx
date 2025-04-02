@@ -24,19 +24,14 @@ import ActivitiesChoices from './ActivityChoices';
 import Logout from './Logout.tsx';
 import Calendar from './Calendar.tsx';
 
-// interface ISetAuth {
-  //   setAuth:
-  // }
-
-  // const Login = ({ setAuth }: ISetAuth) => {
-
-  // }
-
-  // States
+import { User } from '../types/models.ts';
 
 
-  const App: React.FC = () => {
+
+
+const App: React.FC= () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null)
   // Check Auth
   useEffect(() => {
     const checkAuth = async () => { //? type 
@@ -45,7 +40,8 @@ import Calendar from './Calendar.tsx';
         setIsAuthenticated(response.data.isAuthenticated);
 
         if (response.data.isAuthenticated) {
-          console.log(response.data.user);
+          const fetchedUser: User = response.data.user;
+          setUser(fetchedUser);
         }
       }
       catch (error) {
@@ -72,7 +68,7 @@ import Calendar from './Calendar.tsx';
       
       <Route path="/" element={ 
         <ProtectedRoute>
-          <Home /> 
+         {user && <Home user = {user}/> }
         </ProtectedRoute>
       }/>
       <Route path="/maps" element={
@@ -87,7 +83,7 @@ import Calendar from './Calendar.tsx';
       }/>
       <Route path="/chatbot" element={
         <ProtectedRoute>
-          <ChatBot/>
+          { user && <ChatBot user = {user} />}
         </ProtectedRoute>
       }/>
       <Route path="/itinerary" element={
