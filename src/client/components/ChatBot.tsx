@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { PromptKey } from '../types/prompt.ts'
+import { User } from '../types/models.ts'; 
 
 
 
@@ -10,19 +11,41 @@ interface ChatMessage {
   user: boolean;
 }
 
+interface ChatProps {
+  user: User;
+}
 
 
+const ChatBot: React.FC<ChatProps>= ({user}) => {
+  const userId = user.id;
+  
+  const [sessionId, setSessionId] = useState(null);
 
-
-
-
-
-const ChatBot: React.FC = () => {
   const [message, setMessage] = useState<string>('');
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
   const chatLogRef = useRef<HTMLDivElement>(null);
   const [context, setContext] = useState<PromptKey>('default');
   
+  useEffect(() => {
+    // check local storage for session ID
+    const storedSessionId = localStorage.getItem('sessionId');
+    if (storedSessionId) {
+      setSessionId(storedSessionId);
+    } else {
+      // Create new session ID
+      fetch('/api/new-session', { method: 'POST' })
+        .then((response) => response.json())
+        .then((data) => {
+          localStorage.setItem('sessionId', data.sessionId);
+          setSessionId(data.sessionId);
+        });
+    }
+    
+    // Scroll to bottom of chat log on update
+    if (chatLogRef.current) {
+        chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
+    }
+  }, [chatLog]);
  
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,7 +56,7 @@ const ChatBot: React.FC = () => {
     setMessage('');
 
     try {
-      const response = await axios.post('/api/chats', { message });
+      const response = await axios.post('/api/chats', { message, userId });
         setChatLog(prevChatLog => [...prevChatLog, { text: response.data, user: false }]);
     } catch (error: any) { // Type the error
         console.error("Error sending message:", error);
@@ -42,12 +65,7 @@ const ChatBot: React.FC = () => {
 };
 
 
-useEffect(() => {
-    // Scroll to bottom of chat log on update
-    if (chatLogRef.current) {
-        chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
-    }
-}, [chatLog]);
+
   
   return (
     <div
