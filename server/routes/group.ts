@@ -1,10 +1,10 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 
-const router = express.Router();
+const groupRoute = express.Router();
 const prisma = new PrismaClient();
 
-router.post('/', async (req, res) => {
+groupRoute.post('/', async (req, res) => {
   const { itinerary_id, activity_id } = req.body;
 
   if (!itinerary_id || !activity_id) {
@@ -26,4 +26,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-export default router;
+export default groupRoute;
