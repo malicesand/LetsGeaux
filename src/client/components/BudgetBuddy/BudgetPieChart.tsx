@@ -28,6 +28,8 @@ const BudgetPieChart: React.FC = () => {
 
   // Convert to MUI PieChart format
   const pieData = categories.map((item) => {
+    console.log("Pie chart data:", pieData); //debugg
+
     const fallbackLabel = `Category ${item.id}`;
     const label = typeof item.category === 'string' && item.category.trim() !== ''
       ? item.category

@@ -1,7 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
-
+import { Request, Response } from 'express';
 const router = express.Router();
 const prisma = new PrismaClient();
 
@@ -42,8 +42,8 @@ router.get('/categories', async (req, res) => {
 
 // Create a new budget entry
 // Initialize budget with total amount and currency
-router.post('/', async (req, res) => {
-  const { limit, spent, notes, groupItinerary_id } = req.body;
+router.post('/', async (req: Request, res: Response) => {
+  const { limit, spent, notes, category, groupItinerary_id } = req.body;
 
   if (isNaN(limit)) {
     return res.status(400).json({ message: 'Invalid limit value' });
@@ -52,12 +52,13 @@ router.post('/', async (req, res) => {
   try {
     const budget = await prisma.budget.create({
       data: {
-        limit,
-        spent,
-        notes,
-        groupItinerary_id,
-        updatedAt: new Date(),
-        createdAt: new Date()
+        limit: Number(limit),
+        category: category || 'Uncategorized',
+        notes: notes || '',
+        spent: 0, // default to 0
+        groupItinerary_id: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     });
 
