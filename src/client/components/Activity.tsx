@@ -2,10 +2,10 @@ import React, { FC, useState } from 'react';
 import axios from 'axios';
 import { Container, Card, Box, Button, Typography } from '@mui/material';
 
-import { Activity } from '../../../types/models.ts';
+import { activity } from '../../../types/models.ts';
 
 type ActivityProps = {
-  act: Activity;
+  act: activity;
   getAllActivities: () => void;
 };
 

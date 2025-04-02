@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-import { User } from '../../../types/models.ts';
+import { user } from '../../../types/models.ts';
 
 
 
@@ -13,7 +13,7 @@ interface ChatMessage {
 
 
 interface ChatProps {
-  user: User;
+  user: user;
 }
 
 
