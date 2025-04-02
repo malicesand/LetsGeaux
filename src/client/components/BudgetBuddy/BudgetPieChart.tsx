@@ -22,6 +22,7 @@ const BudgetPieChart: React.FC = () => {
       console.log('Fetched category data:', res.data);
       setCategories(res.data);
 
+      // Group and sum spent by category
       const grouped = res.data.reduce((acc: Record<string, number>, curr: BudgetCategory) => {
         const key = curr.category?.trim() || `Category ${curr.id}`;
         acc[key] = (acc[key] || 0) + (curr.spent || 0);
