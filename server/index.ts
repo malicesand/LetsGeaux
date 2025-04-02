@@ -34,6 +34,7 @@ app.use(session({ secret: 'cats', resave:false, saveUninitialized: true }));
 // Initialize Passport for google
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.json());
 
 // Google OAuth Strategy
 passport.use(new GoogleStrategy({

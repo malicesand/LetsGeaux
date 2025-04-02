@@ -18,24 +18,20 @@ import Maps from './Maps.tsx'
 import Suggestions from './Suggestions.tsx'
 import ChatBot from './ChatBot.tsx'
 import Itinerary from './Itineraray.tsx';
-import Calendar from './Calendar.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 import Activities from './Activities.tsx';
 import ActivitiesChoices from './ActivityChoices';
+import Logout from './Logout.tsx';
+import Calendar from './Calendar.tsx';
 
-// interface ISetAuth {
-  //   setAuth:
-  // }
-
-  // const Login = ({ setAuth }: ISetAuth) => {
-
-  // }
-
-  // States
+import { User } from '../types/models.ts';
 
 
-  const App: React.FC = () => {
+
+
+const App: React.FC= () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null)
   // Check Auth
   useEffect(() => {
     const checkAuth = async () => { //? type 
@@ -44,7 +40,8 @@ import ActivitiesChoices from './ActivityChoices';
         setIsAuthenticated(response.data.isAuthenticated);
 
         if (response.data.isAuthenticated) {
-          console.log(response.data.user);
+          const fetchedUser: User = response.data.user;
+          setUser(fetchedUser);
         }
       }
       catch (error) {
@@ -71,7 +68,7 @@ import ActivitiesChoices from './ActivityChoices';
       
       <Route path="/" element={ 
         <ProtectedRoute>
-          <Home /> 
+         {user && <Home user = {user}/> }
         </ProtectedRoute>
       }/>
       <Route path="/maps" element={
@@ -86,7 +83,7 @@ import ActivitiesChoices from './ActivityChoices';
       }/>
       <Route path="/chatbot" element={
         <ProtectedRoute>
-          <ChatBot/>
+          { user && <ChatBot user = {user} />}
         </ProtectedRoute>
       }/>
       <Route path="/itinerary" element={
@@ -96,7 +93,7 @@ import ActivitiesChoices from './ActivityChoices';
       }/>
       <Route path="/calendar" element={
         <ProtectedRoute>
-          <Calendar />
+          <Calendar/>
         </ProtectedRoute> 
       }/>
       <Route path="/budgetbuddy" element={
@@ -104,6 +101,11 @@ import ActivitiesChoices from './ActivityChoices';
           <BudgetBuddy />
         </ProtectedRoute>
       }/>
+      <Route path="/logout" element={
+        <ProtectedRoute> 
+        <Logout />
+      </ProtectedRoute>
+      } />
     </Routes>
   )
 };
