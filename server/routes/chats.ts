@@ -29,6 +29,8 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
   const prompt = prompts.default
   const userMessage = req.body.message;
   const userId = req.body.userId;
+  const sessionId = req.body.sessionId;
+  console.log(sessionId);
 
   try {
     const response = await genAI.models.generateContent({
@@ -43,6 +45,7 @@ const chatPost = await prisma.chatHistory.create({
     userId: userId,
     userMessage: userMessage,
     botResponse: aIReply,
+    sessionId: sessionId
   }
 })
 res.json(aIReply);
@@ -54,5 +57,5 @@ res.json(aIReply);
 
 chatsRoute.patch('/', async (req: Request, res: Response) => {
   
-})
+});
 export default chatsRoute;

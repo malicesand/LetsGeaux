@@ -30,6 +30,7 @@ const ChatBot: React.FC<ChatProps>= ({user}) => {
     // check local storage for session ID
     const storedSessionId = localStorage.getItem('sessionId');
     if (storedSessionId) {
+      console.log(storedSessionId);
       setSessionId(storedSessionId);
     } else {
       // Create new session ID
@@ -39,8 +40,8 @@ const ChatBot: React.FC<ChatProps>= ({user}) => {
           localStorage.setItem('sessionId', data.sessionId);
           setSessionId(data.sessionId);
         });
+        console.log(sessionId)
     }
-    
     // Scroll to bottom of chat log on update
     if (chatLogRef.current) {
         chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
@@ -56,7 +57,7 @@ const ChatBot: React.FC<ChatProps>= ({user}) => {
     setMessage('');
 
     try {
-      const response = await axios.post('/api/chats', { message, userId });
+      const response = await axios.post('/api/chats', { message, userId, sessionId });
         setChatLog(prevChatLog => [...prevChatLog, { text: response.data, user: false }]);
     } catch (error: any) { // Type the error
         console.error("Error sending message:", error);
@@ -73,6 +74,7 @@ const ChatBot: React.FC<ChatProps>= ({user}) => {
       style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}
     >
       <h1>Gata Bot</h1>
+      <h2>Welcome {user.username}!</h2>
       <div
         className='chat-list'
         style={{
