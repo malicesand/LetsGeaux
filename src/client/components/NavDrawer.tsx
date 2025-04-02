@@ -61,9 +61,9 @@ const NavDrawer: React.FC = () => {
     try {
       
       await axios.post('/logout')
-        
+          setOpen(false);
           setAuth(false);
-          navigate('/');
+          navigate('/logout');
         
     } catch (error) {
       
@@ -171,7 +171,7 @@ const NavDrawer: React.FC = () => {
             </ListItem>
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
-              <ListItemButton onClick={handleLogout}>
+              <ListItemButton component={Link} to='/logout' onClick={handleLogout}>
                 <ListItemIcon>
                   <LogoutIcon />
                 </ListItemIcon>
