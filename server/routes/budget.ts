@@ -55,7 +55,7 @@ router.post('/', async (req: Request, res: Response) => {
         limit: Number(limit),
         category: category || 'Uncategorized',
         notes: notes || '',
-        spent: 0, // default to 0
+        spent, // default to 0
         groupItinerary_id: null,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -73,22 +73,24 @@ router.post('/', async (req: Request, res: Response) => {
 // Add category to budget
 // Update budget details
 router.put('/:id', async (req, res) => {
-  //grab budget id from url
-  const { id } =req.params;
-  const { category, limit, notes } = req.body;
+  const { id } = req.params;
+  const { category, limit, notes, spent } = req.body;
+
   try {
     const budget = await prisma.budget.update({
-      //match by primary key
       where: { id: parseInt(id) },
       data: {
         category,
         limit,
         notes,
+        spent: Number(spent),
+        updatedAt: new Date()
       },
     });
-    //return updated record
+
     res.status(200).json(budget);
   } catch (error) {
+    console.error('Error UPDATING budget:', error);
     res.status(500).json({ message: 'Error UPDATING budget', error });
   }
 });
