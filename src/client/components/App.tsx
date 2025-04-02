@@ -22,7 +22,7 @@ import Calendar from './Calendar.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 import Activities from './Activities.tsx';
 import ActivitiesChoices from './ActivityChoices';
-
+import Logout from './Logout.tsx';
 // interface ISetAuth {
   //   setAuth:
   // }
@@ -104,6 +104,11 @@ import ActivitiesChoices from './ActivityChoices';
           <BudgetBuddy />
         </ProtectedRoute>
       }/>
+      <Route path="/logout" element={
+        <ProtectedRoute> 
+        <Logout />
+      </ProtectedRoute>
+      } />
     </Routes>
   )
 };
