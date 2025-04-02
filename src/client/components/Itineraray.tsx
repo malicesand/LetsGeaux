@@ -13,6 +13,8 @@ const Itinerary: React.FC = () => {
   const [itineraries, setItineraries] = useState<any[]>([]);
   const [error, setError] = useState<string>('');
 
+  const[userId, setUserId] = useState <number | null>(null)
+
   useEffect(() => {
     if (selectedDates.length > 0 && !editingItinerary) {
       setItineraryName(`Trip from ${selectedDates[0].toLocaleDateString()} to ${selectedDates[selectedDates.length - 1].toLocaleDateString()}`);
@@ -26,19 +28,31 @@ const Itinerary: React.FC = () => {
   }, [selectedDates, editingItinerary]);
 
 
-  useEffect(() => {
-    const fetchItineraries = async () => {
-      try {
-        const response = await axios.get('/api/itinerary');
-        setItineraries(response.data);
-      } catch (err) {
-        console.error('Error fetching itineraries:', err);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchItineraries = async () => {
+  //     try {
+  //       const response = await axios.get('/api/itinerary');
+  //       setItineraries(response.data);
+  //     } catch (err) {
+  //       console.error('Error fetching itineraries:', err);
+  //     }
+  //   };
   
-    fetchItineraries();
-  }, []); 
+  //   fetchItineraries();
+  // }, []); 
 
+
+  useEffect(()=>{
+    const getUser = async ()=>{
+      try{
+        const response = await axios.get('api/user')
+        setUserId(response.data.id)
+      }catch(err){
+        console.error('Error getting user:', err)
+      }
+    }
+    getUser()
+  }, [])
 
   const handleEditSubmit = async () => {
     if (!itineraryName || !itineraryNotes) {
@@ -47,15 +61,18 @@ const Itinerary: React.FC = () => {
     }
 
     const updatedItineraryData = {
-      id: editingItinerary.id,
-      creator_id: editingItinerary.creator_id,
-      member_id: editingItinerary.member_id,
+      ...editingItinerary,
       name: itineraryName,
-      notes: itineraryNotes,
-      begin: editingItinerary.begin,
-      end: editingItinerary.end,
-      upVotes: editingItinerary.upVotes,
-      downVotes: editingItinerary.downVotes,
+      notes: itineraryNotes
+      // id: editingItinerary.id,
+      // creator_id: editingItinerary.creator_id,
+      // member_id: editingItinerary.member_id,
+      // name: itineraryName,
+      // notes: itineraryNotes,
+      // begin: editingItinerary.begin,
+      // end: editingItinerary.end,
+      // upVotes: editingItinerary.upVotes,
+      // downVotes: editingItinerary.downVotes,
     };
 
     try {
@@ -88,8 +105,8 @@ const Itinerary: React.FC = () => {
     }
 
     const itineraryData = {
-      creator_id: 1,  
-      member_id: 2,   
+      creator_id: userId,  
+      member_id: userId,   
       name: itineraryName,
       notes: itineraryNotes,
       begin: selectedDates[0].toISOString(),  // Start date
@@ -125,6 +142,10 @@ const Itinerary: React.FC = () => {
     }
   };
 
+  
+
+
+
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
@@ -155,7 +176,7 @@ const Itinerary: React.FC = () => {
       <Box display="flex" flexDirection="column" mb={2}>
         <Typography variant="h6">Selected Dates:</Typography>
         <Box display="flex" flexWrap="wrap" justifyContent="center">
-          {selectedDates.map((date: any, index: any) => (
+          {selectedDates.map((date: any, index: number) => (
             <Typography key={index} variant="body2" sx={{ margin: 1 }}>
               {date.toLocaleDateString()}
             </Typography>

@@ -1,5 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import { authenticate } from 'passport';
 const prisma = new PrismaClient();
 
 const itineraryRoute = express.Router();
@@ -15,9 +16,14 @@ res.status(500).json({error: 'Error fetching itinerary'})
 })
 
 itineraryRoute.post('/', async (req: any, res: any) =>{
-const {creator_id, member_id, name, notes, begin, end, upVotes, downVotes} = req.body
+  if (!req.user || !req.user.userId) {
+    return res.status(401).json({ error: "Unauthorized: No user data found" });
+  }
 
-if (!creator_id || !name || !begin || !end) {
+  const{userId} = req.user
+const {member_id, name, notes, begin, end, upVotes, downVotes} = req.body
+
+if (!name || !begin || !end) {
   return res.status(400).json({ error: "Missing required fields" });
 }
 
@@ -25,8 +31,8 @@ if (!creator_id || !name || !begin || !end) {
 try{
   const newItinerary = await prisma.itinerary.create({
 data: {
-creator_id, 
-member_id, 
+creator_id: userId, 
+member_id:  Number(member_id), 
 name, 
 notes, 
 begin: new Date(begin),
@@ -88,11 +94,28 @@ itineraryRoute.patch('/:id', async (req: any, res: any) => {
   }) 
 
 
-// adding routes to make itinerary shareable 
-// itineraryRoute.post('/:id', async(req: any, res: any)=>{
+// // adding routes to make itinerary shareable 
+// itineraryRoute.post('/:id/share', async(req: any, res: any)=>{
+// const {id} = req.params //itinerary id
+// const{groupId} = req.body // group id
+// // if no groupid
+// if(!groupId){
+// return res.status(400).json({error: "Group id required"})
+// }
 
 //   try{
-//     res.status
+// const group = await prisma.group.findUnique({
+//    where : { id: groupId},
+//    //include: { users: true}
+// })
+// // if(!group){
+// //   return res.status(404).json({error: 'Group not found'})
+// // }
+
+ 
+// //ok status for sharing itinerary with group
+//     res.status(200).json({message: "Itinerary shared with group"})
+//     //catch block for error
 //   }catch(error){
 //     res.status(500).json({error: 'Error sharing itinerary'})
 //   } 
