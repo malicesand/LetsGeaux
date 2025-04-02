@@ -47,7 +47,8 @@ const BudgetPieChart: React.FC = () => {
   const handleDelete = async (id: number) => {
     try {
       await api.delete(`/${id}`);
-      fetchCategories(); // refresh chart plus list
+      // refresh chart plus list
+      fetchCategories();
     } catch (err) {
       console.error('Delete failed', err);
     }
@@ -147,7 +148,7 @@ const BudgetPieChart: React.FC = () => {
         </Box>
       )}
 
-      {/* 🔽 Full list of all entries */}
+      {/* Full list of all entries */}
       <Box mt={4}>
         <Typography variant="h6" gutterBottom>All Budget Entries</Typography>
         {categories.length === 0 ? (
