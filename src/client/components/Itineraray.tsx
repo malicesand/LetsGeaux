@@ -7,8 +7,17 @@ import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
 import { isBefore, isAfter, isSameDay } from 'date-fns';
 import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
+import { user } from '../../../types/models.ts';
 
-const Itinerary: React.FC = () => {
+
+
+interface ItineraryProps{
+user: user
+}
+
+
+
+const Itinerary: React.FC <ItineraryProps>= ({user}) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]); // Store selected dates
@@ -79,8 +88,7 @@ const Itinerary: React.FC = () => {
     }
 
     const itineraryData = {
-      creator_id: 1, // Sample creator ID
-      member_id: 2,  // Sample member ID
+      member_id: 2,  
       name: itineraryName,
       notes: itineraryNotes,
       begin: selectedDates[0].toISOString(),
@@ -173,7 +181,9 @@ const Itinerary: React.FC = () => {
   };
 
   return (
+    
     <LocalizationProvider dateAdapter={AdapterDateFns}>
+      {/* {console.log(user)} */}
       <Container>
         <Typography variant="h4" gutterBottom>
           {editingItinerary ? 'Edit Itinerary' : 'Choose Dates for Your Trip'}

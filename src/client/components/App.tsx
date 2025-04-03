@@ -88,7 +88,7 @@ const App: React.FC= () => {
       }/>
       <Route path="/itinerary" element={
         <ProtectedRoute>
-          <Itinerary/>
+          {user && <Itinerary user = {user}/>}
         </ProtectedRoute>
       }/>
       

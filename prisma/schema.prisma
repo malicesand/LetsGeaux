@@ -22,6 +22,7 @@ model user {
   suggestion suggestion[]
   group      group?       @relation(fields: [groupId], references: [id])
   vote       vote[]
+  itinerary  itinerary[]
 
   @@index([groupId], map: "user_groupId_fkey")
 }
@@ -47,18 +48,19 @@ model suggestion {
 }
 
 model itinerary {
-  id         Int        @id @default(autoincrement())
-  creator_id Int
-  member_id  Int
-  name       String     @db.VarChar(50)
-  begin      DateTime
-  end        DateTime
-  upVotes    Int
-  downVotes  Int
-  createdAt  DateTime
-  notes      String     @db.VarChar(150)
-  route      route[]
-  activity   activity[]
+  id        Int        @id @default(autoincrement())
+  member_id Int
+  name      String     @db.VarChar(50)
+  begin     DateTime
+  end       DateTime
+  upVotes   Int
+  downVotes Int
+  createdAt DateTime
+  notes     String     @db.VarChar(150)
+  route     route[]
+  activity  activity[]
+  creator   user?      @relation(fields: [creatorId], references: [id])
+  creatorId Int?
 }
 
 model activity {

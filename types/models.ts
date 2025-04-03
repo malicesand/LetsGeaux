@@ -1,4 +1,4 @@
 export { 
   user, 
-  activity 
+  activity,
 } from '@prisma/client';

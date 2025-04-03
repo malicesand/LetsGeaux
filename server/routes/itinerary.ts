@@ -15,9 +15,10 @@ res.status(500).json({error: 'Error fetching itinerary'})
 })
 
 itineraryRoute.post('/', async (req: any, res: any) =>{
-const {creator_id, member_id, name, notes, begin, end, upVotes, downVotes} = req.body
-
-if (!creator_id || !name || !begin || !end) {
+  const {id} = req.user
+const {member_id, name, notes, begin, end, upVotes, downVotes} = req.body
+//console.log(req.user)
+if (!id || !name || !begin || !end) {
   return res.status(400).json({ error: "Missing required fields" });
 }
 
@@ -25,7 +26,7 @@ if (!creator_id || !name || !begin || !end) {
 try{
   const newItinerary = await prisma.itinerary.create({
 data: {
-creator_id, 
+id, 
 member_id, 
 name, 
 notes, 
@@ -88,30 +89,30 @@ itineraryRoute.patch('/:id', async (req: any, res: any) => {
   }) 
 
 
-  itineraryRoute.get('/:id/user', async (req: any, res: any)=>{
-    const {id} = req.params
-    try{
-  const getUsers = await prisma.itinerary.findUnique({
-    where: {id: Number(id)}, 
-    include: {creator: true},
-  })
-      res.status(200).json({message: "", getUsers})
-    }catch(error){
-      res.status(500).json({error: ""})
-    }
-  })
+  // itineraryRoute.get('/:id/user', async (req: any, res: any)=>{
+  //   const {id} = req.params
+  //   try{
+  // const getUsers = await prisma.itinerary.findUnique({
+  //   where: {id: Number(id)}, 
+  //   //include: {creator: true},
+  // })
+  //     res.status(200).json({message: "", getUsers})
+  //   }catch(error){
+  //     res.status(500).json({error: ""})
+  //   }
+  // })
 
 
 
 
-  itineraryRoute.get('/', (req: any, res: any)=>{
-    try{
+  // itineraryRoute.get('/', (req: any, res: any)=>{
+  //   try{
   
-      res.status(200).josn({message: ""})
-    }catch(error){
-      res.status(500).json({error: ""})
-    }
-  })
+  //     res.status(200).josn({message: ""})
+  //   }catch(error){
+  //     res.status(500).json({error: ""})
+  //   }
+  // })
 
 
 // // adding routes to make itinerary shareable 
