@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 
@@ -26,20 +26,18 @@ type FormFields = {
 
 }
 const inputKeys: string[] = ['title', 'description', 'time', 'date', 'location', 'image', 'phoneNum', 'address',]
-const ActivityForm = ({editMode, act, activitySet, getAllActivities}) => {
-  const { name, description, time, date, location, image, phone, address } = activitySet;
-  const [chosenTitle, setChosenTitle] = useState(name);
-  const [chosenDescription, setChosenDescription] = useState(description);
-  const [chosenTime, setChosenTime] = useState(time);
-  const [chosenDate, setChosenDate] = useState(date);
-  const [chosenLocation, setChosenLocation] = useState(location);
-  const [chosenImage, setChosenImage] = useState(image);
-  const [chosenPhone, setChosenPhone] = useState(phone);
-  const [chosenAddress, setChosenAddress] = useState(address);
+const ActivityForm = ({editMode, act, activitySet, getAllActivities, editableActivity, setEditMode}) => {
+  const [chosenTitle, setChosenTitle] = useState("");
+  const [chosenDescription, setChosenDescription] = useState("");
+  const [chosenTime, setChosenTime] = useState("");
+  const [chosenDate, setChosenDate] = useState(null);
+  const [chosenLocation, setChosenLocation] = useState("");
+  const [chosenImage, setChosenImage] = useState("");
+  const [chosenPhone, setChosenPhone] = useState("");
+  const [chosenAddress, setChosenAddress] = useState("");
 
 
-
-  const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({
+  const { register, handleSubmit, setValue, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({
     defaultValues: {
       title: chosenTitle,
       description: chosenDescription,
@@ -51,6 +49,19 @@ const ActivityForm = ({editMode, act, activitySet, getAllActivities}) => {
       address: chosenAddress,
     }
   });
+  useEffect(() => {
+    if (editMode === true) {
+      const { name, description, time, date, location, image, phone, address } = editableActivity;
+       setValue('title', name);
+       setValue('description', description);
+       setValue('time', time);
+      setValue('date', date);
+       setValue('location', location);
+      setValue('image', image);
+      setValue('phone', phone);
+      setValue('address', address);
+    }
+  }, [editMode])
 const submitForm =  () => {
   return editMode ? postActivity : postActivity
 };

@@ -102,7 +102,7 @@ suggestionRouter.get('/search', async (req:any, res:any) => {
   res.sendStatus(500);
  }
   //    console.log('after 2nd return')
-  //    console.log(entries); 
+  //    console.log(entries);
   //    console.log('no yo');
   //   })
     // .then(locations => {

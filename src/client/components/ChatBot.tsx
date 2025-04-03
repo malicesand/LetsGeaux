@@ -23,8 +23,8 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
   const [message, setMessage] = useState<string>('');
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
   const chatLogRef = useRef<HTMLDivElement>(null);
-  
- 
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
