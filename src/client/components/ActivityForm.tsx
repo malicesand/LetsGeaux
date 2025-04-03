@@ -25,16 +25,17 @@ type FormFields = {
   address: string,
 
 }
-const inputKeys = ['title', 'description', 'time', 'date', 'location', 'image', 'phoneNum', 'address',]
-const ActivityForm = () => {
-  const [chosenTitle, setChosenTitle] = useState('');
-  const [chosenDescription, setChosenDescription] = useState('');
-  const [chosenTime, setChosenTime] = useState('');
-  const [chosenDate, setChosenDate] = useState(null);
-  const [chosenLocation, setChosenLocation] = useState('');
-  const [chosenImage, setChosenImage] = useState('');
-  const [chosenPhone, setChosenPhone] = useState('');
-  const [chosenAddress, setChosenAddress] = useState('');
+const inputKeys: string[] = ['title', 'description', 'time', 'date', 'location', 'image', 'phoneNum', 'address',]
+const ActivityForm = ({editMode, act, activitySet, getAllActivities}) => {
+  const { name, description, time, date, location, image, phone, address } = activitySet;
+  const [chosenTitle, setChosenTitle] = useState(name);
+  const [chosenDescription, setChosenDescription] = useState(description);
+  const [chosenTime, setChosenTime] = useState(time);
+  const [chosenDate, setChosenDate] = useState(date);
+  const [chosenLocation, setChosenLocation] = useState(location);
+  const [chosenImage, setChosenImage] = useState(image);
+  const [chosenPhone, setChosenPhone] = useState(phone);
+  const [chosenAddress, setChosenAddress] = useState(address);
 
 
 
@@ -50,9 +51,12 @@ const ActivityForm = () => {
       address: chosenAddress,
     }
   });
-  // const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+const submitForm =  () => {
+  return editMode ? postActivity : postActivity
+};
 
-  const postActivity: SubmitHandler<FormFields> = async (formValues) => {
+
+  const postActivity: SubmitHandler<FormFields> = (formValues) => {
     const { title, description, time, date, location, image, phoneNum, address } = formValues
     const details = {
 
@@ -68,11 +72,11 @@ const ActivityForm = () => {
         address,
       }
     }
-    try {
-      await axios.post("/api/activity", details);
-    } catch (error) {
-      console.error('failed to post activity', error);
-    }
+    axios.post("/api/activity", details).then(() => {
+      getAllActivities();
+    }).catch((err) => {
+      console.error('failed to post activity', err);
+    });
   }
   return (
     <Container>

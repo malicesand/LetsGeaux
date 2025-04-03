@@ -22,11 +22,20 @@ const Activities = () => {
     <Container>
       <h2>Current Activities</h2>
       {activitySet.map((act) => (
-        <Card key={act.name}>
-      <Activity act={act} getAllActivities={getAllActivities} editMode={editMode} />
+        <Card key={act.id}>
+      <Activity
+      act={act}
+      getAllActivities={getAllActivities}
+      setEditMode={setEditMode}
+      setActivitySet={setActivitySet} />
       </Card>
       ))}
-      <ActivityForm act={act}/>
+      <ActivityForm
+      act={act}
+      activitySet={activitySet}
+      editMode={editMode}
+      getAllActivities={getAllActivities}
+      />
     </Container>
   )
 }

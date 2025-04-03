@@ -18,6 +18,7 @@ import { Container, Card, Button, Input, InputLabel, Typography, Accordion, Grid
 import Activity from './Activity';
 import ActivityForm from './ActivityForm';
 
+
 const Activities = () => {
   const [activitySet, setActivitySet] = useState([]);
   const [editMode, setEditMode] = useState(false);
@@ -37,11 +38,15 @@ const Activities = () => {
       <h2>Current Activities</h2>
       {activitySet.map((act) => (
         <Card key={act.name}>
-      <Activity act={act} getAllActivities={getAllActivities} editMode={editMode} />
+      <Activity
+      act={act}
+      getAllActivities={getAllActivities}
+      setEditMode={setEditMode}
+      setActivitySet={setActivitySet}
+      />
       </Card>
       ))}
-      {/* <ActivityForm act={act}/> */}
-<ActivityForm />
+<ActivityForm activitySet={activitySet} editMode={editMode} setEditMode={setEditMode}/>
     </Container>
   )
 }
