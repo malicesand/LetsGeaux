@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 import { v4 as uuidv4 } from 'uuid';
 
 
-import { PromptKey, prompts}  from '../../src/client/types/prompt.ts';
+import { PromptKey, prompts} from '../../types/prompt.ts';
 
 
 const apiKey = process.env.GOOGLE_API_KEY;

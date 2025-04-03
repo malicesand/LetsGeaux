@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { PromptKey } from '../types/prompt.ts'
-import { User } from '../types/models.ts'; 
 
+import { user } from '../../../types/models.ts';
 
 
 
@@ -16,11 +15,14 @@ interface ChatProps {
 }
 
 
-const ChatBot: React.FC<ChatProps>= ({user}) => {
-  const userId = user.id;
-  
-  const [sessionId, setSessionId] = useState(null);
+interface ChatProps {
+  user: user;
+}
 
+
+
+
+const ChatBot: React.FC <ChatProps> = ({user}) => {
   const [message, setMessage] = useState<string>('');
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
   const chatLogRef = useRef<HTMLDivElement>(null);
