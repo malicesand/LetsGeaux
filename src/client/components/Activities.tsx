@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Card, Button, Input, InputLabel, Typography, Accordion, Grid,  } from '@mui/material';
-import Activity from './Activity';
-import ActivityForm from './ActivityForm';
+//import Activity from './Activity';
+//import ActivityForm from './ActivityForm';
 
-const Activities = () => {
-  const [activitySet, setActivitySet] = useState([]);
+const Activities: React.FC = () => {
+  return(
+    <div></div>
+  )
+}
+
+export default Activities;
+/**
+ * 
+ * const [activitySet, setActivitySet] = useState([]);
   const [editMode, setEditMode] = useState(false);
 
   const getAllActivities = () => {
@@ -29,6 +37,4 @@ const Activities = () => {
       <ActivityForm act={act}/>
     </Container>
   )
-}
-
-export default Activities;
+ */

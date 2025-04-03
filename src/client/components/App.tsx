@@ -22,7 +22,6 @@ import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 import Activities from './Activities.tsx';
 import ActivitiesChoices from './ActivityChoices';
 import Logout from './Logout.tsx';
-import Calendar from './Calendar.tsx';
 
 import { user } from '../../../types/models.ts';
 
@@ -91,11 +90,7 @@ const App: React.FC= () => {
           <Itinerary/>
         </ProtectedRoute>
       }/>
-      <Route path="/calendar" element={
-        <ProtectedRoute>
-          <Calendar/>
-        </ProtectedRoute> 
-      }/>
+      
       <Route path="/budgetbuddy" element={
         <ProtectedRoute> 
           <BudgetBuddy />
