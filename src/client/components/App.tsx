@@ -101,7 +101,7 @@ const App: React.FC= () => {
           <BudgetBuddy />
         </ProtectedRoute>
       }/>
-      <Route path='/RouteChoices' element={
+      <Route path='/routechoices' element={
         <ProtectedRoute>
           <RouteChoices/>
         </ProtectedRoute>
