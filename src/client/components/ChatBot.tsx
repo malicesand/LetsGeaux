@@ -2,16 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 import { user } from '../../../types/models.ts';
-
-
+import { PromptKey } from '../../../types/prompt.ts';
 
 interface ChatMessage {
   text: string;
   user: boolean;
-}
-
-interface ChatProps {
-  user: User;
 }
 
 
@@ -21,13 +16,15 @@ interface ChatProps {
 
 
 
-
 const ChatBot: React.FC <ChatProps> = ({user}) => {
   const [message, setMessage] = useState<string>('');
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
   const chatLogRef = useRef<HTMLDivElement>(null);
   const [context, setContext] = useState<PromptKey>('default');
+  const [sessionId, setSessionId] = useState(null);
   
+  const userId = user.id; 
+
   useEffect(() => {
     // check local storage for session ID
     const storedSessionId = localStorage.getItem('sessionId');
