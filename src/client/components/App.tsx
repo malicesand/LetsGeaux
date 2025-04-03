@@ -24,14 +24,14 @@ import ActivitiesChoices from './ActivityChoices';
 import Logout from './Logout.tsx';
 import Calendar from './Calendar.tsx';
 
-import { User } from '../types/models.ts';
+import { user } from '../../../types/models.ts';
 
 
 
 
 const App: React.FC= () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<user | null>(null)
   // Check Auth
   useEffect(() => {
     const checkAuth = async () => { //? type 
@@ -40,7 +40,7 @@ const App: React.FC= () => {
         setIsAuthenticated(response.data.isAuthenticated);
 
         if (response.data.isAuthenticated) {
-          const fetchedUser: User = response.data.user;
+          const fetchedUser: user = response.data.user;
           setUser(fetchedUser);
         }
       }
