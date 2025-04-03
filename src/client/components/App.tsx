@@ -20,9 +20,10 @@ import ChatBot from './ChatBot.tsx'
 import Itinerary from './Itineraray.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 import Activities from './Activities.tsx';
-import ActivitiesChoices from './ActivityChoices';
+import ActivitiesChoices from './RouteChoices';
 import Logout from './Logout.tsx';
-
+import Calendar from './Calendar.tsx';
+import RouteChoices from './RouteChoices.tsx'
 import { user } from '../../../types/models.ts';
 
 
@@ -94,6 +95,11 @@ const App: React.FC= () => {
       <Route path="/budgetbuddy" element={
         <ProtectedRoute> 
           <BudgetBuddy />
+        </ProtectedRoute>
+      }/>
+      <Route path='/routechoices' element={
+        <ProtectedRoute>
+          <RouteChoices/>
         </ProtectedRoute>
       }/>
       <Route path="/logout" element={
