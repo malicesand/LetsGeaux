@@ -4,73 +4,16 @@ import { Container, Card, Button, Input, InputLabel, Typography, Accordion, Grid
 //import Activity from './Activity';
 //import ActivityForm from './ActivityForm';
 
-<<<<<<< HEAD
-const Activities = () => {
-  const [activitySet, setActivitySet] = useState([]);
-  const [editableActivity, setEditableActivity] = useState({})
-  const [editMode, setEditMode] = useState(false);
-
-  const getAllActivities = () => {
-    axios.get('/api/activity').then(({data}) => {
-      console.log(data);
-      setActivitySet(data);
-    }).catch((err) => console.error('there was an issue', err));
-  }
-
-  useEffect(() => {
-    getAllActivities();
-  }, []);
-  return (
-    <Container>
-      <h2>Current Activities</h2>
-      {activitySet.map((act) => (
-        <Card key={act.id}>
-      <Activity
-      act={act}
-      getAllActivities={getAllActivities}
-      setEditMode={setEditMode}
-      setActivitySet={setActivitySet}
-      setEditableActivity={setEditableActivity}
-      />
-      </Card>
-      ))}
-      <ActivityForm
-      act={act}
-      activitySet={activitySet}
-      editMode={editMode}
-      setEditMode={setEditMode}
-      getAllActivities={getAllActivities}
-      editableActivity={editableActivity}
-      />
-    </Container>
-=======
 const Activities: React.FC = () => {
   return(
     <div></div>
->>>>>>> 3ce23e3428337ae7f56703258a5988e9201e55bf
   )
 }
 
 export default Activities;
-<<<<<<< HEAD
-
-
-/**
- * import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Container, Card, Button, Input, InputLabel, Typography, Accordion, Grid,  } from '@mui/material';
-import Activity from './Activity';
-import ActivityForm from './ActivityForm';
-
-
-const Activities = () => {
-  const [editableActivity, setEditableActivity] = useState({});
-  const [activitySet, setActivitySet] = useState([]);
-=======
 /**
  * 
  * const [activitySet, setActivitySet] = useState([]);
->>>>>>> 3ce23e3428337ae7f56703258a5988e9201e55bf
   const [editMode, setEditMode] = useState(false);
 
   const getAllActivities = () => {
@@ -106,11 +49,4 @@ editableActivity={editableActivity}
 />
     </Container>
   )
-<<<<<<< HEAD
-}
-
-export default Activities;
-
-=======
->>>>>>> 3ce23e3428337ae7f56703258a5988e9201e55bf
  */
