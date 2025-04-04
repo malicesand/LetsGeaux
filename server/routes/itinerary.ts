@@ -15,10 +15,10 @@ res.status(500).json({error: 'Error fetching itinerary'})
 })
 
 itineraryRoute.post('/', async (req: any, res: any) =>{
-  const {id} = req.user
-const {member_id, name, notes, begin, end, upVotes, downVotes} = req.body
+  //const {id} = req.user
+const {creatorId, member_id, name, notes, begin, end, upVotes, downVotes} = req.body
 //console.log(req.user)
-if (!id || !name || !begin || !end) {
+if (!name || !begin || !end) {
   return res.status(400).json({ error: "Missing required fields" });
 }
 
@@ -26,7 +26,7 @@ if (!id || !name || !begin || !end) {
 try{
   const newItinerary = await prisma.itinerary.create({
 data: {
-id, 
+creatorId, 
 member_id, 
 name, 
 notes, 

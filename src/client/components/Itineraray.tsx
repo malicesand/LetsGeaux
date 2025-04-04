@@ -88,6 +88,7 @@ const Itinerary: React.FC <ItineraryProps>= ({user}) => {
     }
 
     const itineraryData = {
+      creatorId: user.id, 
       member_id: 2,  
       name: itineraryName,
       notes: itineraryNotes,

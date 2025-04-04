@@ -4,16 +4,8 @@ import { Container, Card, Button, Input, InputLabel, Typography, Accordion, Grid
 //import Activity from './Activity';
 //import ActivityForm from './ActivityForm';
 
-const Activities: React.FC = () => {
-  return(
-    <div></div>
-  )
-}
-
-export default Activities;
-/**
- * 
- * const [activitySet, setActivitySet] = useState([]);
+const Activities = () => {
+  const [activitySet, setActivitySet] = useState([]);
   const [editMode, setEditMode] = useState(false);
 
   const getAllActivities = () => {
@@ -49,4 +41,6 @@ editableActivity={editableActivity}
 />
     </Container>
   )
- */
+}
+
+export default Activities;
