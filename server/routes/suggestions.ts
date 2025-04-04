@@ -63,10 +63,11 @@ const getTripadvisorDetailedEntries = async (locations: number[]) => {
           // cost: price_level.length,
         }
         // ----------------------this log worked perfectly ONE TIME! other than that, I just get a huge response object with message: too many requests in one of the lower objects
-        console.log('should be returning', locationQueryDetailedEntry) 
+        console.log('should be returning', locationQueryDetailedEntry)
         return locationQueryDetailedEntry;
       });
-      // const allDetailedEntries = Promise.all(detailedEntries);
+      const allDetailedEntries = Promise.all(detailedEntries);
+      return allDetailedEntries;
   } catch(err) {console.error(err)}
 }
 // and finally, this one grabs the image url
@@ -84,14 +85,24 @@ const getTripAdvisorImage = (locationId) => {
 suggestionRouter.get('/search', async (req:any, res:any) => {
  try {
   console.log('trying')
-   const locations: number[] = await getTripadvisorLocationIds()
-   const entries = await getTripadvisorDetailedEntries(locations)
-   console.log('ent', entries);
-  res.status(200).send('your entries, sir', entries);
- } catch (err) {
-  console.error('had a hard time', err);
-  res.sendStatus(500);
- }
+   const locations: number[] = await getTripadvisorLocationIds().then((stuff) => {
+    getTripadvisorDetailedEntries(stuff).then((entries) => {
+      console.log('ent', entries);
+      res.status(200).send(entries);
+    })
+
+    }).catch((err) => {
+      console.error('had a hard time', err);
+      res.sendStatus(500);
+   })
+  } catch(err) {
+    throw err
+  }
+  })
+   
+//    const entries = await getTripadvisorDetailedEntries(locations)
+//  } catch (err) {
+//  }
   //    console.log('after 2nd return')
   //    console.log(entries);
   //    console.log('no yo');
@@ -112,7 +123,6 @@ suggestionRouter.get('/search', async (req:any, res:any) => {
 
       // }
   // })
-})
 
 
 // GET request handling
