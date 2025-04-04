@@ -42,6 +42,7 @@ const App: React.FC= () => {
         if (response.data.isAuthenticated) {
           const fetchedUser: user = response.data.user;
           setUser(fetchedUser);
+          localStorage.removeItem('sessionId');
         }
       }
       catch (error) {
