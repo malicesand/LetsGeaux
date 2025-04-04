@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 import { user } from '../../../types/models.ts';
-import { PromptKey } from '../../../types/prompt.ts';
+
 
 interface ChatMessage {
   text: string;
@@ -12,6 +12,7 @@ interface ChatMessage {
 
 interface ChatProps {
   user: user;
+   
 }
 
 
@@ -20,12 +21,11 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
   const [message, setMessage] = useState<string>('');
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
   const chatLogRef = useRef<HTMLDivElement>(null);
-  const [context, setContext] = useState<PromptKey>('default');
-  const [sessionId, setSessionId] = useState(null);
   
-  const userId = user.id; 
-
+  const [sessionId, setSessionId] = useState(null); // ? Local Storage 
+ 
   useEffect(() => {
+   
     // check local storage for session ID
     const storedSessionId = localStorage.getItem('sessionId');
     if (storedSessionId) {
@@ -33,7 +33,7 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
       setSessionId(storedSessionId);
     } else {
       // Create new session ID
-      fetch('/api/new-session', { method: 'POST' })
+      fetch('/api/chats/new-session', { method: 'POST' })
         .then((response) => response.json())
         .then((data) => {
           localStorage.setItem('sessionId', data.sessionId);
@@ -41,13 +41,15 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
         });
         console.log(sessionId)
     }
-    // Scroll to bottom of chat log on update
+
+
     if (chatLogRef.current) {
-        chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
-    }
+      chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
+  }
+
   }, [chatLog]);
  
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
@@ -55,12 +57,17 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
     setChatLog([...chatLog, { text: message, user: true }]);
     setMessage('');
 
+
     try {
-      const response = await axios.post('/api/chats', { message, userId, sessionId });
-        setChatLog(prevChatLog => [...prevChatLog, { text: response.data, user: false }]);
+      
+
+      const response = await axios.post('/api/chats', { message, userId: user.id, sessionId });
+
+      setChatLog(prev => [...prev, { text: response.data, user: false }]);
+
     } catch (error: any) { // Type the error
         console.error("Error sending message:", error);
-        setChatLog(prevChatLog => [...prevChatLog, {text: "Error: Could not get response.", user: false }]);
+        setChatLog(prev => [...prev, {text: "Error: Could not get response.", user: false }]);
     }
 };
 
@@ -76,19 +83,22 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
       <h2>Welcome {user.username}!</h2>
       <div
         className='chat-list'
+        ref={chatLogRef}
         style={{
           border: '1px solid #ccc',
           padding: '10px',
           height: '400px',
-          // overflowY: 'scroll'
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column'
         }}
-        ref={chatLogRef}
       >
         {chatLog.map((msg, index) => (
           <div
             key={index}
             style={{
               textAlign: msg.user ? 'right' : 'left',
+              color: msg.user ? 'blue' : 'grey',
               marginBottom: '5px'
             }}
           >
