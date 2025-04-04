@@ -20,7 +20,8 @@ const RouteChoices = () => {
     setError(null);
 
     try {
-      const response = await axios.get('/api/maps');
+      
+      const response = await axios.get(`/api/maps}`);
       setRoutes(response.data);
     } catch (err) {
       setError('Error fetching route data. Please try again later.');

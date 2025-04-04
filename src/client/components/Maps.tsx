@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import axios from "axios";
 import { TextField, Button, Box, Typography, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'; 
 
+// Container style for the map 
 const containerStyle = {
   width: "100%",
   height: "500px",
 };
 
+// Default map center (New Orleans)
 const center = {
   lat: 29.9511,  // New Orleans latitude
   lng: -90.0715, // New Orleans longitude
@@ -16,14 +19,15 @@ const center = {
 const libraries: any = ['geometry', 'marker']; 
 
 const Maps = () => {
+  const navigate = useNavigate();
   const [origin, setOrigin] = useState<string>("");
   const [destination, setDestination] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [travelTime, setTravelTime] = useState<string | null>(null);  
-  const [itinerary, setItinerary] = useState<Array<any>>([]);
-  const [openModal, setOpenModal] = useState<boolean>(false); 
-  const [selectedItineraryId, setSelectedItineraryId] = useState<string | null>(null);
-
+  const [itinerary, setItinerary] = useState<Array<any>>([]); // Change to any for better handling of data
+  const [openModal, setOpenModal] = useState<boolean>(false); // State to 
+const [routeInfo, setRouteinfo] = useState<number>(0)
+const [itinteraryId, setItineraryId]= useState<number>(0)
   const mapRef = useRef<google.maps.Map | null>(null);
   const directionsRenderer = useRef<google.maps.DirectionsRenderer | null>(null);
   const directionsService = useRef<google.maps.DirectionsService | null>(null);
@@ -44,24 +48,24 @@ const Maps = () => {
     fetchItinerary();
   }, []);
 
-  // Function to handle selecting an itinerary
-  const handleSelectItinerary = async (id: string) => {
-    try {
-      // Send PATCH request with the selected itinerary's ID
-      const response = await axios.patch('/api/maps', {
-        itineraryId: id
-      });
-      
-      if (response.status === 200) {
-        console.log('Itinerary added successfully');
-        setOpenModal(false); // Close the modal after successful selection
-      } else {
-        console.error('Failed to add itinerary');
+   
+    const handleSelectItinerary = async (itineraryId: string,routeInfo:number ) => {
+      try {
+   
+        const response = await axios.patch(`/api/maps/${routeInfo}`, {
+          itineraryId
+        });
+        
+        if (response.status === 200) {
+          console.log('Itinerary added successfully');
+          setOpenModal(false); // Close the modal after successful selection
+        } else {
+          console.error('Failed to add itinerary');
+        }
+      } catch (error) {
+        console.error('Error during PATCH request:', error);
       }
-    } catch (error) {
-      console.error('Error during PATCH request:', error);
-    }
-  };
+    };
 
   // Function to fetch directions and calculate the travel time
   const fetchDirections = async () => {
@@ -80,6 +84,7 @@ const Maps = () => {
       if (polyline) {
         const path = google.maps.geometry.encoding.decodePath(polyline);
 
+        // Create a Polyline object
         if (polylineRef.current) {
           polylineRef.current.setPath(path);
         } else {
@@ -93,6 +98,7 @@ const Maps = () => {
           polylineRef.current.setMap(mapRef.current);
         }
 
+        // Show the route using DirectionsRenderer
         const directionsRequest = {
           origin,
           destination,
@@ -105,8 +111,9 @@ const Maps = () => {
               directionsRenderer.current.setDirections(result);
               setError(null);
 
+              // Extract travel time from directions result
               const time = result.routes[0].legs[0].duration.text;
-              setTravelTime(time);
+              setTravelTime(time); // Update the state with the travel time
 
               const originLatLng = result.routes[0].legs[0].start_location;
               const destinationLatLng = result.routes[0].legs[0].end_location;
@@ -122,13 +129,33 @@ const Maps = () => {
     }
   };
 
+  // Handle map load and initialize DirectionsService and DirectionsRenderer
   const onLoad = (map: google.maps.Map) => {
     mapRef.current = map;
+
     directionsService.current = new google.maps.DirectionsService();
     directionsRenderer.current = new google.maps.DirectionsRenderer({
       map,
       suppressMarkers: true,
     });
+  };
+
+  const saveTravel = async (origin: string, destination: string, travelTime: string) => {
+    try {
+      const response = await axios.post('/api/maps', {
+        origin,
+        destination,
+        travelTime,
+      });
+      setRouteinfo(response.data.routeInfo.id)
+     
+      if (response.status === 201) {
+        console.log('Data saved successfully!');
+        setOpenModal(true); // Open the modal when the data is saved
+      } 
+    } catch (error) {
+      console.error('Error saving travel data:', error);
+    }
   };
 
   useEffect(() => {
@@ -137,23 +164,28 @@ const Maps = () => {
     }
 
     return () => {
+      // Clean up markers and polyline on component unmount
       if (originMarker.current) originMarker.current.setMap(null);
       if (destinationMarker.current) destinationMarker.current.setMap(null);
       if (polylineRef.current) polylineRef.current.setMap(null);
     };
   }, []);
 
+  // Place the markers for origin and destination
   const placeMarkers = (originLatLng: google.maps.LatLng, destinationLatLng: google.maps.LatLng) => {
     if (mapRef.current) {
+      // Remove previous markers if any
       if (originMarker.current) originMarker.current.setMap(null);
       if (destinationMarker.current) destinationMarker.current.setMap(null);
 
+      // Create new markers using the standard Marker API for origin
       originMarker.current = new google.maps.Marker({
         position: originLatLng,
         map: mapRef.current,
         title: "Origin",
       });
 
+      // Create new markers using the standard Marker API for destination
       destinationMarker.current = new google.maps.Marker({
         position: destinationLatLng,
         map: mapRef.current,
@@ -167,7 +199,8 @@ const Maps = () => {
       <Typography variant="h4" gutterBottom>
         Google Maps Directions
       </Typography>
-
+   
+      {/* Input Fields */}
       <Box display="flex" flexDirection="column" gap={2} mb={2}>
         <TextField
           label="Enter the start address or place"
@@ -190,22 +223,25 @@ const Maps = () => {
         </Button>
       </Box>
 
+      {/* Error Message */}
       {error && <Typography color="error">{error}</Typography>}
 
+      {/* Display the travel time */}
       {travelTime && <Typography variant="h6">Estimated Driving: {travelTime}</Typography>}
 
       <Box mt={2}>
         <Button
           variant="outlined"
           color="secondary"
-          onClick={() => setOpenModal(true)} // Open the modal to display itinerary options
+          onClick={() => saveTravel(origin, destination, travelTime || "")}
         >
-          Select Itinerary
+          Save Travel Time
         </Button>
       </Box>
 
+      {/* Google Map */}
       <LoadScript
-        googleMapsApiKey={'API_KEY'}
+        googleMapsApiKey={'AIzaSyDbe88-k6VGoCVYDfdhGS4Zi2w7YwXiCGA'}
         libraries={libraries}
       >
         <GoogleMap
@@ -224,21 +260,24 @@ const Maps = () => {
         <DialogContent>
           <Typography variant="h6">Itinerary Options</Typography>
           <Box mt={2}>
+           
             {itinerary.length > 0 ? (
+            
               itinerary.map((trip, id) => (
                 <Card key={id} variant="outlined" sx={{ marginBottom: 2 }}>
                   <CardContent>
                     <Typography variant="h6">{trip.name}</Typography>
                     <Typography>{trip.notes}</Typography>
                   </CardContent>
-                  {console.log(trip.id)}
-                  <Button onClick={() => handleSelectItinerary(trip.id)}>Select</Button>
+                  {setItinerary(trip.id)}
+                  <Button onClick={()=>handleSelectItinerary(trip.id, routeInfo)}>Select</Button>
                 </Card>
               ))
             ) : (
               <Typography>No itinerary available.</Typography>
             )}
           </Box>
+        
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenModal(false)} color="primary">
@@ -251,4 +290,3 @@ const Maps = () => {
 };
 
 export default Maps;
-
