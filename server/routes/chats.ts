@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const apiKey = process.env.GOOGLE_API_KEY;
 const genAI = new GoogleGenAI({apiKey});
-
+import { chatHistory } from '../../types/models'
 import { PromptKey, prompts, contextKeywords} from '../../types/prompt.ts';
 // * CONTEXT * //
 const detectContext = (input: string): PromptKey => {
@@ -34,18 +34,25 @@ chatsRoute.post('/new-session', (req: Request, res: Response) => {
 });
 
 chatsRoute.post('/', async (req: Request, res: Response ) => {
-  const { message, userId, sessionId} = req.body;
+  const { userMessage, userId, sessionId} = req.body;
   
-  let conversationId = sessionId || uuidv4();
+  // let conversationId = sessionId || uuidv4();
   // check for ID or create
   
   // fetch context
   // let lastContext =  // TODO context handling for replies and history
-  console.log(conversationId)
+  console.log(sessionId)
  
-
+  const convoHistory = await prisma.chatHistory.upsert({
+    where: { sessionId },
+    update: { lastActive: new Date()},
+    create: {
+      sessionId,
+      userId
+    }
+  })
   
-  const context = detectContext(message);
+  const context = detectContext(userMessage);
   const prompt = prompts[context] 
   
   try {
@@ -56,14 +63,15 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
     });
   const responseParts = response.candidates[0].content.parts[0] // TODO type
   const aIReply: string  = responseParts?.text || 'no response from Gata';
-  await prisma.chatHistory.create({ // ? idk how this is actively adding w/o a declaration
+  await prisma.message.create({ // ? idk how this is actively adding w/o a declaration
     data: {
       userId: userId,
-      userMessage: message,
+      userMessage: userMessage,
       botResponse: aIReply,
       sessionId: sessionId
     }
   })
+  console.log('successful convo')
   res.json(aIReply);
     } catch (error) { // TODO make type
       console.error(error);
