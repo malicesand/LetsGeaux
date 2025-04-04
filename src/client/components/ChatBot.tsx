@@ -18,7 +18,7 @@ interface ChatProps {
 
 
 const ChatBot: React.FC <ChatProps> = ({user}) => {
-  const [message, setMessage] = useState<string>('');
+  const [userMessage, setUserMessage] = useState<string>('');
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
   const chatLogRef = useRef<HTMLDivElement>(null);
   
@@ -52,16 +52,16 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!userMessage.trim()) return;
 
-    setChatLog([...chatLog, { text: message, user: true }]);
-    setMessage('');
+    setChatLog([...chatLog, { text: userMessage, user: true }]);
+    setUserMessage('');
 
 
     try {
       
 
-      const response = await axios.post('/api/chats', { message, userId: user.id, sessionId });
+      const response = await axios.post('/api/chats', { userMessage, userId: user.id, sessionId });
 
       setChatLog(prev => [...prev, { text: response.data, user: false }]);
 
@@ -109,8 +109,8 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
       <form onSubmit={handleSubmit} style={{ marginTop: '10px' }}>
         <input
           type='text'
-          value={message}
-          onChange={e => setMessage(e.target.value)}
+          value={userMessage}
+          onChange={e => setUserMessage(e.target.value)}
           placeholder='Type your message...'
           style={{ width: '70%', padding: '8px', marginRight: '10px' }}
         />
