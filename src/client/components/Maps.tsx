@@ -19,6 +19,7 @@ const center = {
 const libraries: any = ['geometry', 'marker']; 
 
 const Maps = () => {
+  const navigate = useNavigate();
   const [origin, setOrigin] = useState<string>("");
   const [destination, setDestination] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -114,6 +115,7 @@ const Maps = () => {
   
       if (response.status === 201) {
         console.log('Data saved successfully!');
+        navigate('/routechoices')
       } 
     } catch (error) {
       console.error('Error saving travel data:', error);
@@ -165,13 +167,13 @@ const Maps = () => {
       {/* Input Fields */}
       <Box display="flex" flexDirection="column" gap={2} mb={2}>
         <TextField
-          label="Enter origin"
+          label="Enter the start addres or place"
           variant="outlined"
           value={origin}
           onChange={(e) => setOrigin(e.target.value)}
         />
         <TextField
-          label="Enter destination"
+          label="Enter destination address or place"
           variant="outlined"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
