@@ -55,7 +55,7 @@ const Suggestion = () => {
     <Container>
       <Grid item size={6}>
         <Card>
-          <Typography variant="h3">Featured Foray:</Typography>
+          {/* <Typography variant="h3">Featured Foray:</Typography> */}
           <Button variant="filled">Next attraction</Button>
           <Button variant="filled">add to activities</Button>
           <ImageList>
@@ -91,7 +91,7 @@ const Suggestion = () => {
             //       }
             //     ]}
           >
-              <Typography variant="h4">The New Orleans Jazz Museum celebrates jazz in the city where it was born. Through dynamic interactive exhibits, multi-generational educational programming, research facilities, and engaging musical performances, the music New Orleans made famous is explored in all its forms. Housed in the historic Old U.S. Mint, strategically located at the intersection of the French Quarter and the Frenchmen Street live music corridor, the New Orleans Jazz Museum is in the heart of the city’s music scene.</Typography>
+              <Typography>The New Orleans Jazz Museum celebrates jazz in the city where it was born. Through dynamic interactive exhibits, multi-generational educational programming, research facilities, and engaging musical performances, the music New Orleans made famous is explored in all its forms. Housed in the historic Old U.S. Mint, strategically located at the intersection of the French Quarter and the Frenchmen Street live music corridor, the New Orleans Jazz Museum is in the heart of the city’s music scene.</Typography>
             </Accordion>
           </ImageListItem>
         </ImageList>

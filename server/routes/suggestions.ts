@@ -40,13 +40,7 @@ const getTripadvisorDetailedEntries = async (locations: number[]) => {
   try {
 
     const detailedEntries = await locations.map(async (location) => {
-      
       const detailedEntry = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`)
-      // .then((locationQueryProperties) => {
-        // if (locationQueryProperties.hasOwnProperty('location_id')) {
-          
-        //   console.log('entry query Properties from the inside');
-        //   console.log('yo');
         const {
           name,
           description,
@@ -57,7 +51,7 @@ const getTripadvisorDetailedEntries = async (locations: number[]) => {
           longitude,
           // price_level,
         } = detailedEntry.data;
-        // console.log('DE.D', detailedEntry.data)
+         console.log(name)//---------------- successfully shows name of each entry coming through
         const locationQueryDetailedEntry = {
           title: name,
           description,
@@ -68,15 +62,11 @@ const getTripadvisorDetailedEntries = async (locations: number[]) => {
           longitude,
           // cost: price_level.length,
         }
-        // console.log('LQDE', locationQueryDetailedEntry)
-        // }
-        // })
-        // })
-        // console.log('Deetz!!');
-        // console.log(detailedEntry);
+        // ----------------------this log worked perfectly ONE TIME! other than that, I just get a huge response object with message: too many requests in one of the lower objects
+        console.log('should be returning', locationQueryDetailedEntry) 
         return locationQueryDetailedEntry;
       });
-      const allDetailedEntries = Promise.all(detailedEntries);
+      // const allDetailedEntries = Promise.all(detailedEntries);
   } catch(err) {console.error(err)}
 }
 // and finally, this one grabs the image url
@@ -93,10 +83,11 @@ const getTripAdvisorImage = (locationId) => {
 // SEARCH flavored GET handling
 suggestionRouter.get('/search', async (req:any, res:any) => {
  try {
-   const locations = await getTripadvisorLocationIds()
+  console.log('trying')
+   const locations: number[] = await getTripadvisorLocationIds()
    const entries = await getTripadvisorDetailedEntries(locations)
    console.log('ent', entries);
-  res.status(200).send(entries);
+  res.status(200).send('your entries, sir', entries);
  } catch (err) {
   console.error('had a hard time', err);
   res.sendStatus(500);
