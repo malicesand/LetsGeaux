@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Box, TextField, Button, Typography } from '@mui/material';
 import axios from 'axios';
 
+// Define the Activity type interface
 interface Activity {
   id: string;
   name: string;
@@ -12,16 +13,14 @@ interface Activity {
   image: string;
   phone: string;
   address: string;
-  itineraryId: string; 
 }
 
-interface Props {
-  itineraryId: string; // Pass this as a prop to fetch activities for a specific itinerary
-}
-
-const Activity: React.FC<Props> = ({ itineraryId }) => {
+const Activity: React.FC = () => {
+  // State to store activities
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [formData, setFormData] = useState<Activity>({
+  
+  // State for the form
+  const [formData, setFormData] = useState({
     id: '',
     name: '',
     description: '',
@@ -31,22 +30,20 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
     image: '',
     phone: '',
     address: '',
-    itineraryId: itineraryId,
   });
 
-  // Fetch activities for a specific itinerary when component mounts
+  // Get activities from the server
   useEffect(() => {
     const getActivities = async () => {
       try {
-        const response = await axios.get(`/api/activity/${itineraryId}`);
+        const response = await axios.get('/api/activity');
         setActivities(response.data);
       } catch (err) {
         console.error('Error fetching activities:', err);
       }
     };
-
     getActivities();
-  }, [itineraryId]);
+  }, []);
 
   // Handle form input changes
   const handleChange = (e: React.ChangeEvent<{ name?: string; value: any }>) => {
@@ -64,7 +61,7 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
     try {
       const response = await axios.post('/api/activity', formData);
       setActivities([...activities, response.data]); // Add new activity to the list
-      resetForm();
+      resetForm(); // Reset form after adding
     } catch (err) {
       console.error('Error creating activity:', err);
     }
@@ -78,7 +75,7 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
       setActivities(activities.map((activity) =>
         activity.id === formData.id ? response.data : activity
       ));
-      resetForm();
+      resetForm(); // Reset form after update
     } catch (err) {
       console.error('Error updating activity:', err);
     }
@@ -106,23 +103,34 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
       image: '',
       phone: '',
       address: '',
-      itineraryId: itineraryId, 
     });
   };
 
   // Handle update button click (pre-fill form for updating)
   const handleUpdateClick = (activity: Activity) => {
-    setFormData(activity);
+    setFormData({
+      id: activity.id,
+      name: activity.name,
+      description: activity.description,
+      time: activity.time,
+      date: activity.date,
+      location: activity.location,
+      image: activity.image,
+      phone: activity.phone,
+      address: activity.address,
+    });
   };
 
+  // Decide whether to create or update an activity when submitting the form
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.id) {
-      updateActivity(); 
+      updateActivity(); // Update activity if it has an id
     } else {
-      postActivity();
+      postActivity(); // Otherwise, create a new activity
     }
   };
+  
 
   return (
     <Container>
