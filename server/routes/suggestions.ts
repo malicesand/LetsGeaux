@@ -32,15 +32,17 @@ const getTripadvisorLocationIds = async (query: string = "restaurant") => {
 
       console.error('failed to get ids', err);
     }
-}
-
-// This one queries trip advisor with an array of location ids and moves wanted info from the result to an object
-const getTripadvisorDetailedEntries = async (locations: number[]) => {
-  // console.log('deez loc', locations)
-  try {
-
-    const detailedEntries = await locations.map(async (location) => {
-      const detailedEntry = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`)
+  }
+  
+  // This one queries trip advisor with an array of location ids and moves wanted info from the result to an object
+  const getTripadvisorDetailedEntries = async (locations: number[]) => {
+    // console.log('deez loc', locations)
+    try {
+      
+      const detailedEntries = await locations.map(async (location) => {
+        const detailedEntry = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`)
+        // const advisorImage = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/photos?language=en&key=${API_KEY}`)
+        // console.log('img', advisorImage);
         const {
           name,
           description,
@@ -55,15 +57,16 @@ const getTripadvisorDetailedEntries = async (locations: number[]) => {
         const locationQueryDetailedEntry = {
           title: name,
           description,
-          // timeAvailable: hours.weekday_text,
+          // hours: hours.weekday_text,
           phoneNum: phone,
           // address: address_obj.address_string || "new orleans",
           latitude,
           longitude,
+          address: address_obj.address_string,
           // cost: price_level.length,
         }
         // ----------------------this log worked perfectly ONE TIME! other than that, I just get a huge response object with message: too many requests in one of the lower objects
-        console.log('should be returning', locationQueryDetailedEntry)
+        // locationQueryDetailedEntry.image = advisorImage.data[0].images.large.url
         return locationQueryDetailedEntry;
       });
       const allDetailedEntries = Promise.all(detailedEntries);

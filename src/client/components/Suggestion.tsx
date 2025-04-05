@@ -42,8 +42,17 @@ Faded translucent accordion to be set by lunch tomorrow.  [https://mui.com/mater
 
 
 // const Grid = Grid2;
-const Suggestion = () => {
+const Suggestion = ({currentSuggestion, getAllSuggestions, setSuggestionEditMode,/* setEditableSuggestion}*/}) => {
   const [expanded, toggleExpanded] = useState(false);
+
+
+  /* ---------Parts of the currentSuggestion
+  title, description, phoneNum, latitude, longitude, address
+  */
+
+  /**
+   * Activity Suggestion match points
+   */
 
   const handleExpansion = () => {
     toggleExpanded((prevExpanded) => !prevExpanded)
@@ -51,32 +60,43 @@ const Suggestion = () => {
 
 
   }
+  const { title, description, phoneNum, latitude, longitude, address, hours, image } = currentSuggestion;
   return (
     <Container>
       <Grid item size={6}>
         <Card>
           {/* <Typography variant="h3">Featured Foray:</Typography> */}
-          <Button variant="filled">Next attraction</Button>
+          {/* <Button variant="filled">Next attraction</Button> */}
           <Button variant="filled">add to activities</Button>
           <ImageList>
             <ImageListItem key="ItemText" cols={4}>
               <ListItemText >
                 <Typography variant="h2">
-                  New Orleans Jazz Museum
+                  {title}
                 </Typography>
               </ListItemText>
-              <img src="https://media-cdn.tripadvisor.com/media/photo-o/0b/92/b7/85/20160608-102742-largejpg.jpg"></img>
+              <img width="100" height="100" src="https://media-cdn.tripadvisor.com/media/photo-o/0b/92/b7/85/20160608-102742-largejpg.jpg"></img>
+              <Typography>{description}</Typography>
+              <Typography><b>Contact number:</b> {phoneNum}</Typography>
+              <Typography><b>address:</b> {address}</Typography>
+              {hours
+              ? (
+                <Typography><b>Hours of operation:</b></Typography>
+
+              ): (
+                <Typography><em>Operation hours unavailable</em></Typography>
+              )}
               <Box></Box>
               <Accordion
                 expanded={expanded}
                 onChange={handleExpansion}
                 slots={{ transition: Fade as AccordionSlots['transition'] }}
-            //     sx={[
-            //       expanded
-            //  ? {
-            //         [`& .${AccordionClasses.region}`]: {
-            //           height: 'auto',
-            //         },
+                //     sx={[
+                  //       expanded
+                  //  ? {
+                    //         [`& .${AccordionClasses.region}`]: {
+                      //           height: 'auto',
+                      //         },
             //         [`& .${accordionDetailsClasses.root}`]: {
             //           display: 'block',
             //         },
@@ -91,7 +111,7 @@ const Suggestion = () => {
             //       }
             //     ]}
           >
-              <Typography>The New Orleans Jazz Museum celebrates jazz in the city where it was born. Through dynamic interactive exhibits, multi-generational educational programming, research facilities, and engaging musical performances, the music New Orleans made famous is explored in all its forms. Housed in the historic Old U.S. Mint, strategically located at the intersection of the French Quarter and the Frenchmen Street live music corridor, the New Orleans Jazz Museum is in the heart of the city’s music scene.</Typography>
+              <Typography></Typography>
             </Accordion>
           </ImageListItem>
         </ImageList>

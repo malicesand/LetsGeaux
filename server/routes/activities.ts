@@ -8,9 +8,6 @@ const prisma = new PrismaClient;
 activityRouter.post('/', async (req:any, res:any) => {
 
   try {
-    console.log('under here')
-    console.log(req.body);
-    console.log('over here---------------------------------------------')
     const newActivity = await prisma.activity.create(req.body)
     res.status(201).json(newActivity);
 
