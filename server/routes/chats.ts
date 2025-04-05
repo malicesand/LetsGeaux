@@ -5,8 +5,12 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const apiKey = process.env.GOOGLE_API_KEY;
 const genAI = new GoogleGenAI({apiKey});
-import { chatHistory } from '../../types/models'
+// import { chatHistory } from '../../types/models'
 import { PromptKey, prompts, contextKeywords} from '../../types/prompt.ts';
+
+// * ROUTING * //
+const chatsRoute = express.Router()
+
 // * CONTEXT * //
 const detectContext = (input: string): PromptKey => {
   let lowerCaseMessage = input.toLowerCase();
@@ -14,35 +18,31 @@ const detectContext = (input: string): PromptKey => {
   const detectedContext = (Object.keys(contextKeywords) as PromptKey[]).find((key) =>
   contextKeywords[key].some((keyword) => lowerCaseMessage.includes(keyword)) );
   return detectedContext || "default";
-}
+};
 
 
-// * ROUTING * //
-const chatsRoute = express.Router()
+// * Request Handling *//
 
+// Get Chat History
 chatsRoute.get('/:sessionId', async (req: Request, res: Response) => {
-  // chat history retrieval
-  // session id = req params
-  // messages = find many w/ session Id
+  const { userId } = req.body;
+  // const convoHistory =
 });
 
 //* Session Id *//
 chatsRoute.post('/new-session', (req: Request, res: Response) => {
   const sessionId: string = uuidv4();
   res.json({ sessionId });
-  console.log('Session ID created for this chat:', sessionId) 
+  // console.log('Session ID created for this chat:', sessionId) 
 });
 
+//* Conversation *//
 chatsRoute.post('/', async (req: Request, res: Response ) => {
   const { userMessage, userId, sessionId} = req.body;
-  
-  // let conversationId = sessionId || uuidv4();
-  // check for ID or create
-  
   // fetch context
-  // let lastContext =  // TODO context handling for replies and history
-  console.log(sessionId)
- 
+  
+  // console.log(sessionId)
+  
   const convoHistory = await prisma.chatHistory.upsert({
     where: { sessionId },
     update: { lastActive: new Date()},
@@ -51,12 +51,21 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
       userId
     }
   })
+  let messages = await prisma.message.findMany({
+    where: { sessionId : sessionId },
+    orderBy: { timeStamp: 'asc'},
+  });
+
+  // console.log(messages.length);
+  //  context handling for replies and history
+  // if (messages.length > )
+  
   
   const context = detectContext(userMessage);
   const prompt = prompts[context] 
   
   try {
-    const response = await genAI.models.generateContent({ // TODO type
+    const response = await genAI.models.generateContent({ 
       model: 'gemini-2.0-flash',
       contents: prompt, 
 
@@ -71,9 +80,9 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
       sessionId: sessionId
     }
   })
-  console.log('successful convo')
+  // console.log('successful convo')
   res.json(aIReply);
-    } catch (error) { // TODO make type
+    } catch (error) { 
       console.error(error);
       res.status(500).json({ error: 'Server Error returning prompt.'});
     }
