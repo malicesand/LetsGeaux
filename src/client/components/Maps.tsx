@@ -27,7 +27,7 @@ const Maps = () => {
   const [itinerary, setItinerary] = useState<Array<any>>([]); // Change to any for better handling of data
   const [openModal, setOpenModal] = useState<boolean>(false); // State to 
 const [routeInfo, setRouteinfo] = useState<number>(0)
-const [itinteraryId, setItineraryId]= useState<number>(0)
+
   const mapRef = useRef<google.maps.Map | null>(null);
   const directionsRenderer = useRef<google.maps.DirectionsRenderer | null>(null);
   const directionsService = useRef<google.maps.DirectionsService | null>(null);
@@ -49,23 +49,23 @@ const [itinteraryId, setItineraryId]= useState<number>(0)
   }, []);
 
    
-    const handleSelectItinerary = async (itineraryId: string,routeInfo:number ) => {
-      try {
-   
-        const response = await axios.patch(`/api/maps/${routeInfo}`, {
-          itineraryId
-        });
+  const handleSelectItinerary = (itineraryId: number, routeInfo: number) => {
+    console.log('handleSelectItinerary called with:', itineraryId, routeInfo); // Check if this is being logged
+  
+    axios.patch(`/api/maps/${routeInfo}`, { itineraryId })
+      .then((response:any) => {
+        console.log('Response from PATCH request:', response); // Check if this logs the response
         
         if (response.status === 200) {
-          console.log('Itinerary added successfully');
-          setOpenModal(false); // Close the modal after successful selection
-        } else {
-          console.error('Failed to add itinerary');
+          console.log('Itinerary added successfully:', response);
+          navigate('/routechoices', { state: { itineraryId } });
+          setOpenModal(false);
         }
-      } catch (error) {
-        console.error('Error during PATCH request:', error);
-      }
-    };
+      })
+      .catch((error:any) => {
+        console.error('Error during PATCH request:', error); // Catch and log errors
+      });
+  };
 
   // Function to fetch directions and calculate the travel time
   const fetchDirections = async () => {
@@ -139,7 +139,7 @@ const [itinteraryId, setItineraryId]= useState<number>(0)
       suppressMarkers: true,
     });
   };
-
+  
   const saveTravel = async (origin: string, destination: string, travelTime: string) => {
     try {
       const response = await axios.post('/api/maps', {
@@ -269,8 +269,10 @@ const [itinteraryId, setItineraryId]= useState<number>(0)
                     <Typography variant="h6">{trip.name}</Typography>
                     <Typography>{trip.notes}</Typography>
                   </CardContent>
-                  {setItinerary(trip.id)}
-                  <Button onClick={()=>handleSelectItinerary(trip.id, routeInfo)}>Select</Button>
+                 
+                  <Button onClick={()=>handleSelectItinerary(trip.id, routeInfo) }>
+                  Select</Button>
+                 
                 </Card>
               ))
             ) : (
