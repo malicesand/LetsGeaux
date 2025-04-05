@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-import { user } from '../../../types/models.ts';
+import { user } from '../../../../types/models.ts';
 
 
 interface ChatMessage {
@@ -39,7 +39,7 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
           localStorage.setItem('sessionId', data.sessionId);
           setSessionId(data.sessionId);
         });
-        console.log(sessionId)
+        // TODO have chat greet user on mount
     }
 
 

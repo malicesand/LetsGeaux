@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const apiKey = process.env.GOOGLE_API_KEY;
 const genAI = new GoogleGenAI({apiKey});
-// import { chatHistory } from '../../types/models'
+import { chatHistory } from '../../types/models'
 import { PromptKey, prompts, contextKeywords} from '../../types/prompt.ts';
 
 // * ROUTING * //
@@ -57,7 +57,7 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
   });
 
   // console.log(messages.length);
-  //  context handling for replies and history
+  // TODO context handling for replies and history
   // if (messages.length > )
   
   
@@ -65,7 +65,7 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
   const prompt = prompts[context] 
   
   try {
-    const response = await genAI.models.generateContent({ 
+    const response = await genAI.models.generateContent({ // TODO type
       model: 'gemini-2.0-flash',
       contents: prompt, 
 
@@ -82,7 +82,7 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
   })
   // console.log('successful convo')
   res.json(aIReply);
-    } catch (error) { 
+    } catch (error) { // TODO make type
       console.error(error);
       res.status(500).json({ error: 'Server Error returning prompt.'});
     }

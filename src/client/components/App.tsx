@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   Routes,
   Route,
   BrowserRouter as Router,
@@ -7,16 +7,16 @@ import {
   useNavigate,
   Navigate,
   useLocation,
-  Link  } from 'react-router-dom';
+  Link
+} from 'react-router-dom';
 import axios from 'axios';
-
 
 // feature routes
 import Home from './Home.tsx';
 import Login from './Login.tsx';
-import Maps from './Maps.tsx'
-import Suggestions from './Suggestions.tsx'
-import ChatBot from './ChatBot.tsx'
+import Maps from './Maps.tsx';
+import Suggestions from './Suggestions.tsx';
+import ChatBot from './Chat/ChatBot.tsx';
 import Itinerary from './Itineraray.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 import Activities from './Activities.tsx';
@@ -26,15 +26,13 @@ import Calendar from './Calendar.tsx';
 import RouteChoices from './RouteChoices.tsx'
 import { user } from '../../../types/models.ts';
 
-
-
-
-const App: React.FC= () => {
+const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<user | null>(null)
+  const [user, setUser] = useState<user | null>(null);
   // Check Auth
   useEffect(() => {
-    const checkAuth = async () => { //? type 
+    const checkAuth = async () => {
+      //? type
       try {
         const response = await axios.get('/api/check-auth');
         setIsAuthenticated(response.data.isAuthenticated);
@@ -44,23 +42,23 @@ const App: React.FC= () => {
           setUser(fetchedUser);
           localStorage.removeItem('sessionId');
         }
-      }
-      catch (error) {
+      } catch (error) {
         setIsAuthenticated(false);
         console.error('Server: Err checking auth status', error);
       }
     };
-    checkAuth(); 
-  }, []); 
-  
-  // Protected Route
-  const ProtectedRoute: React.FC<{children: React.ReactNode}> = ({children}) => {
-    if (!isAuthenticated) {
-      return <Navigate to="/login" replace />;
-    }
-    return <>{children}</>
-  };
+    checkAuth();
+  }, []);
 
+  // Protected Route
+  const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+    children
+  }) => {
+    if (!isAuthenticated) {
+      return <Navigate to='/login' replace />;
+    }
+    return <>{children}</>;
+  };
 
   return (
     <Routes>
@@ -109,7 +107,7 @@ const App: React.FC= () => {
       </ProtectedRoute>
       } />
     </Routes>
-  )
+  );
 };
 
 export default App;
