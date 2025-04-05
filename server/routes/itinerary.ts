@@ -1,12 +1,19 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import { userInfo } from 'os';
+import { user } from '../../types/models.ts';
+
+
 const prisma = new PrismaClient();
 
 const itineraryRoute = express.Router();
 
 itineraryRoute.get('/', async (req: any, res: any )=>{
+ 
 try{
-  const itineraries = await prisma.itinerary.findMany()
+  const itineraries = await prisma.itinerary.findMany({
+   where: {creatorId : req.user.id}
+  })
 res.status(200).json(itineraries)
 }catch(error){
 res.status(500).json({error: 'Error fetching itinerary'})
