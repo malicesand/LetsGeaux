@@ -13,4 +13,5 @@ export {
   budget,
   chatHistory,
   message,
+  
 } from '@prisma/client';
