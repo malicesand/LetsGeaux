@@ -8,7 +8,7 @@ import {
   Stack,
 } from '@mui/material';
 
-// Function to color the progress bar based on budget usage
+// Function to color the progress bar based on users budget usage
 function getProgressColor(value: number): 'primary' | 'warning' | 'error' {
   if (value < 50) return 'primary';
   if (value < 85) return 'warning';
