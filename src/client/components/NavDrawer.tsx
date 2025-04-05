@@ -27,6 +27,7 @@ import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
 import ChatIcon  from '@mui/icons-material/TryOutlined';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import EventIcon from '@mui/icons-material/Event';
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 
 const drawerWidth = 240;
 
@@ -135,15 +136,7 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
-            {/* calendar
-            <ListItem key={'calendar'} disablePadding>
-              <ListItemButton component={Link}to='/calendar' onClick={handleDrawerClose}>
-                <ListItemIcon>
-                  <EventIcon />
-                </ListItemIcon>
-                <ListItemText primary={'Calendar'} />
-              </ListItemButton>
-            </ListItem> */}
+          
             {/* itinerary */}
             <ListItem key={'itinerary'} disablePadding>
               <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
@@ -176,6 +169,14 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary="Route Choices" />
               </ListItemButton>
             </ListItem>
+            <ListItem key={'Activities'} disablePadding>
+              <ListItemButton component={Link} to="/activities" onClick={handleDrawerClose}>
+                <ListItemIcon>
+                <LocalActivityIcon />
+                </ListItemIcon>
+                <ListItemText primary="Activities" />
+              </ListItemButton>
+            </ListItem>
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
               <ListItemButton component={Link} to='/logout' onClick={handleLogout}>
@@ -185,7 +186,7 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Logout'} />
               </ListItemButton>
             </ListItem>
-            
+            {/* Activites */}
 
         </List>
       </Drawer>
