@@ -246,7 +246,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
         </Box>
 
         <Box mt={4}>
-          <Typography variant="h5">Created Itineraries</Typography>
+          <Typography variant="h5">Create Your Itinerary</Typography>
           {itineraries.map((itinerary, index) => (
             <Card key={index} sx={{ mb: 2 }}>
               <CardContent>
