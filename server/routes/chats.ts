@@ -47,6 +47,7 @@ chatsRoute.get('/chat-history/:userId', async (req: Request, res: Response) => {
       res.status(500).json({error: 'failed to fetch user chat history'})
   }
 });
+
 //* Get Messages from a Session *//
 chatsRoute.get('/messages/:sessionId', async (req: Request, res, Response) => {
   const {sessionId} = req.params;
@@ -134,6 +135,7 @@ chatsRoute.patch('/chat-history/:sessionId', async (req: Request, res: Response)
 
 
 });
+
 //* Delete a Conversation *//
 chatsRoute.delete('/:sessionId', async (req: Request, res: Response) => {
   const {sessionId} = req.params;
