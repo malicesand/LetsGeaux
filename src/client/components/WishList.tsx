@@ -19,9 +19,9 @@ const Wishlist: React.FC<WishlistProps> = ({user}) => {
     // }).catch((err) => console.error('did not grab wishes', err))
     // console.log('still gotta get em');
   }
-  useEffect(() => {
-    getAllWishlistSuggestions();
-  }, [])
+  // useEffect(() => {
+  //   getAllWishlistSuggestions();
+  // }, [])
 
   return (
     <div>Stuff here</div>

@@ -18,4 +18,17 @@ wishlistRouter.get('/:userId', async (req:any, res:any) => {
   }
 })
 
+wishlistRouter.delete('/:suggestionId/:userId', (req: any, res: any) => {
+  const { suggestionId, userId } = req.params
+  const killWish = await prisma.userOnsuggestion.destroy({
+    where: {
+      userId: +userId,
+      suggestionId: +suggestionId,
+    }
+  }).then().catch((err) => {
+    console.error('failed to remove list item', err);
+    res.sendStatus(500);
+  }) 
+})
+
 export default wishlistRouter;
