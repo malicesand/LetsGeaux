@@ -12,24 +12,27 @@ const Wishlist: React.FC<WishlistProps> = ({user}) => {
   const [listing, setListing] = useState(true);
   const [listSet, setListSet] = useState([]);
   const getAllWishlistSuggestions = () => {
-    axios.get(`/api/wishlist/${user.id}`).then(({data}) => {
-      setListSet(data);
-    }).catch((err) => console.error('did not grab wishes', err))
-    console.log('still gotta get em');
+    console.log('lawd, she tryin');
+    // axios.get(`/api/wishlist/${user.id}`).then((data) => {
+    //   console.log(data)
+    //   setListSet(data);
+    // }).catch((err) => console.error('did not grab wishes', err))
+    // console.log('still gotta get em');
   }
   useEffect(() => {
     getAllWishlistSuggestions();
   }, [])
 
   return (
-    <Container>
-      {listSet.map((listSuggestion) => (
+    <div>Stuff here</div>
+    // <Container>
+    //   {listSet.map((listSuggestion) => (
 
-        <Card key={listSuggestion.id}>
-          <Suggestion listSuggestion={listSuggestion} listing={listing} setListing={setListing} />
-        </Card>
-      ))}
-    </Container>
+    //     <Card key={listSuggestion.id}>
+    //       <Suggestion listSuggestion={listSuggestion} listing={listing} setListing={setListing} />
+    //     </Card>
+    //   ))}
+    // </Container>
   )
 }
 
