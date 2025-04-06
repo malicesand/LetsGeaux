@@ -27,10 +27,16 @@ interface BudgetEntry {
 const BudgetOverview: React.FC = () => {
   const [budgets, setBudgets] = useState<BudgetEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [itineraries, setItineraries] = useState([]);
+  const [selectedItineraryId, setSelectedItineraryId] = useState<number | null>(null);
+
 
   useEffect(() => {
+    if (selectedItineraryId === null) return;
+
+    setLoading(true);
     api
-      .get('/budget')
+      .get(`/budget/itinerary/${selectedItineraryId}`)
       .then((res) => {
         console.log('Budget response:', res.data);
 
@@ -41,6 +47,13 @@ const BudgetOverview: React.FC = () => {
       .catch((err) => console.error('Fetch budget error:', err))
       .finally(() => setLoading(false));
   }, []);
+  useEffect(() => {
+    api.get('/itinerary') // maybe wrong endpoint
+      .then(res => setItineraries(res.data))
+      .catch(err => console.error('Error fetching itineraries:', err));
+      //trigger when itinerary changes
+  }, [selectedItineraryId]);
+  
 
   if (loading) return <CircularProgress sx={{ m: 4 }} />;
 
@@ -70,7 +83,6 @@ const BudgetOverview: React.FC = () => {
               backgroundColor: '#f9f9f9',
             }}
           >
-            {/* ✅ Icon and Category Inline */}
             <Stack direction="row" alignItems="center" spacing={1}>
               <AttachMoneyIcon sx={{ color: 'green' }} />
               <Typography variant="h6">{budget.category}</Typography>
