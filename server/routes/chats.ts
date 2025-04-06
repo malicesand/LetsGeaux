@@ -116,7 +116,20 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
 chatsRoute.patch('/chat-history/:sessionId', async (req: Request, res: Response) => {
   // Name a session/ change it's name
   const {sessionId} = req.params;
-  const {convoName} = req.body;
+  console.log(sessionId)
+  console.log(req.body)
+  const {conversationName} = req.body
+  console.log(conversationName)
+  try {
+    const updateConvoName = await prisma.chatHistory.update({
+      where: { sessionId },
+      data: { conversationName }
+    });
+    res.status(200).json(updateConvoName);
+  } catch (error) {
+    console.error('could not save/change conversation name', error);
+    res.status(500).json({error: 'failed  to change/save conversation name'});
+  }
 
 
 
