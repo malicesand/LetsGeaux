@@ -36,21 +36,34 @@ wishlistRouter.get('/:userId', async (req:any, res:any) => {
 })
 
 wishlistRouter.patch('/:suggestionId/:userId', async (req: any, res: any) => {
-  const { suggestionId, userId } = req.params
-  const killWish = await prisma.userOnsuggestion.destroy({
-    where: {
-      userId: +userId,
-      suggestionId: +suggestionId,
-    }
-  }).then(() => res.status(200).send('wish removed')).catch((err) => {
+  try {
+
+    const { suggestionId, userId } = req.params
+    console.log('ids', suggestionId, userId);
+    const findWish = await prisma.userOnsuggestion.findFirst({
+      where: {
+        userId: +userId,
+        suggestionId: +suggestionId,
+      },
+      select: {id: true}
+
+    })
+    console.log(findWish)
+    const killWish = await prisma.userOnsuggestion.delete({
+      where: {
+        id: findWish.id
+      },
+    })
+    res.status(200).send('wish removed')
+  } catch (err) {
     console.error('failed to remove list item', err);
     res.sendStatus(500);
-  })
-});
+  }
+})
 
 wishlistRouter.delete('/:userId', async (req:any, res:any) => {
   const { userId } = req.params;
-  const killAllWishes = await prisma.userOnsuggestion.destroyMany({
+  const killAllWishes = await prisma.userOnsuggestion.deleteMany({
     where: {
       userId: +userId
     }

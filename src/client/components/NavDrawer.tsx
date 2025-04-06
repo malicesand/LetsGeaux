@@ -28,6 +28,9 @@ import ChatIcon  from '@mui/icons-material/TryOutlined';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import EventIcon from '@mui/icons-material/Event';
 import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';
+import AppShortcut from '@mui/icons-material/AppShortcut';
+import App from './App';
+import { Apps } from '@mui/icons-material';
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -139,7 +142,7 @@ const NavDrawer: React.FC = () => {
              <ListItem key={'wishlist'} disablePadding>
                <ListItemButton component={Link}to='/wishlist' onClick={handleDrawerClose}>
                  <ListItemIcon>
-                   <EventIcon />
+                   <AppShortcut />
                  </ListItemIcon>
                  <ListItemText primary={'Wishlist'} />
                </ListItemButton>

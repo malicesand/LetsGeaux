@@ -25,6 +25,7 @@ const Wishlist: React.FC<WishlistProps> = ({ user }) => {
       {wishlistSuggs.map((currentSuggestion) => (
         <Card key={currentSuggestion.id}>
           <Suggestion
+            user={user}
             wishMode={wishMode}
             currentSuggestion={currentSuggestion}
             getAllWishlistSuggestions={getAllWishlistSuggestions}

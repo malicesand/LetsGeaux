@@ -52,7 +52,14 @@ Faded translucent accordion to be set by lunch tomorrow.  [https://mui.com/mater
 
 
 // const Grid = Grid2;
-const Suggestion: React.FC<SuggestionProps> = ({ user, currentSuggestion, getAllSuggestions, setSuggestionEditMode, listSuggestion, wishMode, /* setEditableSuggestion}*/ }) => {
+const Suggestion: React.FC<SuggestionProps> = ({
+  user,
+  currentSuggestion,
+  getAllSuggestions,
+  wishMode,
+  getAllWishlistSuggestions,
+  /*listSuggestion, setEditableSuggestion}*/
+}) => {
   const [expanded, toggleExpanded] = useState(false);
 
 
@@ -103,6 +110,13 @@ const Suggestion: React.FC<SuggestionProps> = ({ user, currentSuggestion, getAll
     axios.post(`/api/suggestions/${user.id}`, details).then(() => { }).catch(err => console.error('unable to save suggestion', err))
   }
 
+const handleRemoveFromWishlist = () => {
+  axios.patch(`/api/wishlist/${currentSuggestion.id}/${user.id}`)
+  .then(() => {
+    getAllWishlistSuggestions();
+  })
+  .catch((err) => console.error('sorry, tex', err));
+}
 
   const handleExpansion = () => {
     toggleExpanded((prevExpanded) => !prevExpanded)
@@ -118,7 +132,12 @@ const Suggestion: React.FC<SuggestionProps> = ({ user, currentSuggestion, getAll
           {/* <Typography variant="h3">Featured Foray:</Typography> */}
           {/* <Button variant="filled">Next attraction</Button> */}
           <Button variant="filled">add to activities!</Button>
+          {wishMode
+          ?
+          <Button onClick={handleRemoveFromWishlist}>Remove from wishlist</Button>
+          :
           <Button onClick={addToWishlist} variant="filled">add to wishlist!</Button>
+          }
           <ImageList>
             <ImageListItem key="ItemText" cols={4}>
               <ListItemText >
