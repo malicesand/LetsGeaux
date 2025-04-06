@@ -22,19 +22,35 @@ const detectContext = (input: string): PromptKey => {
 // * Request Handling *//
 // Get Chat History
 chatsRoute.get('/chat-history/:userId', async (req: Request, res: Response) => {
-  // find chatBot conversations for current user
-  const {userId} = req.params
+  const {userId} = req.params;
+
   try {
     const chatHistories = await prisma.chatHistory.findMany({
       // request handling manipulates type => convert to number
       where: {userId: Number(userId)}
     })
-    console.log('found user sessions');
+    console.log(chatHistories[0].sessionId);
     res.json(chatHistories)
  
   } catch (error) {
       console.error(error);
       res.status(500).json({error: 'failed to fetch user chat history'})
+  }
+});
+
+chatsRoute.get('/messages/:sessionId', async (req: Request, res, Response) => {
+  const {sessionId} = req.params;
+
+  try {
+    const sessionMessages = await prisma.message.findMany({
+      where: {sessionId: sessionId}
+    })
+    console.log('found session messages', sessionMessages);
+    res.json(sessionMessages)
+    
+  } catch (error) {
+    console.error('server faild to find session messagess', error);
+    res.status(500).json({error: 'failed to fetch user history messahes'})
   }
 });
 
