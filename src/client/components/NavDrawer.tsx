@@ -28,6 +28,7 @@ import ChatIcon  from '@mui/icons-material/TryOutlined';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import EventIcon from '@mui/icons-material/Event';
 import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 const drawerWidth = 240;
 
@@ -158,7 +159,7 @@ const NavDrawer: React.FC = () => {
             {/* Budget Buddy */}
             <ListItem key={'BudgetBuddy'} disablePadding>
               <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
-                <ListItemIcon>💰</ListItemIcon>
+                <ListItemIcon><AttachMoneyIcon sx={{ color: 'grey' }} /></ListItemIcon>
                 <ListItemText primary="Budget Buddy" />
               </ListItemButton>
             </ListItem>
