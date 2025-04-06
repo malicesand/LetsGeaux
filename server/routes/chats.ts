@@ -45,12 +45,12 @@ chatsRoute.get('/messages/:sessionId', async (req: Request, res, Response) => {
     const sessionMessages = await prisma.message.findMany({
       where: {sessionId: sessionId}
     })
-    console.log('found session messages', sessionMessages);
+    // console.log('found session messages', sessionMessages);
     res.json(sessionMessages)
     
   } catch (error) {
-    console.error('server faild to find session messagess', error);
-    res.status(500).json({error: 'failed to fetch user history messahes'})
+    console.error('server failed to find session messages', error);
+    res.status(500).json({error: 'failed to fetch user history messages'})
   }
 });
 
