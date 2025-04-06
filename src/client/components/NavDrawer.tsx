@@ -135,16 +135,16 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
-            {/* calendar
-            <ListItem key={'calendar'} disablePadding>
-              <ListItemButton component={Link}to='/calendar' onClick={handleDrawerClose}>
-                <ListItemIcon>
-                  <EventIcon />
-                </ListItemIcon>
-                <ListItemText primary={'Calendar'} />
-              </ListItemButton>
-            </ListItem> */}
-            {/* itinerary */}
+            calendar
+             <ListItem key={'wishlist'} disablePadding>
+               <ListItemButton component={Link}to='/wishlist' onClick={handleDrawerClose}>
+                 <ListItemIcon>
+                   <EventIcon />
+                 </ListItemIcon>
+                 <ListItemText primary={'wishlist'} />
+               </ListItemButton>
+             </ListItem>
+             {/* wishlist*/}
             <ListItem key={'itinerary'} disablePadding>
               <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
                 <ListItemIcon>

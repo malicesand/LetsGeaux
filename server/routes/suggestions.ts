@@ -133,7 +133,7 @@ suggestionRouter.post('/:userId', async(req: any, res: any) => {
         suggestionId: id,
       }
     }
-    const wishlist = await prisma.userOnsuggestion.create(wishObj)
+    const wishlistUserSuggestion = await prisma.userOnsuggestion.create(wishObj)
     res.sendStatus(201);
   } catch(err) {
     console.error('failed to add Suggestion', err);
