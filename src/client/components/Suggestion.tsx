@@ -110,6 +110,29 @@ const Suggestion: React.FC<SuggestionProps> = ({
     axios.post(`/api/suggestions/${user.id}`, details).then(() => { }).catch(err => console.error('unable to save suggestion', err))
   }
 
+  const handleAddToActivities = () => {
+    const details = {
+      data: {
+        address,
+        description,
+        phone: phoneNum,
+        name: title,
+      }
+  }
+  axios.post('/api/activity', details).then(() => {
+    if (wishMode) {
+      handleRemoveFromWishlist()
+    }
+  }).then(() => {
+    if (wishMode) {
+      getAllWishlistSuggestions();
+    }
+  }).catch((err) => {
+    console.error('unable to change suggestion', err);
+  })
+}
+
+
 const handleRemoveFromWishlist = () => {
   axios.patch(`/api/wishlist/${currentSuggestion.id}/${user.id}`)
   .then(() => {
@@ -131,7 +154,7 @@ const handleRemoveFromWishlist = () => {
         <Card>
           {/* <Typography variant="h3">Featured Foray:</Typography> */}
           {/* <Button variant="filled">Next attraction</Button> */}
-          <Button variant="filled">add to activities!</Button>
+          <Button variant="filled" onClick={handleAddToActivities}>add to activities!</Button>
           {wishMode
           ?
           <Button onClick={handleRemoveFromWishlist}>Remove from wishlist</Button>

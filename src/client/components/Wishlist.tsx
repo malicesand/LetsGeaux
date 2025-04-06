@@ -20,6 +20,16 @@ const Wishlist: React.FC<WishlistProps> = ({ user }) => {
     }).catch((err) => console.error('unable to retrieve wishlist', err));
   }
   useEffect(() => getAllWishlistSuggestions(), []);
+
+const handleListDelete = () => {
+  axios.delete(`/api/wishlist/${user.id}`).then(() => {
+    getAllWishlistSuggestions();
+  }).catch((err) => {
+    console.error('unable to delete list', err);
+  })
+}
+
+
   return (
     <Container>
       {wishlistSuggs.map((currentSuggestion) => (
@@ -33,7 +43,13 @@ const Wishlist: React.FC<WishlistProps> = ({ user }) => {
         </Card>
 
       ))}
-      <Button>Delete entire wishlist</Button>
+      {wishlistSuggs.length
+      ? (
+        <Button onClick={handleListDelete}>Delete entire wishlist</Button>
+
+      ) : (
+        <Typography>Add new excursions to your wishlist on the Suggestions Page!</Typography>
+      )}
     </Container>
   )
 }

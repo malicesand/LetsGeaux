@@ -80,8 +80,8 @@ model itinerary {
 
 model activity {
   id          Int        @id @default(autoincrement())
-  name        String?    @db.VarChar(50)
-  description String     @db.VarChar(200)
+  name        String?    @db.VarChar(100)
+  description String     @db.VarChar(500)
   address     String?
   phone       String?    @db.VarChar(150)
   time        String?
