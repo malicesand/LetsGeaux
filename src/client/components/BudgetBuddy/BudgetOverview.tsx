@@ -7,7 +7,7 @@ import {
   Box,
   Stack,
 } from '@mui/material';
-
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 // Function to color the progress bar based on users budget usage
 function getProgressColor(value: number): 'primary' | 'warning' | 'error' {
   if (value < 50) return 'primary';
@@ -70,11 +70,18 @@ const BudgetOverview: React.FC = () => {
               backgroundColor: '#f9f9f9',
             }}
           >
-            <Typography variant="h6">{budget.category}</Typography>
+            {/* ✅ Icon and Category Inline */}
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <AttachMoneyIcon sx={{ color: 'green' }} />
+              <Typography variant="h6">{budget.category}</Typography>
+            </Stack>
+
             <Typography>{budget.notes}</Typography>
+
             <Typography variant="body2">
               ${budget.spent?.toFixed(2) || 0} of ${budget.limit}
             </Typography>
+
             <LinearProgress
               variant="determinate"
               value={percent}
@@ -87,5 +94,6 @@ const BudgetOverview: React.FC = () => {
     </Box>
   );
 };
+
 
 export default BudgetOverview;

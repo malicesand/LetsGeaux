@@ -38,6 +38,25 @@ router.get('/categories', async (req, res) => {
   }
 });
 
+// GET all budget entries for BudgetOverview LinearProgress UI
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const budgets = await prisma.budget.findMany({
+      orderBy: { updatedAt: 'desc' }
+    });
+
+    const parsed = budgets.map((b) => ({
+      ...b,
+      spent: Number(b.spent),
+      limit: Number(b.limit),
+    }));
+
+    res.json(parsed);
+  } catch (error) {
+    console.error('Error FETCHING all budgets:', error);
+    res.status(500).json({ message: 'Error retrieving budgets', error });
+  }
+});
 
 
 // Create a new budget entry
@@ -55,7 +74,7 @@ router.post('/', async (req: Request, res: Response) => {
         limit: Number(limit),
         category: category || 'Uncategorized',
         notes: notes || '',
-        spent, // default to 0
+        spent: spent !== undefined ? Number(spent) : 0,
         groupItinerary_id: null,
         createdAt: new Date(),
         updatedAt: new Date()
