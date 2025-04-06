@@ -174,7 +174,7 @@ const BudgetPieChart: React.FC = () => {
             fullWidth
             margin="dense"
             value={editForm.category}
-            onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+            disabled
           />
           <TextField
             label="Limit"
