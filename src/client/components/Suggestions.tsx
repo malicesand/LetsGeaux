@@ -3,9 +3,12 @@ import axios from 'axios';
 import SuggestionForm from './SuggestionForm';
 import { Container, Card, Typography, Dialog, Grid, Avatar, Input, InputLabel, Button, SpeedDial, CircularProgress } from '@mui/material'
 import Suggestion from './Suggestion';
+import { user } from '../../../types/models.ts';
 
-// const Grid = Grid2;
-const Suggestions = () => {
+interface SuggestionsProps {
+  user: user;
+}
+const Suggestions: React.FC<SuggestionsProps>= ({ user }) => {
 
   const [editableSuggestion, setEditableSuggestion] = useState({});
   const [suggestionSet, setSuggestionSet] = useState([]);
@@ -29,6 +32,7 @@ const Suggestions = () => {
       {suggestionSet.map((currentSuggestion) => (
         <Card key={currentSuggestion.id}>
           <Suggestion
+          user={user}
           currentSuggestion={currentSuggestion}
           getAllSuggestions={getAllSuggestions}
           setSuggestionEditMode={setSuggestionEditMode}

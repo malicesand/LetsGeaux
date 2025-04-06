@@ -91,6 +91,7 @@ suggestionRouter.get('/search', async (req:any, res:any) => {
    const locations: number[] = await getTripadvisorLocationIds().then((stuff) => {
     getTripadvisorDetailedEntries(stuff).then((entries) => {
       console.log('ent', entries);
+      // getTripAdvisorImage(locations)
       res.status(200).send(entries);
     })
 
@@ -103,40 +104,32 @@ suggestionRouter.get('/search', async (req:any, res:any) => {
   }
   })
    
-//    const entries = await getTripadvisorDetailedEntries(locations)
-//  } catch (err) {
-//  }
-  //    console.log('after 2nd return')
-  //    console.log(entries);
-  //    console.log('no yo');
-  //   })
-    // .then(locations => {
-    // })
-
-   // .then((locations) => {
-    // res.status(200).send(locations);
-    // console.log("locations");
-    //   getTripadvisorDetailedEntries().then((detailedEntries) => {
-      //     console.log(detailedEntries);
-      // })
-      // }).catch((err) => {
-      // } catch(err) {
-      //     console.error('failed to get suggestions', err);
-      //       res.sendStatus(500);
-
-      // }
-  // })
-
 
 // GET request handling
 suggestionRouter.get('/', async (req: any, res: any) => {
 
-  const allSugg = await prisma.suggestion.findMany().then(()=> {
-    res.status(200).send('looks Like we Made it!!!');
-  }).catch((err:any) => {
+  try {
+
+    const allSuggs = await prisma.suggestion.findMany();
+    console.log(allSuggs)
+    res.status(200).send('an answer', allSuggs.data);
+  } catch( err:any) {
     console.error("FAIL!!", err);
     res.sendStatus(500);
-  });
+  };
 })
+
+// POST requests from suggestions page (suggestion component)
+suggestionRouter.post('/', async(req: Request, res: Response) => {
+    
+  try {
+
+    const newSuggestion = await prisma.suggestion.create(req.body)
+    res.status(201).json(newSuggestion)
+  } catch(err) {
+    console.error('failed to add Suggestion', err);
+    res.sendStatus(500);
+  }
+});
 
 export default suggestionRouter;

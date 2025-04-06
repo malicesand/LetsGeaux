@@ -79,7 +79,7 @@ const App: React.FC= () => {
       }/>
       <Route path="/suggestions" element={
         <ProtectedRoute>
-          <Suggestions/>
+          {user && <Suggestions user = {user} />}
         </ProtectedRoute>
       }/>
       <Route path="/chatbot" element={
