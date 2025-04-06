@@ -45,10 +45,10 @@ model suggestion {
   created_at    DateTime           @default(now())
   timeAvailable String?
   cost          Int?
-  address       String             @db.VarChar(50)
-  description   String             @db.MediumText
-  image         String?            @db.TinyText
-  phoneNum      String?            @db.VarChar(15)
+  address       String             @db.VarChar(100)
+  description   String             @db.Text
+  image         String?            @db.Text
+  phoneNum      String?            @db.VarChar(50)
   userId        Int?
   latitude      String?
   longitude     String?
