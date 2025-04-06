@@ -169,14 +169,14 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary="Route Choices" />
               </ListItemButton>
             </ListItem>
-            <ListItem key={'Activities'} disablePadding>
+            {/* <ListItem key={'Activities'} disablePadding>
               <ListItemButton component={Link} to="/activities" onClick={handleDrawerClose}>
                 <ListItemIcon>
                 <LocalActivityIcon />
                 </ListItemIcon>
                 <ListItemText primary="Activities" />
               </ListItemButton>
-            </ListItem>
+            </ListItem> */}
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
               <ListItemButton component={Link} to='/logout' onClick={handleLogout}>

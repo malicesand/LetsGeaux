@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Box, TextField, Button, Typography } from '@mui/material';
+import { Container, Box, TextField, Button, Typography, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import axios from 'axios';
 
-// Define the Activity type interface
 interface Activity {
+  
   id: string;
   name: string;
   description: string;
@@ -13,13 +13,17 @@ interface Activity {
   image: string;
   phone: string;
   address: string;
+  itineraryId: string;
 }
 
-const Activity: React.FC = () => {
-  // State to store activities
+interface Props {
+  itineraryId: string;
+  addActivity: (itineraryId: string, activityData: any) => Promise<void>;
+
+}
+
+const Activity: React.FC<Props> = ({ itineraryId }) => {
   const [activities, setActivities] = useState<Activity[]>([]);
-  
-  // State for the form
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -30,22 +34,23 @@ const Activity: React.FC = () => {
     image: '',
     phone: '',
     address: '',
+    itineraryId: itineraryId,
   });
+  const [open, setOpen] = useState(false);  // Modal open state
 
-  // Get activities from the server
+  // Fetch activities when the component mounts
   useEffect(() => {
     const getActivities = async () => {
       try {
-        const response = await axios.get('/api/activity');
+        const response = await axios.get(`/api/activity/${itineraryId}`);
         setActivities(response.data);
       } catch (err) {
         console.error('Error fetching activities:', err);
       }
     };
     getActivities();
-  }, []);
+  }, [itineraryId]);
 
-  // Handle form input changes
   const handleChange = (e: React.ChangeEvent<{ name?: string; value: any }>) => {
     const { name, value } = e.target;
     if (name) {
@@ -56,18 +61,17 @@ const Activity: React.FC = () => {
     }
   };
 
-  // POST a new activity
   const postActivity = async () => {
     try {
       const response = await axios.post('/api/activity', formData);
-      setActivities([...activities, response.data]); // Add new activity to the list
-      resetForm(); // Reset form after adding
+      setActivities([...activities, response.data]);
+      resetForm();
+      setOpen(false);  // Close modal after adding activity
     } catch (err) {
       console.error('Error creating activity:', err);
     }
   };
 
-  // PATCH (update an activity)
   const updateActivity = async () => {
     try {
       const updatedActivity = { ...formData };
@@ -75,13 +79,13 @@ const Activity: React.FC = () => {
       setActivities(activities.map((activity) =>
         activity.id === formData.id ? response.data : activity
       ));
-      resetForm(); // Reset form after update
+      resetForm();
+      setOpen(false);  // Close modal after updating activity
     } catch (err) {
       console.error('Error updating activity:', err);
     }
   };
 
-  // DELETE an activity
   const deleteActivity = async (id: string) => {
     try {
       await axios.delete(`/api/activity/${id}`);
@@ -91,7 +95,6 @@ const Activity: React.FC = () => {
     }
   };
 
-  // Reset the form after adding/updating an activity
   const resetForm = () => {
     setFormData({
       id: '',
@@ -103,10 +106,10 @@ const Activity: React.FC = () => {
       image: '',
       phone: '',
       address: '',
+      itineraryId: itineraryId,
     });
   };
 
-  // Handle update button click (pre-fill form for updating)
   const handleUpdateClick = (activity: Activity) => {
     setFormData({
       id: activity.id,
@@ -118,100 +121,122 @@ const Activity: React.FC = () => {
       image: activity.image,
       phone: activity.phone,
       address: activity.address,
+      itineraryId: activity.itineraryId,
     });
+    setOpen(true);  // Open modal to edit activity
   };
 
-  // Decide whether to create or update an activity when submitting the form
+  const handleOpen = () => {
+    resetForm();
+    setOpen(true);  // Open modal to create new activity
+  };
+
+  const handleClose = () => {
+    setOpen(false);  // Close modal
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.id) {
-      updateActivity(); // Update activity if it has an id
+      updateActivity();  // Update activity if it has an id
     } else {
-      postActivity(); // Otherwise, create a new activity
+      postActivity();  // Otherwise, create a new activity
     }
   };
-  
 
   return (
     <Container>
-      {/* Form for creating/updating an activity */}
       <Box mb={4}>
-        <Typography variant="h4" gutterBottom>
-          {formData.id ? 'Update Activity' : 'Create Activity'}
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="Activity Name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Time"
-            name="time"
-            value={formData.time}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Date"
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Location"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Image URL"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <Button type="submit" variant="contained" color="primary">
-            {formData.id ? 'Update Activity' : 'Add Activity'}
-          </Button>
-        </form>
+        {/* <Typography variant="h4" gutterBottom>
+          Activities
+        </Typography> */}
+        <Button variant="contained" color="primary" onClick={handleOpen}>
+          Add Activity
+        </Button>
+
+        {/* Modal for adding/editing activity */}
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>{formData.id ? 'Update Activity' : 'Create Activity'}</DialogTitle>
+          <DialogContent>
+            <form onSubmit={handleSubmit}>
+              <TextField
+                label="Activity Name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Time"
+                name="time"
+                value={formData.time}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Date"
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Location"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Image URL"
+                name="image"
+                value={formData.image}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                  Cancel
+                </Button>
+                <Button type="submit" color="primary">
+                  {formData.id ? 'Update Activity' : 'Add Activity'}
+                </Button>
+              </DialogActions>
+            </form>
+          </DialogContent>
+        </Dialog>
       </Box>
 
-      {/* Display list of activities */}
       <Box>
         <Typography variant="h5" gutterBottom>
           Activities List
@@ -228,11 +253,7 @@ const Activity: React.FC = () => {
             <Button onClick={() => handleUpdateClick(activity)} variant="outlined">
               Update
             </Button>
-            <Button
-              onClick={() => deleteActivity(activity.id)}
-              variant="outlined"
-              color="secondary"
-            >
+            <Button onClick={() => deleteActivity(activity.id)} variant="outlined" color="secondary">
               Delete
             </Button>
           </Box>

@@ -31,7 +31,7 @@ activityRouter.post('/', async (req: any, res: any) => {
 
 // GET
 //:itineraryId
-activityRouter.get('/', async (req: any, res: any) => {
+activityRouter.get('/:itineraryId', async (req: any, res: any) => {
   try {
      const { itineraryId } = req.params;  
     const activities = await prisma.activity.findMany({
@@ -85,5 +85,37 @@ activityRouter.patch('/:id', async (req: any, res: any) => {
     res.sendStatus(500);
   }
 });
+
+// POST (add activity to a specific itinerary)
+activityRouter.post('/:itineraryId/activity', async (req: any, res: any) => {
+  try {
+    const { itineraryId } = req.params;  
+    const { name, description, time, date, location, image, phone, address } = req.body;
+
+    // if (!itineraryId || !name || !description || !time || !date) {
+    //   return res.status(400).json({ error: 'Missing required fields' });
+    // }
+
+    const newActivity = await prisma.activity.create({
+      data: {
+        name,
+        description,
+        time,
+        date,
+        location,
+        image,
+        phone,
+        address,
+        itineraryId: Number(itineraryId),  
+      },
+    });
+
+    res.status(201).json(newActivity);
+  } catch (error) {
+    console.error('Error creating activity:', error);
+    res.sendStatus(500);
+  }
+});
+
 
 export default activityRouter;
