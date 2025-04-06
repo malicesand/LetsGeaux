@@ -57,6 +57,30 @@ router.get('/', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error retrieving budgets', error });
   }
 });
+// GET all budgets for a specific itinerary
+router.get('/itinerary/:id', async (req: Request, res: Response) => {
+  const itineraryId = parseInt(req.params.id);
+
+  try {
+    const budgets = await prisma.budget.findMany({
+      where: {
+        groupItinerary_id: itineraryId,
+      },
+      orderBy: { updatedAt: 'desc' }
+    });
+
+    const parsed = budgets.map((b) => ({
+      ...b,
+      spent: Number(b.spent),
+      limit: Number(b.limit),
+    }));
+
+    res.status(200).json(parsed);
+  } catch (error) {
+    console.error('Error fetching budgets by itinerary:', error);
+    res.status(500).json({ message: 'Error fetching budgets by itinerary', error });
+  }
+});
 
 
 // Create a new budget entry
