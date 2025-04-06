@@ -25,11 +25,11 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
   const [sessionId, setSessionId] = useState(null); // ? Local Storage 
  
   useEffect(() => {
-    console.log(user)
+    // console.log(user)
     // check local storage for session ID
     const storedSessionId = localStorage.getItem('sessionId');
     if (storedSessionId) {
-      console.log(storedSessionId);
+      // console.log(storedSessionId);
       setSessionId(storedSessionId);
     } else {
       // Create new session ID

@@ -55,7 +55,7 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
       const sessionMessages: SessionWithMessages[] = [];
 
       for (const session of sessions) {
-        console.log(session);
+        // console.log(session);
         const msgRes = await axios.get<message[]>(
           `/api/chats/messages/${session.sessionId}`
         );
@@ -77,14 +77,14 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
 
   //* Change Name *//
   const startEditing = (sessionId: string, currentTitle: string) => {
-    console.log('start Editing')
+    
     setEditingSessionId(sessionId);
     setEditedTitle(currentTitle || '');
   };
 
   const saveEditedName = async (sessionId: string) => {
     try {
-      console.log('edited title')
+      
       const response = await axios.patch(`/api/chats/chat-history/${sessionId}`, {
         conversationName: editedTitle
 
@@ -96,7 +96,7 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
     }
   }
   const handleDelete = async(sessionId: string) => {
-    console.log(sessionId)
+    // console.log(sessionId)
     try {
       const response = await axios.delete(`/api/chats/${sessionId}`);
       console.log('deleted session and messages');
@@ -138,7 +138,6 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
                 value={editedTitle}
                 onChange={(e) => setEditedTitle(e.target.value)}
                 onKeyDown={(e) => {
-                  console.log('key pressed', e.key)
                   if (e.key === 'Enter') {saveEditedName(session.sessionId);}
                 }}
                 autoFocus
@@ -156,8 +155,6 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
               // id='change-name'
               variant='contained'
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                // e.stopPropagation();
-                console.log('editing clicked');
                 startEditing(session.sessionId, session.conversationName || '')}}
             >
               Change Name 
@@ -166,8 +163,6 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
             <Button variant='outlined'
             variant='contained'
             onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-              // e.stopPropagation();
-              console.log('editing clicked');
               handleDelete(session.sessionId)}}
             > Delete Session </Button>
           </ButtonGroup>
