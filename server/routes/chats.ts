@@ -9,7 +9,7 @@ import { PromptKey, prompts, contextKeywords} from '../../types/prompt.ts';
 
 const chatsRoute = express.Router()
 
-// * Chat Context * //
+//* Chat Context *//
 const detectContext = (input: string): PromptKey => {
   let lowerCaseMessage = input.toLowerCase();
   // find match based of keywords   
@@ -19,8 +19,18 @@ const detectContext = (input: string): PromptKey => {
 };
 
 
-// * Request Handling *//
-// Get Chat History
+//* Create a New Session Id *//
+chatsRoute.post('/new-session', (req: Request, res: Response) => {
+  try {
+    const sessionId: string = uuidv4();
+    console.log('Session ID created for this chat:', sessionId) 
+    res.json({ sessionId });
+  } catch (error) {
+      res.status(500).json({error: 'failed to create session ID'});
+  }
+});
+
+//* Get User's Chat History *//
 chatsRoute.get('/chat-history/:userId', async (req: Request, res: Response) => {
   const {userId} = req.params;
 
@@ -37,7 +47,7 @@ chatsRoute.get('/chat-history/:userId', async (req: Request, res: Response) => {
       res.status(500).json({error: 'failed to fetch user chat history'})
   }
 });
-
+//* Get Messages from a Session *//
 chatsRoute.get('/messages/:sessionId', async (req: Request, res, Response) => {
   const {sessionId} = req.params;
 
@@ -54,18 +64,8 @@ chatsRoute.get('/messages/:sessionId', async (req: Request, res, Response) => {
   }
 });
 
-//* Session Id *//
-chatsRoute.post('/new-session', (req: Request, res: Response) => {
-  try {
-    const sessionId: string = uuidv4();
-    console.log('Session ID created for this chat:', sessionId) 
-    res.json({ sessionId });
-  } catch (error) {
-      res.status(500).json({error: 'failed to create session ID'});
-  }
-});
 
-//* Conversation *//
+//* Gemini API Handling *//
 chatsRoute.post('/', async (req: Request, res: Response ) => {
   const { userMessage, userId, sessionId} = req.body;
   // console.log(sessionId)
@@ -112,18 +112,46 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
   }
 });
 
-chatsRoute.patch('/', async (req: Request, res: Response) => {
-  // ? update a session ? Another join table??
-  // * also could do a trigger where this updates a user's interests 
-    // useContext is already employed
-});
-chatsRoute.patch('/', async (req: Request, res: Response) => {
-  // update a the history
-});
+//* Name a Conversation *//
+chatsRoute.patch('/chat-history/:sessionId', async (req: Request, res: Response) => {
+  // Name a session/ change it's name
+  const {sessionId} = req.params;
+  const {convoName} = req.body;
 
-chatsRoute.delete('/', async (req: Request, res: Response) => {
-  // delete a message
-  // 
+
+
+});
+//* Delete a Conversation *//
+chatsRoute.delete('/:sessionId', async (req: Request, res: Response) => {
+  const {sessionId} = req.params;
+  // delete messages //
+  const deleteMessages = prisma.message.deleteMany({
+    where: {
+      sessionId: sessionId
+    }
+  })
+  // delete conversation //
+  const deleteSession =  prisma.chatHistory.delete({
+    where: {
+      sessionId: sessionId
+    }
+  })
+  // delete a session
+  try {
+     // delete conversation //
+    // const deleteSession =  await prisma.chatHistory.delete({
+    //   where: {
+    //     sessionId: sessionId
+    //   }
+    // })
+    const transaction = await prisma.$transaction([deleteMessages, deleteSession]);
+    console.log('Session deleted');
+    res.status(200).json('deleted');
+
+  } catch (error) {
+    console.error('Could not delete this conversation', error);
+    res.status(500).json({error: 'failed to delete session'})
+  }
 });
 
 
