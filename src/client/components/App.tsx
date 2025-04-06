@@ -19,12 +19,13 @@ import Suggestions from './Suggestions.tsx'
 import ChatBot from './ChatBot.tsx'
 import Itinerary from './Itineraray.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
-import Activities from './Activities.tsx';
+import Activities from './NEWActivties.tsx';
 import ActivitiesChoices from './RouteChoices';
 import Logout from './Logout.tsx';
 import Calendar from './Calendar.tsx';
 import RouteChoices from './RouteChoices.tsx'
 import { user } from '../../../types/models.ts';
+//import Activity from './NEWActivties.tsx';
 
 
 
@@ -103,6 +104,13 @@ const App: React.FC= () => {
           <RouteChoices/>
         </ProtectedRoute>
       }/>
+
+<Route path='/activities' element={
+        <ProtectedRoute>
+          <Activities/>
+        </ProtectedRoute>
+      }/>
+
       <Route path="/logout" element={
         <ProtectedRoute> 
         <Logout />
