@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 
 wishlistRouter.get('/:userId', async (req:any, res:any) => {
   const { userId } = req.params;
+  console.log('return f/router w/');
   try {
     const wishListItems = await prisma.userOnsuggestion.findMany({
       where: {userId: +userId,}

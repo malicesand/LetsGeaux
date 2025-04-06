@@ -35,7 +35,7 @@ const App: React.FC= () => {
   const [user, setUser] = useState<user | null>(null)
   // Check Auth
   useEffect(() => {
-    const checkAuth = async () => { //? type 
+    const checkAuth = async () => { //? type
       try {
         const response = await axios.get('/api/check-auth');
         setIsAuthenticated(response.data.isAuthenticated);
@@ -51,9 +51,9 @@ const App: React.FC= () => {
         console.error('Server: Err checking auth status', error);
       }
     };
-    checkAuth(); 
-  }, []); 
-  
+    checkAuth();
+  }, []);
+
   // Protected Route
   const ProtectedRoute: React.FC<{children: React.ReactNode}> = ({children}) => {
     if (!isAuthenticated) {
@@ -66,9 +66,9 @@ const App: React.FC= () => {
   return (
     <Routes>
 
-      <Route path="/login" element={!isAuthenticated ? <Login /> :  <Navigate to="/" replace />} /> 
-      
-      <Route path="/" element={ 
+      <Route path="/login" element={!isAuthenticated ? <Login /> :  <Navigate to="/" replace />} />
+
+      <Route path="/" element={
         <ProtectedRoute>
          {user && <Home user = {user}/> }
         </ProtectedRoute>
@@ -98,9 +98,9 @@ const App: React.FC= () => {
           {user && <Itinerary user = {user}/>}
         </ProtectedRoute>
       }/>
-      
+
       <Route path="/budgetbuddy" element={
-        <ProtectedRoute> 
+        <ProtectedRoute>
           <BudgetBuddy />
         </ProtectedRoute>
       }/>
@@ -110,7 +110,7 @@ const App: React.FC= () => {
         </ProtectedRoute>
       }/>
       <Route path="/logout" element={
-        <ProtectedRoute> 
+        <ProtectedRoute>
         <Logout />
       </ProtectedRoute>
       } />
