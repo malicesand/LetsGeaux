@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-
+import ChatHistory from './ChatHistory'
 import { user } from '../../../../types/models.ts';
 
 
@@ -25,7 +25,7 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
   const [sessionId, setSessionId] = useState(null); // ? Local Storage 
  
   useEffect(() => {
-   
+    console.log(user)
     // check local storage for session ID
     const storedSessionId = localStorage.getItem('sessionId');
     if (storedSessionId) {
@@ -75,60 +75,65 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
 
   
   return (
-    <div
-      className='Chat-Bot'
-      style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}
-    >
-      <h1>Gata Bot</h1>
-      <h2>Welcome {user.username}!</h2>
+    <div style={{ display: 'flex', height: '100vh'}}>
       <div
-        className='chat-list'
-        ref={chatLogRef}
-        style={{
-          border: '1px solid #ccc',
-          padding: '10px',
-          height: '400px',
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column'
-        }}
+        className='Chat-Bot'
+        style={{ flex: 3, maxWidth: '800px', margin: '0 auto', padding: '20px' }}
       >
-        {chatLog.map((msg, index) => (
-          <div
-            key={index}
-            style={{
-              textAlign: msg.user ? 'right' : 'left',
-              color: msg.user ? 'blue' : 'grey',
-              marginBottom: '5px'
-            }}
-          >
-            <strong>{msg.user ? 'You:' : 'Gata:'}</strong> {msg.text}
-          </div>
-        ))}
-      </div>
-      <form onSubmit={handleSubmit} style={{ marginTop: '10px' }}>
-        <input
-          type='text'
-          value={userMessage}
-          onChange={e => setUserMessage(e.target.value)}
-          placeholder='Type your message...'
-          style={{ width: '70%', padding: '8px', marginRight: '10px' }}
-        />
-        <button
-          type='submit'
+        <h1>Gata Bot</h1>
+        <h2>Welcome {user.username}!</h2>
+        <div
+          className='chat-list'
+          ref={chatLogRef}
           style={{
-            padding: '8px 15px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            cursor: 'pointer'
+            border: '1px solid #ccc',
+            padding: '10px',
+            height: '400px',
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column'
           }}
         >
-          Send
-        </button>
-      </form>
+          {chatLog.map((msg, index) => (
+            <div
+              key={index}
+              style={{
+                textAlign: msg.user ? 'right' : 'left',
+                color: msg.user ? 'blue' : 'grey',
+                marginBottom: '5px'
+              }}
+            >
+              <strong>{msg.user ? 'You:' : 'Gata:'}</strong> {msg.text}
+            </div>
+          ))}
+        </div>
+        <form onSubmit={handleSubmit} style={{ marginTop: '10px' }}>
+          <input
+            type='text'
+            value={userMessage}
+            onChange={e => setUserMessage(e.target.value)}
+            placeholder='Type your message...'
+            style={{ width: '70%', padding: '8px', marginRight: '10px' }}
+          />
+          <button
+            type='submit'
+            style={{
+              padding: '8px 15px',
+              backgroundColor: '#4CAF50',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            Send
+          </button>
+        </form>
+      </div>
+      {/**Chat History */}
+      <div style={{  width: '300px', borderLeft: '1px solid', overflowY: 'auto'}}>
+        <ChatHistory user={user} />
+      </div>
     </div>
-
         
   );
 };
