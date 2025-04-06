@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Typography from '@mui/material/Typography';
-import MailIcon from '@mui/icons-material/MailOutlineOutlined';
+import ListItemIcon from '@mui/material/ListItemIcon'; 
+// import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import MailIcon from '@mui/icons-material/MailOutlineOutlined';//! find a more fun icon
 
 import { user, chatHistory, message } from '../../../../types/models.ts';
 // import { response } from 'express';
@@ -27,9 +28,6 @@ interface ChatMessage {
 // }
 interface ChatHistProps {
   user: user;
-  // message: message;
-  // chatHistory: chatHistory;
-  // Sessions:
 }
 interface SessionWithMessages {
   session: chatHistory;
@@ -38,12 +36,8 @@ interface SessionWithMessages {
 
 const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
   // const [messages, setMessages] = useState<message[][]>([]); // if storing messages per session
-  const [sessionsWithMessages, setSessionsWithMessages] = useState<
-    SessionWithMessages[]
-  >([]);
-  const [expandedSessionId, setExpandedSessionId] = useState<string | null>(
-    null
-  );
+  const [sessionsWithMessages, setSessionsWithMessages] = useState<SessionWithMessages[]>([]);
+  const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
 
   const userId = user.id;
 
@@ -91,6 +85,8 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
             primary={session.conversationName || 'Untitled Conversation'}
             secondary={`Last active: ${new Date(session.lastActive).toLocaleString()}`}
           />
+          <Button variant='contained'> Change Name </Button>
+          <Button variant='contained' color='rgb(235, 0, 51)'> Delete Session </Button>
           </ListItem>
           {expandedSessionId === session.sessionId && (
             <List component='div' disablePadding sx={{ pl: 4 }}>
