@@ -31,6 +31,8 @@ interface SuggestionProps {
   user: user;
   getAllSuggestions: Function;
   setSuggestionEditMode: Function;
+  getAllWishlistSuggestions: Function;
+  wishMode: Boolean;
 
 }
 
@@ -50,7 +52,7 @@ Faded translucent accordion to be set by lunch tomorrow.  [https://mui.com/mater
 
 
 // const Grid = Grid2;
-const Suggestion: React.FC<SuggestionProps> = ({ user, currentSuggestion, getAllSuggestions, setSuggestionEditMode, listSuggestion/* setEditableSuggestion}*/ }) => {
+const Suggestion: React.FC<SuggestionProps> = ({ user, currentSuggestion, getAllSuggestions, setSuggestionEditMode, listSuggestion, wishMode, /* setEditableSuggestion}*/ }) => {
   const [expanded, toggleExpanded] = useState(false);
 
 
