@@ -120,11 +120,13 @@ suggestionRouter.get('/', async (req: any, res: any) => {
 })
 
 // POST requests from suggestions page (suggestion component)
-suggestionRouter.post('/', async(req: Request, res: Response) => {
-    
+suggestionRouter.post('/:userId', async(req: any, res: any) => {
+  console.log(req.body)
+    const { userId } = req.params;
   try {
 
     const newSuggestion = await prisma.suggestion.create(req.body)
+
     res.status(201).json(newSuggestion)
   } catch(err) {
     console.error('failed to add Suggestion', err);

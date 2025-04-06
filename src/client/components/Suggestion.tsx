@@ -94,10 +94,11 @@ const Suggestion: React.FC<SuggestionProps> = ({ user, currentSuggestion, getAll
         longitude,
         phoneNum,
         title,
-        userId: user.id,
+        upVotes: 0,
+        downVotes: 0,
       }
     }
-    axios.post('/api/suggestions', details).then(() => { }).catch(err => console.error('unable to save suggestion', err))
+    axios.post(`/api/suggestions/${user.id}`, details).then(() => { }).catch(err => console.error('unable to save suggestion', err))
   }
 
 
