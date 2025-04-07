@@ -113,13 +113,13 @@ const Suggestion: React.FC<SuggestionProps> = ({
   const handleAddToActivities = () => {
     const details = {
       data: {
-        address,
-        description,
-        phone: phoneNum,
-        name: title,
+        address: currentSuggestion.address,
+        description: currentSuggestion.description,
+        phone: currentSuggestion.phoneNum,
+        name: currentSuggestion.title,
       }
   }
-  axios.post('/api/activity', details).then(() => {
+  axios.post('/api/activity', details.data).then(() => {
     if (wishMode) {
       handleRemoveFromWishlist()
     }
