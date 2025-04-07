@@ -27,10 +27,16 @@ import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
 import ChatIcon  from '@mui/icons-material/TryOutlined';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import EventIcon from '@mui/icons-material/Event';
+<<<<<<< HEAD
 import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';
 import AppShortcut from '@mui/icons-material/AppShortcut';
 import App from './App';
 import { Apps } from '@mui/icons-material';
+=======
+import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+
+>>>>>>> 640e0b53e4b3a2f35f26de2db6d15f53a1b2d061
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -168,7 +174,7 @@ const NavDrawer: React.FC = () => {
             {/* Budget Buddy */}
             <ListItem key={'BudgetBuddy'} disablePadding>
               <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
-                <ListItemIcon>💰</ListItemIcon>
+                <ListItemIcon><AttachMoneyIcon sx={{ color: 'grey' }} /></ListItemIcon>
                 <ListItemText primary="Budget Buddy" />
               </ListItemButton>
             </ListItem>
@@ -179,6 +185,14 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary="Route Choices" />
               </ListItemButton>
             </ListItem>
+            {/* <ListItem key={'Activities'} disablePadding>
+              <ListItemButton component={Link} to="/activities" onClick={handleDrawerClose}>
+                <ListItemIcon>
+                <LocalActivityIcon />
+                </ListItemIcon>
+                <ListItemText primary="Activities" />
+              </ListItemButton>
+            </ListItem> */}
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
               <ListItemButton component={Link} to='/logout' onClick={handleLogout}>
@@ -188,7 +202,7 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Logout'} />
               </ListItemButton>
             </ListItem>
-            
+            {/* Activites */}
 
         </List>
       </Drawer>
