@@ -27,9 +27,12 @@ import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
 import ChatIcon  from '@mui/icons-material/TryOutlined';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import EventIcon from '@mui/icons-material/Event';
-import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';
+import AppShortcut from '@mui/icons-material/AppShortcut';
+import App from './App';
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import { Apps } from '@mui/icons-material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -137,8 +140,16 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
-          
-            {/* itinerary */}
+            {/*wishlist */}
+             <ListItem key={'wishlist'} disablePadding>
+               <ListItemButton component={Link}to='/wishlist' onClick={handleDrawerClose}>
+                 <ListItemIcon>
+                   <AppShortcut />
+                 </ListItemIcon>
+                 <ListItemText primary={'Wishlist'} />
+               </ListItemButton>
+             </ListItem>
+             {/* itinerary*/}
             <ListItem key={'itinerary'} disablePadding>
               <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
                 <ListItemIcon>

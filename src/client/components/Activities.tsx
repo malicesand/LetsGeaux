@@ -20,6 +20,35 @@
 // const Activities: FC = () => {
 //   const [activitySet, setActivitySet] = useState<ActivityType[]>([]);
 
+<<<<<<< HEAD
+  useEffect(() => {
+    getAllActivities();
+  }, []);
+  return (
+    <Container>
+      <h2>Current Activities</h2>
+      {activitySet.map((act) => (
+        <Card key={act.id}>
+      <Activity
+      act={act}
+      getAllActivities={getAllActivities}
+      setEditMode={setEditMode}
+      setActivitySet={setActivitySet}
+      setEditableActivity={setEditableActivity}
+      />
+      </Card>
+      ))}
+<ActivityForm
+activitySet={activitySet}
+editMode={editMode}
+setEditMode={setEditMode}
+getAllActivities={getAllActivities}
+editableActivity={editableActivity}
+/>
+    </Container>
+  )
+}
+=======
 //   const getAllActivities = async () => {
 //     try {
 //       const response = await axios.get('/api/activity');
@@ -29,6 +58,7 @@
 //       console.error('There was an issue fetching activities:', error);
 //     }
 //   };
+>>>>>>> 640e0b53e4b3a2f35f26de2db6d15f53a1b2d061
 
 //   useEffect(() => {
 //     getAllActivities();

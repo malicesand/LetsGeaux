@@ -24,6 +24,7 @@ import ActivitiesChoices from './RouteChoices';
 import Logout from './Logout.tsx';
 import Calendar from './Calendar.tsx';
 import RouteChoices from './RouteChoices.tsx'
+import Wishlist from './Wishlist.tsx';
 import { user } from '../../../types/models.ts';
 //import Activity from './NEWActivties.tsx';
 
@@ -64,9 +65,9 @@ const App: React.FC = () => {
   return (
     <Routes>
 
-      <Route path="/login" element={!isAuthenticated ? <Login /> :  <Navigate to="/" replace />} /> 
-      
-      <Route path="/" element={ 
+      <Route path="/login" element={!isAuthenticated ? <Login /> :  <Navigate to="/" replace />} />
+
+      <Route path="/" element={
         <ProtectedRoute>
          {user && <Home user = {user}/> }
         </ProtectedRoute>
@@ -78,7 +79,12 @@ const App: React.FC = () => {
       }/>
       <Route path="/suggestions" element={
         <ProtectedRoute>
-          <Suggestions/>
+          {user && <Suggestions user = {user} />}
+        </ProtectedRoute>
+      }/>
+      <Route path="/wishlist" element={
+        <ProtectedRoute>
+          {user && <Wishlist user = {user} />}
         </ProtectedRoute>
       }/>
       <Route path="/chatbot" element={
@@ -91,9 +97,9 @@ const App: React.FC = () => {
           {user && <Itinerary user = {user}/>}
         </ProtectedRoute>
       }/>
-      
+
       <Route path="/budgetbuddy" element={
-        <ProtectedRoute> 
+        <ProtectedRoute>
           <BudgetBuddy />
         </ProtectedRoute>
       }/>
@@ -110,7 +116,7 @@ const App: React.FC = () => {
       }/>
 
       <Route path="/logout" element={
-        <ProtectedRoute> 
+        <ProtectedRoute>
         <Logout />
       </ProtectedRoute>
       } />

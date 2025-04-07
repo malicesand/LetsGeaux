@@ -18,9 +18,9 @@ activityRouter.post('/', async (req: any, res: any) => {
         image,
         phone,
         address,
-        itineraryId: itineraryId,  
+        itineraryId: itineraryId,
       },
-      
+
     });
     res.status(201).json(newActivity);
   } catch (error) {
@@ -89,7 +89,7 @@ activityRouter.patch('/:id', async (req: any, res: any) => {
 // POST (add activity to a specific itinerary)
 activityRouter.post('/:itineraryId/activity', async (req: any, res: any) => {
   try {
-    const { itineraryId } = req.params;  
+    const { itineraryId } = req.params;
     const { name, description, time, date, location, image, phone, address } = req.body;
 
     // if (!itineraryId || !name || !description || !time || !date) {
