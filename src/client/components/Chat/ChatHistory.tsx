@@ -100,6 +100,7 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
     try {
       const response = await axios.delete(`/api/chats/${sessionId}`);
       console.log('deleted session and messages');
+      getUserSessions();
       
     } catch (error) {
       console.error('failed to delete session')
