@@ -152,7 +152,7 @@ const handleRemoveFromWishlist = () => {
     <Container>
       <Grid item size={6}>
         <Card>
-          {/* <Typography variant="h3">Featured Foray:</Typography> */}
+          {/* <Typography variant="h3">Featurfefefefefeeefefefefefed Foray:</Typography> */}
           {/* <Button variant="filled">Next attraction</Button> */}
           <Button variant="filled" onClick={handleAddToActivities}>add to activities!</Button>
           {wishMode
