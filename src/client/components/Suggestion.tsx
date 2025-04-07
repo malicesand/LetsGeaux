@@ -168,7 +168,7 @@ const handleRemoveFromWishlist = () => {
                   {title}
                 </Typography>
               </ListItemText>
-              <img width="50" height="50" src="https://media-cdn.tripadvisor.com/media/photo-o/0b/92/b7/85/20160608-102742-largejpg.jpg"></img>
+              <img width="50" height="50" src="https://static.vecteezy.com/system/resources/previews/002/187/723/original/coming-soon-neon-signs-style-text-free-vector.jpg"></img>
               <Typography>{description}</Typography>
               <Typography><b>Contact number:</b> {phoneNum}</Typography>
               <Typography><b>address:</b> {address}</Typography>

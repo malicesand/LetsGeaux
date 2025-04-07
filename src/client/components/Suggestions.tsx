@@ -13,6 +13,13 @@ const Suggestions: React.FC<SuggestionsProps>= ({ user }) => {
   const [editableSuggestion, setEditableSuggestion] = useState({});
   const [suggestionSet, setSuggestionSet] = useState([]);
   const [suggestionEditMode, setSuggestionEditMode] = useState(false);
+  const [dbSuggestionSet, setDbSuggestionSet] = useState([]);
+
+const getDbSuggestions = () => {
+  axios.get('/api/suggestions').then(({data}) => {
+    setDbSuggestionSet(data)
+  })
+}
 
   const getAllSuggestions = () => {
     axios.get('/api/suggestions/search').then(({data}) => {
@@ -22,15 +29,27 @@ const Suggestions: React.FC<SuggestionsProps>= ({ user }) => {
   }
 
   useEffect(() => {
+    // getDbSuggestions();
     getAllSuggestions();
   }, []);
 
   return (
     <Container>
       <h1>Suggested Excursions</h1>
-    
+      {/* {dbSuggestionSet.map((currentSuggestion) => (
+        <Card key={currentSuggestion.title}>
+          <Suggestion
+          user={user}
+          currentSuggestion={currentSuggestion}
+          getAllSuggestions={getAllSuggestions}
+          setSuggestionEditMode={setSuggestionEditMode}
+          setSuggestionSet={setSuggestionSet}
+          setEditableSuggestion={setEditableSuggestion}
+          />
+        </Card>
+      ))} */}
       {suggestionSet.map((currentSuggestion) => (
-        <Card key={currentSuggestion.id}>
+        <Card key={currentSuggestion.title}>
           <Suggestion
           user={user}
           currentSuggestion={currentSuggestion}

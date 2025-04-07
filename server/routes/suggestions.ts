@@ -103,7 +103,7 @@ suggestionRouter.get('/search', async (req:any, res:any) => {
     throw err
   }
   })
-   
+
 
 // GET request handling
 suggestionRouter.get('/', async (req: any, res: any) => {

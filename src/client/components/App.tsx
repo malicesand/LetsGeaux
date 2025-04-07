@@ -33,12 +33,8 @@ const App: React.FC = () => {
   const [user, setUser] = useState<user | null>(null);
   // Check Auth
   useEffect(() => {
-<<<<<<< HEAD
-    const checkAuth = async () => { //? type
-=======
     const checkAuth = async () => {
       //? type
->>>>>>> 640e0b53e4b3a2f35f26de2db6d15f53a1b2d061
       try {
         const response = await axios.get('/api/check-auth');
         setIsAuthenticated(response.data.isAuthenticated);
@@ -55,17 +51,6 @@ const App: React.FC = () => {
     };
     checkAuth();
   }, []);
-<<<<<<< HEAD
-
-  // Protected Route
-  const ProtectedRoute: React.FC<{children: React.ReactNode}> = ({children}) => {
-    if (!isAuthenticated) {
-      return <Navigate to="/login" replace />;
-    }
-    return <>{children}</>
-  };
-=======
->>>>>>> 640e0b53e4b3a2f35f26de2db6d15f53a1b2d061
 
   // Protected Route
   const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({

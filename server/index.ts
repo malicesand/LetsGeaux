@@ -3,7 +3,7 @@ import path from 'path';
 import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
-// import { urlencoded } from 'express'; 
+// import { urlencoded } from 'express';
 import cors from 'cors';
 import { PrismaClient } from "@prisma/client";
 const GoogleStrategy = require('passport-google-oauth2').Strategy;

@@ -27,16 +27,12 @@ import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
 import ChatIcon  from '@mui/icons-material/TryOutlined';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import EventIcon from '@mui/icons-material/Event';
-<<<<<<< HEAD
 import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';
 import AppShortcut from '@mui/icons-material/AppShortcut';
 import App from './App';
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import { Apps } from '@mui/icons-material';
-=======
-import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-
->>>>>>> 640e0b53e4b3a2f35f26de2db6d15f53a1b2d061
 const drawerWidth = 240;
 
 type Anchor = 'left';
