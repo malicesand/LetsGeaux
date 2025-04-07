@@ -39,7 +39,7 @@ chatsRoute.get('/chat-history/:userId', async (req: Request, res: Response) => {
       // request handling manipulates type => convert to number
       where: {userId: Number(userId)}
     })
-    console.log(chatHistories[0].sessionId);
+    // console.log(chatHistories[0].sessionId);
     res.json(chatHistories)
  
   } catch (error) {
@@ -117,15 +117,15 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
 chatsRoute.patch('/chat-history/:sessionId', async (req: Request, res: Response) => {
   // Name a session/ change it's name
   const {sessionId} = req.params;
-  console.log(sessionId)
-  console.log(req.body)
+  console.log(sessionId, 'patch')
+  // console.log(req.body)
   const {conversationName} = req.body
-  console.log(conversationName)
   try {
     const updateConvoName = await prisma.chatHistory.update({
       where: { sessionId },
       data: { conversationName }
     });
+    console.log('Conversation name changed to:', conversationName)
     res.status(200).json(updateConvoName);
   } catch (error) {
     console.error('could not save/change conversation name', error);
