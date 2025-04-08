@@ -24,7 +24,7 @@ import ActivitiesChoices from './RouteChoices';
 import Logout from './Logout.tsx';
 import Calendar from './Calendar.tsx';
 import RouteChoices from './RouteChoices.tsx'
-//import Wishlist from './Wishlist.tsx';
+import Wishlist from './Wishlists.tsx';
 import { user } from '../../../types/models.ts';
 //import Activity from './NEWActivties.tsx';
 

@@ -195,7 +195,7 @@ model budget {
 
 model chatHistory {
   id               Int      @id @default(autoincrement())
-  userId           Int? // 
+  userId           Int? //
   sessionId        String   @unique // Session identifier
   conversationName String?  @db.VarChar(255) // Allow naming
   lastActive       DateTime @default(now())
