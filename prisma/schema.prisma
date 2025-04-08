@@ -17,14 +17,15 @@ model user {
   googleId     String             @unique
   groupId      Int?
   image        image[]
-  // post       post[]
+  profilePic   String?
+  // memberId...
   reminder     reminder[]
-  // suggestion suggestion[]
   group        group?             @relation(fields: [groupId], references: [id])
   vote         vote[]
   itinerary    itinerary[]
   suggestion   userOnsuggestion[]
   suggestionId Int?
+  userInterest userInterest[]
 
   @@index([groupId], map: "user_groupId_fkey")
 }
@@ -54,7 +55,7 @@ model suggestion {
   longitude     String?
   wishUser      userOnsuggestion[]
   // activity      activity[]
-  location      location[]
+  // location      location[]
   // user          user?      @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "suggestion_userId_fkey")
@@ -63,6 +64,7 @@ model suggestion {
 model itinerary {
   id        Int        @id @default(autoincrement())
   member_id Int
+  groupId   Int?
   name      String     @db.VarChar(50)
   begin     DateTime
   end       DateTime
@@ -81,7 +83,7 @@ model itinerary {
 model activity {
   id          Int        @id @default(autoincrement())
   name        String?    @db.VarChar(100)
-  description String     @db.VarChar(500)
+  description String?    @db.VarChar(500)
   address     String?
   phone       String?    @db.VarChar(150)
   time        String?
@@ -94,18 +96,18 @@ model activity {
   @@index([itineraryId], map: "activity_itineraryId_fkey")
 }
 
-model location {
-  id           Int         @id @default(autoincrement())
-  name         String      @db.VarChar(50)
-  description  String      @db.VarChar(255)
-  address      String      @db.VarChar(50)
-  latitude     Decimal
-  longitude    Decimal
-  suggestionId Int?
-  suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
+// model location {
+//   id           Int         @id @default(autoincrement())
+//   name         String      @db.VarChar(50)
+//   description  String      @db.VarChar(255)
+//   address      String      @db.VarChar(50)
+//   latitude     Decimal
+//   longitude    Decimal
+//   suggestionId Int?
+//   suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
 
-  @@index([suggestionId], map: "location_suggestionId_fkey")
-}
+//   @@index([suggestionId], map: "location_suggestionId_fkey")
+// }
 
 model route {
   id          Int        @id @default(autoincrement())
@@ -130,22 +132,31 @@ model vote {
 }
 
 model interest {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(25)
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(25)
+  userInterest userInterest[]
+}
+
+model userInterest {
+  id         Int      @id @default(autoincrement())
+  user       user     @relation(fields: [userId], references: [id])
+  interest   interest @relation(fields: [interestId], references: [id])
+  userId     Int
+  interestId Int
 }
 
 model group {
   itinerary_id Int      @unique
-  activity_id  Int
   id           Int      @id @default(autoincrement())
   budget       budget[]
   user_id      user[]
+  image        image[]
 }
 
 model reminder {
   id           Int      @id @default(autoincrement())
   call_time    DateTime
-  call_message String   @db.VarChar(40)
+  call_message String   @db.VarChar(255)
   userId       Int?
   activityId   Int?
   user         user?    @relation(fields: [userId], references: [id])
@@ -155,12 +166,14 @@ model reminder {
 }
 
 model image {
-  id         Int    @id @default(autoincrement())
-  url        String @db.TinyText
-  notes      String @db.VarChar(255)
+  id         Int     @id @default(autoincrement())
+  url        String  @db.Text
+  notes      String? @db.VarChar(255)
   activityId Int?
   userId     Int?
-  user       user?  @relation(fields: [userId], references: [id])
+  group      group?  @relation(fields: [groupId], references: [id])
+  user       user?   @relation(fields: [userId], references: [id])
+  groupId    Int?
 
   @@index([activityId], map: "image_activityId_fkey")
   @@index([userId], map: "image_userId_fkey")
@@ -179,25 +192,6 @@ model budget {
 
   @@index([groupItinerary_id], map: "budget_groupItinerary_id_fkey")
 }
-
-/**
- * model post {
- * id           Int      @id @default(autoincrement())
- * title        String   @db.Text
- * content      String   @db.Text
- * createdAt    DateTime @default(now())
- * updatedAt    DateTime @default(now())
- * authorId     Int?
- * location     String?
- * latitude     Decimal?
- * longitude    Decimal?
- * category     String?
- * Tags         String?
- * suggestionId Int?
- * author       user?    @relation(fields: [authorId], references: [id])
- * @@index([authorId], map: "post_authorId_fkey")
- * }
- */
 
 model chatHistory {
   id               Int      @id @default(autoincrement())
