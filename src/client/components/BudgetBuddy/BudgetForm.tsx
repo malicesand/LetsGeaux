@@ -3,8 +3,10 @@ import api from './api';
 import { TextField, Button, Stack, Box } from '@mui/material';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
-
-const BudgetForm: React.FC = () => {
+interface BudgetFormProps {
+  selectedItineraryId: number | null;
+}
+const BudgetForm: React.FC<BudgetFormProps> = ({ selectedItineraryId }) => {
   const [limit, setLimit] = useState('');
   const [spent, setSpent] = useState('');
   const [category, setCategory] = useState('');
@@ -21,12 +23,12 @@ const BudgetForm: React.FC = () => {
     }
 
     try {
-      await api.post('/', {
+      await api.post('/budget', {
         limit: parsedLimit,
         spent: parsedSpent,
         category,
         notes,
-        groupItinerary_id: null, // or assign dynamically later
+        groupItinerary_id: selectedItineraryId, // or assign dynamically later
       });
 
       // Reset form
