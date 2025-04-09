@@ -33,7 +33,7 @@ const MainAppBar: React.FC<MainAppBarProps>= ({ setIsAuthenticated, user }) => {
   const navigate = useNavigate();
   
   const goToProfile = () => {
-    navigate('/profile', {state: {from: '/'}}); 
+    navigate('/profile', {state: {from: '/', user} }); 
   };
   
   return(
