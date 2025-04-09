@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -10,10 +10,16 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import StreetcarIcon from '@mui/icons-material/DirectionsSubwayTwoTone';
 import Link from '@mui/material/Link';
+import { user } from '../../../types/models.ts';
 
 import NavDrawer from './NavDrawer';
 
-const MainAppBar: React.FC= () => {
+interface MainAppBarProps {
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
+  user: user;
+}
+
+const MainAppBar: React.FC<MainAppBarProps>= ({ setIsAuthenticated, user }) => {
   const handleOpenUserMenu = () => {}; // nav instructions to user preferences?
   const handleCloseUserMenu = () => {};
   let anchorElUser; // this has something to do with the preferences nav 
