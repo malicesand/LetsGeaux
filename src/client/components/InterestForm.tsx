@@ -8,10 +8,10 @@ type Interest = {
 const InterestForm: React.FC = () => {
   // Define the list of available interests
   const interests: Interest[] = [
-    { id: 1, name: 'Hotel ' },
+    { id: 1, name: 'Hotel' },
     { id: 2, name: 'Restaurant ' },
     { id: 3, name: 'Attraction' },
-    
+    {id: 4, name: 'Geos'}
   ];
 
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
@@ -36,7 +36,7 @@ const InterestForm: React.FC = () => {
     // Map the selected IDs to their names
     const selectedNames = selectedInterests
       .map((id) => interests.find((interest) => interest.id === id)?.name)
-      .filter((name) => name); // Filter out any undefined values
+      .filter((name) => name); 
 
     
     const interestsData = selectedNames.map((name) => ({
