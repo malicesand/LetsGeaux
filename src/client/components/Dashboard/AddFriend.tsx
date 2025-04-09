@@ -10,7 +10,7 @@ import { styled } from '@mui/material/styles';
 import { user } from '../../../../types/models.ts'
 
  
-const filter = createFilterOptions<string>();
+const filter = createFilterOptions<user>();
 
 const SearchWrapper = styled('div')(() => ({
   position: 'absolute',
@@ -26,6 +26,7 @@ interface AddFriendProps {
 
 const AddFriend: React.FC<AddFriendProps> = () => {
   const [users, setUsers] =  useState<user[]>([])
+  const [friend, setFriend] = useState<user>()
 
   useEffect(() => {
     getUsers();
@@ -34,7 +35,7 @@ const AddFriend: React.FC<AddFriendProps> = () => {
   const getUsers = async() => {
     try {
       const response = await axios.get('/api/users');
-      console.log('got the users', response.data);
+      // console.log('got the users', response.data);
       setUsers(response.data)
       
     } catch (error) {
@@ -48,7 +49,14 @@ const AddFriend: React.FC<AddFriendProps> = () => {
       <Autocomplete
         id="user-search"
         freeSolo
-        options={users.map((user) => user.username as string)}
+        options={users}
+        getOptionLabel={(user: user) => user.username}
+        onChange={(event, value: user) => {
+          if (value) {
+            console.log('Selected user:', value);
+            setFriend(value)
+          }
+        }}
         openOnFocus={false}
         filterOptions={(options, state) => 
           state.inputValue === '' ? [] : filter(options, state)
