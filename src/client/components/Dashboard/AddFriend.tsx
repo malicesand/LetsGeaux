@@ -1,64 +1,69 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'
 
-import SearchIcon from '@mui/icons-material/Search';
-import IconButton from '@mui/material/IconButton';
-import Container from '@mui/material/Container';
-import InputBase from '@mui/material/InputBase';
-import { styled, alpha } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
+import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
-}));
+import { styled } from '@mui/material/styles';
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
+import { user } from '../../../../types/models.ts'
+
+ 
+const filter = createFilterOptions<string>();
+
+const SearchWrapper = styled('div')(() => ({
   position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  left: '60%',
+  bottom: '70%',
+  width: 300,
 }));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
-    },
-  },
-}));
+interface AddFriendProps {
+  user: user;
+}
 
-const AddFriend: React.FC = () => {
+
+const AddFriend: React.FC<AddFriendProps> = () => {
+  const [users, setUsers] =  useState<user[]>([])
+
+  useEffect(() => {
+    getUsers();
+  });
+
+  const getUsers = async() => {
+    try {
+      const response = await axios.get('/api/users');
+      console.log('got the users', response.data);
+      setUsers(response.data)
+      
+    } catch (error) {
+      console.error('failed to get users for add friend search', error)
+    }
+  }
   return (
-    <Container>
-      <Search>
-        <SearchIconWrapper>
-          <SearchIcon />
-        </SearchIconWrapper>
-        <StyledInputBase
-          placeholder='Search for a user...'
-          inputProps={{ 'aria-label': 'search' }}
-        />
-      </Search>
-    </Container>
+    
+    
+    <SearchWrapper>
+      <Autocomplete
+        id="user-search"
+        freeSolo
+        options={users.map((user) => user.username as string)}
+        openOnFocus={false}
+        filterOptions={(options, state) => 
+          state.inputValue === '' ? [] : filter(options, state)
+        }
+        renderInput={(params) => 
+          <TextField 
+            {...params} 
+            placeholder="Search for a user..." 
+           
+        />}
+      />
+
+    </SearchWrapper>
+
+   
   ) 
 }
 
