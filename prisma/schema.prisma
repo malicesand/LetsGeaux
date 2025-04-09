@@ -15,19 +15,28 @@ model user {
   phoneNum     String?            @db.VarChar(10)
   isNotified   Boolean            @default(false)
   googleId     String             @unique
-  groupId      Int?
+  // groupId      Int? 
   image        image[]
   profilePic   String?
   // memberId...
   reminder     reminder[]
-  group        group?             @relation(fields: [groupId], references: [id])
+  // group        group?             @relation(fields: [groupId], references: [id]) 
   vote         vote[]
   itinerary    itinerary[]
   suggestion   userOnsuggestion[]
   suggestionId Int?
   userInterest userInterest[]
 
-  @@index([groupId], map: "user_groupId_fkey")
+  // @@index([groupId], map: "user_groupId_fkey") 
+  userGroups userGroups[]
+}
+
+model userGroups {
+  id      Int   @id @default(autoincrement())
+  user    user  @relation(fields: [userId], references: [id])
+  group   group @relation(fields: [groupId], references: [id])
+  userId  Int
+  groupId Int
 }
 
 model userOnsuggestion {
@@ -63,7 +72,7 @@ model suggestion {
 
 model itinerary {
   id        Int        @id @default(autoincrement())
-  member_id Int
+  // member_id Int        
   groupId   Int?
   name      String     @db.VarChar(50)
   begin     DateTime
@@ -76,6 +85,8 @@ model itinerary {
   activity  activity[]
   creator   user?      @relation(fields: [creatorId], references: [id])
   route     route[]
+  group     group?     @relation(fields: [groupId], references: [id])
+  // @@index([groupId], map: "itinerary_groupId_fkey")        
 
   @@index([creatorId], map: "itinerary_creatorId_fkey")
 }
@@ -146,12 +157,25 @@ model userInterest {
 }
 
 model group {
-  itinerary_id Int      @unique
-  id           Int      @id @default(autoincrement())
-  budget       budget[]
-  user_id      user[]
-  image        image[]
+  id          Int         @id @default(autoincrement())
+  // creatorId    user 
+  name        String      @db.VarChar(50)
+  budget      budget[]
+  // members      user[] // covered under user groups
+  image       image[]
+  itineraryId Int?
+  itinerary   itinerary[]
+
+  userGroups userGroups[]
 }
+
+// model group {
+//   itinerary_id Int      @unique
+//   id           Int      @id @default(autoincrement())
+//   budget       budget[]
+//   user_id      user[]
+//   image        image[]
+// }
 
 model reminder {
   id           Int      @id @default(autoincrement())
@@ -180,17 +204,18 @@ model image {
 }
 
 model budget {
-  id                Int      @id @default(autoincrement())
-  spent             Decimal
-  notes             String   @db.VarChar(255)
-  groupItinerary_id Int?
-  createdAt         DateTime @default(now())
-  limit             Decimal
-  updatedAt         DateTime @updatedAt
-  category          String   @default("")
-  group             group?   @relation(fields: [groupItinerary_id], references: [itinerary_id])
+  id        Int      @id @default(autoincrement())
+  spent     Decimal
+  notes     String   @db.VarChar(255)
+  // groupItinerary_id Int?
+  createdAt DateTime @default(now())
+  limit     Decimal
+  updatedAt DateTime @updatedAt
+  category  String   @default("")
+  group     group?   @relation(fields: [groupId], references: [id]) //@relation(fields: [groupItinerary_id], references: [itinerary_id])
 
-  @@index([groupItinerary_id], map: "budget_groupItinerary_id_fkey")
+  // @@index([groupItinerary_id], map: "budget_groupItinerary_id_fkey")
+  groupId Int?
 }
 
 model chatHistory {
