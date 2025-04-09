@@ -29,6 +29,8 @@ import MainAppBar from './AppBar';
 import { user } from '../../../types/models.ts';
 //import Activity from './NEWActivties.tsx';
 import Profile from './Profile.tsx';
+import Dashboard from './Dashboard/DashboardMain.tsx'
+
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [user, setUser] = useState<user | null>(null);
@@ -145,14 +147,22 @@ const App: React.FC = () => {
           <Profile/>
         </ProtectedRoute>
       }/>
-        <Route
-          path='/logout'
-          element={
-            <ProtectedRoute>
-              <Logout />
-            </ProtectedRoute>
-          }
+      <Route
+        path='/dashboard'
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
         />
+      <Route
+        path='/logout'
+        element={
+          <ProtectedRoute>
+            <Logout />
+          </ProtectedRoute>
+        }
+      />
       </Routes>
     </>
   );
