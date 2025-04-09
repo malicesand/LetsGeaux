@@ -5,14 +5,20 @@ import Box from '@mui/material/Box';
 
 import positions from '@mui/system/positions';
 
-import AddFriend from './AddFriend';
+import AddMember from './AddMember';
 import CreateGroup from './CreateGroup';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 
-const Dashboard: React.FC = () => {
+import { user } from '../../../../types/models.ts';
+
+interface DashboardProps {
+  user: user;
+}
+
+const Dashboard: React.FC<DashboardProps>= ({ user }) => {
   return (
     <Box>
-      <AddFriend />
+      <AddMember user={user}/>
       <Box position= 'absolute' bottom = '10%'>
 
         <BudgetPieChart />

@@ -19,14 +19,14 @@ const SearchWrapper = styled('div')(() => ({
   width: 300,
 }));
 
-interface AddFriendProps {
+interface AddMemberProps {
   user: user;
 }
 
 
-const AddFriend: React.FC<AddFriendProps> = () => {
+const AddMember: React.FC<AddMemberProps> = () => {
   const [users, setUsers] =  useState<user[]>([])
-  const [friend, setFriend] = useState<user>()
+  const [member, setMember] = useState<user>()
 
   useEffect(() => {
     getUsers();
@@ -39,7 +39,7 @@ const AddFriend: React.FC<AddFriendProps> = () => {
       setUsers(response.data)
       
     } catch (error) {
-      console.error('failed to get users for add friend search', error)
+      console.error('failed to get users for add Member search', error)
     }
   }
   return (
@@ -54,7 +54,7 @@ const AddFriend: React.FC<AddFriendProps> = () => {
         onChange={(event, value: user) => {
           if (value) {
             console.log('Selected user:', value);
-            setFriend(value)
+            setMember(value)
           }
         }}
         openOnFocus={false}
@@ -75,4 +75,4 @@ const AddFriend: React.FC<AddFriendProps> = () => {
   ) 
 }
 
-export default AddFriend;
+export default AddMember;
