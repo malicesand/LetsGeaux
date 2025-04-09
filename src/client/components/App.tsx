@@ -29,6 +29,7 @@ import MainAppBar from './AppBar';
 import { user } from '../../../types/models.ts';
 //import Activity from './NEWActivties.tsx';
 import Profile from './Profile.tsx';
+import InterestForm from './InterestForm';
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [user, setUser] = useState<user | null>(null);
@@ -143,6 +144,11 @@ const App: React.FC = () => {
       <Route path='/profile' element={
         <ProtectedRoute>
           <Profile/>
+        </ProtectedRoute>
+      }/>
+      <Route path='/interestform' element={
+        <ProtectedRoute>
+          <InterestForm/>
         </ProtectedRoute>
       }/>
         <Route

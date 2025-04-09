@@ -20,7 +20,7 @@ import chatsRoute from './routes/chats';
 import itineraryRoute from './routes/itinerary';
 import activityRouter from './routes/activities';
 import wishlistRouter from './routes/wishlist';
-
+import interestRouter from './routes/interests'
 dotenv.config();
 
 const app = express();
@@ -159,7 +159,7 @@ app.use('/api/chats/', chatsRoute);
 app.use('/api/maps/', mapsRoute);
 app.use('/api/suggestions', suggestionRouter);
 app.use('/api/wishlist', wishlistRouter);
-
+app.use('/api/interests', interestRouter)
 app.use('/api/itinerary', itineraryRoute)
 app.use('/api/budget', budgetRoutes);
 app.use('/api/activity', activityRouter);
