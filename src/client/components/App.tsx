@@ -28,7 +28,7 @@ import Wishlist from './Wishlists.tsx';
 import MainAppBar from './AppBar';
 import { user } from '../../../types/models.ts';
 //import Activity from './NEWActivties.tsx';
-
+import Profile from './Profile.tsx';
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [user, setUser] = useState<user | null>(null);
@@ -140,7 +140,11 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
-
+      <Route path='/profile' element={
+        <ProtectedRoute>
+          <Profile/>
+        </ProtectedRoute>
+      }/>
         <Route
           path='/logout'
           element={

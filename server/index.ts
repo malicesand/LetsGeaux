@@ -52,17 +52,20 @@ passport.use(new GoogleStrategy({
         let user = await prisma.user.findUnique({ 
           where: { googleId: profile.id },
          });
+         console.log(profile.photos[0].value)
         if (!user) {
+  
           user = await prisma.user.create({
             data: {
               googleId: profile.id,
               username: profile.displayName,
               email: profile.emails[0].value,
+              profilePic: profile.photos[0].value,
               isVerified: true, 
               phoneNum: '',
               isNotified: false,
               groupId: null,
-              image: profile.image,
+              // image: profile.image,
               // post: undefined,
               reminder: undefined,
               suggestion: undefined, 
@@ -120,10 +123,10 @@ app.get('/users', isAuthenticated, async (req: any, res: any) => {
 
 // **Google Auth Routes**
 app.get('/auth/google', (req, res, next) => {
-    console.log("Google OAuth request initiated"); // ✅ Debugging Log
+    console.log("Google OAuth request initiated"); 
     next();
 }, passport.authenticate('google', { 
-    scope: ['profile', 'email']  // ✅ Fixed: Scope is explicitly set
+    scope: ['profile', 'email']  
 }));
 
 app.get('/auth/google/callback', passport.authenticate('google', {
