@@ -11,18 +11,30 @@ import Tooltip from '@mui/material/Tooltip';
 import StreetcarIcon from '@mui/icons-material/DirectionsSubwayTwoTone';
 import Link from '@mui/material/Link';
 import { user } from '../../../types/models.ts';
-
+import MenuItem from '@mui/material/MenuItem';
+import { useNavigate } from 'react-router-dom';
 import NavDrawer from './NavDrawer';
-
+import Profile from './Profile';
 interface MainAppBarProps {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
   user: user;
 }
-
+const setting = ['Profile']
 const MainAppBar: React.FC<MainAppBarProps>= ({ setIsAuthenticated, user }) => {
-  const handleOpenUserMenu = () => {}; // nav instructions to user preferences?
-  const handleCloseUserMenu = () => {};
-  let anchorElUser; // this has something to do with the preferences nav 
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+   // nav instructions to user preferences?
+   const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+  const navigate = useNavigate();
+  
+  const goToProfile = () => {
+    navigate('/profile', {state: {from: '/', user} }); 
+  };
   
   return(
     <AppBar position='static' sx={{ background: 'purple'}} >
@@ -45,15 +57,15 @@ const MainAppBar: React.FC<MainAppBarProps>= ({ setIsAuthenticated, user }) => {
               textDecoration: 'none'
             }}
             
-          >
+          > 
             Let's Geaux
           </Typography>
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open Preferences">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Gata" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
+          <Tooltip title="Open Preferences"> 
+   <IconButton onClick={goToProfile} sx={{ p: 0 }}>
+     <Avatar alt="Gata" src={`${user.profilePic}`}/>
+   </IconButton>
+ </Tooltip>
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
@@ -70,8 +82,8 @@ const MainAppBar: React.FC<MainAppBarProps>= ({ setIsAuthenticated, user }) => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {/* {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+              {/* {setting.map((setting) => (
+                <MenuItem key={setting} component='a'href='/profile' onClick={handleCloseUserMenu}>
                   <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
                 </MenuItem>
               ))} */}
