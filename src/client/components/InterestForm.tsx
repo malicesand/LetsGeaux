@@ -1,49 +1,34 @@
 import React, { useState } from 'react';
-import axios from 'axios'
+import axios from 'axios';
+
 type Interest = {
   id: number;
   name: string;
 };
 
 const InterestForm: React.FC = () => {
-  // Define the list of available interests
   const interests: Interest[] = [
     { id: 1, name: 'Hotel' },
-    { id: 2, name: 'Restaurant ' },
+    { id: 2, name: 'Restaurant' },
     { id: 3, name: 'Attraction' },
-    {id: 4, name: 'Geos'}
+    { id: 4, name: 'Geos' },
   ];
 
-  const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
+  const [selectedInterest, setSelectedInterest] = useState<number | null>(null);
 
-  // Handle checkbox change
-  const handleCheckboxChange = (id: number) => {
-    setSelectedInterests((prevSelected) => {
-      if (prevSelected.includes(id)) {
-        // If the interest is already selected, uncheck it
-        return prevSelected.filter((interestId) => interestId !== id);
-      } else {
-        // If the interest is not selected, add it to the selected list
-        return [...prevSelected, id];
-      }
-    });
+  const handleRadioChange = (id: number) => {
+    setSelectedInterest(id);
   };
 
-  // Handle form submission
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // Map the selected IDs to their names
-    const selectedNames = selectedInterests
-      .map((id) => interests.find((interest) => interest.id === id)?.name)
-      .filter((name) => name); 
+    if (selectedInterest === null) {return};
 
-    
-    const interestsData = selectedNames.map((name) => ({
-      name,
-    }));
+    const selectedName = interests.find((interest) => interest.id === selectedInterest)?.name;
 
-    // Send the interests to the backend via a POST request using Axios
+    const interestsData = [{ name: selectedName }];
+
     try {
       const response = await axios.post('/api/interests', interestsData, {
         headers: {
@@ -52,26 +37,28 @@ const InterestForm: React.FC = () => {
       });
 
       if (response.status === 200) {
-        console.log('Interests saved successfully!');
+        console.log('Interest saved successfully!');
       } else {
-        console.error('Failed to save interests.');
+        console.error('Failed to save interest.');
       }
     } catch (error) {
-      console.error('Error sending interests to the backend:', error);
+      console.error('Error sending interest to the backend:', error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Select your interests</h3>
+      <h3>Select your interest</h3>
       <div>
         {interests.map((interest) => (
           <div key={interest.id}>
             <label>
               <input
-                type="checkbox"
-                checked={selectedInterests.includes(interest.id)}
-                onChange={() => handleCheckboxChange(interest.id)}
+                type="radio"
+                name="interest"
+                value={interest.id}
+                checked={selectedInterest === interest.id}
+                onChange={() => handleRadioChange(interest.id)}
               />
               {interest.name}
             </label>
