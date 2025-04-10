@@ -17,12 +17,12 @@ import Login from './Login.tsx';
 import Maps from './Maps.tsx';
 import Suggestions from './Suggestions.tsx';
 import ChatBot from './Chat/ChatBot.tsx';
-import Itinerary from './Itineraray.tsx';
+import Itinerary from './Itinerary/Itineraray.tsx'
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
-import Activities from './NEWActivties.tsx';
+import Activities from './Itinerary/NEWActivties.tsx';
 import ActivitiesChoices from './RouteChoices';
 import Logout from './Logout.tsx';
-import Calendar from './Calendar.tsx';
+import Calendar from './Itinerary/Calendar.tsx';
 import RouteChoices from './RouteChoices.tsx';
 import Wishlist from './Wishlists.tsx';
 import MainAppBar from './AppBar';
@@ -138,7 +138,9 @@ const App: React.FC = () => {
           path='/activities'
           element={
             <ProtectedRoute>
-              <Activities />
+              <Activities itineraryId={''} addActivity={function (itineraryId: string, activityData: any): Promise<void> {
+                throw new Error('Function not implemented.');
+              } }  />
             </ProtectedRoute>
           }
         />
