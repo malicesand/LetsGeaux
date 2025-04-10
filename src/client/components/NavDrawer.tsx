@@ -182,16 +182,14 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary="Interest Form" />
               </ListItemButton>
             </ListItem>
-
-
-            {/* <ListItem key={'Activities'} disablePadding>
-              <ListItemButton component={Link} to="/activities" onClick={handleDrawerClose}>
+            <ListItem key={'Dashboard'} disablePadding>
+              <ListItemButton component={Link} to="/dashboard" onClick={handleDrawerClose}>
                 <ListItemIcon>
                 <LocalActivityIcon />
                 </ListItemIcon>
-                <ListItemText primary="Activities" />
+                <ListItemText primary="Dashboard" />
               </ListItemButton>
-            </ListItem> */}
+            </ListItem>
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
               <ListItemButton component={Link} to='/logout' onClick={handleLogout}>

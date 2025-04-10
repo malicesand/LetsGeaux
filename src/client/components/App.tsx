@@ -157,7 +157,7 @@ const App: React.FC = () => {
         path='/dashboard'
         element={
           <ProtectedRoute>
-            <Dashboard />
+            {<Dashboard  user={user} />}
           </ProtectedRoute>
         }
         />
