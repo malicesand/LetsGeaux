@@ -4,26 +4,40 @@ import { PrismaClient } from '@prisma/client';
 const groupRoute = express.Router();
 const prisma = new PrismaClient();
 
-groupRoute.post('/', async (req, res) => {
-  const { itinerary_id, activity_id } = req.body;
-
-  if (!itinerary_id || !activity_id) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
+// * Create Travel Party * //
+groupRoute.post('/', async (req: any, res: any) => {
+  // console.log(req.body)
+  const {name} = req.body;
   try {
-    const newGroup = await prisma.group.create({
-      data: {
-        itinerary_id,
-        activity_id
-      }
-    });
-
-    res.status(201).json(newGroup);
-  } catch (error) {
-    console.error('Error creating group:', error);
-    res.status(500).json({ message: 'Error creating group', error });
+    const newParty = await prisma.party.create({data: { name }});
+    console.log('successfully created new travel party', newParty)
+    res.json(newParty)
+  } catch(error) {
+    console.error('failed to create new party', error);
+    res.status(500).json({ error:'failure creating party'});
   }
 });
+//* Add User to Party *//
+groupRoute.post('/userParty', async (req: any, res: any) => {
+  console.log(`userPost creation${req.body}`)
+  const {userId, partyId, } = req.body;
+
+  try {
+    const addUserToParty = await prisma.userParty.create({
+      data: {
+       userId,
+       partyId: +partyId
+      }
+    });
+    
+    console.log("successfully added user to party",addUserToParty)
+    res.json(addUserToParty)
+
+  } catch(error) {
+    console.error('failed to create new user party', error);
+    res.status(500).json({ error:'failure creating party'});
+
+  }
+})
 
 export default groupRoute;
