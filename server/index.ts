@@ -20,7 +20,6 @@ import chatsRoute from './routes/chats';
 import itineraryRoute from './routes/itinerary';
 import activityRouter from './routes/activities';
 import wishlistRouter from './routes/wishlist';
-import groupRouter from './routes/groupandusers'
 
 dotenv.config();
 
@@ -166,7 +165,6 @@ app.use('/api/budget', budgetRoutes);
 app.use('/api/activity', activityRouter);
 
 app.use('/api/group', groupRoute);
-app.use('/api/groups', groupRouter)
 app.get('/login', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'dist', 'index.html'));
 });
