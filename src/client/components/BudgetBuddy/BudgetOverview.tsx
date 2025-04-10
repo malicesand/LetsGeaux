@@ -14,6 +14,7 @@ import {
   TextField,
   Chip
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
 
 interface BudgetEntry {
   id: number;
@@ -35,6 +36,12 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
   const [selectedBudget, setSelectedBudget] = useState<BudgetEntry | null>(null);
   const [editForm, setEditForm] = useState({ category: '', limit: '', notes: '', spent: '' });
   const [updatedEntryId, setUpdatedEntryId] = useState<number | null>(null);
+  // state to keep track of which thresholds have been notified for each budget
+  const [notified, setNotified] = useState<{ [budgetId: number]: { [threshold: number]: boolean } }>({});
+  const { enqueueSnackbar } = useSnackbar();
+
+  // fefine the thresholds
+  const thresholds = [25, 50, 75, 90];
 
   const fetchBudgets = async () => {
     if (!selectedItineraryId) return;
@@ -52,6 +59,32 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
   useEffect(() => {
     fetchBudgets();
   }, [selectedItineraryId]);
+
+  // check each budget entry for threshold crossings
+  useEffect(() => {
+    budgets.forEach(budget => {
+      if (budget.limit > 0) {
+        const percentage = ((budget.spent || 0) / budget.limit) * 100;
+        thresholds.forEach(threshold => {
+          if (percentage >= threshold) {
+            // only show notification if not already notified for this budget and threshold
+            if (!(notified[budget.id]?.[threshold])) {
+              enqueueSnackbar(`${budget.category} has crossed ${threshold}% usage!`, {
+                variant: 'warning',
+              });
+              setNotified(prev => ({
+                ...prev,
+                [budget.id]: {
+                  ...prev[budget.id],
+                  [threshold]: true,
+                },
+              }));
+            }
+          }
+        });
+      }
+    });
+  }, [budgets, enqueueSnackbar, thresholds, notified]);
 
   const openEditModal = (budget: BudgetEntry) => {
     setSelectedBudget(budget);
@@ -138,14 +171,14 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
         );
       })}
 
-      {/* edit Modal */}
+      {/* Edit Modal */}
       <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
-        <DialogTitle>Edit Budget</DialogTitle>
+        <DialogTitle>Edit Budget Entry</DialogTitle>
         <DialogContent>
-          <TextField label="Category" fullWidth margin="normal" value={editForm.category} disabled />
-          <TextField label="Limit" type="number" fullWidth margin="normal" value={editForm.limit} onChange={(e) => setEditForm({ ...editForm, limit: e.target.value })} />
-          <TextField label="Spent" type="number" fullWidth margin="normal" value={editForm.spent} onChange={(e) => setEditForm({ ...editForm, spent: e.target.value })} />
-          <TextField label="Notes" fullWidth margin="normal" multiline value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} />
+          <TextField label="Category" fullWidth margin="dense" value={editForm.category} disabled />
+          <TextField label="Limit" type="number" fullWidth margin="dense" value={editForm.limit} onChange={(e) => setEditForm({ ...editForm, limit: e.target.value })} />
+          <TextField label="Spent" type="number" fullWidth margin="dense" value={editForm.spent} onChange={(e) => setEditForm({ ...editForm, spent: e.target.value })} />
+          <TextField label="Notes" fullWidth margin="dense" multiline value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditOpen(false)}>Cancel</Button>
@@ -153,7 +186,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
         </DialogActions>
       </Dialog>
 
-      {/* delete Modal */}
+      {/* Delete Modal */}
       <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
