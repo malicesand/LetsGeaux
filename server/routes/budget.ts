@@ -19,7 +19,7 @@ router.get('/categories', async (req: Request, res: Response) => {
 
   try {
     const whereClause = itineraryId
-      ? { groupItinerary_id: Number(itineraryId) }
+      ? { partyId: Number(itineraryId) }
       : {};
 
     const categories = await prisma.budget.findMany({
@@ -54,7 +54,7 @@ router.get('/', async (req: Request, res: Response) => {
 
   try {
     const whereClause = itineraryId
-      ? { groupItinerary_id: Number(itineraryId) }
+      ? { partyId: Number(itineraryId) }
       : {};
 
     const budgets = await prisma.budget.findMany({
@@ -77,12 +77,12 @@ router.get('/', async (req: Request, res: Response) => {
 
 // GET all budgets for a specific itinerary
 router.get('/itinerary/:id', async (req: Request, res: Response) => {
-  const itineraryId = parseInt(req.params.id);
+  const partyId = parseInt(req.params.id);
 
   try {
     const budgets = await prisma.budget.findMany({
       where: {
-        groupItinerary_id: itineraryId,
+        partyId: partyId,
       },
       orderBy: { updatedAt: 'desc' }
     });
@@ -104,7 +104,7 @@ router.get('/itinerary/:id', async (req: Request, res: Response) => {
 // Create a new budget entry
 // Initialize budget with total amount and currency
 router.post('/', async (req: Request, res: Response) => {
-  const { limit, spent, notes, category, groupItinerary_id } = req.body;
+  const { limit, spent, notes, category, partyId } = req.body;
 
   if (isNaN(limit)) {
     return res.status(400).json({ message: 'Invalid limit value' });
@@ -117,7 +117,7 @@ router.post('/', async (req: Request, res: Response) => {
         category: category || 'Uncategorized',
         notes: notes || '',
         spent: spent !== undefined ? Number(spent) : 0,
-        groupItinerary_id: groupItinerary_id ? Number(groupItinerary_id) : null,
+        partyId: partyId ? Number(partyId) : null,
 
         createdAt: new Date(),
         updatedAt: new Date()
