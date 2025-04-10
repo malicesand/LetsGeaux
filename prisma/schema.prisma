@@ -15,27 +15,25 @@ model user {
   phoneNum     String?            @db.VarChar(10)
   isNotified   Boolean            @default(false)
   googleId     String             @unique
-  // groupId      Int? 
   image        image[]
   profilePic   String? @db.VarChar(150)
   // memberId...
   reminder     reminder[]
-  // group        group?             @relation(fields: [groupId], references: [id]) 
   vote         vote[]
   itinerary    itinerary[]
   suggestion   userOnsuggestion[]
   suggestionId Int?
   userInterest userInterest[]
 
-  userGroups userGroups[]
+  userParty userParty[]
 }
 
-model userGroups {
+model userParty {
   id      Int   @id @default(autoincrement())
   user    user  @relation(fields: [userId], references: [id])
-  group   group @relation(fields: [groupId], references: [id])
+  party   party @relation(fields: [partyId], references: [id])
   userId  Int
-  groupId Int
+  partyId Int
 }
 
 model userOnsuggestion {
@@ -62,17 +60,34 @@ model suggestion {
   latitude      String?
   longitude     String?
   wishUser      userOnsuggestion[]
-  // activity      activity[]
-  // location      location[]
-  // user          user?      @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "suggestion_userId_fkey")
 }
 
+model vote {
+  id Int @id  @default(autoincrement())
+  suggestion suggestion?
+  user user
+  post post? // if it's a post vote, it can only be up?
+  comment comment?
+}
+
+model post {
+  id Int @id @default(autoincrement())
+  user user
+
+}
+
+
+model comment {
+  id Int @id @default(autoincrement())
+  user user
+
+}
+
 model itinerary {
   id        Int        @id @default(autoincrement())
-  // member_id Int
-  groupId   Int?
+  partyId   Int?
   name      String     @db.VarChar(50)
   begin     DateTime
   end       DateTime
@@ -84,8 +99,7 @@ model itinerary {
   activity  activity[]
   creator   user?      @relation(fields: [creatorId], references: [id])
   route     route[]
-  group     group?     @relation(fields: [groupId], references: [id])
-  // @@index([groupId], map: "itinerary_groupId_fkey")
+  party     party?     @relation(fields: [partyId], references: [id])
 
   @@index([creatorId], map: "itinerary_creatorId_fkey")
 }
@@ -142,17 +156,14 @@ model userInterest {
   interestId Int
 }
 
-model group {
+model party {
   id          Int         @id @default(autoincrement())
-  // creatorId    user 
   name        String      @db.VarChar(50)
-  budget      budget[]
-  // members      user[] // covered under user groups
-  image       image[]
   itineraryId Int?
   itinerary   itinerary[]
-
-  userGroups userGroups[]
+  image       image[]
+  userParty   userParty[]
+  budget      budget[]
 }
 
 model reminder {
@@ -173,9 +184,9 @@ model image {
   notes      String? @db.VarChar(255)
   activityId Int?
   userId     Int?
-  group      group?  @relation(fields: [groupId], references: [id])
+  party      party?  @relation(fields: [partyId], references: [id])
   user       user?   @relation(fields: [userId], references: [id])
-  groupId    Int?
+  partyId    Int?
 
   @@index([activityId], map: "image_activityId_fkey")
   @@index([userId], map: "image_userId_fkey")
@@ -190,10 +201,10 @@ model budget {
   limit     Decimal
   updatedAt DateTime @updatedAt
   category  String   @default("")
-  group     group?   @relation(fields: [groupId], references: [id]) //@relation(fields: [groupItinerary_id], references: [itinerary_id])
+  party     party?   @relation(fields: [partyId], references: [id]) //@relation(fields: [groupItinerary_id], references: [itinerary_id])
 
   // @@index([groupItinerary_id], map: "budget_groupItinerary_id_fkey")
-  groupId Int?
+  partyId Int?
 }
 
 model chatHistory {

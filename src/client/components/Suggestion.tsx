@@ -24,7 +24,13 @@ import {
   ImageListItem,
   ListItemText,
 } from '@mui/material';
-import { AddToQueueRounded, ArrowForwardIos } from '@mui/icons-material'
+import {
+  AddToQueueRounded,
+  ArrowForwardIos,
+}  from '@mui/icons-material';
+import ThumbsUpDownRoundedIcon from '@mui/icons-material/ThumbsUpDown';
+import ThumbDownAltRoundedIcon from '@mui/icons-material/ThumbDownAltRounded';
+import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import { user } from '../../../types/models.ts';
 
 interface SuggestionProps {
@@ -130,6 +136,17 @@ const Suggestion: React.FC<SuggestionProps> = ({
   })
 }
 
+const handleVoteClick = (polarity) => {
+  console.log(`We voted ${polarity}!!`);
+  /**
+   * set an axios request to vote with our existing userId and the current suggestion's
+   * id(maybe both in params?)
+   * At some point set a set of statements that would just check the polarity for
+   * the same vote and change it if need be instead of letting them vote ...
+   * maybe disable the vote button visibly on things they've already voted on..
+   */
+}
+
 
 const handleRemoveFromWishlist = () => {
   axios.patch(`/api/wishlist/${currentSuggestion.id}/${user.id}`)
@@ -179,6 +196,15 @@ const handleRemoveFromWishlist = () => {
                 ) : (
                   <Typography><em>Operation hours unavailable</em></Typography>
                 )}
+                <Typography>Vote on this suggestion<ThumbsUpDownRoundedIcon /></Typography>
+              <Button onClick={() => handleVoteClick('up')}><ThumbUpAltRoundedIcon /></Button>
+              <Button onClick={() => handleVoteClick('down')}><ThumbDownAltRoundedIcon /></Button>
+
+
+
+
+
+
               <Accordion
                 expanded={expanded}
                 onChange={handleExpansion}

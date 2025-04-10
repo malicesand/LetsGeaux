@@ -17,7 +17,7 @@ const API_KEY = process.env.TRAVEL_ADVISOR_API_KEY;
 
 //  HELPERS //                                    enter lat long this way =>  42.3455,-71.10767
 //This one queries tripadvisor to get the location ids needed for detailed information. these ids are returned in an array.
-const getTripadvisorLocationIds = async (query: string = "geos", latLong: string = "30.001667%2C-90.092781") => {
+const getTripadvisorLocationIds = async (query: string = "restaurants", latLong: string = "30.001667%2C-90.092781") => {
   try {
     //  https://api.content.tripadvisor.com/api/v1/location/nearby_search?latLong=42.3455%2C-71.10767&key={API_KEY}&category=${query}&language=en;
 
@@ -77,6 +77,8 @@ const getTripadvisorLocationIds = async (query: string = "geos", latLong: string
 const getTripAdvisorImage = (locationId) => {
   axios.get(`https://api.content.tripadvisor.com/api/v1/location/${locationId}/photos?language=en&key=${API_KEY}`)
   .then((setOfImages) => {
+    // check here to see what comes back from this query..
+    console.log('set of images', setOfImages);
     const { thumbnail } = setOfImages.data[0].images;
     return thumbnail;
   })
@@ -87,11 +89,11 @@ const getTripAdvisorImage = (locationId) => {
 // SEARCH flavored GET handling
 suggestionRouter.get(`/search`, async (req:any, res:any) => {
  try {
-  console.log('trying')
-   const locations: number[] = await getTripadvisorLocationIds().then((stuff) => {
-    getTripadvisorDetailedEntries(stuff).then((entries) => {
-      console.log('ent', entries);
-      // getTripAdvisorImage(locations)
+   const locations: number[] = await getTripadvisorLocationIds().then((locationArray) => {
+     // const picture : string = await getTripAdvisorImage(locations)
+     getTripadvisorDetailedEntries(locationArray).then((entries) => {
+       const picture = getTripAdvisorImage(locationArray[0])
+       console.log('pic', picture);
       res.status(200).send(entries);
     })
 
