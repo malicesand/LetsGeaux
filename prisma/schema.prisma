@@ -16,7 +16,7 @@ model user {
   isNotified   Boolean            @default(false)
   googleId     String             @unique
   image        image[]
-  profilePic   String? @db.VarChar(150)
+  profilePic   String?            @db.VarChar(150)
   // memberId...
   reminder     reminder[]
   vote         vote[]
@@ -26,6 +26,8 @@ model user {
   userInterest userInterest[]
 
   userParty userParty[]
+  post      post[]
+  comment   comment[]
 }
 
 model userParty {
@@ -60,29 +62,25 @@ model suggestion {
   latitude      String?
   longitude     String?
   wishUser      userOnsuggestion[]
+  vote          vote[]
 
   @@index([userId], map: "suggestion_userId_fkey")
 }
 
-model vote {
-  id Int @id  @default(autoincrement())
-  suggestion suggestion?
-  user user
-  post post? // if it's a post vote, it can only be up?
-  comment comment?
-}
-
 model post {
-  id Int @id @default(autoincrement())
-  user user
+  id   Int  @id @default(autoincrement())
+  user user @relation(fields: [userId], references: [id])
 
+  userId Int
+  vote   vote[]
 }
-
 
 model comment {
-  id Int @id @default(autoincrement())
-  user user
+  id   Int  @id @default(autoincrement())
+  user user @relation(fields: [userId], references: [id])
 
+  userId Int
+  vote   vote[]
 }
 
 model itinerary {
@@ -132,12 +130,15 @@ model route {
 }
 
 model vote {
-  id            Int     @id @default(autoincrement())
-  vote_polarity Boolean
-  vote_topic    String  @db.VarChar(25)
-  voted_item_id Int
-  userId        Int?
-  user          user?   @relation(fields: [userId], references: [id])
+  id           Int         @id @default(autoincrement())
+  post         post?       @relation(fields: [postId], references: [id])
+  comment      comment?    @relation(fields: [commentId], references: [id])
+  suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
+  userId       Int?
+  user         user?       @relation(fields: [userId], references: [id])
+  postId       Int?
+  commentId    Int?
+  suggestionId Int?
 
   @@index([userId], map: "vote_userId_fkey")
 }
