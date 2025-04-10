@@ -24,7 +24,7 @@ const BudgetBuddy: React.FC = () => {
       try {
         // confirm this filters by creatorId
         const res = await api.get('/itinerary');
-        console.log("Fetched itineraries:", res.data); //inspect this  for debug
+        console.log("Fetched itineraries:", res.data); //inspect this for debug
         setItineraries(res.data);
       } catch (err) {
         console.error('Failed to fetch itineraries:', err);

@@ -28,7 +28,7 @@ const BudgetForm: React.FC<BudgetFormProps> = ({ selectedItineraryId }) => {
         spent: parsedSpent,
         category,
         notes,
-        groupItinerary_id: selectedItineraryId, // or assign dynamically later
+        itineraryId: selectedItineraryId, // or assign dynamically later
       });
 
       // Reset form
