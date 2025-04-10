@@ -21,6 +21,7 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
   // const [name, setName] = useState<string>('');
   // const [partyId, setPartyId] = useState<number>(); 
   const userId = user.id;
+  
 
   const openModal = () => {
     setOpen(true);
@@ -36,8 +37,8 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
     console.log(`Creating...${name}`);
     try {
       let response = await axios.post('/api/group', {name} );
-      console.log(`${name} created!`)
-      console.log(`${response.data.id} partyId!`)
+      // console.log(`${name} created!`)
+      // console.log(`${response.data.id} partyId!`)
       const partyId = (response.data.id) 
       addUserToParty(userId, partyId);
     } catch (error) {
@@ -45,7 +46,7 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
     };
   };
   const addUserToParty = async(userId:number, partyId:number) => {
-    console.log(`this is a partyId:${partyId}`);
+    // console.log(`this is a partyId:${partyId}`);
     try {
       let response = await axios.post('/api/group/userParty', {userId, partyId});
       console.log(`userParty logged ${response.data}`);

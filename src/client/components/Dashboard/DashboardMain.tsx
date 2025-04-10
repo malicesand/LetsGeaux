@@ -3,7 +3,7 @@ import React from 'react';
 import Box from '@mui/material/Box';
 
 
-import positions from '@mui/system/positions';
+
 
 import AddMember from './AddMember';
 import CreateGroup from './CreateGroup';
