@@ -15,13 +15,13 @@ const API_KEY = process.env.TRAVEL_ADVISOR_API_KEY;
 //   headers: {accept: 'application/json'}
 // };
 
-//  HELPERS //
-
+//  HELPERS //                                    enter lat long this way =>  42.3455,-71.10767
 //This one queries tripadvisor to get the location ids needed for detailed information. these ids are returned in an array.
-const getTripadvisorLocationIds = async (query: string = "restaurant") => {
+const getTripadvisorLocationIds = async (query: string = "geos", latLong: string = "30.001667%2C-90.092781") => {
   try {
+    //  https://api.content.tripadvisor.com/api/v1/location/nearby_search?latLong=42.3455%2C-71.10767&key={API_KEY}&category=${query}&language=en;
 
-    const list = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/search?language=en&searchQuery=${query}&key=${API_KEY}`)
+    const list = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/nearby_search?latLong=${latLong}&language=en&category=${query}&key=${API_KEY}`)
       let locations = [];
       const attractionList = list.data.data;
       for (let attraction of attractionList) {
@@ -33,12 +33,12 @@ const getTripadvisorLocationIds = async (query: string = "restaurant") => {
       console.error('failed to get ids', err);
     }
   }
-  
+
   // This one queries trip advisor with an array of location ids and moves wanted info from the result to an object
   const getTripadvisorDetailedEntries = async (locations: number[]) => {
     // console.log('deez loc', locations)
     try {
-      
+
       const detailedEntries = await locations.map(async (location) => {
         const detailedEntry = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`)
         // const advisorImage = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/photos?language=en&key=${API_KEY}`)
@@ -85,7 +85,7 @@ const getTripAdvisorImage = (locationId) => {
 
 
 // SEARCH flavored GET handling
-suggestionRouter.get('/search', async (req:any, res:any) => {
+suggestionRouter.get(`/search`, async (req:any, res:any) => {
  try {
   console.log('trying')
    const locations: number[] = await getTripadvisorLocationIds().then((stuff) => {
