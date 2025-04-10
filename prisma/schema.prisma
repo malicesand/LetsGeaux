@@ -17,7 +17,7 @@ model user {
   googleId     String             @unique
   // groupId      Int? 
   image        image[]
-  profilePic   String?
+  profilePic   String? @db.VarChar(150)
   // memberId...
   reminder     reminder[]
   // group        group?             @relation(fields: [groupId], references: [id]) 
@@ -27,7 +27,6 @@ model user {
   suggestionId Int?
   userInterest userInterest[]
 
-  // @@index([groupId], map: "user_groupId_fkey") 
   userGroups userGroups[]
 }
 
@@ -72,7 +71,7 @@ model suggestion {
 
 model itinerary {
   id        Int        @id @default(autoincrement())
-  // member_id Int        
+  // member_id Int
   groupId   Int?
   name      String     @db.VarChar(50)
   begin     DateTime
@@ -86,7 +85,7 @@ model itinerary {
   creator   user?      @relation(fields: [creatorId], references: [id])
   route     route[]
   group     group?     @relation(fields: [groupId], references: [id])
-  // @@index([groupId], map: "itinerary_groupId_fkey")        
+  // @@index([groupId], map: "itinerary_groupId_fkey")
 
   @@index([creatorId], map: "itinerary_creatorId_fkey")
 }
@@ -106,19 +105,6 @@ model activity {
 
   @@index([itineraryId], map: "activity_itineraryId_fkey")
 }
-
-// model location {
-//   id           Int         @id @default(autoincrement())
-//   name         String      @db.VarChar(50)
-//   description  String      @db.VarChar(255)
-//   address      String      @db.VarChar(50)
-//   latitude     Decimal
-//   longitude    Decimal
-//   suggestionId Int?
-//   suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
-
-//   @@index([suggestionId], map: "location_suggestionId_fkey")
-// }
 
 model route {
   id          Int        @id @default(autoincrement())
@@ -168,14 +154,6 @@ model group {
 
   userGroups userGroups[]
 }
-
-// model group {
-//   itinerary_id Int      @unique
-//   id           Int      @id @default(autoincrement())
-//   budget       budget[]
-//   user_id      user[]
-//   image        image[]
-// }
 
 model reminder {
   id           Int      @id @default(autoincrement())

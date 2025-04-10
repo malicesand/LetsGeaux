@@ -84,8 +84,6 @@ const Suggestion: React.FC<SuggestionProps> = ({
 
   // This is what occurs when the add to wishlist button is pressed. Calling a post request with wish markers to post the Suggestion
   const addToWishlist = () => {
-    console.log(currentSuggestion);
-    console.log(user);
     /**
      * sugg values:[corresponding suggestion values will be below the first]
      * address, description,  latitude,  longitude, phoneNum, title
