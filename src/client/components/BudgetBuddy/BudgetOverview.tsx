@@ -40,7 +40,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
     if (!selectedItineraryId) return;
     setLoading(true);
     try {
-      const res = await api.get(`/budget?itineraryId=${selectedItineraryId}`);
+      const res = await api.get(`/budget?partyId=${selectedItineraryId}`);
       setBudgets(Array.isArray(res.data) ? res.data : [res.data]);
     } catch (err) {
       console.error('Fetch budget error:', err);

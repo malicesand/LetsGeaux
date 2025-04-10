@@ -44,7 +44,7 @@ const BudgetPieChart: React.FC<Props> = ({ selectedItineraryId }) => {
   const fetchCategories = async () => {
     try {
       const res = await api.get('/budget/categories', {
-        params: { itineraryId: selectedItineraryId }
+        params: { partyId: selectedItineraryId }
       });
 
       //inspect whats coming back
