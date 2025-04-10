@@ -52,7 +52,7 @@ passport.use(new GoogleStrategy({
         let user = await prisma.user.findUnique({ 
           where: { googleId: profile.id },
          });
-         console.log(profile.photos[0].value)
+        
         if (!user) {
   
           user = await prisma.user.create({
@@ -64,7 +64,6 @@ passport.use(new GoogleStrategy({
               isVerified: true, 
               phoneNum: '',
               isNotified: false,
-              
               // image: profile.image,
               // post: undefined,
               reminder: undefined,
@@ -134,10 +133,14 @@ app.get('/auth/google/callback', passport.authenticate('google', {
     failureRedirect: '/login',
 }));
 
+
+
 // Check auth
 app.get('/api/check-auth', (req, res) => {
     res.json({ isAuthenticated: req.isAuthenticated(), user: req.user });
 });
+
+
 
 // Logout Route
 app.post('/logout', (req, res) => {
