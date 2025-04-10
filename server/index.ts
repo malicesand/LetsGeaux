@@ -20,7 +20,7 @@ import chatsRoute from './routes/chats';
 import itineraryRoute from './routes/itinerary';
 import activityRouter from './routes/activities';
 import wishlistRouter from './routes/wishlist';
-import groupRouter from './routes/groupandusers';
+import groupRouter from './routes/groupandusers'
 
 dotenv.config();
 

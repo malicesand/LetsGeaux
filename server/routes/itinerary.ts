@@ -31,7 +31,7 @@ try{
   const newItinerary = await prisma.itinerary.create({
 data: {
 creatorId, 
-member_id, 
+//member_id, 
 name, 
 notes, 
 begin: new Date(begin),
