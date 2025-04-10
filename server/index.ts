@@ -64,7 +64,7 @@ passport.use(new GoogleStrategy({
               isVerified: true, 
               phoneNum: '',
               isNotified: false,
-              groupId: null,
+              
               // image: profile.image,
               // post: undefined,
               reminder: undefined,
