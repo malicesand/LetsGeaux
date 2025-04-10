@@ -1,6 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
-
+import { v4 as uuidv4 } from 'uuid'
 const prisma = new PrismaClient();
 
 const itineraryRoute = express.Router();
@@ -18,34 +18,41 @@ res.status(500).json({error: 'Error fetching itinerary'})
 
 })
 
+//added unique code
 itineraryRoute.post('/', async (req: any, res: any) =>{
   //const {id} = req.user
-const {creatorId, member_id, name, notes, begin, end, upVotes, downVotes} = req.body
+const {creatorId, name, notes, begin, end, upVotes, downVotes} = req.body
 //console.log(req.user)
+const userExists = await prisma.user.findUnique({
+  where: { id: creatorId },
+});
+
+if (!userExists) {
+  return res.status(400).json({ error: 'Creator not found' });
+}
 if (!name || !begin || !end) {
   return res.status(400).json({ error: "Missing required fields" });
 }
-
+const viewCode = uuidv4().slice(0, 4)
 
 try{
   const newItinerary = await prisma.itinerary.create({
 data: {
 creatorId, 
-//member_id, 
 name, 
 notes, 
 begin: new Date(begin),
 end: new Date(end),
 upVotes: upVotes ?? 0,  
 downVotes: downVotes ?? 0,
-
-createdAt: new Date()
+createdAt: new Date(), 
+viewCode,
 }
 
   })
 res.status(201).json(newItinerary)
 }catch(error){
-res.status(500).json({error: 'Error creating itinerary'})
+res.status(500).json({error: 'Error creating itinerary', details: error.message})
 }
 
 }) 
@@ -91,6 +98,42 @@ itineraryRoute.patch('/:id', async (req: any, res: any) => {
   }
   
   }) 
+
+
+
+
+  itineraryRoute.get('/view/:viewCode', async (req: any, res: any) => {
+    const { viewCode } = req.params;
+  
+    try {
+      // Fetch the itinerary based on the view code
+      const itinerary = await prisma.itinerary.findUnique({
+        where: {
+          viewCode: viewCode, 
+        },
+        include: {
+          activity: true,  
+          route: true,     
+          creator: {
+            select: {
+              id: true,
+              
+            },
+          },
+        },
+      });
+  
+      if (!itinerary) {
+        return res.status(404).json({ error: 'Itinerary not found' });
+      }
+  
+      res.json(itinerary); 
+    } catch (error) {
+      console.error('Error fetching itinerary:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
 
 
 export default itineraryRoute;
