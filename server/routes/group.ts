@@ -40,4 +40,27 @@ groupRoute.post('/userParty', async (req: any, res: any) => {
   }
 })
 
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+groupRoute.post('/sendInvite', async (req: any, res:any) => {
+console.log('sending');
+  const msg = {
+    to: 'malicesand@gmail.com', // Change to your recipient
+    from: 'invite@letsgeauxnola.com', // Change to your verified sender
+    subject: 'Sending with SendGrid is Fun',
+    text: 'and easy to do anywhere, even with Node.js',
+    html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+  }
+
+  sgMail
+  .send(msg)
+  .then(() => {
+    console.log('Email sent')
+  })
+  .catch((error) => {
+    console.error(error)
+  })
+});
+
 export default groupRoute;
