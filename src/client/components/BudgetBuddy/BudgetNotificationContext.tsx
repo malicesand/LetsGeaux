@@ -6,7 +6,7 @@ export interface Notification {
   timestamp: Date;
 }
 
-//define the shape of the context value
+//define the shape of the context values
 interface BudgetNotificationContextType {
   notifications: Notification[];
   addNotification: (notification: Notification) => void;
