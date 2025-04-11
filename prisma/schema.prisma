@@ -54,8 +54,8 @@ model suggestion {
   created_at    DateTime           @default(now())
   timeAvailable String?
   cost          Int?
-  address       String             @db.VarChar(100)
-  description   String             @db.Text
+  address       String?            @db.VarChar(100)
+  description   String?            @db.Text
   image         String?            @db.Text
   phoneNum      String?            @db.VarChar(50)
   userId        Int?
@@ -134,9 +134,10 @@ model vote {
   post         post?       @relation(fields: [postId], references: [id])
   comment      comment?    @relation(fields: [commentId], references: [id])
   suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
-  userId       Int?
+  userId       Int
   user         user?       @relation(fields: [userId], references: [id])
   postId       Int?
+  polarity     Int
   commentId    Int?
   suggestionId Int?
 
