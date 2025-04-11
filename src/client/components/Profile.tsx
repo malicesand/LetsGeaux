@@ -1,39 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios'
+import axios from 'axios';
 
-const Profile: React.FC = () =>{
+const Profile: React.FC = () => {
   const location = useLocation();
-  const [interests, useInterests]= useState([]);
-  const { user } = location.state || {}
-  const getInterests = async () => {
-    try {
-     const userId = user.id
-      const response = await axios.get(`/api/interests/${userId}`);
-  
-      useInterests(response.data);
-      
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching interests:', error);
-    }
-  };
-return (
+  const [interests, setInterests] = useState([]);
+  const { user } = location.state; 
 
-  <div>
-<h1>Profile Page</h1>
-    <div>{user.username}</div>
-    <div>{user.email}</div>
-  <img src={`${user.profilePic}`}></img>
-{console.log(interests)}
-   <button onClick={getInterests}>View Interests</button>
-{interests.map((interest)=>{
-  return <div>{interest.name}</div>
-})}
+  useEffect(() => {
+    const fetchInterests = async () => {
+      try {
+        const response = await axios.get(`/api/interests/${user.id}`);
+        setInterests(response.data);
+      } catch (error) {
+        console.error('Error fetching interests:', error);
+      }
+    };
 
-  </div>
+    fetchInterests();
+  }, []); 
 
-)
-}
+  return (
+    <div>
+      <h1>Profile Page</h1>
+      <div>{user.username}</div>
+      <div>{user.email}</div>
+      <img src={user.profilePic} alt="Profile" />
 
-export default Profile
+      <h3>Interests:</h3>
+      {interests.length > 0 
+        interests.map((interest, index) => (
+          <div key={index}>{interest.name}</div>
+        ))
+     
+      }
+    </div>
+  );
+};
+
+export default Profile;
