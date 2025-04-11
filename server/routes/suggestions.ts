@@ -138,7 +138,7 @@ suggestionRouter.get('/', async (req: any, res: any) => {
 
     const allSuggs = await prisma.suggestion.findMany();
     console.log(allSuggs)
-    res.status(200).send('an answer', allSuggs.data);
+    res.status(200).send( allSuggs);
   } catch( err:any) {
     console.error("FAIL!!", err);
     res.sendStatus(500);
