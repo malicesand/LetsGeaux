@@ -20,7 +20,7 @@ import chatsRoute from './routes/chats';
 import itineraryRoute from './routes/itinerary';
 import activityRouter from './routes/activities';
 import wishlistRouter from './routes/wishlist';
-import voteRouter from './routes/votes';
+import voteRouter from './routes/votes';import interestRouter from './routes/interests'
 dotenv.config();
 
 const app = express();
@@ -52,7 +52,7 @@ passport.use(new GoogleStrategy({
         let user = await prisma.user.findUnique({ 
           where: { googleId: profile.id },
          });
-         console.log(profile.photos[0].value)
+        
         if (!user) {
   
           user = await prisma.user.create({
@@ -134,10 +134,14 @@ app.get('/auth/google/callback', passport.authenticate('google', {
     failureRedirect: '/login',
 }));
 
+
+
 // Check auth
 app.get('/api/check-auth', (req, res) => {
     res.json({ isAuthenticated: req.isAuthenticated(), user: req.user });
 });
+
+
 
 // Logout Route
 app.post('/logout', (req, res) => {
@@ -159,7 +163,7 @@ app.use('/api/chats/', chatsRoute);
 app.use('/api/maps/', mapsRoute);
 app.use('/api/suggestions', suggestionRouter);
 app.use('/api/wishlist', wishlistRouter);
-
+app.use('/api/interests', interestRouter)
 app.use('/api/itinerary', itineraryRoute)
 app.use('/api/budget', budgetRoutes);
 app.use('/api/activity', activityRouter);
