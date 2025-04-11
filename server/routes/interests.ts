@@ -65,6 +65,58 @@ interestRoute.get('/:userId', async (req, res) => {
   }
 });
 
+interestRoute.put('/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { newInterest } = req.body;
 
+    // Find or create the new interest
+    let newInterestRecord = await prisma.interest.findFirst({
+      where: { name: newInterest },
+    });
+
+    if (!newInterestRecord) {
+      newInterestRecord = await prisma.interest.create({
+        data: { name: newInterest },
+      });
+    }
+
+    // Find the user's current interest
+    const userInterest = await prisma.userInterest.findFirst({
+      where: { userId: +userId },
+      include: { interest: true },
+    });
+
+    if (!userInterest) {
+      // If user doesn't have one, create new
+      await prisma.userInterest.create({
+        data: {
+          userId: +userId,
+          interestId: newInterestRecord.id,
+        },
+      });
+    } else {
+      const oldInterestId = userInterest.interestId;
+
+      // Update to new interest
+      await prisma.userInterest.update({
+        where: { id: userInterest.id },
+        data: {
+          interestId: newInterestRecord.id,
+        },
+      });
+
+      // Force delete the old interest 
+      await prisma.interest.delete({
+        where: { id: oldInterestId },
+      });
+    }
+
+    res.status(200).json({ message: 'Interest updated and old interest deleted', interest: newInterestRecord });
+  } catch (error) {
+    console.error("Error updating interest:", error);
+    res.status(500).json({ message: 'Error updating interest' });
+  }
+});
 
 export default interestRoute

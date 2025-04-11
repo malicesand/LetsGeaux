@@ -12,9 +12,9 @@ interface InterestProps {
 
 const InterestForm: React.FC<InterestProps> = ({user}) => {
   const interests: Interest[] = [
-    { id: 1, name: 'Hotel' },
-    { id: 2, name: 'Restaurant' },
-    { id: 3, name: 'Attraction' },
+    { id: 1, name: 'Hotels' },
+    { id: 2, name: 'Restaurants' },
+    { id: 3, name: 'Attractions' },
     { id: 4, name: 'Geos' },
   ];
 
