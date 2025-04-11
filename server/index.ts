@@ -20,7 +20,12 @@ import chatsRoute from './routes/chats';
 import itineraryRoute from './routes/itinerary';
 import activityRouter from './routes/activities';
 import wishlistRouter from './routes/wishlist';
-import voteRouter from './routes/votes';import interestRouter from './routes/interests'
+import voteRouter from './routes/votes';
+import interestRouter from './routes/interests';
+import communityRouter from './routes/community';
+import commentsRouter from './routes/comments';
+import postsRouter from './routes/posts';
+
 dotenv.config();
 
 const app = express();
@@ -28,9 +33,9 @@ app.use(express.json());
 
 const port = 8000;
 app.use(cors({
-  origin: 'http://localhost:8000', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // 
+  origin: 'http://localhost:8000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], //
   credentials: true, // missing so cookies werent sent which breaks session based auth
 }));
 app.options('*', cors());
@@ -47,31 +52,31 @@ passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:8000/auth/google/callback',
-}, async (accessToken, refreshToken, profile, done) => { 
+}, async (accessToken, refreshToken, profile, done) => {
     try {
-        let user = await prisma.user.findUnique({ 
+        let user = await prisma.user.findUnique({
           where: { googleId: profile.id },
          });
-        
+
         if (!user) {
-  
+
           user = await prisma.user.create({
             data: {
               googleId: profile.id,
               username: profile.displayName,
               email: profile.emails[0].value,
               profilePic: profile.photos[0].value,
-              isVerified: true, 
+              isVerified: true,
               phoneNum: '',
               isNotified: false,
               // partyId: null,
               image: profile.image,
               // post: undefined,
               reminder: undefined,
-              suggestion: undefined, 
+              suggestion: undefined,
               vote: undefined
             }
-          });   
+          });
         }
         done(null, user);
     } catch (error) {
@@ -107,7 +112,7 @@ const isAuthenticated = (req: any, res: any, next: Function) => {
 // Get the current user's profile
 app.get('/users', isAuthenticated, async (req: any, res: any) => {
     try {
-      const user = await prisma.user.findUnique({ 
+      const user = await prisma.user.findUnique({
         where: { googleId: req.googleId }
       });
 
@@ -123,10 +128,10 @@ app.get('/users', isAuthenticated, async (req: any, res: any) => {
 
 // **Google Auth Routes**
 app.get('/auth/google', (req, res, next) => {
-    console.log("Google OAuth request initiated"); 
+    console.log("Google OAuth request initiated");
     next();
-}, passport.authenticate('google', { 
-    scope: ['profile', 'email']  
+}, passport.authenticate('google', {
+    scope: ['profile', 'email']
 }));
 
 app.get('/auth/google/callback', passport.authenticate('google', {
@@ -169,6 +174,9 @@ app.use('/api/budget', budgetRoutes);
 app.use('/api/activity', activityRouter);
 app.use('/api/vote', voteRouter);
 app.use('/api/group', groupRoute);
+app.use('/api/community', communityRouter);
+app.use('/api/posts', postsRouter);
+app.use('/api/comments', commentsRouter);
 app.get('/login', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'dist', 'index.html'));
 });

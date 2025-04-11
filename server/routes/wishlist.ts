@@ -1,5 +1,4 @@
 const express = require('express');
-import axios from 'axios';
 import { PrismaClient } from '@prisma/client';
 
 const wishlistRouter = express.Router();
