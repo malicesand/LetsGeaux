@@ -1,7 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import SuggestionForm from './SuggestionForm';
-import { Container, Card, Typography, Dialog, Grid, Avatar, Input, InputLabel, Button, SpeedDial, CircularProgress } from '@mui/material'
+// import SuggestionForm from './SuggestionForm';
+import {
+  Container,
+  Card,
+  // Typography,
+  // Dialog,
+  // Grid,
+  // Avatar,
+  // Input,
+  // InputLabel,
+  // Button,
+  // SpeedDial,
+  // CircularProgress
+} from '@mui/material'
 import Suggestion from './Suggestion';
 import { user } from '../../../types/models.ts';
 
