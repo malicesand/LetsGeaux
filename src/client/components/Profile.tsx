@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-
+import ImageUpload from './ImageUpload';
 const ALL_INTERESTS = ['Restaurants', 'Hotels', 'Geos', 'Attractions']; 
 
 const Profile: React.FC = () => {
@@ -45,13 +45,13 @@ const Profile: React.FC = () => {
   const currentInterest = interests[0]?.name;
   const interestOptions = ALL_INTERESTS.filter((i) => i !== currentInterest);
   useEffect(() => {
-    // Check if script is already added
+   
     if (!document.querySelector('script[src="https://widget.cloudinary.com/v2.0/global/all.js"]')) {
       const script = document.createElement('script');
       script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
       script.async = true;
       script.onload = () => {
-        console.log('Cloudinary widget script loaded');
+      
       };
       document.body.appendChild(script);
     }
@@ -67,13 +67,16 @@ const Profile: React.FC = () => {
         cropping: true,
         multiple: false,
         folder: 'letsGeatx/profilePic',
+        transformation: [
+          { width: 150, height: 150, crop: 'limit' } 
+        ],
       },
       async (error: any, result: any) => {
         if (!error && result.event === 'success') {
           const imageUrl = result.info.secure_url;
           console.log('Uploaded image:', imageUrl);
   
-          // Send to backend to save in DB
+         
           try {
             await axios.patch(`/api/users/${user.id}/profile-pic`, {
               profilePic: imageUrl,
@@ -99,7 +102,7 @@ const Profile: React.FC = () => {
       <h1>Profile Page</h1>
       <div>{user.username}</div>
       <div>{user.email}</div>
-      <img src={user.profilePic} alt="Profile" />
+      <img src={user.profilePic} alt="Profile" style={{ height: '150px' }} />
       <button onClick={handleUploadWidget}>Change Profile Picture</button>
 
       <h3>Current Interest:</h3>
@@ -123,6 +126,8 @@ const Profile: React.FC = () => {
         ))}
         <button type="submit">Update Interest</button>
       </form>
+          {/* upload image component */}
+          <ImageUpload/>
     </div>
   );
 };
