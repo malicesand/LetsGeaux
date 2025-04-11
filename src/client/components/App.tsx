@@ -17,12 +17,12 @@ import Login from './Login.tsx';
 import Maps from './Maps.tsx';
 import Suggestions from './Suggestions.tsx';
 import ChatBot from './Chat/ChatBot.tsx';
-import Itinerary from './Itineraray.tsx';
+import Itinerary from './Itinerary/Itineraray.tsx'
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
-import Activities from './NEWActivties.tsx';
+import Activities from './Itinerary/NEWActivties.tsx';
 import ActivitiesChoices from './RouteChoices';
 import Logout from './Logout.tsx';
-import Calendar from './Calendar.tsx';
+import Calendar from './Itinerary/Calendar.tsx';
 import RouteChoices from './RouteChoices.tsx';
 import Wishlist from './Wishlists.tsx';
 import MainAppBar from './AppBar';
@@ -30,6 +30,7 @@ import { user } from '../../../types/models.ts';
 //import Activity from './NEWActivties.tsx';
 import Profile from './Profile.tsx';
 import Dashboard from './Dashboard/DashboardMain.tsx'
+import ViewCodeForm from './Itinerary/viewCodeForm.tsx';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -138,7 +139,9 @@ const App: React.FC = () => {
           path='/activities'
           element={
             <ProtectedRoute>
-              <Activities />
+              <Activities itineraryId={''} addActivity={function (itineraryId: string, activityData: any): Promise<void> {
+                throw new Error('Function not implemented.');
+              } }  />
             </ProtectedRoute>
           }
         />
@@ -163,6 +166,15 @@ const App: React.FC = () => {
           </ProtectedRoute>
         }
       />
+
+<Route
+        path='/viewform'
+        element={
+          <ProtectedRoute>
+            {<ViewCodeForm/>}
+          </ProtectedRoute>
+        }
+        />
       </Routes>
     </>
   );
