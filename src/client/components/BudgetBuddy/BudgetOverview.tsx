@@ -12,13 +12,9 @@ import {
   DialogActions,
   Button,
   TextField,
+  Chip
 } from '@mui/material';
-
-function getProgressColor(value: number): 'primary' | 'warning' | 'error' {
-  if (value < 50) return 'primary';
-  if (value < 85) return 'warning';
-  return 'error';
-}
+import { useSnackbar } from 'notistack';
 
 interface BudgetEntry {
   id: number;
@@ -28,25 +24,67 @@ interface BudgetEntry {
   spent?: number;
 }
 
-const BudgetOverview: React.FC = () => {
+interface Props {
+  selectedItineraryId: number | null;
+}
+
+const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
   const [budgets, setBudgets] = useState<BudgetEntry[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selectedBudget, setSelectedBudget] = useState<BudgetEntry | null>(null);
   const [editForm, setEditForm] = useState({ category: '', limit: '', notes: '', spent: '' });
+  const [updatedEntryId, setUpdatedEntryId] = useState<number | null>(null);
+  // state to keep track of which thresholds have been notified for each budget
+  const [notified, setNotified] = useState<{ [budgetId: number]: { [threshold: number]: boolean } }>({});
+  const { enqueueSnackbar } = useSnackbar();
+
+  // fefine the thresholds
+  const thresholds = [25, 50, 75, 90];
+
+  const fetchBudgets = async () => {
+    if (!selectedItineraryId) return;
+    setLoading(true);
+    try {
+      const res = await api.get(`/budget?partyId=${selectedItineraryId}`);
+      setBudgets(Array.isArray(res.data) ? res.data : [res.data]);
+    } catch (err) {
+      console.error('Fetch budget error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    api
-      .get('/budget')
-      .then((res) => {
-        const result = Array.isArray(res.data) ? res.data : [res.data];
-        setBudgets(result);
-      })
-      .catch((err) => console.error('Fetch budget error:', err))
-      .finally(() => setLoading(false));
-  }, []);
+    fetchBudgets();
+  }, [selectedItineraryId]);
+
+  // check each budget entry for threshold crossings
+  useEffect(() => {
+    budgets.forEach(budget => {
+      if (budget.limit > 0) {
+        const percentage = ((budget.spent || 0) / budget.limit) * 100;
+        thresholds.forEach(threshold => {
+          if (percentage >= threshold) {
+            // only show notification if not already notified for this budget and threshold
+            if (!(notified[budget.id]?.[threshold])) {
+              enqueueSnackbar(`${budget.category} has crossed ${threshold}% usage!`, {
+                variant: 'warning',
+              });
+              setNotified(prev => ({
+                ...prev,
+                [budget.id]: {
+                  ...prev[budget.id],
+                  [threshold]: true,
+                },
+              }));
+            }
+          }
+        });
+      }
+    });
+  }, [budgets, enqueueSnackbar, thresholds, notified]);
 
   const openEditModal = (budget: BudgetEntry) => {
     setSelectedBudget(budget);
@@ -64,36 +102,39 @@ const BudgetOverview: React.FC = () => {
     setDeleteOpen(true);
   };
 
-  const handleEditSave = () => {
+  const handleEditSave = async () => {
     if (!selectedBudget) return;
-    api.put(`/budget/${selectedBudget.id}`, {
-      ...editForm,
-      limit: parseFloat(editForm.limit),
-      spent: parseFloat(editForm.spent),
-    })
-      .then(() => {
-        setEditOpen(false);
-        refreshBudgets();
-      })
-      .catch((err) => console.error('Update failed:', err));
+    try {
+      await api.put(`/budget/${selectedBudget.id}`, {
+        ...editForm,
+        limit: parseFloat(editForm.limit),
+        spent: parseFloat(editForm.spent),
+      });
+      setUpdatedEntryId(selectedBudget.id);
+      fetchBudgets();
+    } catch (err) {
+      console.error('Update failed:', err);
+    } finally {
+      setEditOpen(false);
+      setTimeout(() => setUpdatedEntryId(null), 2000);
+    }
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!selectedBudget) return;
-    api.delete(`/budget/${selectedBudget.id}`)
-      .then(() => {
-        setDeleteOpen(false);
-        refreshBudgets();
-      })
-      .catch((err) => console.error('Delete failed:', err));
+    try {
+      await api.delete(`/budget/${selectedBudget.id}`);
+      fetchBudgets();
+    } catch (err) {
+      console.error('Delete failed:', err);
+    } finally {
+      setDeleteOpen(false);
+    }
   };
 
-  const refreshBudgets = () => {
-    setLoading(true);
-    api.get('/budget')
-      .then((res) => setBudgets(Array.isArray(res.data) ? res.data : [res.data]))
-      .finally(() => setLoading(false));
-  };
+  if (!selectedItineraryId) {
+    return <Typography sx={{ m: 4 }}>Select an itinerary to view budget entries.</Typography>;
+  }
 
   if (loading) return <CircularProgress sx={{ m: 4 }} />;
   if (budgets.length === 0) return <Typography sx={{ m: 4 }}>No budget entries found.</Typography>;
@@ -118,12 +159,13 @@ const BudgetOverview: React.FC = () => {
             <LinearProgress
               variant="determinate"
               value={percent}
-              color={getProgressColor(percent)}
               sx={{ height: 10, borderRadius: 5, mt: 1 }}
+              color={percent < 50 ? 'primary' : percent < 85 ? 'warning' : 'error'}
             />
             <Stack direction="row" spacing={1} mt={2}>
               <Button size="small" variant="outlined" onClick={() => openEditModal(budget)}>Edit</Button>
               <Button size="small" variant="outlined" color="error" onClick={() => openDeleteModal(budget)}>Delete</Button>
+              {updatedEntryId === budget.id && <Chip label="Updated!" color="success" size="small" />}
             </Stack>
           </Box>
         );
@@ -131,39 +173,12 @@ const BudgetOverview: React.FC = () => {
 
       {/* Edit Modal */}
       <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
-        <DialogTitle>Edit Budget</DialogTitle>
+        <DialogTitle>Edit Budget Entry</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Category"
-            fullWidth
-            margin="normal"
-            value={editForm.category}
-            onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-          />
-          <TextField
-            label="Limit"
-            type="number"
-            fullWidth
-            margin="normal"
-            value={editForm.limit}
-            onChange={(e) => setEditForm({ ...editForm, limit: e.target.value })}
-          />
-          <TextField
-            label="Spent"
-            type="number"
-            fullWidth
-            margin="normal"
-            value={editForm.spent}
-            onChange={(e) => setEditForm({ ...editForm, spent: e.target.value })}
-          />
-          <TextField
-            label="Notes"
-            fullWidth
-            margin="normal"
-            multiline
-            value={editForm.notes}
-            onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-          />
+          <TextField label="Category" fullWidth margin="dense" value={editForm.category} disabled />
+          <TextField label="Limit" type="number" fullWidth margin="dense" value={editForm.limit} onChange={(e) => setEditForm({ ...editForm, limit: e.target.value })} />
+          <TextField label="Spent" type="number" fullWidth margin="dense" value={editForm.spent} onChange={(e) => setEditForm({ ...editForm, spent: e.target.value })} />
+          <TextField label="Notes" fullWidth margin="dense" multiline value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditOpen(false)}>Cancel</Button>
@@ -171,15 +186,15 @@ const BudgetOverview: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
-          <Typography>Are you sure you want to delete this budget entry?</Typography>
+          <Typography>Are you sure you want to delete this entry?</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteOpen(false)}>Cancel</Button>
-          <Button color="error" variant="contained" onClick={handleDeleteConfirm}>Delete</Button>
+          <Button variant="contained" color="error" onClick={handleDeleteConfirm}>Delete</Button>
         </DialogActions>
       </Dialog>
     </Box>

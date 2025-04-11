@@ -165,7 +165,6 @@ app.use('/api/budget', budgetRoutes);
 app.use('/api/activity', activityRouter);
 app.use('/api/vote', voteRouter);
 app.use('/api/group', groupRoute);
-
 app.get('/login', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'dist', 'index.html'));
 });
