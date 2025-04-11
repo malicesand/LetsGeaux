@@ -3,23 +3,23 @@ import axios from 'axios';
 import {
   Container,
   Box,
-  SpeedDial,
-  SpeedDialAction,
-  SpeedDialIcon,
+  // SpeedDial,
+  // SpeedDialAction,
+  // SpeedDialIcon,
   Button,
   Card,
-  CardMedia,
-  Stack,
+  // CardMedia,
+  // Stack,
   Fade,
   Accordion,
-  AccordionClasses,
-  AccordionSummary,
+  // AccordionClasses,
+  // AccordionSummary,
   Typography,
-  AccordionDetails,
-  accordionDetailsClasses,
-  Dialog,
+  // AccordionDetails,
+  // accordionDetailsClasses,
+  // Dialog,
   Grid,
-  Avatar,
+  // Avatar,
   ImageList,
   ImageListItem,
   ListItemText,
@@ -111,7 +111,9 @@ const Suggestion: React.FC<SuggestionProps> = ({
         downVotes: 0,
       }
     }
-    axios.post(`/api/suggestions/${user.id}`, details).then(() => { }).catch(err => console.error('unable to save suggestion', err))
+    axios.post(`/api/suggestions/${user.id}`, details)
+    .then(() => { })
+    .catch(err => console.error('unable to save suggestion', err))
   }
 
   const handleAddToActivities = () => {
@@ -136,8 +138,37 @@ const Suggestion: React.FC<SuggestionProps> = ({
   })
 }
 
-const handleVoteClick = (polarity) => {
-  console.log(`We voted ${polarity}!!`);
+const handleVoteClick = (polarity: string) => {
+  const { id } = user;
+  console.log('id fer user')
+  const { id: suggestionId } = currentSuggestion;
+  console.log('got suggestionstuff')
+  const pol = polarity === 'up' ? 1 : 0
+  const vote = {
+    // details: {
+    data: {
+      user: {connect: {id: user.id}},
+      suggestion: {connect: {id: suggestionId}},
+      polarity: pol,
+    }
+  // }
+}
+  console.log('user.id', id);
+  console.log('defined vote details')
+  let voteDirection;
+  axios.post('api/vote', vote).then(() => {
+    console.log('into the post')
+    if (polarity === 'up') {
+      voteDirection = 'upVotes';
+    } else {
+      voteDirection = 'downVotes';
+    }
+    axios.patch(`api/suggestions/${suggestionId}`, [voteDirection])
+    console.log('into the patch(post details)')
+  })
+    .then(() => console.log("I VOTED!"))
+    .catch((err) => console.error('there is an issue with your vote', err));
+  
   /**
    * set an axios request to vote with our existing userId and the current suggestion's
    * id(maybe both in params?)
