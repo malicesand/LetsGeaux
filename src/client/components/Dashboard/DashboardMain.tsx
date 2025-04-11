@@ -20,7 +20,7 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
       <AddMember user={user}/>
       <CreateGroup user={user}/>
       <Box position= 'absolute' bottom = '10%'>
-        <BudgetPieChart />
+        {/* <BudgetPieChart /> */}
       </Box>
     </Box>
   )

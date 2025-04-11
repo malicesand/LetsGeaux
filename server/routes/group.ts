@@ -68,14 +68,6 @@ groupRoute.post('/sendInvite', async (req: any, res:any) => {
     console.error('Error sending invites:', error);
     res.status(500).json({ error: 'Failed to send some or all invites' })
   }
-  // sgMail.send(msg)
-  // .then(() => {
-  //   console.log('Email sent')
-  //   res.json({message:'email sent'})
-  // })
-  // .catch((error) => {
-  //   console.error(error)
-  // })
 });
 
 export default groupRoute;
