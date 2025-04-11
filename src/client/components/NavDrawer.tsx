@@ -33,6 +33,7 @@ import App from './App';
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import { Apps } from '@mui/icons-material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import InterestForm from './InterestForm';
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -175,10 +176,10 @@ const NavDrawer: React.FC = () => {
               </ListItemButton>
             </ListItem>
               {/* Route Choices  */}
-            <ListItem key={'RouteChoices'} disablePadding>
-              <ListItemButton component={Link} to="/routechoices" onClick={handleDrawerClose}>
+            <ListItem key={'InterestForm'} disablePadding>
+              <ListItemButton component={Link} to="/interestform" onClick={handleDrawerClose}>
                 <ListItemIcon><PinDropOutlinedIcon/></ListItemIcon>
-                <ListItemText primary="Route Choices" />
+                <ListItemText primary="Interest Form" />
               </ListItemButton>
             </ListItem>
             <ListItem key={'Dashboard'} disablePadding>
