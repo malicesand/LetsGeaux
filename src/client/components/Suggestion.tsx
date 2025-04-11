@@ -3,28 +3,34 @@ import axios from 'axios';
 import {
   Container,
   Box,
-  SpeedDial,
-  SpeedDialAction,
-  SpeedDialIcon,
+  // SpeedDial,
+  // SpeedDialAction,
+  // SpeedDialIcon,
   Button,
   Card,
-  CardMedia,
-  Stack,
+  // CardMedia,
+  // Stack,
   Fade,
   Accordion,
-  AccordionClasses,
-  AccordionSummary,
+  // AccordionClasses,
+  // AccordionSummary,
   Typography,
-  AccordionDetails,
-  accordionDetailsClasses,
-  Dialog,
+  // AccordionDetails,
+  // accordionDetailsClasses,
+  // Dialog,
   Grid,
-  Avatar,
+  // Avatar,
   ImageList,
   ImageListItem,
   ListItemText,
 } from '@mui/material';
-import { AddToQueueRounded, ArrowForwardIos } from '@mui/icons-material'
+import {
+  AddToQueueRounded,
+  ArrowForwardIos,
+}  from '@mui/icons-material';
+import ThumbsUpDownRoundedIcon from '@mui/icons-material/ThumbsUpDown';
+import ThumbDownAltRoundedIcon from '@mui/icons-material/ThumbDownAltRounded';
+import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import { user } from '../../../types/models.ts';
 
 interface SuggestionProps {
@@ -84,8 +90,6 @@ const Suggestion: React.FC<SuggestionProps> = ({
 
   // This is what occurs when the add to wishlist button is pressed. Calling a post request with wish markers to post the Suggestion
   const addToWishlist = () => {
-    console.log(currentSuggestion);
-    console.log(user);
     /**
      * sugg values:[corresponding suggestion values will be below the first]
      * address, description,  latitude,  longitude, phoneNum, title
@@ -107,7 +111,9 @@ const Suggestion: React.FC<SuggestionProps> = ({
         downVotes: 0,
       }
     }
-    axios.post(`/api/suggestions/${user.id}`, details).then(() => { }).catch(err => console.error('unable to save suggestion', err))
+    axios.post(`/api/suggestions/${user.id}`, details)
+    .then(() => { })
+    .catch(err => console.error('unable to save suggestion', err))
   }
 
   const handleAddToActivities = () => {
@@ -130,6 +136,46 @@ const Suggestion: React.FC<SuggestionProps> = ({
   }).catch((err) => {
     console.error('unable to change suggestion', err);
   })
+}
+
+const handleVoteClick = (polarity: string) => {
+  const { id } = user;
+  console.log('id fer user')
+  const { id: suggestionId } = currentSuggestion;
+  console.log('got suggestionstuff')
+  const pol = polarity === 'up' ? 1 : 0
+  const vote = {
+    // details: {
+    data: {
+      user: {connect: {id: user.id}},
+      suggestion: {connect: {id: suggestionId}},
+      polarity: pol,
+    }
+  // }
+}
+  console.log('user.id', id);
+  console.log('defined vote details')
+  let voteDirection;
+  axios.post('api/vote', vote).then(() => {
+    console.log('into the post')
+    if (polarity === 'up') {
+      voteDirection = 'upVotes';
+    } else {
+      voteDirection = 'downVotes';
+    }
+    axios.patch(`api/suggestions/${suggestionId}`, [voteDirection])
+    console.log('into the patch(post details)')
+  })
+    .then(() => console.log("I VOTED!"))
+    .catch((err) => console.error('there is an issue with your vote', err));
+  
+  /**
+   * set an axios request to vote with our existing userId and the current suggestion's
+   * id(maybe both in params?)
+   * At some point set a set of statements that would just check the polarity for
+   * the same vote and change it if need be instead of letting them vote ...
+   * maybe disable the vote button visibly on things they've already voted on..
+   */
 }
 
 
@@ -181,6 +227,15 @@ const handleRemoveFromWishlist = () => {
                 ) : (
                   <Typography><em>Operation hours unavailable</em></Typography>
                 )}
+                <Typography>Vote on this suggestion<ThumbsUpDownRoundedIcon /></Typography>
+              <Button onClick={() => handleVoteClick('up')}><ThumbUpAltRoundedIcon /></Button>
+              <Button onClick={() => handleVoteClick('down')}><ThumbDownAltRoundedIcon /></Button>
+
+
+
+
+
+
               <Accordion
                 expanded={expanded}
                 onChange={handleExpansion}
