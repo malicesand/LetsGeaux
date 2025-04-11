@@ -78,9 +78,9 @@ const getTripAdvisorImage = (locationId) => {
   axios.get(`https://api.content.tripadvisor.com/api/v1/location/${locationId}/photos?language=en&key=${API_KEY}`)
   .then((setOfImages) => {
     // check here to see what comes back from this query..
-    console.log('set of images', setOfImages);
-    const { thumbnail } = setOfImages.data[0].images;
-    return thumbnail;
+    // console.log('set of images', setOfImages);
+    // const { thumbnail } = setOfImages.data[0].images;
+    // return thumbnail;
   })
 
 }
@@ -105,6 +105,30 @@ suggestionRouter.get(`/search`, async (req:any, res:any) => {
     throw err
   }
   })
+// adds to the vote upvote/downvote count of a suggestion
+suggestionRouter.patch('/:id', async (req: any, res: any) => {
+  const { id } = req.params;
+  const values = () => {
+    for (let key of req.body.data) {
+      return req.body.data[key];
+    }
+  }
+  console.log('whats the damage', req.body)
+  try {
+const polarity = req.body
+    const setVote = await prisma.suggestion.update({
+      where: { id: +id },
+      data: {
+        [polarity]: {
+          increment: 1,
+        }
+      }
+    })
+  } catch (err){
+    console.error('unable to add vote', err);
+    res.sendStatus(500);
+  };
+})
 
 
 // GET request handling
