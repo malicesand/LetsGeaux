@@ -1,8 +1,6 @@
 import React from 'react';
-import axios from 'axios';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 
+import Box from '@mui/material/Box';
 
 
 import AddMember from './AddMember';
@@ -22,7 +20,7 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
       <AddMember user={user}/>
       <CreateGroup user={user}/>
       <Box position= 'absolute' bottom = '10%'>
-      <BudgetPieChart />
+        <BudgetPieChart />
       </Box>
     </Box>
   )

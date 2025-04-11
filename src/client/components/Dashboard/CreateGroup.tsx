@@ -19,11 +19,12 @@ interface groupProps {
 }
 
 const CreateGroup: React.FC<groupProps> = ({user}) => {
+  const userId = user.id;
   const [open, setOpen] = React.useState(false);
   const [partyName, setPartyName] = React.useState<string>('');
-  // const [partyId, setPartyId] = useState<number>(); 
-  const userId = user.id;
   const [email, setEmail] = React.useState<string>('')
+  const [inviteSuccess, setInviteSuccess] = useState(false);
+  const [partySuccess, setPartySuccess] = useState(false);
   
 
   const openModal = () => {
@@ -35,38 +36,42 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
   };
 
   
-// * Request Handling * //
+  //* Request Handling *//
   const createParty = async (name:string, partyName:string) => {
     // console.log(`Creating...${name}`);
     setPartyName(partyName)
-    console.log(partyName, 'line41')
+    // console.log(partyName, 'line41')
     try {
       let response = await axios.post('/api/group', {name} );
       // console.log(`${name} created!`)
       // console.log(`${response.data.id} partyId!`)
       const partyId = (response.data.id);
-      console.log(partyName, 'line47')
+      setPartySuccess(true);
+      setTimeout(() => setPartySuccess(false), 10000)
       addUserToParty(userId, partyId, partyName);
     } catch (error) {
       console.error('failed to create new group');
     };
   };
+  //* Add Current User to Party *//
   const addUserToParty = async(userId:number, partyId:number, partyName: string) => {
     // console.log(`this is a partyId:${partyId}`);
-
-    console.log(`Travel Party ${partyName} Created`)
+    // console.log(`Travel Party ${partyName} Created`)
     try {
       let response = await axios.post('/api/group/userParty', {userId, partyId});
-      console.log(`userParty logged ${partyName}`);
+      // console.log(`userParty logged ${partyName}`);
     } catch (error) {
       console.error('Could not create new userParty model', error);
     }
   }; 
-
+  //* Send E-Vite *//
   const sendEmail = async(email: string, partyName:string) => {
     try {
       await axios.post('/api/group/sendInvite', { email, partyName });
       console.log(`Invited ${email} to ${partyName}`)
+      setInviteSuccess(true);
+      setEmail('');
+      setTimeout(() => setInviteSuccess(false), 3000)
     } catch (error) {
         console.error('could not send email', error)
     }
@@ -82,14 +87,13 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
         onClose={closeModal}
         slotProps={{
           paper: {
+            sx: { width: 500 },
             component: 'form',
             onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
               const formJson = Object.fromEntries((formData as any).entries());
-              // closeModal();
               const partyName = (formJson.party);
-              // setPartyName(formJson.party);
               createParty(formJson.party, partyName);
             }
           }
@@ -114,7 +118,11 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
           <DialogActions>
             <Button type='submit'>Create</Button>
           </DialogActions>
-
+          {partySuccess && (
+            <Typography sx={{ mt: 1, color: 'green' }}>
+              Party Created!
+            </Typography>
+          )}
           <Divider/>
 
           <Typography variant='subtitle1' sx={{ mt: 2 }}>
@@ -143,6 +151,11 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
           >
             Invite
           </Button>
+          {inviteSuccess && (
+            <Typography sx={{ mt: 1, color: 'green' }}>
+              Invite sent successfully!
+            </Typography>
+          )}
           <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
             You can also invite friends later from your party dashboard.
           </Typography>
@@ -151,18 +164,6 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
           <Button onClick={closeModal}>Close</Button>
         </DialogActions>
       </Dialog>
-        {/* Modal 'Name Group' //? also have add member search? send email invite? */}
-          {/* Results Message */}
-            {/* Failure //?  */}
-
-            {/**Success Redirect Options: 
-               * Create Itinerary, 
-               * Create Budget, 
-               * Add Members, 
-               * Browse Suggestions,
-               * Visit your group page  
-            */}
-
     </React.Fragment>
   )
 };
