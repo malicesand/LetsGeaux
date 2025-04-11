@@ -8,8 +8,8 @@ const Profile: React.FC = () =>{
   const { user } = location.state || {}
   const getInterests = async () => {
     try {
-     
-      const response = await axios.get('/api/interests');
+     const userId = user.id
+      const response = await axios.get(`/api/interests/${userId}`);
   
       useInterests(response.data);
       

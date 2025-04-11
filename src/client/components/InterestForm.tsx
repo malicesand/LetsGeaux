@@ -31,7 +31,6 @@ const InterestForm: React.FC<InterestProps> = ({user}) => {
 
     const selectedName = interests.find((interest) => interest.id === selectedInterest)?.name;
     let userId = user.id
-    console.log(userId)
     const interestsData = [{ name: selectedName}];
 
     try {

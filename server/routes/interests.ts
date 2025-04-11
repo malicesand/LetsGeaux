@@ -16,7 +16,7 @@ interestRoute.post('/:userId', async (req, res) => {
       let existingInterest = await prisma.interest.findFirst({
         where: { name: interest.name },
       });
-      console.log(existingInterest)
+      
       // If it doesn't exist, create it
       if (!existingInterest) {
         existingInterest = await prisma.interest.create({
@@ -42,15 +42,22 @@ interestRoute.post('/:userId', async (req, res) => {
 });
 
 interestRoute.get('/:userId', async (req, res) => {
-  const {userId} = req.params
   try {
-    // Fetch all interests from the database
-    const interests = await prisma.userInterest.findFirst({select:userId});
-    console.log(interests)
-  
+    const {userId} = req.params
+
+    const userInterests = await prisma.userInterest.findMany({
+      where: { userId: +userId },
+      include: {
+        interest: true, // Include interest details
+      },
+    });
+
+    // Extract just the interest data
+    const interests = userInterests.map((ui) => ui.interest);
+
     res.status(200).json(interests);
   } catch (error) {
-    console.error('Error fetching interests:', error);
+    console.error("Error fetching user interests:", error);
     res.status(500).json({ message: 'Error fetching interests' });
   }
 });
