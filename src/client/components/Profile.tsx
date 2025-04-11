@@ -14,7 +14,8 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const fetchInterests = async () => {
       try {
-        const response = await axios.get(`/api/interests/${user.id}`);
+        const userId = user.id
+        const response = await axios.get(`/api/interests/${userId}`);
         setInterests(response.data);
 
         // Preselect another interest if possible
@@ -43,6 +44,55 @@ const Profile: React.FC = () => {
 
   const currentInterest = interests[0]?.name;
   const interestOptions = ALL_INTERESTS.filter((i) => i !== currentInterest);
+  useEffect(() => {
+    // Check if script is already added
+    if (!document.querySelector('script[src="https://widget.cloudinary.com/v2.0/global/all.js"]')) {
+      const script = document.createElement('script');
+      script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
+      script.async = true;
+      script.onload = () => {
+        console.log('Cloudinary widget script loaded');
+      };
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  const handleUploadWidget = () => {
+    // @ts-ignore - Cloudinary not typed
+    const widget = window.cloudinary.createUploadWidget(
+      {
+        cloudName: 'dcrrsec0d',
+        uploadPreset: 'LetsGeatx Profile',
+        sources: ['local', 'url', 'camera'],
+        cropping: true,
+        multiple: false,
+        folder: 'letsGeatx/profilePic',
+      },
+      async (error: any, result: any) => {
+        if (!error && result.event === 'success') {
+          const imageUrl = result.info.secure_url;
+          console.log('Uploaded image:', imageUrl);
+  
+          // Send to backend to save in DB
+          try {
+            await axios.patch(`/api/users/${user.id}/profile-pic`, {
+              profilePic: imageUrl,
+            });
+  
+           
+            user.profilePic = imageUrl;
+          } catch (err) {
+            console.error('Failed to update profile pic in DB:', err);
+          }
+        }
+      }
+    );
+  
+    widget.open();
+  };
+
+
+
 
   return (
     <div>
@@ -50,6 +100,7 @@ const Profile: React.FC = () => {
       <div>{user.username}</div>
       <div>{user.email}</div>
       <img src={user.profilePic} alt="Profile" />
+      <button onClick={handleUploadWidget}>Change Profile Picture</button>
 
       <h3>Current Interest:</h3>
       <div>{currentInterest || 'None'}</div>
