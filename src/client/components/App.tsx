@@ -30,6 +30,7 @@ import { user } from '../../../types/models.ts';
 //import Activity from './NEWActivties.tsx';
 import Profile from './Profile.tsx';
 import Dashboard from './Dashboard/DashboardMain.tsx'
+import ViewCodeForm from './Itinerary/viewCodeForm.tsx';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -165,6 +166,15 @@ const App: React.FC = () => {
           </ProtectedRoute>
         }
       />
+
+<Route
+        path='/viewform'
+        element={
+          <ProtectedRoute>
+            {<ViewCodeForm/>}
+          </ProtectedRoute>
+        }
+        />
       </Routes>
     </>
   );
