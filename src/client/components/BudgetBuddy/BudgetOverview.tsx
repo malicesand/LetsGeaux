@@ -69,7 +69,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
           if (percentage >= threshold) {
             // only show notification if not already notified for this budget and threshold
             if (!(notified[budget.id]?.[threshold])) {
-              enqueueSnackbar(`${budget.category} has crossed ${threshold}% usage!`, {
+              enqueueSnackbar(`${budget.category} is at ${threshold}% usage!`, {
                 variant: 'warning',
               });
               setNotified(prev => ({
