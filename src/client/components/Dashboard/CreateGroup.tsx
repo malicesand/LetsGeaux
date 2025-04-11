@@ -22,7 +22,8 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
   const userId = user.id;
   const [open, setOpen] = React.useState(false);
   const [partyName, setPartyName] = React.useState<string>('');
-  const [email, setEmail] = React.useState<string>('')
+  const [inputValue, setInputValue] = useState<string>('')
+  const [emails, setEmails] = React.useState<string[]>([])
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [partySuccess, setPartySuccess] = useState(false);
   
@@ -65,13 +66,15 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
     }
   }; 
   //* Send E-Vite *//
-  const sendEmail = async(email: string, partyName:string) => {
+  const sendEmail = async(emailList: string[], partyName:string) => {
     try {
-      await axios.post('/api/group/sendInvite', { email, partyName });
-      console.log(`Invited ${email} to ${partyName}`)
+      await axios.post('/api/group/sendInvite', { emails: emailList, partyName });
+      console.log(`Invited ${emails} to ${partyName}`)
       setInviteSuccess(true);
-      setEmail('');
-      setTimeout(() => setInviteSuccess(false), 3000)
+      setInputValue('');
+      setEmails([]);
+      setTimeout(() => closeModal(), 3000)
+      setTimeout(() => setInviteSuccess(false), 4000)
     } catch (error) {
         console.error('could not send email', error)
     }
@@ -131,24 +134,22 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
           <FilledInput
 
             id='email'
-            placeholder='Enter email to invite'
-            type='email'
+            placeholder='Enter email to invite (separate multiples with commas!'
+            type='text'
             fullWidth
-            value={email}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              console.log(event.target.value);
-              setEmail(event.target.value);
-              
+            value={inputValue}
+            onChange={(event) => {
+              const raw = event.target.value;
+              setInputValue(raw);
+              const parsedEmails = raw.split(',').map(email => email.trim()).filter(email => email.length > 0);
+              setEmails(parsedEmails)
             }} 
           />
           <Button 
             sx={{ mt: 1 }}
             variant='outlined'
-            onClick={(e) => {
-              e.preventDefault();
-              sendEmail(email, partyName);
-            }}
-          >
+            onClick={() => sendEmail(emails, partyName)} disabled={emails.length === 0}
+            >
             Invite
           </Button>
           {inviteSuccess && (
