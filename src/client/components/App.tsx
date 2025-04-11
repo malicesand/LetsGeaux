@@ -150,7 +150,7 @@ const App: React.FC = () => {
       }/>
       <Route path='/interestform' element={
         <ProtectedRoute>
-          <InterestForm/>
+         {user && <InterestForm user={user} />}
         </ProtectedRoute>
       }/>
       <Route

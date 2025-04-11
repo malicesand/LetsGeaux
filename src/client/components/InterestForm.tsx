@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { user } from '../../../types/models.ts';
 
 type Interest = {
   id: number;
   name: string;
 };
+interface InterestProps {
+  user: user;
+}
 
-const InterestForm: React.FC = () => {
+const InterestForm: React.FC<InterestProps> = ({user}) => {
   const interests: Interest[] = [
     { id: 1, name: 'Hotel' },
     { id: 2, name: 'Restaurant' },
@@ -26,21 +30,16 @@ const InterestForm: React.FC = () => {
     if (selectedInterest === null) {return};
 
     const selectedName = interests.find((interest) => interest.id === selectedInterest)?.name;
-
-    const interestsData = [{ name: selectedName }];
+    let userId = user.id
+    console.log(userId)
+    const interestsData = [{ name: selectedName}];
 
     try {
-      const response = await axios.post('/api/interests', interestsData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await axios.post(`/api/interests/${userId}`, interestsData);
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         console.log('Interest saved successfully!');
-      } else {
-        console.error('Failed to save interest.');
-      }
+      } 
     } catch (error) {
       console.error('Error sending interest to the backend:', error);
     }
@@ -50,6 +49,7 @@ const InterestForm: React.FC = () => {
     <form onSubmit={handleSubmit}>
       <h3>Select your interest</h3>
       <div>
+       
         {interests.map((interest) => (
           <div key={interest.id}>
             <label>
