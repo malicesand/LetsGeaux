@@ -200,7 +200,14 @@ const NavDrawer: React.FC = () => {
               </ListItemButton>
             </ListItem>
             {/* Activites */}
-
+            <ListItem key={'viewform'} disablePadding>
+              <ListItemButton component={Link} to='/viewform' onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText primary={'ViewForm'} />
+              </ListItemButton>
+            </ListItem>
         </List>
       </Drawer>
     </Box>

@@ -16,7 +16,8 @@ model user {
   isNotified   Boolean            @default(false)
   googleId     String             @unique
   image        image[]
-  profilePic   String?
+  profilePic   String?            @db.VarChar(150)
+  // memberId...
   reminder     reminder[]
   vote         vote[]
   itinerary    itinerary[]
@@ -25,6 +26,8 @@ model user {
   userInterest userInterest[]
 
   userParty userParty[]
+  post      post[]
+  comment   comment[]
 }
 
 model userParty {
@@ -51,16 +54,33 @@ model suggestion {
   created_at    DateTime           @default(now())
   timeAvailable String?
   cost          Int?
-  address       String             @db.VarChar(100)
-  description   String             @db.Text
+  address       String?            @db.VarChar(100)
+  description   String?            @db.Text
   image         String?            @db.Text
   phoneNum      String?            @db.VarChar(50)
   userId        Int?
   latitude      String?
   longitude     String?
   wishUser      userOnsuggestion[]
+  vote          vote[]
 
   @@index([userId], map: "suggestion_userId_fkey")
+}
+
+model post {
+  id   Int  @id @default(autoincrement())
+  user user @relation(fields: [userId], references: [id])
+
+  userId Int
+  vote   vote[]
+}
+
+model comment {
+  id   Int  @id @default(autoincrement())
+  user user @relation(fields: [userId], references: [id])
+
+  userId Int
+  vote   vote[]
 }
 
 model itinerary {
@@ -78,6 +98,7 @@ model itinerary {
   creator   user?      @relation(fields: [creatorId], references: [id])
   route     route[]
   party     party?     @relation(fields: [partyId], references: [id])
+  viewCode  String     @unique
 
   @@index([creatorId], map: "itinerary_creatorId_fkey")
 }
@@ -98,19 +119,6 @@ model activity {
   @@index([itineraryId], map: "activity_itineraryId_fkey")
 }
 
-// model location {
-//   id           Int         @id @default(autoincrement())
-//   name         String      @db.VarChar(50)
-//   description  String      @db.VarChar(255)
-//   address      String      @db.VarChar(50)
-//   latitude     Decimal
-//   longitude    Decimal
-//   suggestionId Int?
-//   suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
-
-//   @@index([suggestionId], map: "location_suggestionId_fkey")
-// }
-
 model route {
   id          Int        @id @default(autoincrement())
   destination String
@@ -123,12 +131,16 @@ model route {
 }
 
 model vote {
-  id            Int     @id @default(autoincrement())
-  vote_polarity Boolean
-  vote_topic    String  @db.VarChar(25)
-  voted_item_id Int
-  userId        Int?
-  user          user?   @relation(fields: [userId], references: [id])
+  id           Int         @id @default(autoincrement())
+  post         post?       @relation(fields: [postId], references: [id])
+  comment      comment?    @relation(fields: [commentId], references: [id])
+  suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
+  userId       Int
+  user         user?       @relation(fields: [userId], references: [id])
+  postId       Int?
+  polarity     Int
+  commentId    Int?
+  suggestionId Int?
 
   @@index([userId], map: "vote_userId_fkey")
 }

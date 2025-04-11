@@ -20,7 +20,7 @@ import chatsRoute from './routes/chats';
 import itineraryRoute from './routes/itinerary';
 import activityRouter from './routes/activities';
 import wishlistRouter from './routes/wishlist';
-import interestRouter from './routes/interests'
+import voteRouter from './routes/votes';import interestRouter from './routes/interests'
 dotenv.config();
 
 const app = express();
@@ -167,9 +167,8 @@ app.use('/api/interests', interestRouter)
 app.use('/api/itinerary', itineraryRoute)
 app.use('/api/budget', budgetRoutes);
 app.use('/api/activity', activityRouter);
-
+app.use('/api/vote', voteRouter);
 app.use('/api/group', groupRoute);
-
 app.get('/login', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'dist', 'index.html'));
 });
