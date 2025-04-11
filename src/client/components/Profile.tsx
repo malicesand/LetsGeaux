@@ -28,12 +28,10 @@ const Profile: React.FC = () => {
       <img src={user.profilePic} alt="Profile" />
 
       <h3>Interests:</h3>
-      {interests.length > 0 
-        interests.map((interest, index) => (
-          <div key={index}>{interest.name}</div>
-        ))
-     
-      }
+      {console.log(interests)}
+     {interests.map((interest)=>{
+      return <div>{interest.name} </div>
+     })}
     </div>
   );
 };

@@ -5,39 +5,41 @@ const interestRoute = express.Router()
 
 
 interestRoute.post('/:userId', async (req, res) => {
+  console.log(req.body)
   try {
-    const interests = req.body; // Array of interest objects
-    const {userId} = req.params
-    console.log(req.body)
-    // Use a for...of loop to handle async await correctly
-    const createdInterests = [];
-    for (const interest of interests) {
-      // Check if the interest already exists (optional)
-      let existingInterest = await prisma.interest.findFirst({
-        where: { name: interest.name },
+    const { name } = req.body 
+    const { userId } = req.params;
+    // Find or create the interest
+    let interest = await prisma.interest.findFirst({
+      where: { name },
+    });
+
+    if (!interest) {
+      interest = await prisma.interest.create({
+        data: { name },
       });
-      
-      // If it doesn't exist, create it
-      if (!existingInterest) {
-        existingInterest = await prisma.interest.create({
-          data: { name: interest.name },
-        });
-      }
-      // Create the join in userInterest table
+    }
+
+    // Check if the userInterest already exists
+    const existingUserInterest = await prisma.userInterest.findFirst({
+      where: {
+        userId: +userId,
+      },
+    });
+
+    if (!existingUserInterest) {
       await prisma.userInterest.create({
         data: {
           userId: +userId,
-          interestId: existingInterest.id,
+          interestId: interest.id,
         },
       });
-
-      createdInterests.push(existingInterest);
     }
 
-    res.status(200).json(createdInterests);
+    res.status(200).json(interest);
   } catch (error) {
-    console.error("Error saving interests:", error);
-    res.status(500).json({ message: 'Error saving interests' });
+    console.error("Error saving interest:", error);
+    res.status(500).json({ message: 'Error saving interest' });
   }
 });
 
@@ -48,10 +50,11 @@ interestRoute.get('/:userId', async (req, res) => {
     const userInterests = await prisma.userInterest.findMany({
       where: { userId: +userId },
       include: {
-        interest: true, // Include interest details
+        interest: true, 
       },
     });
 
+    
     // Extract just the interest data
     const interests = userInterests.map((ui) => ui.interest);
 

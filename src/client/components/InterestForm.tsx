@@ -31,7 +31,7 @@ const InterestForm: React.FC<InterestProps> = ({user}) => {
 
     const selectedName = interests.find((interest) => interest.id === selectedInterest)?.name;
     let userId = user.id
-    const interestsData = [{ name: selectedName}];
+    const interestsData = { name: selectedName};
 
     try {
       const response = await axios.post(`/api/interests/${userId}`, interestsData);
