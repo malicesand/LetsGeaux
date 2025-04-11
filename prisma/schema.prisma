@@ -78,6 +78,7 @@ model itinerary {
   creator   user?      @relation(fields: [creatorId], references: [id])
   route     route[]
   party     party?     @relation(fields: [partyId], references: [id])
+  viewCode  String     @unique
 
   @@index([creatorId], map: "itinerary_creatorId_fkey")
 }

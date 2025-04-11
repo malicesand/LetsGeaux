@@ -1,6 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
-
+import { v4 as uuidv4 } from 'uuid'
 const prisma = new PrismaClient();
 
 const itineraryRoute = express.Router();
@@ -18,37 +18,55 @@ res.status(500).json({error: 'Error fetching itinerary'})
 
 })
 
-itineraryRoute.post('/', async (req: any, res: any) =>{
-  //const {id} = req.user
-const {creatorId, member_id, name, notes, begin, end, upVotes, downVotes} = req.body
-//console.log(req.user)
-if (!name || !begin || !end) {
-  return res.status(400).json({ error: "Missing required fields" });
-}
+//added unique code
+itineraryRoute.post('/', async (req: any, res: any) => {
+  const { creatorId, name, notes, begin, end, upVotes, downVotes } = req.body;
 
+  // Check if the creator exists
+  const userExists = await prisma.user.findUnique({
+    where: { id: creatorId },
+  });
 
-try{
-  const newItinerary = await prisma.itinerary.create({
-data: {
-creatorId, 
-member_id, 
-name, 
-notes, 
-begin: new Date(begin),
-end: new Date(end),
-upVotes: upVotes ?? 0,  
-downVotes: downVotes ?? 0,
+  if (!userExists) {
+    return res.status(400).json({ error: 'Creator not found' });
+  }
 
-createdAt: new Date()
-}
+  // Validate the required fields
+  if (!name || !begin || !end) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
 
-  })
-res.status(201).json(newItinerary)
-}catch(error){
-res.status(500).json({error: 'Error creating itinerary'})
-}
+  const startDate = new Date(begin);
+  const endDate = new Date(end);
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    return res.status(400).json({ error: 'Invalid date format' });
+  }
 
-}) 
+  const viewCode = uuidv4().slice(0, 4); // Generate view code
+
+  try {
+    // Create the new itinerary
+    const newItinerary = await prisma.itinerary.create({
+      data: {
+        creatorId,
+        name,
+        notes,
+        begin: startDate, 
+        end: endDate,     
+        upVotes: upVotes ?? 0,
+        downVotes: downVotes ?? 0,
+        createdAt: new Date(),
+        viewCode,
+      },
+    });
+
+    res.status(201).json(newItinerary);
+  } catch (error) {
+    console.error('Error creating itinerary:', error);
+    res.status(500).json({ error: 'Error creating itinerary', details: error.message });
+  }
+});
+
 
 itineraryRoute.patch('/:id', async (req: any, res: any) => {
   const { id } = req.params;
@@ -91,6 +109,42 @@ itineraryRoute.patch('/:id', async (req: any, res: any) => {
   }
   
   }) 
+
+
+
+
+  itineraryRoute.get('/view/:viewCode', async (req: any, res: any) => {
+    const { viewCode } = req.params;
+  
+    try {
+      // Fetch the itinerary based on the view code
+      const itinerary = await prisma.itinerary.findUnique({
+        where: {
+          viewCode: viewCode, 
+        },
+        include: {
+          activity: true,  
+          route: true,     
+          creator: {
+            select: {
+              id: true,
+              
+            },
+          },
+        },
+      });
+  
+      if (!itinerary) {
+        return res.status(404).json({ error: 'Itinerary not found' });
+      }
+  
+      res.json(itinerary); 
+    } catch (error) {
+      console.error('Error fetching itinerary:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
 
 
 export default itineraryRoute;

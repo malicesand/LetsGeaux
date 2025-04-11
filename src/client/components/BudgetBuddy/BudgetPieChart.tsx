@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Chip
 } from '@mui/material';
 
 interface BudgetCategory {
@@ -20,7 +21,11 @@ interface BudgetCategory {
   limit?: number;
 }
 
-const BudgetPieChart: React.FC = () => {
+interface Props {
+  selectedItineraryId: number | null;
+}
+
+const BudgetPieChart: React.FC<Props> = ({ selectedItineraryId }) => {
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
   const [chartData, setChartData] = useState<{ name: string; value: number }[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -34,9 +39,23 @@ const BudgetPieChart: React.FC = () => {
     notes: ''
   });
 
+  const [updatedId, setUpdatedId] = useState<number | null>(null);
+
   const fetchCategories = async () => {
     try {
-      const res = await api.get('/categories');
+      const res = await api.get('/budget/categories', {
+        params: { partyId: selectedItineraryId }
+      });
+
+      //inspect whats coming back
+      console.log("Fetched category data:", res.data);
+
+      // validate that the response is actually an array
+      if (!Array.isArray(res.data)) {
+        console.error('Invalid data format for categories:', res.data);
+        return;
+      }
+
       setCategories(res.data);
 
       const grouped = res.data.reduce((acc: Record<string, number>, curr: BudgetCategory) => {
@@ -56,16 +75,17 @@ const BudgetPieChart: React.FC = () => {
     }
   };
 
+
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [selectedItineraryId]);
 
   const openEditModal = (entry: BudgetCategory) => {
     setEditForm({
       id: entry.id,
       category: entry.category,
-      spent: String(entry.spent || ''),
-      limit: String(entry.limit || ''),
+      spent: String(entry.spent ?? ''),
+      limit: String(entry.limit ?? ''),
       notes: entry.notes || '',
     });
     setEditOpen(true);
@@ -73,27 +93,33 @@ const BudgetPieChart: React.FC = () => {
 
   const handleEditSave = async () => {
     try {
-      await api.put(`/${editForm.id}`, {
+      await api.put(`/budget/${editForm.id}`, {
         category: editForm.category,
         limit: parseFloat(editForm.limit),
         spent: parseFloat(editForm.spent),
         notes: editForm.notes,
       });
       setEditOpen(false);
+      setUpdatedId(editForm.id);
       fetchCategories();
+      setTimeout(() => setUpdatedId(null), 2000);
     } catch (err) {
-      console.error('Update failed', err);
+      console.error('Update failed:', err);
     }
   };
 
   const handleDelete = async (id: number) => {
     try {
-      await api.delete(`/${id}`);
+      await api.delete(`/budget/${id}`);
       fetchCategories();
     } catch (err) {
       console.error('Delete failed', err);
     }
   };
+
+  if (!selectedItineraryId) {
+    return <Typography sx={{ mt: 4 }}>Select an itinerary to view budget distribution.</Typography>;
+  }
 
   return (
     <Box sx={{ width: '100%', mt: 4 }}>
@@ -127,6 +153,7 @@ const BudgetPieChart: React.FC = () => {
             .map((entry) => (
               <Box key={entry.id} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: 2, backgroundColor: '#f9f9f9' }}>
                 <Typography variant="body1">Spent: ${entry.spent}</Typography>
+                <Typography variant="body2">Limit: ${entry.limit}</Typography>
                 <Typography variant="body2">Notes: {entry.notes || 'None'}</Typography>
                 <Box mt={1}>
                   <Button variant="outlined" size="small" onClick={() => openEditModal(entry)} sx={{ mr: 1 }}>
@@ -135,6 +162,7 @@ const BudgetPieChart: React.FC = () => {
                   <Button variant="outlined" size="small" color="error" onClick={() => handleDelete(entry.id)}>
                     Delete
                   </Button>
+                  {updatedId === entry.id && <Chip label="Updated!" color="success" size="small" sx={{ ml: 1 }} />}
                 </Box>
               </Box>
             ))}
@@ -159,6 +187,7 @@ const BudgetPieChart: React.FC = () => {
                 <Button variant="outlined" size="small" color="error" onClick={() => handleDelete(entry.id)}>
                   Delete
                 </Button>
+                {updatedId === entry.id && <Chip label="Updated!" color="success" size="small" sx={{ ml: 1 }} />}
               </Box>
             </Box>
           ))
@@ -169,37 +198,10 @@ const BudgetPieChart: React.FC = () => {
       <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
         <DialogTitle>Edit Budget Entry</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Category"
-            fullWidth
-            margin="dense"
-            value={editForm.category}
-            disabled
-          />
-          <TextField
-            label="Limit"
-            type="number"
-            fullWidth
-            margin="dense"
-            value={editForm.limit}
-            onChange={(e) => setEditForm({ ...editForm, limit: e.target.value })}
-          />
-          <TextField
-            label="Spent"
-            type="number"
-            fullWidth
-            margin="dense"
-            value={editForm.spent}
-            onChange={(e) => setEditForm({ ...editForm, spent: e.target.value })}
-          />
-          <TextField
-            label="Notes"
-            fullWidth
-            multiline
-            margin="dense"
-            value={editForm.notes}
-            onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-          />
+          <TextField label="Category" fullWidth margin="dense" value={editForm.category} disabled />
+          <TextField label="Limit" type="number" fullWidth margin="dense" value={editForm.limit} onChange={(e) => setEditForm({ ...editForm, limit: e.target.value })} />
+          <TextField label="Spent" type="number" fullWidth margin="dense" value={editForm.spent} onChange={(e) => setEditForm({ ...editForm, spent: e.target.value })} />
+          <TextField label="Notes" fullWidth multiline margin="dense" value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditOpen(false)}>Cancel</Button>
