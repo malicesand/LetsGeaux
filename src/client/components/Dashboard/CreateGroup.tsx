@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-import Box from '@mui/material/Box';
+// import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -10,17 +10,22 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import FilledInput from '@mui/material/FilledInput';
+import Divider from '@mui/material/Divider';
 
-import { user, party } from '../../../../types/models.ts'
+import { user } from '../../../../types/models.ts'
 interface groupProps {
   user: user;
 }
 
 const CreateGroup: React.FC<groupProps> = ({user}) => {
-  const [open, setOpen] = React.useState(false);
-  // const [name, setName] = useState<string>('');
-  // const [partyId, setPartyId] = useState<number>(); 
   const userId = user.id;
+  const [open, setOpen] = React.useState(false);
+  const [partyName, setPartyName] = React.useState<string>('');
+  const [inputValue, setInputValue] = useState<string>('')
+  const [emails, setEmails] = React.useState<string[]>([])
+  const [inviteSuccess, setInviteSuccess] = useState(false);
+  const [partySuccess, setPartySuccess] = useState(false);
   
 
   const openModal = () => {
@@ -32,28 +37,48 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
   };
 
   
-// * Request Handling * //
-  const createParty = async (name:string) => {
-    console.log(`Creating...${name}`);
+  //* Request Handling *//
+  const createParty = async (name:string, partyName:string) => {
+    // console.log(`Creating...${name}`);
+    setPartyName(partyName)
+    // console.log(partyName, 'line41')
     try {
       let response = await axios.post('/api/group', {name} );
       // console.log(`${name} created!`)
       // console.log(`${response.data.id} partyId!`)
-      const partyId = (response.data.id) 
-      addUserToParty(userId, partyId);
+      const partyId = (response.data.id);
+      setPartySuccess(true);
+      setTimeout(() => setPartySuccess(false), 10000)
+      addUserToParty(userId, partyId, partyName);
     } catch (error) {
       console.error('failed to create new group');
     };
   };
-  const addUserToParty = async(userId:number, partyId:number) => {
+  //* Add Current User to Party *//
+  const addUserToParty = async(userId:number, partyId:number, partyName: string) => {
     // console.log(`this is a partyId:${partyId}`);
+    // console.log(`Travel Party ${partyName} Created`)
     try {
       let response = await axios.post('/api/group/userParty', {userId, partyId});
-      console.log(`userParty logged ${response.data}`);
+      // console.log(`userParty logged ${partyName}`);
     } catch (error) {
       console.error('Could not create new userParty model', error);
     }
   }; 
+  //* Send E-Vite *//
+  const sendEmail = async(emailList: string[], partyName:string) => {
+    try {
+      await axios.post('/api/group/sendInvite', { emails: emailList, partyName });
+      console.log(`Invited ${emails} to ${partyName}`)
+      setInviteSuccess(true);
+      setInputValue('');
+      setEmails([]);
+      setTimeout(() => closeModal(), 3000)
+      setTimeout(() => setInviteSuccess(false), 4000)
+    } catch (error) {
+        console.error('could not send email', error)
+    }
+  }
 
   return (
     <React.Fragment>
@@ -65,17 +90,14 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
         onClose={closeModal}
         slotProps={{
           paper: {
+            sx: { width: 500 },
             component: 'form',
             onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
               e.preventDefault();
-              // console.log(e.currentTarget);
               const formData = new FormData(e.currentTarget);
               const formJson = Object.fromEntries((formData as any).entries());
-              // console.log(formJson, 'the form');
-              // setName(formJson.party);
-              // console.log(name, 'name on dom');
-              closeModal();
-              createParty(formJson.party);
+              const partyName = (formJson.party);
+              createParty(formJson.party, partyName);
             }
           }
         }}
@@ -96,24 +118,53 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
             fullWidth
             variant='standard'
           />
+          <DialogActions>
+            <Button type='submit'>Create</Button>
+          </DialogActions>
+          {partySuccess && (
+            <Typography sx={{ mt: 1, color: 'green' }}>
+              Party Created!
+            </Typography>
+          )}
+          <Divider/>
+
+          <Typography variant='subtitle1' sx={{ mt: 2 }}>
+            Invite your friends to join your travel party
+          </Typography>
+          <FilledInput
+
+            id='email'
+            placeholder='Enter email to invite (separate multiples with commas!'
+            type='text'
+            fullWidth
+            value={inputValue}
+            onChange={(event) => {
+              const raw = event.target.value;
+              setInputValue(raw);
+              const parsedEmails = raw.split(',').map(email => email.trim()).filter(email => email.length > 0);
+              setEmails(parsedEmails)
+            }} 
+          />
+          <Button 
+            sx={{ mt: 1 }}
+            variant='outlined'
+            onClick={() => sendEmail(emails, partyName)} disabled={emails.length === 0}
+            >
+            Invite
+          </Button>
+          {inviteSuccess && (
+            <Typography sx={{ mt: 1, color: 'green' }}>
+              Invite sent successfully!
+            </Typography>
+          )}
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
+            You can also invite friends later from your party dashboard.
+          </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeModal}>Cancel</Button>
-          <Button type='submit'>Create</Button>
+          <Button onClick={closeModal}>Close</Button>
         </DialogActions>
       </Dialog>
-        {/* Modal 'Name Group' //? also have add member search? send email invite? */}
-          {/* Results Message */}
-            {/* Failure //?  */}
-
-            {/**Success Redirect Options: 
-               * Create Itinerary, 
-               * Create Budget, 
-               * Add Members, 
-               * Browse Suggestions,
-               * Visit your group page  
-            */}
-
     </React.Fragment>
   )
 };

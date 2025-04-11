@@ -63,6 +63,7 @@
     "@mui/x-charts": "^7.28.0",
     "@mui/x-date-pickers": "^7.28.2",
     "@react-google-maps/api": "^2.20.6",
+    "@sendgrid/mail": "^8.1.5",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/uuid": "^10.0.0",
     "axios": "^1.8.4",

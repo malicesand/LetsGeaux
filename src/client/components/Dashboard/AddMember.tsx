@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 
 import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
+
 import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
 
 import { styled } from '@mui/material/styles';
@@ -39,7 +39,7 @@ const AddMember: React.FC<AddMemberProps> = () => {
       setUsers(response.data)
       
     } catch (error) {
-      console.error('failed to get users for add Member search', error)
+      // console.error('failed to get users for add Member search', error)
     }
   }
   return (
