@@ -5,6 +5,9 @@ A travel helper app for a short or long trip to New Orleans. Consolidates sugges
 ## Itinerary
 Users can select the days they'll visit a city, then be redirected to an itinerary page. On that page, they can add activities, view suggestions, and add routes for each day of their trip.
 
+## Travel Parties
+Get your friends and family involved! Create a Travel Party with shared access to itineraries and budgets. Search for existing users or send an E-Vite to add your companions to the group. They'll be immediately directed to your Party page so they can jump right into planning.
+
 ## Budget Buddy
 Your ultimate travel budgeting companion, seamlessly integrating into your trip planning experience. With Budget Buddy easily set budgets, allocate spending categories like food and travel and visualize your spending habits with an interactive chart.
 
