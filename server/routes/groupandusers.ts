@@ -14,32 +14,32 @@ groupRouter.post('/:groupId/itinerary', async (req: any, res: any) => {
     const userId = req.user.id; // Get the logged-in user's ID
 
     // Check if the user is part of the group by querying userGroups table
-    const userGroup = await prisma.userGroups.findUnique({
-      where: {
-        userId_groupId: {
-          userId,
-          groupId: Number(groupId),
-        },
-      },
-    });
+    // const userGroup = await prisma.userGroups.findUnique({
+    //   where: {
+    //     userId_groupId: {
+    //       userId,
+    //       groupId: Number(groupId),
+    //     },
+    //   },
+    // });
 
-    if (!userGroup) {
-      return res.status(403).json({ error: 'You are not a member of this group' });
-    }
+    // if (!userGroup) {
+    //   return res.status(403).json({ error: 'You are not a member of this group' });
+    // }
 
     // Proceed with creating the itinerary if user is part of the group
-    const newItinerary = await prisma.itinerary.create({
-      data: {
-        name,
-        begin,
-        end,
-        notes,
-        groupId: Number(groupId), // Link itinerary to group
-        creatorId: userId, // Set the user as the creator
-      },
-    });
+    // const newItinerary = await prisma.itinerary.create({
+    //   data: {
+    //     name,
+    //     begin,
+    //     end,
+    //     notes,
+    //   //  groupId: Number(groupId), // Link itinerary to group
+    //     creatorId: userId, // Set the user as the creator
+    //   },
+    // });
 
-    res.json(newItinerary); // Send back the created itinerary
+   // res.json(newItinerary); // Send back the created itinerary
   } catch (error) {
     console.error('Error creating itinerary:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -56,29 +56,29 @@ groupRouter.put('/:groupId/itinerary/:itineraryId', async (req: any, res: any) =
     const userId = req.user.id; // Get the logged-in user's ID
 
     // Check if the user is part of the group by querying userGroups table
-    const userGroup = await prisma.userGroups.findUnique({
-      where: {
-        userId_groupId: {
-          userId,
-          groupId: Number(groupId),
-        },
-      },
-    });
+    // const userGroup = await prisma.userGroups.findUnique({
+    //   where: {
+    //     userId_groupId: {
+    //       userId,
+    //       groupId: Number(groupId),
+    //     },
+    //   },
+    // });
 
-    if (!userGroup) {
-      return res.status(403).json({ error: 'You are not a member of this group' });
-    }
+    // if (!userGroup) {
+    //   return res.status(403).json({ error: 'You are not a member of this group' });
+    // }
 
-    // Check if the itinerary exists and belongs to the group
-    const itinerary = await prisma.itinerary.findUnique({
-      where: { id: Number(itineraryId) },
-    });
+    // // Check if the itinerary exists and belongs to the group
+    // const itinerary = await prisma.itinerary.findUnique({
+    //   where: { id: Number(itineraryId) },
+    // });
 
-    if (!itinerary || itinerary.groupId !== Number(groupId)) {
-      return res.status(404).json({ error: 'Itinerary not found or does not belong to this group' });
-    }
+    // if (!itinerary || itinerary.groupId !== Number(groupId)) {
+    //   return res.status(404).json({ error: 'Itinerary not found or does not belong to this group' });
+    // }
 
-    // Proceed with updating the itinerary
+    // // Proceed with updating the itinerary
     const updatedItinerary = await prisma.itinerary.update({
       where: { id: Number(itineraryId) },
       data: {
@@ -125,87 +125,86 @@ groupRouter.put('/:groupId/itinerary/:itineraryId', async (req: any, res: any) =
 // to create a code 
 //map is used nut needs to be replaced for more of a permanent solution
 // to add new table to schema for viewCode
-const viewCodeStore = new Map(); 
 
-groupRouter.get('/:groupId/itinerary/view', async(req: any, res: any)=>{
-  const {groupId} = req.params
-  try{
-    const group = await prisma.group.findUnique({
-      where: { id: Number(groupId)}
-    })
+// groupRouter.get('/:groupId/itinerary/view', async(req: any, res: any)=>{
+//   const {groupId} = req.params
+//   try{
+//     const group = await prisma.group.findUnique({
+//       where: { id: Number(groupId)}
+//     })
 
    
-    if(!group){
-      return res.status(404).json({error: 'Group not found'})
-    }
+//     if(!group){
+//       return res.status(404).json({error: 'Group not found'})
+//     }
   
   
-    const viewCode = uuidv4();
-    console.log(`Generated viewCode ${viewCode} for groupId ${groupId}`);
-//TODO: add viewCode model to schema
-  //  await prisma.viewCode.create({
-  //   data: {
-  //     code: viewCode,
-  //     groupId: Number(groupId)
-  //   }
-  //  })
-    res.status(201).json({ viewCode })
+//     const viewCode = uuidv4();
+//     console.log(`Generated viewCode ${viewCode} for groupId ${groupId}`);
+// //TODO: add viewCode model to schema
+//   //  await prisma.viewCode.create({
+//   //   data: {
+//   //     code: viewCode,
+//   //     groupId: Number(groupId)
+//   //   }
+//   //  })
+//     res.status(201).json({ viewCode })
     
-  }catch(error){
-    console.error('Error generating view code:', error)
-    res.status(500).json({error: 'Internal server error'})
-  }
-})
+//   }catch(error){
+//     console.error('Error generating view code:', error)
+//     res.status(500).json({error: 'Internal server error'})
+//   }
+// })
 
-//sharing itinerary for users without aacount( view only)
+// //sharing itinerary for users without aacount( view only)
 
-groupRouter.get('/itinerary/view/:viewCode', async (req: any, res: any) => {
-  const { viewCode } = req.params; // Get the view code from the request
+// groupRouter.get('/itinerary/view/:viewCode', async (req: any, res: any) => {
+//   const { viewCode } = req.params; // Get the view code from the request
 
-  try {
-    // Retrieve the groupId associated with this view code
-    //TODO:
-    // const codeEntry = await prisma.viewCode.findUnique({
-    //   where: {
-    //     code: viewCode
-    //   }
-    // });
-    //TODO:
-    // if (!codeEntry) {
-    //   return res.status(404).json({ error: 'Invalid view code' });
-    // }
+//   try {
+//     // Retrieve the groupId associated with this view code
+//     //TODO:
+//     // const codeEntry = await prisma.viewCode.findUnique({
+//     //   where: {
+//     //     code: viewCode
+//     //   }
+//     // });
+//     //TODO:
+//     // if (!codeEntry) {
+//     //   return res.status(404).json({ error: 'Invalid view code' });
+//     // }
 
-    //Fetch the itinerary based on the groupId
-    const itinerary = await prisma.itinerary.findFirst({
-      where: {
-        //TODO
-      //  groupId: codeEntry.groupId, 
-      },
-      include: {
-        activity: true,
-        route: true,
-        creator: {
-          select: {
-            id: true,
-            username: true,
-          },
-        },
-      },
-    });
+//     //Fetch the itinerary based on the groupId
+//     const itinerary = await prisma.itinerary.findFirst({
+//       where: {
+//         //TODO
+//       //  groupId: codeEntry.groupId, 
+//       },
+//       include: {
+//         activity: true,
+//         route: true,
+//         creator: {
+//           select: {
+//             id: true,
+//             username: true,
+//           },
+//         },
+//       },
+//     });
     
-    if (!itinerary) {
-      return res.status(404).json({ error: 'Itinerary not found' });
-    }
-    res.json(itinerary);
+//     if (!itinerary) {
+//       return res.status(404).json({ error: 'Itinerary not found' });
+//     }
+//     res.json(itinerary);
     
 
-  } catch (error) {
-    console.error('Error fetching itinerary:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+//   } catch (error) {
+//     console.error('Error fetching itinerary:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
 
-export default groupRouter;
+// export default groupRouter;
 
 // //POST 
 
