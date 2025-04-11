@@ -39,7 +39,7 @@ const AddMember: React.FC<AddMemberProps> = () => {
       setUsers(response.data)
       
     } catch (error) {
-      console.error('failed to get users for add Member search', error)
+      // console.error('failed to get users for add Member search', error)
     }
   }
   return (
