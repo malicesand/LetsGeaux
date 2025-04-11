@@ -21,7 +21,9 @@ const ViewCodeForm = () => {
     }
 
     try {
-      const response = await axios.get(`/api/itinerary/view /${viewCode}`);
+      const response = await axios.get(`/api/itinerary/view/${viewCode}`);
+      console.log('Fetching itinerary with viewCode:', viewCode);
+
       setItinerary(response.data);
       setError('');
     } catch (err) {
