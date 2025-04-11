@@ -15,6 +15,7 @@ import {
   Chip
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
+import { useBudgetNotifications } from './BudgetNotificationContext';
 
 interface BudgetEntry {
   id: number;
@@ -39,6 +40,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
   // state to keep track of which thresholds have been notified for each budget
   const [notified, setNotified] = useState<{ [budgetId: number]: { [threshold: number]: boolean } }>({});
   const { enqueueSnackbar } = useSnackbar();
+  const { addNotification } = useBudgetNotifications();
 
   // fefine the thresholds
   const thresholds = [25, 50, 75, 90];
@@ -61,30 +63,36 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
   }, [selectedItineraryId]);
 
   // check each budget entry for threshold crossings
-  useEffect(() => {
-    budgets.forEach(budget => {
-      if (budget.limit > 0) {
-        const percentage = ((budget.spent || 0) / budget.limit) * 100;
-        thresholds.forEach(threshold => {
-          if (percentage >= threshold) {
-            // only show notification if not already notified for this budget and threshold
-            if (!(notified[budget.id]?.[threshold])) {
-              enqueueSnackbar(`${budget.category} is at ${threshold}% usage!`, {
-                variant: 'warning',
-              });
-              setNotified(prev => ({
-                ...prev,
-                [budget.id]: {
-                  ...prev[budget.id],
-                  [threshold]: true,
-                },
-              }));
-            }
+ // add dynamic notification logging when thresholds are crossed
+ useEffect(() => {
+  budgets.forEach(budget => {
+    if (budget.limit > 0) {
+      const percentage = ((budget.spent || 0) / budget.limit) * 100;
+      thresholds.forEach(threshold => {
+        if (percentage >= threshold) {
+          if (!(notified[budget.id]?.[threshold])) {
+            // show toast notification via notistack
+            enqueueSnackbar(`${budget.category} is at ${threshold}% usage!`, {
+              variant: 'warning',
+            });
+            // also add a dynamic notification via context
+            addNotification({ message: `${budget.category} is at ${threshold}% usage!`, timestamp: new Date() });
+            // record that we have notified this threshold for this budget
+            setNotified(prev => ({
+              ...prev,
+              [budget.id]: {
+                ...prev[budget.id],
+                [threshold]: true,
+              },
+            }));
           }
-        });
-      }
-    });
-  }, [budgets, enqueueSnackbar, thresholds, notified]);
+        }
+      });
+    }
+  });
+  //added addNotification as a dependency
+}, [budgets, enqueueSnackbar, thresholds, notified, addNotification]);
+
 
   const openEditModal = (budget: BudgetEntry) => {
     setSelectedBudget(budget);
