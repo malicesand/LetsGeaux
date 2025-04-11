@@ -1,9 +1,9 @@
 import React from 'react';
 // import axios from 'axios';
-import Suggestion from './Suggestion.tsx';
+import Suggestion from '../Suggestion.tsx';
 import { Container, Typography, List, Card, Paper, Grid} from '@mui/material';
 
-const Community = () => {
+const CommunityPage = () => {
   return (
     <Container>
       <Typography variant='h1'>Welcome to da pawty!</Typography>
@@ -13,4 +13,4 @@ const Community = () => {
   )
 }
 
-export default Community;
+export default CommunityPage;
