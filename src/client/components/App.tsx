@@ -31,6 +31,7 @@ import { user } from '../../../types/models.ts';
 import Profile from './Profile.tsx';
 import Dashboard from './Dashboard/DashboardMain.tsx'
 import ViewCodeForm from './Itinerary/viewCodeForm.tsx';
+import CommunityPage from './Community/CommunityPage.tsx';
 
 import InterestForm from './InterestForm';
 const App: React.FC = () => {
@@ -135,7 +136,14 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
-
+         <Route
+          path='/Community'
+          element={
+            <ProtectedRoute>
+              {user && <CommunityPage user={user} />}
+            </ProtectedRoute>
+          }
+        />
         <Route
           path='/activities'
           element={

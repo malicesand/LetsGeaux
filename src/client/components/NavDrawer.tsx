@@ -34,6 +34,7 @@ import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import { Apps } from '@mui/icons-material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import InterestForm from './InterestForm';
+import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -157,6 +158,15 @@ const NavDrawer: React.FC = () => {
                   <TravelExploreIcon />
                 </ListItemIcon>
                 <ListItemText primary={'Itinerary'} />
+              </ListItemButton>
+            </ListItem>
+            {/* maps */}
+          <ListItem key={'community'} disablePadding>
+              <ListItemButton component={Link}to='/community' onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <PeopleRoundedIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Community'} />
               </ListItemButton>
             </ListItem>
           {/* chat */}
