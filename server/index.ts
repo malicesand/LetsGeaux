@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request, Response, NextFunction} from 'express';
 import path from 'path';
 import passport from 'passport';
 import session from 'express-session';
@@ -33,9 +33,9 @@ app.use(express.json());
 
 const port = 8000;
 app.use(cors({
-  origin: 'http://localhost:8000',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], //
+  origin: 'http://localhost:3000', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // 
   credentials: true, // missing so cookies werent sent which breaks session based auth
 }));
 app.options('*', cors());
@@ -186,7 +186,10 @@ app.get('/', isAuthenticated, (req, res) => {
 });
 
 // Catch-all route to handle all other paths and return the front-end app
-app.get('*', (req: any, res: any) => {
+app.get('*', (req: Request, res: Response, next: NextFunction) => {
+  if (req.path.startsWith('api') || req.path.startsWith('auth') || req.path.startsWith('logout')) {
+    return next();
+  }
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 
