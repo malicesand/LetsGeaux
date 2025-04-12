@@ -3,12 +3,8 @@ import axios from 'axios';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-import MessageBoard from './MessageBoard';
 import CreateGroup from './CreateGroup';
-import ReplyForm from './ReplyForm'
-import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
-import AddMember from './AddMember';
-
+// import BudgetPieChart from './BudgetPieChart'
 import { user, userParty } from '../../../../types/models.ts';
 
 interface DashboardProps {
@@ -19,15 +15,12 @@ interface party {
   name: string;
 }
 const Dashboard: React.FC<DashboardProps>= ({ user }) => {
-  // const [userWithParties, setUserWithParties] = useState<UserWithParties[]>
   const [partyInfo, setPartyInfo] = useState<{id: number, name: string}[]>([])
-  const [currentPartyId, setCurrentPartyId] = useState<number | null>(null);
-  const [partyMembers, setPartyMembers] = useState<string[]>([]);
   const userId = user.id
 
   useEffect(() => {
     getUserParties();
-  },[])
+  }, [userId])
 
   const getUserParties = async() => {
     console.log(userId)
@@ -63,20 +56,21 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
 
   return (
     <Box>
-      <AddMember />
       <CreateGroup user={user} onPartyCreated={getUserParties}/>
-      <Box>
-        <Typography component='ul'>
+        <Typography >
           Your Travel Parties
-          {partyInfo.map((party) => (
-            <li key={party.id}>
-              <Link to={`/party/${String(party.id)}`}>
-              {party.name}
-              </Link>
-            </li>
-          ))}
         </Typography>
-      </Box>
+        <Box>
+          {partyInfo.map((selectedParty) => (
+            <Box key={selectedParty.id} mb={1}>
+              <Link to={`/party/${selectedParty.id}?name=${encodeURIComponent(selectedParty.name)}`}>
+              <Typography variant='body1' color='primary'>
+                {selectedParty.name}
+              </Typography>
+              </Link>
+            </Box>
+          ))}
+        </Box>
       <Box position= 'absolute' bottom = '10%'>
         {/* <BudgetPieChart /> */}
       </Box>
