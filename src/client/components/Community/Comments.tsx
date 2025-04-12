@@ -8,8 +8,15 @@ import CommentForm from './CommentForm.tsx';
 const Comments = () => {
   return (
     <Container>
+      <Card >
       <Comment />
+      </Card>
+      <Card >
+      <Comment />
+      </Card>
     </Container>
+
+
   )
 }
 

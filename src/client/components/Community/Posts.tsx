@@ -8,6 +8,10 @@ import PostForm from './PostForm.tsx';
 const Posts = () => {
   return (
     <Container>
+      <PostForm/>
+      <Post/>
+      <Post/>
+      <Post/>
     </Container>
   )
 }

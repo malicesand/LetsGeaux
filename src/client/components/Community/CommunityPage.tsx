@@ -3,14 +3,16 @@ import React from 'react';
 import Suggestion from '../Suggestion.tsx';
 import { Container, Typography, List, Card, Paper, Grid} from '@mui/material';
 import Posts from './Posts.tsx';
-import Comments from '.Comments.tsx';
+import Comments from './Comments.tsx';
 
 const CommunityPage = () => {
   return (
     <Container>
       <Typography variant='h1'>Welcome to da pawty!</Typography>
       <Grid>
-        <Comments />
+        <Posts />
+        {/* Actually, I don't think the comments will be rendered directly from here.. */}
+        {/* <Comments /> */}
       </Grid>
     </Container>
   )
