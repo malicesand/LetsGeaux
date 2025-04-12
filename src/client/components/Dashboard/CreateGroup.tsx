@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import FilledInput from '@mui/material/FilledInput';
 import Divider from '@mui/material/Divider';
 
-import { useParty } from './PartyContext';
+
 
 import { user } from '../../../../types/models.ts'
 interface groupProps {
@@ -28,9 +28,9 @@ const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
   const [emails, setEmails] = React.useState<string[]>([])
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [partySuccess, setPartySuccess] = useState(false);
-  const [member, setMember] = useState<user>()
-  const { setPartyName, setPartyId, partyName } = useParty()
-  
+  // const [member, setMember] = useState<user>();
+  const [partyName, setPartyName] = useState<string>('');
+  const [partyId, setPartyId] = useState<number>(null);
 
   const openModal = () => {
     setOpen(true);
@@ -42,20 +42,17 @@ const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
 
   
   //* Request Handling *//
-  const createParty = async (name:string, partyName:string) => {
-    // console.log(`Creating...${name}`);
-    
-    setPartyName(partyName)
-    // console.log(partyName, 'line41')
+  const createParty = async (partyName:string) => {
+    const name = partyName
+    setPartyName(name)
     try {
       let response = await axios.post('/api/group', {name} );
-      // console.log(`${name} created!`)
-      // console.log(`${response.data.id} partyId!`)
       const id = (response.data.id);
+      onPartyCreated();
       setPartyId(id);
       setPartySuccess(true);
       setTimeout(() => setPartySuccess(false), 10000)
-      addUserToParty(userId, id, partyName);
+      await addUserToParty(userId, id, partyName);
       onPartyCreated();
     } catch (error) {
       console.error('failed to create new group');
@@ -63,11 +60,8 @@ const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
   };
   //* Add Current User to Party *//
   const addUserToParty = async(userId:number, partyId:number, partyName: string) => {
-    // console.log(`this is a partyId:${partyId}`);
-    // console.log(`Travel Party ${partyName} Created`)
     try {
       let response = await axios.post('/api/group/userParty', {userId, partyId});
-      // console.log(`userParty logged ${partyName}`);
     } catch (error) {
       console.error('Could not create new userParty model', error);
     }
@@ -76,7 +70,6 @@ const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
   const sendEmail = async(emailList: string[], partyName:string) => {
     try {
       await axios.post('/api/group/sendInvite', { emails: emailList, partyName });
-      console.log(`Invited ${emails} to ${partyName}`)
       setInviteSuccess(true);
       setInputValue('');
       setEmails([]);
@@ -104,7 +97,7 @@ const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
               const formData = new FormData(e.currentTarget);
               const formJson = Object.fromEntries((formData as any).entries());
               const partyName = (formJson.party);
-              createParty(formJson.party, partyName);
+              createParty(partyName);
             }
           }
         }}

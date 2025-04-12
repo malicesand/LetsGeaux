@@ -14,6 +14,7 @@ interface PartyDashboardProps {
 
 const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const { partyId } = useParams();
+  console.log(partyId)
   const numericPartyId = parseInt(partyId || '', 10);
   
   const location = useLocation();
@@ -25,10 +26,9 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const userId = user.id
 
   useEffect(() => {
-    console.log(partyName)
-    console.log(numericPartyId);
+    
     getUsersForParty(numericPartyId);
-  },[])
+  },[numericPartyId])
 //  const getPartyNames = async(partyIds: number[]) => {
 //     try {
 //       const requests = partyIds.map(id => 

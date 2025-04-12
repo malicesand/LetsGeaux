@@ -3,11 +3,7 @@ import axios from 'axios';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-import MessageBoard from './MessageBoard';
 import CreateGroup from './CreateGroup';
-import ReplyForm from './ReplyForm'
-import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
-import AddMember from './AddMember';
 
 import { user, userParty } from '../../../../types/models.ts';
 
@@ -21,13 +17,15 @@ interface party {
 const Dashboard: React.FC<DashboardProps>= ({ user }) => {
   // const [userWithParties, setUserWithParties] = useState<UserWithParties[]>
   const [partyInfo, setPartyInfo] = useState<{id: number, name: string}[]>([])
-  const [currentPartyId, setCurrentPartyId] = useState<number | null>(null);
-  const [partyMembers, setPartyMembers] = useState<string[]>([]);
+  // const [currentPartyId, setCurrentPartyId] = useState<number | null>(null);
+  // const [partyMembers, setPartyMembers] = useState<string[]>([]);
+  // const [partyNames, setPartyNames] = useState<string[]>([]);
   const userId = user.id
+
 
   useEffect(() => {
     getUserParties();
-  },[])
+  }, [userId])
 
   const getUserParties = async() => {
     console.log(userId)
