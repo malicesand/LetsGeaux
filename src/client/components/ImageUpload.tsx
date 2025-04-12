@@ -30,9 +30,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
         cloudName: 'dcrrsec0d',
         uploadPreset: 'LetsGeaux Profile',
         sources: ['local', 'url', 'google_drive'],
-        multiple: false,
+        multiple: true,
         folder: 'letsGeaux',
-        cropping: true,
       },
       (error: any, result: any) => {
         if (!error && result.event === 'success') {
