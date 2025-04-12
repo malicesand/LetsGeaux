@@ -1,7 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import {
+  Container,
+  Typography,
+  Button,
+  Avatar,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Box,
+  Stack
+} from '@mui/material';
 import ImageUpload from './ImageUpload';
+
 const ALL_INTERESTS = ['Restaurants', 'Hotels', 'Geos', 'Attractions']; 
 
 const Profile: React.FC = () => {
@@ -14,11 +28,10 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const fetchInterests = async () => {
       try {
-        const userId = user.id
+        const userId = user.id;
         const response = await axios.get(`/api/interests/${userId}`);
         setInterests(response.data);
 
-        
         const current = response.data[0]?.name;
         const otherOptions = ALL_INTERESTS.filter((i) => i !== current);
         setSelectedInterest(otherOptions[0]);
@@ -35,7 +48,6 @@ const Profile: React.FC = () => {
       const response = await axios.put(`/api/interests/${user.id}`, {
         newInterest: selectedInterest,
       });
-
       setInterests([response.data.interest]);
     } catch (error) {
       console.error('Error updating interest:', error);
@@ -44,15 +56,12 @@ const Profile: React.FC = () => {
 
   const currentInterest = interests[0]?.name;
   const interestOptions = ALL_INTERESTS.filter((i) => i !== currentInterest);
+
   useEffect(() => {
-   
     if (!document.querySelector('script[src="https://widget.cloudinary.com/v2.0/global/all.js"]')) {
       const script = document.createElement('script');
       script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
       script.async = true;
-      script.onload = () => {
-      
-      };
       document.body.appendChild(script);
     }
   }, []);
@@ -64,25 +73,17 @@ const Profile: React.FC = () => {
         cloudName: 'dcrrsec0d',
         uploadPreset: 'LetsGeaux Profile',
         sources: ['local', 'url', 'camera', 'google_drive'],
-        cropping: true,
         multiple: false,
         folder: 'letsGeaux',
-        transformation: [
-          { width: 150, height: 150, crop: 'limit' } 
-        ],
+        transformation: [{ width: 150, height: 150, crop: 'limit' }],
       },
       async (error: any, result: any) => {
         if (!error && result.event === 'success') {
           const imageUrl = result.info.secure_url;
-          console.log('Uploaded image:', imageUrl);
-  
-         
           try {
             await axios.patch(`/api/users/${user.id}/profile-pic`, {
               profilePic: imageUrl,
             });
-  
-           
             user.profilePic = imageUrl;
           } catch (err) {
             console.error('Failed to update profile pic in DB:', err);
@@ -90,45 +91,55 @@ const Profile: React.FC = () => {
         }
       }
     );
-  
     widget.open();
   };
 
-
-
-
   return (
-    <div>
-      <h1>Profile Page</h1>
-      <div>{user.username}</div>
-      <div>{user.email}</div>
-      <img src={user.profilePic} alt="Profile" style={{ height: '150px' }} />
-      <button onClick={handleUploadWidget}>Change Profile Picture</button>
+    <Container maxWidth="sm" sx={{ py: 4 }}>
+      <Typography variant="h4" gutterBottom>Profile Page</Typography>
+      <Stack spacing={2} alignItems="center">
+        <Avatar src={user.profilePic} alt="Profile Picture" sx={{ width: 150, height: 150 }} />
+        <Button variant="outlined" onClick={handleUploadWidget}>Change Profile Picture</Button>
+        <Typography variant="h6">{user.username}</Typography>
+        <Typography variant="body1">{user.email}</Typography>
+      </Stack>
 
-      <h3>Current Interest:</h3>
-      <div>{currentInterest || 'None'}</div>
+      <Box mt={4}>
+        <Typography variant="h6">Current Interest:</Typography>
+        <Typography variant="body1">{currentInterest || 'None'}</Typography>
+      </Box>
 
-      <h4>Change Interest:</h4>
-      <form onSubmit={(e) => { e.preventDefault(); handleUpdateInterest(); }}>
-        {interestOptions.map((interest) => (
-          <div key={interest}>
-            <label>
-              <input
-                type="radio"
-                name="interest"
+      <Box mt={3}>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Change Interest</FormLabel>
+          <RadioGroup
+            value={selectedInterest}
+            onChange={(e) => setSelectedInterest(e.target.value)}
+          >
+            {interestOptions.map((interest) => (
+              <FormControlLabel
+                key={interest}
                 value={interest}
-                checked={selectedInterest === interest}
-                onChange={(e) => setSelectedInterest(e.target.value)}
+                control={<Radio />}
+                label={interest}
               />
-              {interest}
-            </label>
-          </div>
-        ))}
-        <button type="submit">Update Interest</button>
-      </form>
-          {/* upload image component */}
-          <ImageUpload userId={user.id}/>
-    </div>
+            ))}
+          </RadioGroup>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
+            onClick={handleUpdateInterest}
+          >
+            Update Interest
+          </Button>
+        </FormControl>
+      </Box>
+
+      <Box mt={4}>
+        <ImageUpload userId={user.id} />
+      </Box>
+    </Container>
   );
 };
 
