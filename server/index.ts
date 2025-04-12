@@ -20,7 +20,9 @@ import chatsRoute from './routes/chats';
 import itineraryRoute from './routes/itinerary';
 import activityRouter from './routes/activities';
 import wishlistRouter from './routes/wishlist';
-import voteRouter from './routes/votes';import interestRouter from './routes/interests'
+import voteRouter from './routes/votes';
+import interestRouter from './routes/interests'
+import imageRoute from './routes/images';
 dotenv.config();
 
 const app = express();
@@ -169,6 +171,7 @@ app.use('/api/budget', budgetRoutes);
 app.use('/api/activity', activityRouter);
 app.use('/api/vote', voteRouter);
 app.use('/api/group', groupRoute);
+app.use('/api/image', imageRoute)
 app.get('/login', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'dist', 'index.html'));
 });
