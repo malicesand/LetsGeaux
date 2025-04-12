@@ -11,11 +11,11 @@ interface BudgetCategory {
 
 interface BudgetPDFPrintoutProps {
   // itinerary with a name field
-  itinerary: { name: string }; 
+  itinerary: { name: string };
   //array of budget categories with details
-  budgetBreakdown: BudgetCategory[]; 
+  budgetBreakdown: BudgetCategory[];
   // overall current budget value
-  currentBudget: number; 
+  currentBudget: number;
 }
 
 const BudgetPDFPrintout: React.FC<BudgetPDFPrintoutProps> = ({ itinerary, budgetBreakdown, currentBudget }) => {
@@ -54,7 +54,8 @@ const BudgetPDFPrintout: React.FC<BudgetPDFPrintoutProps> = ({ itinerary, budget
           padding: 2,
           width: '100%',
           backgroundColor: 'white',
-          color: 'black'
+          color: 'black',
+          border: '1px solid #ccc'
         }}
       >
         {/* itinerary title (printed at top of PDF) */}
