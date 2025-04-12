@@ -77,7 +77,7 @@ const BudgetPDFPrintout: React.FC<BudgetPDFPrintoutProps> = ({ itinerary, budget
         {/* current Budget Summary */}
         <Box sx={{ mt: 2 }}>
           <Typography variant="h6">
-            Current Budget: ${currentBudget.toFixed(2)}
+            Current Budget in Total: ${currentBudget.toFixed(2)}
           </Typography>
         </Box>
         {/* timestamp printed at the bottom */}
