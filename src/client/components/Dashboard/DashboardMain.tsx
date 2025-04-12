@@ -63,20 +63,22 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
 
   return (
     <Box>
-      <AddMember />
+      {/* <AddMember  /> */}
       <CreateGroup user={user} onPartyCreated={getUserParties}/>
-      <Box>
-        <Typography component='ul'>
+        <Typography >
           Your Travel Parties
-          {partyInfo.map((party) => (
-            <li key={party.id}>
-              <Link to={`/party/${String(party.id)}`}>
-              {party.name}
-              </Link>
-            </li>
-          ))}
         </Typography>
-      </Box>
+        <Box>
+          {partyInfo.map((selectedParty) => (
+            <Box key={selectedParty.id} mb={1}>
+              <Link to={`/party/${selectedParty.id}?name=${encodeURIComponent(selectedParty.name)}`}>
+              <Typography variant='body1' color='primary'>
+                {selectedParty.name}
+              </Typography>
+              </Link>
+            </Box>
+          ))}
+        </Box>
       <Box position= 'absolute' bottom = '10%'>
         {/* <BudgetPieChart /> */}
       </Box>

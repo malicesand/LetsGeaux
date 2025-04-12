@@ -12,7 +12,7 @@ import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 
 import { user } from '../../../../types/models.ts'
-import { useParty } from './PartyContext';
+// import { useParty } from './PartyContext';
  
 const filter = createFilterOptions<user>();
 
@@ -23,22 +23,27 @@ const SearchWrapper = styled('div')(() => ({
   width: 300,
 }));
 
-// interface AddMemberProps {
-//   user: user;
-// }
+interface AddMemberProps {
+  user: user;
+  partyId: number;
+  partyName: string;
+}
 
 
-const AddMember: React.FC = () => {
+const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
   const [users, setUsers] =  useState<user[]>([])
   const [member, setMember] = useState<user['username']>()
   const[userId, setUserId] = useState<user['id']>()
   const [open, setOpen] = React.useState(false);
+  // const partyName = partyInfo.name;
+  // const partyId = partyInfo.id
+
   
-  const { partyId, partyName } = useParty();
+  // const { partyId, partyName } = useParty();
   
 
   useEffect(() => {
-    getUsers();
+    getUsers(partyId);
   }, []);
 
   const openModal = () => {
@@ -50,7 +55,7 @@ const AddMember: React.FC = () => {
   };
 
 
-  const getUsers = async() => {
+  const getUsers = async(partyId: number) => {
     try {
       const response = await axios.get('/api/users');
       console.log('got the users');
