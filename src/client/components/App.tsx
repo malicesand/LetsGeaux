@@ -31,10 +31,11 @@ import { user } from '../../../types/models.ts';
 import Profile from './Profile.tsx';
 import Dashboard from './Dashboard/DashboardMain.tsx'
 import ViewCodeForm from './Itinerary/viewCodeForm.tsx';
+import PartyDashboard from './Dashboard/PartyDashboard.tsx';
 
 import InterestForm from './InterestForm';
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(undefined);
   const [user, setUser] = useState<user | null>(null);
   const location = useLocation(); // gets current route
 
@@ -58,6 +59,9 @@ const App: React.FC = () => {
     checkAuth();
   }, []);
 
+  if (isAuthenticated === undefined) {
+    return <div>Loading...</div>
+  }
   // Protected Route
   const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     if (!isAuthenticated) {
@@ -172,12 +176,19 @@ const App: React.FC = () => {
           </ProtectedRoute>
         }
       />
-
-<Route
+      <Route
         path='/viewform'
         element={
           <ProtectedRoute>
             {<ViewCodeForm/>}
+          </ProtectedRoute>
+        }
+        />
+      <Route
+        path='/party/:partyId'
+        element={
+          <ProtectedRoute>
+            <PartyDashboard user={user}/>
           </ProtectedRoute>
         }
         />
