@@ -31,7 +31,7 @@ const BudgetPDFPrintout: React.FC<BudgetPDFPrintoutProps> = ({ itinerary, budget
       await pdf.html(printRef.current, {
         callback: function (doc) {
           // save the PDF with a filename that includes the itinerary name
-          doc.save(`${itinerary.name}-Budget.pdf`);
+          doc.save(`${itinerary.name} Budget.pdf`);
         },
         //specify coordinates and width to adjust positioning
         x: 10,
