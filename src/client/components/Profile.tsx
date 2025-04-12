@@ -63,10 +63,10 @@ const Profile: React.FC = () => {
       {
         cloudName: 'dcrrsec0d',
         uploadPreset: 'LetsGeatx Profile',
-        sources: ['local', 'url', 'camera'],
+        sources: ['local', 'url', 'camera', 'google_drive'],
         cropping: true,
         multiple: false,
-        folder: 'letsGeatx/profilePic',
+        folder: 'letsGeaux/profilePic',
         transformation: [
           { width: 150, height: 150, crop: 'limit' } 
         ],
@@ -127,7 +127,7 @@ const Profile: React.FC = () => {
         <button type="submit">Update Interest</button>
       </form>
           {/* upload image component */}
-          <ImageUpload/>
+          <ImageUpload userId={user.id}/>
     </div>
   );
 };
