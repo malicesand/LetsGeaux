@@ -20,12 +20,11 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps>= ({ user }) => {
   return (
     <Box>
-      <CreateGroup user={user}/>
+      <CreateGroup user={user} />
       <Box>
         <MessageBoard user={user}/>
-        
-        
       </Box>
+      <AddMember />
       <Box position= 'absolute' bottom = '10%'>
         {/* <BudgetPieChart /> */}
       </Box>

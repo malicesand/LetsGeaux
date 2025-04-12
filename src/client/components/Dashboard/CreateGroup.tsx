@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 import FilledInput from '@mui/material/FilledInput';
 import Divider from '@mui/material/Divider';
 
+import { useParty } from './PartyContext';
+
 import { user } from '../../../../types/models.ts'
 interface groupProps {
   user: user;
@@ -26,7 +28,8 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
   const [emails, setEmails] = React.useState<string[]>([])
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [partySuccess, setPartySuccess] = useState(false);
-  
+  const [member, setMember] = useState<user>()
+  const { setPartyId } = useParty();
 
   const openModal = () => {
     setOpen(true);
@@ -46,10 +49,11 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
       let response = await axios.post('/api/group', {name} );
       // console.log(`${name} created!`)
       // console.log(`${response.data.id} partyId!`)
-      const partyId = (response.data.id);
+      const id = (response.data.id);
+      setPartyId(id);
       setPartySuccess(true);
       setTimeout(() => setPartySuccess(false), 10000)
-      addUserToParty(userId, partyId, partyName);
+      addUserToParty(userId, id, partyName);
     } catch (error) {
       console.error('failed to create new group');
     };

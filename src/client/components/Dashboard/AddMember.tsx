@@ -8,7 +8,7 @@ import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
 import { styled } from '@mui/material/styles';
 
 import { user } from '../../../../types/models.ts'
-
+import { useParty } from './PartyContext';
  
 const filter = createFilterOptions<user>();
 
@@ -19,29 +19,43 @@ const SearchWrapper = styled('div')(() => ({
   width: 300,
 }));
 
-interface AddMemberProps {
-  user: user;
-}
+// interface AddMemberProps {
+//   user: user;
+// }
 
 
-const AddMember: React.FC<AddMemberProps> = () => {
+const AddMember: React.FC = () => {
   const [users, setUsers] =  useState<user[]>([])
-  const [member, setMember] = useState<user>()
+  // const [member, setMember] = useState<user>()
+  // const[userId, setUserId] = useState<user['id']>()
+  const { partyId } = useParty();
 
   useEffect(() => {
     getUsers();
-  });
+  }, []);
 
   const getUsers = async() => {
     try {
       const response = await axios.get('/api/users');
-      // console.log('got the users', response.data);
-      setUsers(response.data)
+      console.log('got the users');
+      setUsers(response.data);
       
     } catch (error) {
-      // console.error('failed to get users for add Member search', error)
+      console.error('failed to get users for add Member search', error)
+    };
+  };
+
+  const addUserToParty = async(userId:number, partyId:number) => {
+    console.log(partyId)
+    console.log(userId);
+    try {
+      let response = await axios.post('/api/group/userParty', {userId, partyId});
+      console.log(response.data);
+    } catch (error) {
+      console.error('Could not create new userParty model', error);
     }
-  }
+  }; 
+
   return (
     
     
@@ -53,8 +67,9 @@ const AddMember: React.FC<AddMemberProps> = () => {
         getOptionLabel={(user: user) => user.username}
         onChange={(event, value: user) => {
           if (value) {
-            console.log('Selected user:', value);
-            setMember(value)
+            // console.log('Selected user:', value);
+            const userId = value.id;
+            addUserToParty(userId, partyId);
           }
         }}
         openOnFocus={false}
