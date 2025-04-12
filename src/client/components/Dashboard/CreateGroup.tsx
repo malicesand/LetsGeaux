@@ -18,9 +18,10 @@ import { useParty } from './PartyContext';
 import { user } from '../../../../types/models.ts'
 interface groupProps {
   user: user;
+  onPartyCreated: () => void;
 }
 
-const CreateGroup: React.FC<groupProps> = ({user}) => {
+const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
   const userId = user.id;
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = useState<string>('')
@@ -55,6 +56,7 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
       setPartySuccess(true);
       setTimeout(() => setPartySuccess(false), 10000)
       addUserToParty(userId, id, partyName);
+      onPartyCreated();
     } catch (error) {
       console.error('failed to create new group');
     };
