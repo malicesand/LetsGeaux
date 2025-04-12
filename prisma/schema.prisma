@@ -25,9 +25,10 @@ model user {
   suggestionId Int?
   userInterest userInterest[]
 
-  userParty userParty[]
-  post      post[]
-  comment   comment[]
+  userParty    userParty[]
+  post         post[]
+  comment      comment[]
+  partyMessage partyMessage[]
 }
 
 model userParty {
@@ -160,13 +161,14 @@ model userInterest {
 }
 
 model party {
-  id          Int         @id @default(autoincrement())
-  name        String      @db.VarChar(50)
-  itineraryId Int?
-  itinerary   itinerary[]
-  image       image[]
-  userParty   userParty[]
-  budget      budget[]
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(50)
+  itineraryId  Int?
+  itinerary    itinerary[]
+  image        image[]
+  userParty    userParty[]
+  budget       budget[]
+  partyMessage partyMessage[]
 }
 
 model reminder {
@@ -229,4 +231,17 @@ model message {
   sessionId   String   @db.VarChar(100)
 
   ChatHistory chatHistory @relation("ChatHistoryToMessage", fields: [sessionId], references: [sessionId])
+}
+
+model partyMessage {
+  id        Int      @id @default(autoincrement())
+  text      String
+  createdAt DateTime @default(now())
+
+  // Relationships
+  member user @relation(fields: [userId], references: [id])
+  userId Int
+
+  party   party @relation(fields: [partyId], references: [id])
+  partyId Int
 }
