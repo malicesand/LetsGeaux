@@ -13,19 +13,23 @@ import Typography from '@mui/material/Typography';
 import FilledInput from '@mui/material/FilledInput';
 import Divider from '@mui/material/Divider';
 
+import { useParty } from './PartyContext';
+
 import { user } from '../../../../types/models.ts'
 interface groupProps {
   user: user;
+  onPartyCreated: () => void;
 }
 
-const CreateGroup: React.FC<groupProps> = ({user}) => {
+const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
   const userId = user.id;
   const [open, setOpen] = React.useState(false);
-  const [partyName, setPartyName] = React.useState<string>('');
   const [inputValue, setInputValue] = useState<string>('')
   const [emails, setEmails] = React.useState<string[]>([])
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [partySuccess, setPartySuccess] = useState(false);
+  const [member, setMember] = useState<user>()
+  const { setPartyName, setPartyId, partyName } = useParty()
   
 
   const openModal = () => {
@@ -40,16 +44,19 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
   //* Request Handling *//
   const createParty = async (name:string, partyName:string) => {
     // console.log(`Creating...${name}`);
+    
     setPartyName(partyName)
     // console.log(partyName, 'line41')
     try {
       let response = await axios.post('/api/group', {name} );
       // console.log(`${name} created!`)
       // console.log(`${response.data.id} partyId!`)
-      const partyId = (response.data.id);
+      const id = (response.data.id);
+      setPartyId(id);
       setPartySuccess(true);
       setTimeout(() => setPartySuccess(false), 10000)
-      addUserToParty(userId, partyId, partyName);
+      addUserToParty(userId, id, partyName);
+      onPartyCreated();
     } catch (error) {
       console.error('failed to create new group');
     };
@@ -148,7 +155,7 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
           <Button 
             sx={{ mt: 1 }}
             variant='outlined'
-            onClick={() => sendEmail(emails, partyName)} disabled={emails.length === 0}
+            onClick={() => sendEmail(emails, inputValue)} disabled={emails.length === 0}
             >
             Invite
           </Button>
