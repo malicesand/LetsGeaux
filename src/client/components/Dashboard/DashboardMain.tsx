@@ -19,6 +19,8 @@ interface party {
 const Dashboard: React.FC<DashboardProps>= ({ user }) => {
   // const [userWithParties, setUserWithParties] = useState<UserWithParties[]>
   const [partyNames, setPartyNames] = useState<string[]>([])
+  const [currentPartyId, setCurrentPartyId] = useState<number | null>(null);
+  const [partyMembers, setPartyMembers] = useState<string[]>([]);
   const userId = user.id
 
   useEffect(() => {
@@ -46,12 +48,25 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
       );
       const responses = await Promise.all(requests);
       const names = responses.map(res => res.data.name);
+      console.log(names);
       setPartyNames(names);
     } catch (error) {
       console.error('Could not find names for one or all partyIds')
     };
   };
 
+  const getUserForParty = async (partyId: number) => {
+    try {
+      const response = await axios.get(`/api/group/usersInParty/${partyId}`);
+      const users = response.data;
+      const usernames = users.map((user:user) => user.username)
+      console.log(usernames);
+      setPartyMembers(usernames);
+    } catch (error) {
+      console.error('failed to find members for one or all parties')
+    }
+  };
+  
   return (
     <Box>
       <CreateGroup user={user} />

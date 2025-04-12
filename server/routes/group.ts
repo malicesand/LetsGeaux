@@ -100,10 +100,31 @@ groupRoute.get('/:partyId', async(req: any, res: any) => {
     })
     console.log(`Found the name for ${partyId}`);
     res.json(partyInfo);
-    
   } catch (error) {
-    console.error('Could not find any party names for this ID');
+    console.error('Could not find any party names for this ID', error);
     res.status(500).json({error: 'no party names found'})
   }
 })
+
+// * Get the Members of the Travel Party * //
+groupRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
+  const {partyId} = req.params;
+
+  try {
+    const usersInParty = await prisma.userParty.findMany({
+      where: {
+        partyId: +partyId,
+      },
+      include: {
+        user: true,
+      },
+    });
+    const users = usersInParty.map(entry => entry.user);
+    console.log(users)
+    res.json(users); 
+  } catch (error) {
+    console.error('failed to find members for this travel party', error);
+    res.status(500).json({ error: 'Could not fetch users in the party'});
+  }
+});
 export default groupRoute;
