@@ -18,7 +18,7 @@ const Profile: React.FC = () => {
         const response = await axios.get(`/api/interests/${userId}`);
         setInterests(response.data);
 
-        // Preselect another interest if possible
+        
         const current = response.data[0]?.name;
         const otherOptions = ALL_INTERESTS.filter((i) => i !== current);
         setSelectedInterest(otherOptions[0]);
@@ -62,11 +62,11 @@ const Profile: React.FC = () => {
     const widget = window.cloudinary.createUploadWidget(
       {
         cloudName: 'dcrrsec0d',
-        uploadPreset: 'LetsGeatx Profile',
+        uploadPreset: 'LetsGeaux Profile',
         sources: ['local', 'url', 'camera', 'google_drive'],
         cropping: true,
         multiple: false,
-        folder: 'letsGeaux/profilePic',
+        folder: 'letsGeaux',
         transformation: [
           { width: 150, height: 150, crop: 'limit' } 
         ],
