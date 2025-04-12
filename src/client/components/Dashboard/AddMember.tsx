@@ -12,7 +12,6 @@ import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 
 import { user } from '../../../../types/models.ts'
-// import { useParty } from './PartyContext';
  
 const filter = createFilterOptions<user>();
 
@@ -35,12 +34,6 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
   const [member, setMember] = useState<user['username']>()
   const[userId, setUserId] = useState<user['id']>()
   const [open, setOpen] = React.useState(false);
-  // const partyName = partyInfo.name;
-  // const partyId = partyInfo.id
-
-  
-  // const { partyId, partyName } = useParty();
-  
 
   useEffect(() => {
     getUsers(partyId);
@@ -53,7 +46,6 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
   const closeModal = () => {
     setOpen(false);
   };
-
 
   const getUsers = async(partyId: number) => {
     try {
@@ -83,7 +75,6 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
         <Autocomplete
           id="user-search"
           freeSolo
-          // label='add a user to this party'
           options={users}
           getOptionLabel={(user: user) => user.username}
           onChange={(event, value: user) => {
@@ -101,12 +92,10 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
             <TextField 
               {...params} 
               placeholder="Add a user to this party" 
-            
           />}
         />
       </SearchWrapper>
       <div>
-
       <Modal
         open={open}
         onClose={closeModal}

@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import CreateGroup from './CreateGroup';
-
+// import BudgetPieChart from './BudgetPieChart'
 import { user, userParty } from '../../../../types/models.ts';
 
 interface DashboardProps {
@@ -15,13 +15,8 @@ interface party {
   name: string;
 }
 const Dashboard: React.FC<DashboardProps>= ({ user }) => {
-  // const [userWithParties, setUserWithParties] = useState<UserWithParties[]>
   const [partyInfo, setPartyInfo] = useState<{id: number, name: string}[]>([])
-  // const [currentPartyId, setCurrentPartyId] = useState<number | null>(null);
-  // const [partyMembers, setPartyMembers] = useState<string[]>([]);
-  // const [partyNames, setPartyNames] = useState<string[]>([]);
   const userId = user.id
-
 
   useEffect(() => {
     getUserParties();
@@ -61,7 +56,6 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
 
   return (
     <Box>
-      {/* <AddMember  /> */}
       <CreateGroup user={user} onPartyCreated={getUserParties}/>
         <Typography >
           Your Travel Parties

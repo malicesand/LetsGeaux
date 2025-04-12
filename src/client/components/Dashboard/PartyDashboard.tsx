@@ -21,33 +21,13 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const searchParams = new URLSearchParams(location.search);
   const partyName = searchParams.get('name');
   const [partyInfo, setPartyInfo] = useState<{id: number, name: string}[]>([])
-  // const [currentPartyId, setCurrentPartyId] = useState<number | null>(null);
   const [partyMembers, setPartyMembers] = useState<string[]>([]);
-  const userId = user.id
+  // const userId = user.id //? delete
 
   useEffect(() => {
     
     getUsersForParty(numericPartyId);
   },[numericPartyId])
-//  const getPartyNames = async(partyIds: number[]) => {
-//     try {
-//       const requests = partyIds.map(id => 
-//         axios.get<party>(`/api/group/${id}`)
-//       );
-//       const responses = await Promise.all(requests);
-//       const names = responses.map((res) => ({
-//         id: res.data.id,
-//         name: res.data.name
-//       }));
-//       console.log(names);
-//       setPartyInfo(names);
-//     } catch (error) {
-//       console.error('Could not find names for one or all partyIds')
-//     };
-//   };
-  
-
-  
 
   const getUsersForParty = async (partyId: number) => {
     console.log(partyId)

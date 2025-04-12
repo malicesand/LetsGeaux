@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-// import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -12,8 +11,6 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import FilledInput from '@mui/material/FilledInput';
 import Divider from '@mui/material/Divider';
-
-
 
 import { user } from '../../../../types/models.ts'
 interface groupProps {
@@ -28,9 +25,8 @@ const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
   const [emails, setEmails] = React.useState<string[]>([])
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [partySuccess, setPartySuccess] = useState(false);
-  // const [member, setMember] = useState<user>();
-  const [partyName, setPartyName] = useState<string>('');
-  const [partyId, setPartyId] = useState<number>(null);
+  const [partyName, setPartyName] = useState<string>(''); //? delete partyName const?
+  const [partyId, setPartyId] = useState<number>(null); //? delete partyId const?
 
   const openModal = () => {
     setOpen(true);
@@ -132,9 +128,8 @@ const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
             Invite your friends to join your travel party
           </Typography>
           <FilledInput
-
             id='email'
-            placeholder='Enter email to invite (separate multiples with commas!'
+            placeholder='Enter email to invite (separate multiples with commas!)'
             type='text'
             fullWidth
             value={inputValue}
