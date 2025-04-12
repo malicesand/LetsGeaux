@@ -78,6 +78,7 @@ const AddMember: React.FC = () => {
         <Autocomplete
           id="user-search"
           freeSolo
+          // label='add a user to this party'
           options={users}
           getOptionLabel={(user: user) => user.username}
           onChange={(event, value: user) => {
@@ -94,7 +95,7 @@ const AddMember: React.FC = () => {
           renderInput={(params) => 
             <TextField 
               {...params} 
-              placeholder="Search for a user..." 
+              placeholder="Add a user to this party" 
             
           />}
         />

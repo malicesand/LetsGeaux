@@ -21,8 +21,8 @@ interface party {
 const Dashboard: React.FC<DashboardProps>= ({ user }) => {
   // const [userWithParties, setUserWithParties] = useState<UserWithParties[]>
   const [partyInfo, setPartyInfo] = useState<{id: number, name: string}[]>([])
-  // const [currentPartyId, setCurrentPartyId] = useState<number | null>(null);
-  // const [partyMembers, setPartyMembers] = useState<string[]>([]);
+  const [currentPartyId, setCurrentPartyId] = useState<number | null>(null);
+  const [partyMembers, setPartyMembers] = useState<string[]>([]);
   const userId = user.id
 
   useEffect(() => {
@@ -63,6 +63,7 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
 
   return (
     <Box>
+      <AddMember />
       <CreateGroup user={user} onPartyCreated={getUserParties}/>
       <Box>
         <Typography component='ul'>

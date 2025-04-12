@@ -22,7 +22,7 @@ const MessageBoard: React.FC<MessageBoardProps> = ({ user }) => {
 
   return (
     <div style={{ flex: 3, maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <h2>Welcome {user.username}!</h2>
+      <h2>This is your party chat</h2>
       <MessageList chatLog={chatLog} chatLogRef={chatLogRef} />
       <ReplyForm onSend={handleNewMessage} user={user} />
     </div>
