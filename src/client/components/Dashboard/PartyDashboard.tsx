@@ -47,23 +47,14 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
 
   return (
     <Box>
-      <CreateGroup user={user} />
-      <Box>
-        <Typography component='ul'>
-          Your Travel Parties
-          {partyInfo.map((party) => (
-            <li key={party.id}>
-              <Link href={`/party/${party.id}`}>{party.name}</Link>
-            </li>
-          ))}
-        </Typography>
-      </Box>
+      
+      
       <Box>
         <MessageBoard user={user}/>
       </Box>
       <AddMember />
       <Box position= 'absolute' bottom = '10%'>
-        {/* <BudgetPieChart /> */}
+        <BudgetPieChart />
       </Box>
     </Box>
   )

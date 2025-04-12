@@ -63,7 +63,8 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
 
   return (
     <Box>
-      <CreateGroup user={user} />
+      <AddMember />
+      <CreateGroup user={user} onPartyCreated={getUserParties}/>
       <Box>
         <Typography component='ul'>
           Your Travel Parties
