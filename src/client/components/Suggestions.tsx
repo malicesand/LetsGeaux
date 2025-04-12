@@ -63,7 +63,7 @@ const getDbSuggestions = () => {
   }
 
   const getApiSuggestions = () => {
-      axios.get('/api/suggestions/search').then(({data: searchData}) => {
+      axios.get(`/api/suggestions/search/${user.id}`).then(({data: searchData}) => {
         console.log(searchData);
           setSuggestionSet(searchData);
       })
@@ -81,7 +81,7 @@ const getDbSuggestions = () => {
       <h2>user picks</h2>
       <h2></h2>
       {dbSuggestionSet.map((currentSuggestion: any) => (
-        <Card key={currentSuggestion.title}>
+        <Card key={currentSuggestion.id}>
           <Suggestion
           user={user}
           isDb={true}

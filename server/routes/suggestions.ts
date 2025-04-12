@@ -36,7 +36,7 @@ const getTripadvisorLocationIds = async (query: string = "restaurants", latLong:
 
   // This one queries trip advisor with an array of location ids and moves wanted info from the result to an object
   const getTripadvisorDetailedEntries = async (locations: number[]) => {
-    // console.log('deez loc', locations)
+    console.log('deez loc', locations)
     try {
 
       const detailedEntries = await locations.map(async (location) => {
@@ -87,13 +87,20 @@ const getTripAdvisorImage = (locationId) => {
 
 
 // SEARCH flavored GET handling
-suggestionRouter.get(`/search`, async (req:any, res:any) => {
+suggestionRouter.get(`/search/:id`, async (req:any, res:any) => {
+  const { id } = req.params
  try {
-   const locations: number[] = await getTripadvisorLocationIds().then((locationArray) => {
+  const userInterest = await prisma.$queryRaw`SELECT name FROM interest WHERE id IN (SELECT interestId FROM userInterest WHERE userId = ${id})`
+  console.log('fingers crossed for an interest:', userInterest)
+  const { name } = userInterest[0];
+  console.log('parsed:', name);
+
+  const locations: number[] = await getTripadvisorLocationIds(name).then((locationArray) => {
+    console.log('locationArray', locationArray);
      // const picture : string = await getTripAdvisorImage(locations)
      getTripadvisorDetailedEntries(locationArray).then((entries) => {
-       const picture = getTripAdvisorImage(locationArray[0])
-       console.log('pic', picture);
+      //  const picture = getTripAdvisorImage(locationArray[0])
+      //  console.log('pic', picture);
       res.status(200).send(entries);
     })
 
