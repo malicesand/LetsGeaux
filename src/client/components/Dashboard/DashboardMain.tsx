@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { Link } from 'react-router-dom';
 import MessageBoard from './MessageBoard';
 import CreateGroup from './CreateGroup';
 import ReplyForm from './ReplyForm'
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
 
-import { user, userParty, party } from '../../../../types/models.ts';
+import { user, userParty } from '../../../../types/models.ts';
 
 interface DashboardProps {
   user: user;
@@ -18,7 +20,7 @@ interface party {
 }
 const Dashboard: React.FC<DashboardProps>= ({ user }) => {
   // const [userWithParties, setUserWithParties] = useState<UserWithParties[]>
-  const [partyNames, setPartyNames] = useState<string[]>([])
+  const [partyInfo, setPartyInfo] = useState<{id: number, name: string}[]>([])
   const [currentPartyId, setCurrentPartyId] = useState<number | null>(null);
   const [partyMembers, setPartyMembers] = useState<string[]>([]);
   const userId = user.id
@@ -47,33 +49,33 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
         axios.get<party>(`/api/group/${id}`)
       );
       const responses = await Promise.all(requests);
-      const names = responses.map(res => res.data.name);
+      const names = responses.map((res) => ({
+        id: res.data.id,
+        name: res.data.name
+      }));
       console.log(names);
-      setPartyNames(names);
+      setPartyInfo(names);
     } catch (error) {
       console.error('Could not find names for one or all partyIds')
     };
   };
 
-  const getUserForParty = async (partyId: number) => {
-    try {
-      const response = await axios.get(`/api/group/usersInParty/${partyId}`);
-      const users = response.data;
-      const usernames = users.map((user:user) => user.username)
-      console.log(usernames);
-      setPartyMembers(usernames);
-    } catch (error) {
-      console.error('failed to find members for one or all parties')
-    }
-  };
-  
+
   return (
     <Box>
       <CreateGroup user={user} />
       <Box>
-        <MessageBoard user={user}/>
+        <Typography component='ul'>
+          Your Travel Parties
+          {partyInfo.map((party) => (
+            <li key={party.id}>
+              <Link to={`/party/${String(party.id)}`}>
+              {party.name}
+              </Link>
+            </li>
+          ))}
+        </Typography>
       </Box>
-      <AddMember />
       <Box position= 'absolute' bottom = '10%'>
         {/* <BudgetPieChart /> */}
       </Box>
