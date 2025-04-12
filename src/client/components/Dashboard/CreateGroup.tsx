@@ -23,13 +23,13 @@ interface groupProps {
 const CreateGroup: React.FC<groupProps> = ({user}) => {
   const userId = user.id;
   const [open, setOpen] = React.useState(false);
-  const [partyName, setPartyName] = React.useState<string>('');
   const [inputValue, setInputValue] = useState<string>('')
   const [emails, setEmails] = React.useState<string[]>([])
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [partySuccess, setPartySuccess] = useState(false);
   const [member, setMember] = useState<user>()
-  const { setPartyId } = useParty();
+  const { setPartyName, setPartyId, partyName } = useParty()
+  
 
   const openModal = () => {
     setOpen(true);
@@ -43,6 +43,7 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
   //* Request Handling *//
   const createParty = async (name:string, partyName:string) => {
     // console.log(`Creating...${name}`);
+    
     setPartyName(partyName)
     // console.log(partyName, 'line41')
     try {
@@ -152,7 +153,7 @@ const CreateGroup: React.FC<groupProps> = ({user}) => {
           <Button 
             sx={{ mt: 1 }}
             variant='outlined'
-            onClick={() => sendEmail(emails, partyName)} disabled={emails.length === 0}
+            onClick={() => sendEmail(emails, inputValue)} disabled={emails.length === 0}
             >
             Invite
           </Button>

@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 
 import TextField from '@mui/material/TextField';
-
+import Modal  from '@mui/material/Modal';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
-
+import Fade from '@mui/material/Fade';
+import Backdrop from '@mui/material/Backdrop';
+import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 
 import { user } from '../../../../types/models.ts'
@@ -26,13 +30,25 @@ const SearchWrapper = styled('div')(() => ({
 
 const AddMember: React.FC = () => {
   const [users, setUsers] =  useState<user[]>([])
-  // const [member, setMember] = useState<user>()
-  // const[userId, setUserId] = useState<user['id']>()
-  const { partyId } = useParty();
+  const [member, setMember] = useState<user['username']>()
+  const[userId, setUserId] = useState<user['id']>()
+  const [open, setOpen] = React.useState(false);
+  
+  const { partyId, partyName } = useParty();
+  
 
   useEffect(() => {
     getUsers();
   }, []);
+
+  const openModal = () => {
+    setOpen(true);
+  };
+
+  const closeModal = () => {
+    setOpen(false);
+  };
+
 
   const getUsers = async() => {
     try {
@@ -45,7 +61,7 @@ const AddMember: React.FC = () => {
     };
   };
 
-  const addUserToParty = async(userId:number, partyId:number) => {
+  const addMemberToParty = async(userId:number, partyId:number) => {
     console.log(partyId)
     console.log(userId);
     try {
@@ -56,35 +72,84 @@ const AddMember: React.FC = () => {
     }
   }; 
 
-  return (
-    
-    
-    <SearchWrapper>
-      <Autocomplete
-        id="user-search"
-        freeSolo
-        options={users}
-        getOptionLabel={(user: user) => user.username}
-        onChange={(event, value: user) => {
-          if (value) {
-            // console.log('Selected user:', value);
-            const userId = value.id;
-            addUserToParty(userId, partyId);
+  return ( 
+    <React.Fragment>
+      <SearchWrapper>
+        <Autocomplete
+          id="user-search"
+          freeSolo
+          options={users}
+          getOptionLabel={(user: user) => user.username}
+          onChange={(event, value: user) => {
+            if (value) {
+              setMember(value.username)
+              setUserId(value.id)
+              openModal()
+            }
+          }}
+          openOnFocus={false}
+          filterOptions={(options, state) => 
+            state.inputValue === '' ? [] : filter(options, state)
           }
-        }}
-        openOnFocus={false}
-        filterOptions={(options, state) => 
-          state.inputValue === '' ? [] : filter(options, state)
-        }
-        renderInput={(params) => 
-          <TextField 
-            {...params} 
-            placeholder="Search for a user..." 
-           
-        />}
-      />
+          renderInput={(params) => 
+            <TextField 
+              {...params} 
+              placeholder="Search for a user..." 
+            
+          />}
+        />
+      </SearchWrapper>
+      <div>
 
-    </SearchWrapper>
+      <Modal
+        open={open}
+        onClose={closeModal}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+          },
+        }}
+      >
+        <Fade in={open}>
+          <Box sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            textAlign: 'center',
+          }}>
+            <Typography  variant="h6" component="h2">
+              Would you like to add {member} to {partyName}?
+            </Typography>
+            <Box mt={2} display="flex" justifyContent="center" gap={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  if (userId && partyId) {
+                    addMemberToParty(userId, partyId);
+                    closeModal();
+                  }
+                }}
+              >
+                Confirm
+              </Button>
+              <Button variant="outlined" onClick={closeModal}>
+                Cancel
+              </Button>
+            </Box>
+          </Box>
+        </Fade>
+      </Modal>
+      </div>
+    </React.Fragment>
 
    
   ) 
