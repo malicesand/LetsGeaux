@@ -14,6 +14,7 @@ import BudgetOverview from './BudgetOverview';
 import BudgetForm from './BudgetForm';
 import BudgetPieChart from './BudgetPieChart';
 import api from './api';
+import BudgetPDFPrintout from './BudgetPDFPrintout';
 
 const BudgetBuddy: React.FC = () => {
   const [itineraries, setItineraries] = useState<any[]>([]);
@@ -77,6 +78,21 @@ const BudgetBuddy: React.FC = () => {
           <BudgetPieChart selectedItineraryId={selectedItineraryId} />
         </Paper>
       </Box>
+       {/* add the PDF Printout component */}
+       {selectedItineraryId && (
+        <Box sx={{ my: 3 }}>
+          <Paper elevation={6} sx={{ p: 4 }}>
+            <BudgetPDFPrintout
+              // **pass the itinerary data for the currently selected itinerary
+              itinerary={itineraries.find((it) => it.id === selectedItineraryId)}
+              // **pass actual budget breakdown data (currently a placeholder empty array)
+              budgetBreakdown={[]}
+              // **pass the current budget summary (placeholder value here)
+              currentBudget={0}
+            />
+          </Paper>
+        </Box>
+      )}
     </Container>
   );
 };
