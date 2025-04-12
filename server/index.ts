@@ -3,6 +3,7 @@ import path from 'path';
 import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
+import './cloudinarycleanup'
 // import { urlencoded } from 'express';
 import cors from 'cors';
 import { PrismaClient } from "@prisma/client";
