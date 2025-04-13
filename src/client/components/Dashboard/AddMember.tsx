@@ -146,7 +146,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
       </div>
     </React.Fragment>
 
-   
+
   ) 
 }
 
