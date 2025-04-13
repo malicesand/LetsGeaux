@@ -22,7 +22,7 @@
 ALTER TABLE `activity` DROP FOREIGN KEY `activity_itineraryId_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `budget` DROP FOREIGN KEY `budget_groupId_fkey`;
+-- ALTER TABLE `budget` DROP FOREIGN KEY `budget_groupId_fkey`;
 
 -- DropForeignKey
 ALTER TABLE `image` DROP FOREIGN KEY `image_groupId_fkey`;

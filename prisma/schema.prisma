@@ -115,6 +115,7 @@ model activity {
   location    String?
   itineraryId Int?
   itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
+  creatorId   Int
 
   @@index([itineraryId], map: "activity_itineraryId_fkey")
 }
