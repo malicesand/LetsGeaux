@@ -1,8 +1,9 @@
-import express from 'express';
+import express, {Request, Response, NextFunction} from 'express';
 import path from 'path';
 import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
+import './cloudinarycleanup'
 // import { urlencoded } from 'express';
 import cors from 'cors';
 import { PrismaClient } from "@prisma/client";
@@ -20,7 +21,9 @@ import chatsRoute from './routes/chats';
 import itineraryRoute from './routes/itinerary';
 import activityRouter from './routes/activities';
 import wishlistRouter from './routes/wishlist';
-import voteRouter from './routes/votes';import interestRouter from './routes/interests'
+import voteRouter from './routes/votes';
+import interestRouter from './routes/interests'
+import imageRoute from './routes/images';
 dotenv.config();
 
 const app = express();
@@ -28,7 +31,7 @@ app.use(express.json());
 
 const port = 8000;
 app.use(cors({
-  origin: 'http://localhost:8000', 
+  origin: 'http://localhost:3000', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // 
   credentials: true, // missing so cookies werent sent which breaks session based auth
@@ -169,6 +172,7 @@ app.use('/api/budget', budgetRoutes);
 app.use('/api/activity', activityRouter);
 app.use('/api/vote', voteRouter);
 app.use('/api/group', groupRoute);
+app.use('/api/image', imageRoute)
 app.get('/login', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'dist', 'index.html'));
 });
@@ -178,7 +182,10 @@ app.get('/', isAuthenticated, (req, res) => {
 });
 
 // Catch-all route to handle all other paths and return the front-end app
-app.get('*', (req: any, res: any) => {
+app.get('*', (req: Request, res: Response, next: NextFunction) => {
+  if (req.path.startsWith('api') || req.path.startsWith('auth') || req.path.startsWith('logout')) {
+    return next();
+  }
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 

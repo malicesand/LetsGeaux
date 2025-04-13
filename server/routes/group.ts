@@ -73,14 +73,13 @@ groupRoute.post('/sendInvite', async (req: any, res:any) => {
 // * Get A User's Parties * //
 groupRoute.get('/userParty/:userId', async (req: any, res: any) => {
   const {userId} = req.params;
-  console.log(userId)
   try {
     let parties = await prisma.userParty.findMany({
       where: {
         userId: +userId,
       },
     })
-    console.log('Found parties for user', parties);
+    // console.log('Found parties for user', parties);
     res.json(parties);
   } catch (error) {
     console.error('Could not find any parties for user');
@@ -91,14 +90,13 @@ groupRoute.get('/userParty/:userId', async (req: any, res: any) => {
 // * Get a Party * //
 groupRoute.get('/:partyId', async(req: any, res: any) => {
   const {partyId} = req.params;
-  console.log(partyId);
   try {
     let partyInfo = await prisma.party.findUnique({
       where: {
         id: +partyId,
       }
     })
-    console.log(`Found the name for ${partyId}`);
+    // console.log(`Found the userParty Names`);
     res.json(partyInfo);
   } catch (error) {
     console.error('Could not find any party names for this ID', error);
