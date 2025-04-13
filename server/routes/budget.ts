@@ -117,8 +117,8 @@ router.post('/', async (req: Request, res: Response) => {
         category: category || 'Uncategorized',
         notes: notes || '',
         spent: spent !== undefined ? Number(spent) : 0,
-        partyId: partyId ? Number(partyId) : null,
-
+        partyId: null,
+//partyId: partyId ? Number(partyId) : null
         createdAt: new Date(),
         updatedAt: new Date()
       }
