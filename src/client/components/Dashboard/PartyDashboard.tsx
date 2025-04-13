@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import MessageBoard from './MessageBoard';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
+import AddItinerary from './AddItinerary';
 import { user } from '../../../../types/models.ts';
 
 interface PartyDashboardProps {
@@ -20,14 +21,19 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const partyName = searchParams.get('name');
+  
   const [partyInfo, setPartyInfo] = useState<{id: number, name: string}[]>([])
   const [partyMembers, setPartyMembers] = useState<string[]>([]);
   // const userId = user.id //? delete
 
+  if(!partyId || !partyName) {
+    return <div>Loading party dashboard...</div>
+  }
   useEffect(() => {
-    
     getUsersForParty(numericPartyId);
   },[numericPartyId])
+
+
 
   const getUsersForParty = async (partyId: number) => {
     console.log(partyId)
@@ -47,6 +53,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
       <Typography>
         {partyName}
       </Typography>
+      <AddItinerary user={user} partyId={numericPartyId} partyName={partyName}/>
       <Box>
         <MessageBoard user={user}/>
       </Box>
