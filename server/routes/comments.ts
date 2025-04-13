@@ -15,7 +15,7 @@ commentsRouter.get(/*Id from the post*/'/:id', async (req: any, res: any) => {
 
     const allComments = await prisma.comment.findMany({
       where: {
-        postId: id,
+        postId: +id,
       }
     })
     res.status(200).send(allComments/**I think I can sort them by time in here.. */)

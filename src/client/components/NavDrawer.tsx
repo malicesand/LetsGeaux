@@ -57,7 +57,7 @@ const NavDrawer: React.FC = () => {
     setOpen(true);
   };
   const handleLogout = async () => {
-    try {  
+    try {
       await axios.post('/logout')
           setOpen(false);
           setAuth(false);
@@ -68,7 +68,7 @@ const NavDrawer: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>     
+    <Box sx={{ display: 'flex' }}>
       <IconButton
         color='inherit'
         aria-label='open drawer'
@@ -125,24 +125,6 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
-            {/*wishlist */}
-             <ListItem key={'wishlist'} disablePadding>
-               <ListItemButton component={Link}to='/wishlist' onClick={handleDrawerClose}>
-                 <ListItemIcon>
-                   <AppShortcut />
-                 </ListItemIcon>
-                 <ListItemText primary={'Wishlist'} />
-               </ListItemButton>
-             </ListItem>
-             {/* itinerary*/}
-            <ListItem key={'itinerary'} disablePadding>
-              <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
-                <ListItemIcon>
-                  <TravelExploreIcon />
-                </ListItemIcon>
-                <ListItemText primary={'Itinerary'} />
-              </ListItemButton>
-            </ListItem>
             {/* maps */}
           <ListItem key={'community'} disablePadding>
               <ListItemButton component={Link}to='/community' onClick={handleDrawerClose}>
@@ -152,7 +134,6 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Community'} />
               </ListItemButton>
             </ListItem>
-          </ListItem>
           {/*wishlist */}
           <ListItem key={'wishlist'} disablePadding>
             <ListItemButton component={Link}to='/wishlist' onClick={handleDrawerClose}>

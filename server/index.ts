@@ -22,16 +22,11 @@ import itineraryRoute from './routes/itinerary';
 import activityRouter from './routes/activities';
 import wishlistRouter from './routes/wishlist';
 import voteRouter from './routes/votes';
-<<<<<<< HEAD
-import interestRouter from './routes/interests';
-import communityRouter from './routes/community';
-import commentsRouter from './routes/comments';
-import postsRouter from './routes/posts';
-
-=======
 import interestRouter from './routes/interests'
 import imageRoute from './routes/images';
->>>>>>> a38ab993268e91c44cf1cc51cfe6d0973850452b
+import communityRouter from './routes/community';
+import postsRouter from './routes/posts';
+import commentsRouter from './routes/comments';
 dotenv.config();
 
 const app = express();
