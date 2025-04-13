@@ -55,6 +55,9 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   return (
   <Stack spacing={4} sx={{ p: 3 }}>
   {/* Header Row */}
+  <Typography variant="h4" align="center" sx={{ flexGrow: 1, textAlign: 'center' }}>
+      {partyName}
+  </Typography>
   <Box display='flex' justifyContent='left'>
     <AddItinerary user={user} partyId={numericPartyId} partyName={partyName} />  
   </Box>
@@ -78,9 +81,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
         
         )}
     </Typography>
-  <Typography variant="h4" align="center" sx={{ flexGrow: 1, textAlign: 'center' }}>
-      {partyName}
-  </Typography>
+  
   </Box>
   <Box display='flex' justifyContent='right' alignItems='center'>
     <AddMember user={user} partyId={numericPartyId} partyName={partyName} />
