@@ -3,6 +3,7 @@ import path from 'path';
 import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
+import './cloudinarycleanup'
 // import { urlencoded } from 'express';
 import cors from 'cors';
 import { PrismaClient } from "@prisma/client";
@@ -21,11 +22,16 @@ import itineraryRoute from './routes/itinerary';
 import activityRouter from './routes/activities';
 import wishlistRouter from './routes/wishlist';
 import voteRouter from './routes/votes';
+<<<<<<< HEAD
 import interestRouter from './routes/interests';
 import communityRouter from './routes/community';
 import commentsRouter from './routes/comments';
 import postsRouter from './routes/posts';
 
+=======
+import interestRouter from './routes/interests'
+import imageRoute from './routes/images';
+>>>>>>> a38ab993268e91c44cf1cc51cfe6d0973850452b
 dotenv.config();
 
 const app = express();
@@ -177,6 +183,7 @@ app.use('/api/group', groupRoute);
 app.use('/api/community', communityRouter);
 app.use('/api/posts', postsRouter);
 app.use('/api/comments', commentsRouter);
+app.use('/api/image', imageRoute)
 app.get('/login', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'dist', 'index.html'));
 });
