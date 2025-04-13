@@ -70,7 +70,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
 
   const getAllImages = async () => {
     try {
-      const response = await axios.get('/api/image');
+      const response = await axios.get(`/api/image/${userId}`);
       setImages(response.data);
     } catch (error) {
       console.error(error);
