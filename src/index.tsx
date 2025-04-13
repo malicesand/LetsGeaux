@@ -8,10 +8,10 @@ import { BudgetNotificationProvider } from './client/components/BudgetBuddy/Budg
 const root = createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
-  <SnackbarProvider maxSnack={3}>
-  <BudgetNotificationProvider>
-    <App />
-    </BudgetNotificationProvider>
-  </SnackbarProvider>
-</BrowserRouter>
+    <SnackbarProvider maxSnack={3}>
+      <BudgetNotificationProvider>
+        <App />
+      </BudgetNotificationProvider>
+    </SnackbarProvider>
+  </BrowserRouter>
 );
