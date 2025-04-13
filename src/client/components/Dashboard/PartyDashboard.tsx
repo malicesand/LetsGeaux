@@ -3,6 +3,8 @@ import { useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import MessageBoard from './MessageBoard';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
@@ -48,20 +50,56 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
     }
   };
 
+
+
   return (
-    <Box>
-      <Typography>
-        {partyName}
-      </Typography>
-      <AddItinerary user={user} partyId={numericPartyId} partyName={partyName}/>
-      <Box>
-        <MessageBoard user={user}/>
-      </Box>
-      <AddMember user={user} partyId={numericPartyId} partyName={partyName} />
-      <Box position= 'absolute' bottom = '10%'>
-        {/* <BudgetPieChart /> */}
-      </Box>
+  <Stack spacing={4} sx={{ p: 3 }}>
+  {/* Header Row */}
+  <Box display='flex' justifyContent='left'>
+    <AddItinerary user={user} partyId={numericPartyId} partyName={partyName} />  
+  </Box>
+  <Box display = 'flex' justifyContent='left'>
+    <Typography>
+      Party Members
+        <Box component = 'ul' 
+          sx={{
+            padding: "0 0",
+            listStyle: 'none',
+            display: 'grid',
+            gap: '30px',
+            // gridTemplateColumns: ''
+          }}
+        >
+        </Box>
+        {partyMembers.map((member) => 
+          <Box component='li'>
+            {member}
+          </Box>
+        
+        )}
+    </Typography>
+  <Typography variant="h4" align="center" sx={{ flexGrow: 1, textAlign: 'center' }}>
+      {partyName}
+  </Typography>
+  </Box>
+  <Box display='flex' justifyContent='right' alignItems='center'>
+    <AddMember user={user} partyId={numericPartyId} partyName={partyName} />
+  </Box>
+  {/* Message Board */}
+  {/* <Box display="flex" justifyContent="center" alignItems="center">
+    <Box sx={{ width: '60%' }}>
+      <MessageBoard user={user} />
     </Box>
+  </Box> */}
+
+  {/* Optional Footer Content or Budget */}
+  <Box display="flex" justifyContent="center">
+    {/* <BudgetPieChart /> */}
+  </Box>
+</Stack>
+
+  
+
   )
 };
 
