@@ -118,7 +118,7 @@ router.post('/', async (req: Request, res: Response) => {
         notes: notes || '',
         spent: spent !== undefined ? Number(spent) : 0,
         partyId: null,
-//partyId: partyId ? Number(partyId) : null,
+//partyId: partyId ? Number(partyId) : null
         createdAt: new Date(),
         updatedAt: new Date()
       }
