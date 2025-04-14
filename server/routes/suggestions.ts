@@ -15,6 +15,29 @@ const API_KEY = process.env.TRAVEL_ADVISOR_API_KEY;
 //   headers: {accept: 'application/json'}
 // };
 
+
+
+
+/**
+ * const getTripadvisorLocationIds = async (query: string = "restaurants", latLong: string = "30.001667%2C-90.092781") => {
+  try {
+    //  https://api.content.tripadvisor.com/api/v1/location/nearby_search?latLong=42.3455%2C-71.10767&key={API_KEY}&category=${query}&language=en;
+
+    const list = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/nearby_search?latLong=${latLong}&language=en&category=${query}&key=${API_KEY}`)
+      let locations = [];
+      const attractionList = list.data.data;
+      for (let attraction of attractionList) {
+        locations.push(attraction.location_id);
+      }
+      return locations;
+    } catch (err) {
+
+      console.error('failed to get ids', err);
+    }
+  }
+ * 
+ */
+
 //  HELPERS //                                    enter lat long this way =>  42.3455,-71.10767
 //This one queries tripadvisor to get the location ids needed for detailed information. these ids are returned in an array.
 const getTripadvisorLocationIds = async (query: string = "restaurants", latLong: string = "30.001667%2C-90.092781") => {
@@ -74,6 +97,15 @@ const getTripadvisorLocationIds = async (query: string = "restaurants", latLong:
       return allDetailedEntries;
   } catch(err) {console.error(err)}
 }
+
+
+
+
+
+
+
+
+
 // and finally, this one grabs the image url
 const getTripAdvisorImage = (locationId) => {
   axios.get(`https://api.content.tripadvisor.com/api/v1/location/${locationId}/photos?language=en&key=${API_KEY}`)
@@ -85,6 +117,29 @@ const getTripAdvisorImage = (locationId) => {
   })
 
 }
+
+/**
+ * suggestionRouter.get(`/search`, async (req:any, res:any) => {
+ try {
+   const locations: number[] = await getTripadvisorLocationIds().then((locationArray) => {
+     // const picture : string = await getTripAdvisorImage(locations)
+     getTripadvisorDetailedEntries(locationArray).then((entries) => {
+       const picture = getTripAdvisorImage(locationArray[0])
+       console.log('pic', picture);
+      res.status(200).send(entries);
+    })
+
+    }).catch((err) => {
+      console.error('had a hard time', err);
+      res.sendStatus(500);
+   })
+  } catch(err) {
+    throw err
+  }
+  })
+ * 
+ */
+
 
 
 // SEARCH flavored GET handling
@@ -101,15 +156,15 @@ suggestionRouter.get(`/search/:id`, async (req:any, res:any) => {
 
 
   //     // const picture : string = await getTripAdvisorImage(locations)
-  //     getTripadvisorDetailedEntries(locationArray).then((entries) => {
-  //       //  const picture = getTripAdvisorImage(locationArray[0])
-  //       //  console.log('pic', picture);
-  //       res.status(200).send(entries);
-  //     })
+      getTripadvisorDetailedEntries(locationArray).then((entries) => {
+        //  const picture = getTripAdvisorImage(locationArray[0])
+        //  console.log('pic', picture);
+        res.status(200).send(entries);
+      })
       
-  //   }).catch((err) => {
-  //     console.error('had a hard time', err);
-  //     res.sendStatus(500);
+    }).catch((err) => {
+      console.error('had a hard time', err);
+      res.sendStatus(500);
     })
   // }
   } catch(err) {
