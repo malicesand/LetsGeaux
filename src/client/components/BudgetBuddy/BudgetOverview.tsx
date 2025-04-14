@@ -6,16 +6,17 @@ import {
   LinearProgress,
   Box,
   Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Chip
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
+import { useBudgetNotifications } from './BudgetNotificationContext';
 
-// Function to color the progress bar based on users budget usage
-function getProgressColor(value: number): 'primary' | 'warning' | 'error' {
-  if (value < 50) return 'primary';
-  if (value < 85) return 'warning';
-  return 'error';
-}
-
-// Budget object structure
 interface BudgetEntry {
   id: number;
   category: string;
@@ -24,51 +25,139 @@ interface BudgetEntry {
   spent?: number;
 }
 
-const BudgetOverview: React.FC = () => {
+interface Props {
+  selectedItineraryId: number | null;
+}
+
+const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
   const [budgets, setBudgets] = useState<BudgetEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [selectedBudget, setSelectedBudget] = useState<BudgetEntry | null>(null);
+  const [editForm, setEditForm] = useState({ category: '', limit: '', notes: '', spent: '' });
+  const [updatedEntryId, setUpdatedEntryId] = useState<number | null>(null);
+  // state to keep track of which thresholds have been notified for each budget
+  const [notified, setNotified] = useState<{ [budgetId: number]: { [threshold: number]: boolean } }>({});
+  const { enqueueSnackbar } = useSnackbar();
+  const { addNotification } = useBudgetNotifications();
+
+  // fefine the thresholds
+  const thresholds = [25, 50, 75, 90];
+
+  const fetchBudgets = async () => {
+    if (!selectedItineraryId) return;
+    setLoading(true);
+    try {
+      const res = await api.get(`/budget?partyId=${selectedItineraryId}`);
+      setBudgets(Array.isArray(res.data) ? res.data : [res.data]);
+    } catch (err) {
+      console.error('Fetch budget error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    api
-      .get('/budget')
-      .then((res) => {
-        console.log('Budget response:', res.data);
+    fetchBudgets();
+  }, [selectedItineraryId]);
 
-        //Force response into array (temporary workaround)
-        const result = Array.isArray(res.data) ? res.data : [res.data];
-        setBudgets(result);
-      })
-      .catch((err) => console.error('Fetch budget error:', err))
-      .finally(() => setLoading(false));
-  }, []);
+  // check each budget entry for threshold crossings
+ // add dynamic notification logging when thresholds are crossed
+ useEffect(() => {
+  budgets.forEach(budget => {
+    if (budget.limit > 0) {
+      const percentage = ((budget.spent || 0) / budget.limit) * 100;
+      thresholds.forEach(threshold => {
+        if (percentage >= threshold) {
+          if (!(notified[budget.id]?.[threshold])) {
+            // show toast notification via notistack
+            enqueueSnackbar(`${budget.category} is at ${threshold}% usage!`, {
+              variant: 'warning',
+            });
+            // also add a dynamic notification via context
+            addNotification({ message: `${budget.category} is at ${threshold}% usage!`, timestamp: new Date() });
+            // record that we have notified this threshold for this budget
+            setNotified(prev => ({
+              ...prev,
+              [budget.id]: {
+                ...prev[budget.id],
+                [threshold]: true,
+              },
+            }));
+          }
+        }
+      });
+    }
+  });
+  //added addNotification as a dependency
+}, [budgets, enqueueSnackbar, thresholds, notified, addNotification]);
+
+
+  const openEditModal = (budget: BudgetEntry) => {
+    setSelectedBudget(budget);
+    setEditForm({
+      category: budget.category,
+      limit: budget.limit.toString(),
+      notes: budget.notes,
+      spent: budget.spent?.toString() || '0'
+    });
+    setEditOpen(true);
+  };
+
+  const openDeleteModal = (budget: BudgetEntry) => {
+    setSelectedBudget(budget);
+    setDeleteOpen(true);
+  };
+
+  const handleEditSave = async () => {
+    if (!selectedBudget) return;
+    try {
+      await api.put(`/budget/${selectedBudget.id}`, {
+        ...editForm,
+        limit: parseFloat(editForm.limit),
+        spent: parseFloat(editForm.spent),
+      });
+      setUpdatedEntryId(selectedBudget.id);
+      fetchBudgets();
+    } catch (err) {
+      console.error('Update failed:', err);
+    } finally {
+      setEditOpen(false);
+      setTimeout(() => setUpdatedEntryId(null), 2000);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedBudget) return;
+    try {
+      await api.delete(`/budget/${selectedBudget.id}`);
+      fetchBudgets();
+    } catch (err) {
+      console.error('Delete failed:', err);
+    } finally {
+      setDeleteOpen(false);
+    }
+  };
+
+  if (!selectedItineraryId) {
+    return <Typography sx={{ m: 4 }}>Select an itinerary to view budget entries.</Typography>;
+  }
 
   if (loading) return <CircularProgress sx={{ m: 4 }} />;
-
-  if (budgets.length === 0) {
-    return <Typography sx={{ m: 4 }}>No budget entries found.</Typography>;
-  }
+  if (budgets.length === 0) return <Typography sx={{ m: 4 }}>No budget entries found.</Typography>;
 
   return (
     <Box sx={{ mt: 4 }}>
-      <Typography variant="h5" gutterBottom>
-        Budget Overview
-      </Typography>
+      <Typography variant="h5" gutterBottom>Budget Overview</Typography>
 
       {budgets.map((budget) => {
-        const percent = budget.spent
-          ? (budget.spent / budget.limit) * 100
-          : 0;
+        const percent = budget.spent ? (budget.spent / budget.limit) * 100 : 0;
 
         return (
           <Box
             key={budget.id}
-            sx={{
-              mb: 3,
-              p: 2,
-              border: '1px solid #ccc',
-              borderRadius: 2,
-              backgroundColor: '#f9f9f9',
-            }}
+            sx={{ mb: 3, p: 2, border: '1px solid #ccc', borderRadius: 2, backgroundColor: '#f9f9f9' }}
           >
             <Typography variant="h6">{budget.category}</Typography>
             <Typography>{budget.notes}</Typography>
@@ -78,12 +167,44 @@ const BudgetOverview: React.FC = () => {
             <LinearProgress
               variant="determinate"
               value={percent}
-              color={getProgressColor(percent)}
               sx={{ height: 10, borderRadius: 5, mt: 1 }}
+              color={percent < 50 ? 'primary' : percent < 85 ? 'warning' : 'error'}
             />
+            <Stack direction="row" spacing={1} mt={2}>
+              <Button size="small" variant="outlined" onClick={() => openEditModal(budget)}>Edit</Button>
+              <Button size="small" variant="outlined" color="error" onClick={() => openDeleteModal(budget)}>Delete</Button>
+              {updatedEntryId === budget.id && <Chip label="Updated!" color="success" size="small" />}
+            </Stack>
           </Box>
         );
       })}
+
+      {/* Edit Modal */}
+      <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
+        <DialogTitle>Edit Budget Entry</DialogTitle>
+        <DialogContent>
+          <TextField label="Category" fullWidth margin="dense" value={editForm.category} disabled />
+          <TextField label="Limit" type="number" fullWidth margin="dense" value={editForm.limit} onChange={(e) => setEditForm({ ...editForm, limit: e.target.value })} />
+          <TextField label="Spent" type="number" fullWidth margin="dense" value={editForm.spent} onChange={(e) => setEditForm({ ...editForm, spent: e.target.value })} />
+          <TextField label="Notes" fullWidth margin="dense" multiline value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={handleEditSave}>Save</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Modal */}
+      <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this entry?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteOpen(false)}>Cancel</Button>
+          <Button variant="contained" color="error" onClick={handleDeleteConfirm}>Delete</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

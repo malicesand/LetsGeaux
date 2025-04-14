@@ -1,9 +1,11 @@
+
+
+
 import React, { useState, useEffect } from 'react';
-import { Container, Box, TextField, Button, Typography, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Container, Box, TextField, Button, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 
 interface Activity {
-  
   id: string;
   name: string;
   description: string;
@@ -14,12 +16,12 @@ interface Activity {
   phone: string;
   address: string;
   itineraryId: string;
+  creatorId?: string; 
 }
 
 interface Props {
   itineraryId: string;
   addActivity: (itineraryId: string, activityData: any) => Promise<void>;
-
 }
 
 const Activity: React.FC<Props> = ({ itineraryId }) => {
@@ -37,15 +39,23 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
     itineraryId: itineraryId,
   });
   const [open, setOpen] = useState(false);  // Modal open state
+  const [error, setError] = useState<string | null>(null);  // Error handling
+  const [message, setMessage] = useState<string>('');  // Success message
 
   // Fetch activities when the component mounts
   useEffect(() => {
     const getActivities = async () => {
       try {
         const response = await axios.get(`/api/activity/${itineraryId}`);
-        setActivities(response.data);
+        console.log('Fetched activities:', response.data); 
+        if (response.data && Array.isArray(response.data)) {
+          setActivities(response.data); 
+        } else {
+          throw new Error('Invalid response format');
+        }
       } catch (err) {
         console.error('Error fetching activities:', err);
+        setError('Error fetching activities.');
       }
     };
     getActivities();
@@ -64,25 +74,32 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
   const postActivity = async () => {
     try {
       const response = await axios.post('/api/activity', formData);
-      setActivities([...activities, response.data]);
+      setActivities((prevActivities) => [...prevActivities, response.data]);
       resetForm();
-      setOpen(false);  // Close modal after adding activity
-    } catch (err) {
-      console.error('Error creating activity:', err);
+      setOpen(false); 
+      setMessage('Activity added successfully!');
+    } catch (err: any) {
+      console.error('Error creating activity:', err.response?.data || err.message);
+      setError('Error creating activity.');
     }
   };
+  
 
   const updateActivity = async () => {
     try {
       const updatedActivity = { ...formData };
       const response = await axios.patch(`/api/activity/${formData.id}`, updatedActivity);
-      setActivities(activities.map((activity) =>
-        activity.id === formData.id ? response.data : activity
-      ));
+      setActivities((prevActivities) =>
+        prevActivities.map((activity) =>
+          activity.id === formData.id ? response.data : activity
+        )
+      );
       resetForm();
       setOpen(false);  // Close modal after updating activity
+      setMessage('Activity updated successfully!');
     } catch (err) {
       console.error('Error updating activity:', err);
+      setError('Error updating activity.');
     }
   };
 
@@ -90,8 +107,10 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
     try {
       await axios.delete(`/api/activity/${id}`);
       setActivities(activities.filter((activity) => activity.id !== id));
+      setMessage('Activity deleted successfully!');
     } catch (err) {
       console.error('Error deleting activity:', err);
+      setError('Error deleting activity.');
     }
   };
 
@@ -147,9 +166,6 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
   return (
     <Container>
       <Box mb={4}>
-        {/* <Typography variant="h4" gutterBottom>
-          Activities
-        </Typography> */}
         <Button variant="contained" color="primary" onClick={handleOpen}>
           Add Activity
         </Button>
@@ -236,6 +252,9 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
           </DialogContent>
         </Dialog>
       </Box>
+
+      {error && <Snackbar open autoHideDuration={6000}><Alert severity="error">{error}</Alert></Snackbar>}
+      {message && <Snackbar open autoHideDuration={6000}><Alert severity="success">{message}</Alert></Snackbar>}
 
       <Box>
         <Typography variant="h5" gutterBottom>

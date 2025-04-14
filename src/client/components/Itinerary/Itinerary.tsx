@@ -1,5 +1,11 @@
+
+
+
+
+
+
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, TextField, Button, Box, Card, CardContent, CardActions } from '@mui/material';
+import { Container, Typography, TextField, Button, Box, Card, CardContent, CardActions, Snackbar, Alert } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -7,13 +13,33 @@ import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
 import { isBefore, isAfter, isSameDay } from 'date-fns';
 import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
-import { user } from '../../../types/models.ts';
+import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx'; 
+import { useLocation } from 'react-router-dom';
 
+// interface ItineraryProps {
+//   user: user;
+// }
 interface ItineraryProps {
-  user: user;
-}
+  itinerary: {
+    id: number;
+    name: string;
+    description: string;
+   
+  };
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    isVerified: boolean;
+    phoneNum: string;
+    isNotified: boolean;
+    googleId: string;
+    profilePic: string;
+    suggestionId: number;
+  };
 
+}
 const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -23,7 +49,9 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   const [itineraries, setItineraries] = useState<any[]>([]);
   const [editingItinerary, setEditingItinerary] = useState<any | null>(null);
   const [error, setError] = useState<string>('');
-
+  const location = useLocation()
+  const {partyId} = location.state || {}
+  
   // Function to add activity to itinerary
   const addActivityToItinerary = async (itineraryId: string, activityData: any) => {
     try {
@@ -93,21 +121,27 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       setError('Please provide a name and select dates for the itinerary');
       return;
     }
-
+  
     const itineraryData = {
       creatorId: user.id, 
-      member_id: 2,  
       name: itineraryName,
       notes: itineraryNotes,
       begin: selectedDates[0].toISOString(),
       end: selectedDates[selectedDates.length - 1].toISOString(),
       upVotes: 0,
       downVotes: 0,
+      
     };
-
+  
     try {
       const response = await axios.post('/api/itinerary', itineraryData);
-      setItineraries(prev => [...prev, response.data]);
+  
+      const newItinerary = {
+        ...response.data,  
+        message: `Itinerary created! View Itinerary with CODE: ${response.data.viewCode}`
+      };
+  
+      setItineraries(prev => [...prev, newItinerary]);
       setItineraryName('');
       setItineraryNotes('');
       setError('');
@@ -116,15 +150,18 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       console.error('Error creating itinerary:', err);
     }
   };
+  
 
   // Fetch existing itineraries
   useEffect(() => {
+    console.log(partyId, "partyId at itinerary")
     const fetchItineraries = async () => {
       try {
         const response = await axios.get('/api/itinerary');
         setItineraries(response.data);
       } catch (err) {
         console.error('Error fetching itineraries:', err);
+        
       }
     };
 
@@ -164,7 +201,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     const updatedItineraryData = {
       id: editingItinerary.id,
       creator_id: editingItinerary.creator_id,
-      member_id: editingItinerary.member_id,
+      //member_id: editingItinerary.member_id,
       name: itineraryName,
       notes: itineraryNotes,
       begin: selectedDates[0].toISOString(),
@@ -244,7 +281,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
             </Button>
           )}
         </Box>
-
+        
         <Box mt={4}>
           <Typography variant="h5">Create Your Itinerary</Typography>
           {itineraries.map((itinerary, index) => (
@@ -254,6 +291,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                 <Typography variant="body1">{itinerary.notes}</Typography>
                 <Typography variant="body2">{`Begin: ${new Date(itinerary.begin).toLocaleString()}`}</Typography>
                 <Typography variant="body2">{`End: ${new Date(itinerary.end).toLocaleString()}`}</Typography>
+                {itinerary.message && <Alert severity="success">{itinerary.message}</Alert>}
+
               </CardContent>
               <CardActions>
                 <Button variant="contained" color="secondary" onClick={() => handleEditClick(itinerary)}>

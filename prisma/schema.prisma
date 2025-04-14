@@ -8,46 +8,90 @@ datasource db {
 }
 
 model user {
-  id         Int          @id @default(autoincrement())
-  username   String       @db.VarChar(50)
-  email      String       @db.VarChar(50)
-  isVerified Boolean      @default(false)
-  phoneNum   String?      @db.VarChar(10)
-  isNotified Boolean      @default(false)
-  googleId   String       @unique
-  groupId    Int?
-  image      image[]
-  // post       post[]
-  reminder   reminder[]
-  suggestion suggestion[]
-  group      group?       @relation(fields: [groupId], references: [id])
-  vote       vote[]
+  id           Int                @id @default(autoincrement())
+  username     String             @db.VarChar(50)
+  email        String             @db.VarChar(50)
+  isVerified   Boolean            @default(false)
+  phoneNum     String?            @db.VarChar(10)
+  isNotified   Boolean            @default(false)
+  googleId     String             @unique
+  image        image[]
+  profilePic   String?            @db.VarChar(150)
+  // memberId...
+  reminder     reminder[]
+  vote         vote[]
+  itinerary    itinerary[]
+  suggestion   userOnsuggestion[]
+  suggestionId Int?
+  userInterest userInterest[]
 
-  @@index([groupId], map: "user_groupId_fkey")
+  userParty    userParty[]
+  post         post[]
+  comment      comment[]
+  partyMessage partyMessage[]
+}
+
+model userParty {
+  id      Int   @id @default(autoincrement())
+  user    user  @relation(fields: [userId], references: [id])
+  party   party @relation(fields: [partyId], references: [id])
+  userId  Int
+  partyId Int
+}
+
+model userOnsuggestion {
+  id           Int         @id @default(autoincrement())
+  user         user?       @relation(fields: [userId], references: [id])
+  suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
+  userId       Int?
+  suggestionId Int?
 }
 
 model suggestion {
-  id            Int        @id @default(autoincrement())
-  title         String     @db.VarChar(120)
-  upVotes       Int
-  downVotes     Int
-  created_at    DateTime   @default(now())
-  timeAvailable DateTime
-  cost          Int
-  address       String     @db.VarChar(50)
-  description   String     @db.MediumText
-  image         String     @db.TinyText
-  phoneNum      String     @db.VarChar(15)
+  id            Int                @id @default(autoincrement())
+  title         String             @db.VarChar(120)
+  upVotes       Int?
+  downVotes     Int?
+  created_at    DateTime           @default(now())
+  timeAvailable String?
+  cost          Int?
+  address       String?            @db.VarChar(100)
+  description   String?            @db.Text
+  image         String?            @db.Text
+  phoneNum      String?            @db.VarChar(50)
   userId        Int?
-  location      location[]
-  user          user?      @relation(fields: [userId], references: [id])
+  latitude      String?
+  longitude     String?
+  wishUser      userOnsuggestion[]
+  vote          vote[]
 
   @@index([userId], map: "suggestion_userId_fkey")
 }
 
+model post {
+  id       Int       @id @default(autoincrement())
+  user     user      @relation(fields: [userId], references: [id])
+  body     String    @db.VarChar(255)
+  userId   Int
+  postName String    @db.TinyText
+  vote     vote[]
+  comment  comment[]
+}
+
+model comment {
+  id       Int    @id @default(autoincrement())
+  user     user   @relation(fields: [userId], references: [id])
+  post     post?  @relation(fields: [postId], references: [id])
+  userId   Int
+  postName String @db.TinyText
+  body     String @db.VarChar(255)
+  vote     vote[]
+  postId   Int
+}
+
 model itinerary {
   id        Int        @id @default(autoincrement())
-  member_id Int
+  partyId   Int?
   name      String     @db.VarChar(50)
   begin     DateTime
   end       DateTime
@@ -59,14 +103,16 @@ model itinerary {
   activity  activity[]
   creator   user?      @relation(fields: [creatorId], references: [id])
   route     route[]
+  party     party?     @relation(fields: [partyId], references: [id])
+  viewCode  String     @unique
 
   @@index([creatorId], map: "itinerary_creatorId_fkey")
 }
 
 model activity {
   id          Int        @id @default(autoincrement())
-  name        String?    @db.VarChar(50)
-  description String     @db.VarChar(200)
+  name        String?    @db.VarChar(100)
+  description String?    @db.VarChar(500)
   address     String?
   phone       String?    @db.VarChar(150)
   time        String?
@@ -77,19 +123,6 @@ model activity {
   itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
 
   @@index([itineraryId], map: "activity_itineraryId_fkey")
-}
-
-model location {
-  id           Int         @id @default(autoincrement())
-  name         String      @db.VarChar(50)
-  description  String      @db.VarChar(255)
-  address      String      @db.VarChar(50)
-  latitude     Decimal
-  longitude    Decimal
-  suggestionId Int?
-  suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
-
-  @@index([suggestionId], map: "location_suggestionId_fkey")
 }
 
 model route {
@@ -104,33 +137,49 @@ model route {
 }
 
 model vote {
-  id            Int     @id @default(autoincrement())
-  vote_polarity Boolean
-  vote_topic    String  @db.VarChar(25)
-  voted_item_id Int
-  userId        Int?
-  user          user?   @relation(fields: [userId], references: [id])
+  id           Int         @id @default(autoincrement())
+  post         post?       @relation(fields: [postId], references: [id])
+  comment      comment?    @relation(fields: [commentId], references: [id])
+  suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
+  userId       Int
+  user         user?       @relation(fields: [userId], references: [id])
+  postId       Int?
+  polarity     Int
+  commentId    Int?
+  suggestionId Int?
 
   @@index([userId], map: "vote_userId_fkey")
 }
 
 model interest {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(25)
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(25)
+  userInterest userInterest[]
 }
 
-model group {
-  itinerary_id Int      @unique
-  activity_id  Int
-  id           Int      @id @default(autoincrement())
+model userInterest {
+  id         Int      @id @default(autoincrement())
+  user       user     @relation(fields: [userId], references: [id])
+  interest   interest @relation(fields: [interestId], references: [id])
+  userId     Int
+  interestId Int
+}
+
+model party {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(50)
+  itineraryId  Int?
+  itinerary    itinerary[]
+  image        image[]
+  userParty    userParty[]
   budget       budget[]
-  user_id      user[]
+  partyMessage partyMessage[]
 }
 
 model reminder {
   id           Int      @id @default(autoincrement())
   call_time    DateTime
-  call_message String   @db.VarChar(40)
+  call_message String   @db.VarChar(255)
   userId       Int?
   activityId   Int?
   user         user?    @relation(fields: [userId], references: [id])
@@ -140,68 +189,64 @@ model reminder {
 }
 
 model image {
-  id         Int    @id @default(autoincrement())
-  url        String @db.TinyText
-  notes      String @db.VarChar(255)
+  id         Int     @id @default(autoincrement())
+  url        String  @db.Text
+  notes      String? @db.VarChar(255)
   activityId Int?
   userId     Int?
-  user       user?  @relation(fields: [userId], references: [id])
+  party      party?  @relation(fields: [partyId], references: [id])
+  user       user?   @relation(fields: [userId], references: [id])
+  partyId    Int?
 
   @@index([activityId], map: "image_activityId_fkey")
   @@index([userId], map: "image_userId_fkey")
 }
 
 model budget {
-  id                Int      @id @default(autoincrement())
-  spent             Decimal
-  notes             String   @db.VarChar(255)
-  groupItinerary_id Int?
-  createdAt         DateTime @default(now())
-  limit             Decimal
-  updatedAt         DateTime @updatedAt
-  category          String   @default("")
-  group             group?   @relation(fields: [groupItinerary_id], references: [itinerary_id])
+  id        Int      @id @default(autoincrement())
+  spent     Decimal
+  notes     String   @db.VarChar(255)
+  // groupItinerary_id Int?
+  createdAt DateTime @default(now())
+  limit     Decimal
+  updatedAt DateTime @updatedAt
+  category  String   @default("")
+  party     party?   @relation(fields: [partyId], references: [id]) //@relation(fields: [groupItinerary_id], references: [itinerary_id])
 
-  @@index([groupItinerary_id], map: "budget_groupItinerary_id_fkey")
+  // @@index([groupItinerary_id], map: "budget_groupItinerary_id_fkey")
+  partyId Int?
 }
 
-
-/* model post {
-  id           Int      @id @default(autoincrement())
-  title        String   @db.Text
-  content      String   @db.Text
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
-  authorId     Int?
-  location     String?
-  latitude     Decimal?
-  longitude    Decimal?
-  category     String?
-  Tags         String?
-  suggestionId Int?
-  author       user?    @relation(fields: [authorId], references: [id])
-
-  @@index([authorId], map: "post_authorId_fkey")
-} */
-
-model chatHistory { 
-  id Int @id @default(autoincrement())
-  userId Int? // 
-  sessionId String @unique // Session identifier
-  conversationName String? @db.VarChar(255) // Allow naming
-  lastActive DateTime @default(now()) 
+model chatHistory {
+  id               Int      @id @default(autoincrement())
+  userId           Int? //
+  sessionId        String   @unique // Session identifier
+  conversationName String?  @db.VarChar(255) // Allow naming
+  lastActive       DateTime @default(now())
 
   messages message[] @relation("ChatHistoryToMessage")
 }
+
 model message {
   id          Int      @id @default(autoincrement())
   userId      Int?
   userMessage String   @db.Text
   botResponse String   @db.LongText
   timeStamp   DateTime @default(now())
-  sessionId   String  @db.VarChar(100)  
-  
-  ChatHistory chatHistory @relation("ChatHistoryToMessage", fields: [sessionId], references: [sessionId])
+  sessionId   String   @db.VarChar(100)
 
+  ChatHistory chatHistory @relation("ChatHistoryToMessage", fields: [sessionId], references: [sessionId])
 }
 
+model partyMessage {
+  id        Int      @id @default(autoincrement())
+  text      String
+  createdAt DateTime @default(now())
+
+  // Relationships
+  member user @relation(fields: [userId], references: [id])
+  userId Int
+
+  party   party @relation(fields: [partyId], references: [id])
+  partyId Int
+}

@@ -4,9 +4,6 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   Box,
-  Button,
-  TextField,
-  Typography,
   IconButton,
   List,
   ListItem,
@@ -19,16 +16,17 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ProfileIcon from '@mui/icons-material/AccountCircle';
-import AlertIcon from '@mui/icons-material/AddAlert';
 import LogoutIcon from '@mui/icons-material/LogoutSharp';
 import MapIcon from '@mui/icons-material/MapOutlined';
 import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
 import ChatIcon  from '@mui/icons-material/TryOutlined';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
-import EventIcon from '@mui/icons-material/Event';
-import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';import LocalActivityIcon from '@mui/icons-material/LocalActivity';
-
+import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';
+import AppShortcut from '@mui/icons-material/AppShortcut';
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import InterestForm from './InterestForm';
+import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -60,40 +58,31 @@ const NavDrawer: React.FC = () => {
   };
   const handleLogout = async () => {
     try {
-      
       await axios.post('/logout')
           setOpen(false);
           setAuth(false);
           navigate('/logout');
-        
     } catch (error) {
-      
-    
-        console.error('Error logging out at client', error);
-      };
+      console.error('Error logging out at client', error);
+    };
   };
 
   return (
     <Box sx={{ display: 'flex' }}>
-     
-      
-          <IconButton
-            color='inherit'
-            aria-label='open drawer'
-            onClick={handleDrawerOpen}
-            edge='start'
-            sx={[
-              {
-                mr: 2
-              },
-              open && { display: 'none' }
-            ]}
-          >
-            <MenuIcon />
-          </IconButton>
-        
-        
-      
+      <IconButton
+        color='inherit'
+        aria-label='open drawer'
+        onClick={handleDrawerOpen}
+        edge='start'
+        sx={[
+          {
+            mr: 2
+          },
+          open && { display: 'none' }
+        ]}
+      >
+        <MenuIcon />
+      </IconButton>
       <Drawer
         sx={{
           width: drawerWidth,
@@ -136,58 +125,74 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
-          
-            {/* itinerary */}
-            <ListItem key={'itinerary'} disablePadding>
-              <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
+            {/* maps */}
+          <ListItem key={'community'} disablePadding>
+              <ListItemButton component={Link}to='/community' onClick={handleDrawerClose}>
                 <ListItemIcon>
-                  <TravelExploreIcon />
+                  <PeopleRoundedIcon />
                 </ListItemIcon>
-                <ListItemText primary={'Itinerary'} />
+                <ListItemText primary={'Community'} />
               </ListItemButton>
             </ListItem>
+          {/*wishlist */}
+          <ListItem key={'wishlist'} disablePadding>
+            <ListItemButton component={Link}to='/wishlist' onClick={handleDrawerClose}>
+              <ListItemIcon>
+                <AppShortcut />
+              </ListItemIcon>
+              <ListItemText primary={'Wishlist'} />
+            </ListItemButton>
+          </ListItem>
+          {/* itinerary*/}
+          <ListItem key={'itinerary'} disablePadding>
+            <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
+              <ListItemIcon>
+                <TravelExploreIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Itinerary'} />
+            </ListItemButton>
+          </ListItem>
           {/* chat */}
           <ListItem key={'chat'} disablePadding>
-              <ListItemButton component={Link}to='/chatbot' onClick={handleDrawerClose}>
-                <ListItemIcon>
-                  <ChatIcon />
-                </ListItemIcon>
-                <ListItemText primary={`Gata AI Chat`} /> 
-              </ListItemButton>
-            </ListItem>
-            {/* Budget Buddy */}
-            <ListItem key={'BudgetBuddy'} disablePadding>
-              <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
-                <ListItemIcon>💰</ListItemIcon>
-                <ListItemText primary="Budget Buddy" />
-              </ListItemButton>
-            </ListItem>
-              {/* Route Choices  */}
-            <ListItem key={'RouteChoices'} disablePadding>
-              <ListItemButton component={Link} to="/routechoices" onClick={handleDrawerClose}>
-                <ListItemIcon><PinDropOutlinedIcon/></ListItemIcon>
-                <ListItemText primary="Route Choices" />
-              </ListItemButton>
-            </ListItem>
-            {/* <ListItem key={'Activities'} disablePadding>
-              <ListItemButton component={Link} to="/activities" onClick={handleDrawerClose}>
-                <ListItemIcon>
-                <LocalActivityIcon />
-                </ListItemIcon>
-                <ListItemText primary="Activities" />
-              </ListItemButton>
-            </ListItem> */}
+            <ListItemButton component={Link}to='/chatbot' onClick={handleDrawerClose}>
+              <ListItemIcon>
+                <ChatIcon />
+              </ListItemIcon>
+              <ListItemText primary={`Gata AI Chat`} /> 
+            </ListItemButton>
+          </ListItem>
+          {/* Budget Buddy */}
+          <ListItem key={'BudgetBuddy'} disablePadding>
+            <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
+              <ListItemIcon><AttachMoneyIcon sx={{ color: 'grey' }} /></ListItemIcon>
+              <ListItemText primary="Budget Buddy" />
+            </ListItemButton>
+          </ListItem>
+          {/* Route Choices  */}
+          <ListItem key={'InterestForm'} disablePadding>
+            <ListItemButton component={Link} to="/interestform" onClick={handleDrawerClose}>
+              <ListItemIcon><PinDropOutlinedIcon/></ListItemIcon>
+              <ListItemText primary="Interest Form" />
+            </ListItemButton>
+          </ListItem>
+          {/* Activites */}
+          <ListItem key={'viewform'} disablePadding>
+            <ListItemButton component={Link} to='/viewform' onClick={handleDrawerClose}>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary={'ViewForm'} />
+            </ListItemButton>
+          </ListItem>
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
-              <ListItemButton component={Link} to='/logout' onClick={handleLogout}>
-                <ListItemIcon>
-                  <LogoutIcon />
-                </ListItemIcon>
-                <ListItemText primary={'Logout'} />
-              </ListItemButton>
-            </ListItem>
-            {/* Activites */}
-
+            <ListItemButton component={Link} to='/logout' onClick={handleLogout}>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Logout'} />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
     </Box>

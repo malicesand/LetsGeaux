@@ -14,21 +14,31 @@ function isLoggedIn(req, res, next) {
 // Retrieve user's budget and categories from DB
 // get all budget categories and totals used in pie chart
 // Get data for PieChart categories + spent totals
-router.get('/categories', async (req, res) => {
+router.get('/categories', async (req: Request, res: Response) => {
+  const itineraryId = req.query.itineraryId;
+
   try {
+    const whereClause = itineraryId
+      ? { partyId: Number(itineraryId) }
+      : {};
+
     const categories = await prisma.budget.findMany({
+      where: whereClause,
       select: {
         id: true,
         category: true,
-        spent: true
+        spent: true,
+        limit: true,
+        notes: true
       }
     });
 
-    // Prisma returns Decimal for spent.. convert to number
     const parsed = categories.map((item) => ({
       id: item.id,
       category: item.category,
       spent: Number(item.spent || 0),
+      limit: Number(item.limit || 0),
+      notes: item.notes
     }));
 
     res.json(parsed);
@@ -38,12 +48,63 @@ router.get('/categories', async (req, res) => {
   }
 });
 
+// GET all budget entries for BudgetOverview LinearProgress UI
+router.get('/', async (req: Request, res: Response) => {
+  const itineraryId = req.query.itineraryId;
+
+  try {
+    const whereClause = itineraryId
+      ? { partyId: Number(itineraryId) }
+      : {};
+
+    const budgets = await prisma.budget.findMany({
+      where: whereClause,
+      orderBy: { updatedAt: 'desc' }
+    });
+
+    const parsed = budgets.map((b) => ({
+      ...b,
+      spent: Number(b.spent),
+      limit: Number(b.limit),
+    }));
+
+    res.json(parsed);
+  } catch (error) {
+    console.error('Error FETCHING budgets:', error);
+    res.status(500).json({ message: 'Error retrieving budgets', error });
+  }
+});
+
+// GET all budgets for a specific itinerary
+router.get('/itinerary/:id', async (req: Request, res: Response) => {
+  const partyId = parseInt(req.params.id);
+
+  try {
+    const budgets = await prisma.budget.findMany({
+      where: {
+        partyId: partyId,
+      },
+      orderBy: { updatedAt: 'desc' }
+    });
+
+    const parsed = budgets.map((b) => ({
+      ...b,
+      spent: Number(b.spent),
+      limit: Number(b.limit),
+    }));
+
+    res.status(200).json(parsed);
+  } catch (error) {
+    console.error('Error fetching budgets by itinerary:', error);
+    res.status(500).json({ message: 'Error fetching budgets by itinerary', error });
+  }
+});
 
 
 // Create a new budget entry
 // Initialize budget with total amount and currency
 router.post('/', async (req: Request, res: Response) => {
-  const { limit, spent, notes, category, groupItinerary_id } = req.body;
+  const { limit, spent, notes, category, partyId } = req.body;
 
   if (isNaN(limit)) {
     return res.status(400).json({ message: 'Invalid limit value' });
@@ -55,8 +116,9 @@ router.post('/', async (req: Request, res: Response) => {
         limit: Number(limit),
         category: category || 'Uncategorized',
         notes: notes || '',
-        spent, // default to 0
-        groupItinerary_id: null,
+        spent: spent !== undefined ? Number(spent) : 0,
+        partyId: null,
+//partyId: partyId ? Number(partyId) : null
         createdAt: new Date(),
         updatedAt: new Date()
       }

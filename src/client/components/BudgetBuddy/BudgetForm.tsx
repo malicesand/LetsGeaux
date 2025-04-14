@@ -3,8 +3,13 @@ import api from './api';
 import { TextField, Button, Stack, Box } from '@mui/material';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
+interface BudgetFormProps {
+  selectedItineraryId: number | null;
 
-const BudgetForm: React.FC = () => {
+ //callback that the parent can supply to refresh data after a budget is added
+ onBudgetAdded?: () => void;
+}
+const BudgetForm: React.FC<BudgetFormProps> = ({ selectedItineraryId, onBudgetAdded }) => {
   const [limit, setLimit] = useState('');
   const [spent, setSpent] = useState('');
   const [category, setCategory] = useState('');
@@ -21,12 +26,12 @@ const BudgetForm: React.FC = () => {
     }
 
     try {
-      await api.post('/', {
+      await api.post('/budget', {
         limit: parsedLimit,
         spent: parsedSpent,
         category,
         notes,
-        groupItinerary_id: null, // or assign dynamically later
+        partyId: selectedItineraryId, // now using partyId instead of itineraryId
       });
 
       // Reset form
@@ -34,10 +39,14 @@ const BudgetForm: React.FC = () => {
       setSpent('');
       setCategory('');
       setNotes('');
-    } catch (err) {
-      console.error('Failed to submit budget:', err);
-    }
-  };
+   // call the parents callback to re fetch budgets immediately
+   if (onBudgetAdded) {
+    onBudgetAdded();
+  }
+} catch (err) {
+  console.error('Failed to submit budget:', err);
+}
+};
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ p: 2 }}>
