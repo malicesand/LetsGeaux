@@ -18,10 +18,10 @@ interface CommentsProps {
 const Comments: React.FC<CommentsProps> = ({ user, commentSet, getAllComments, endComments, postId }) => {
   return (
     <Container>
-      <CommentForm user={user} getAllComments={getAllComments} postId={postId} />
-      {commentSet.map((currentComment) => (
+      {/* <CommentForm postId={postId} user={user} getAllComments={getAllComments} postId={postId} /> */}
+      {commentSet.map((currentComment: any) => (
         <Card key={currentComment.id}>
-      <Comment user={user} getAllComments={getAllComments} />
+      <Comment currentComment={currentComment} user={user} getAllComments={getAllComments} />
       </Card>
       ))}
       <Button onClick={endComments}>back to posts</Button>

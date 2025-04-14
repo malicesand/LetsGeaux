@@ -33,12 +33,14 @@ const PostForm: React.FC<PostFormProps>= ({ user, getAllPosts }) => {
     }
   })
   const submitForm: SubmitHandler<FormFields> = (data:any) => {
-    const { id } = user;
+    const { id, username } = user;
+    // console.log(user.username)
     const postBody = {
 
         data: {
           userId: +id,
           body: data.body,
+          postName: username
         }
       }
 

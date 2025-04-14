@@ -21,7 +21,7 @@ interface PostProps {
 }
 
 const Post: React.FC<PostProps> = ({user, currentPost, getAllPosts}) => {
-  const { body, id } = currentPost
+  const { body, id, postName } = currentPost
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentSet, setCommentSet] =useState([]);
 
@@ -46,12 +46,14 @@ const endComments = () => {
     <Container>
       <Card sx={{boxShadow: 10 }}>
       <Typography> {body}</Typography>
+      <Typography>By: {postName}</Typography>
       <Button>Like 🚀</Button>
       <Button onClick={startComments}>see comments</Button>
       {isCommenting ? (
         <Paper>
           <CommentForm postId={id} user={user} getAllComments={getAllComments} />
           <Comments
+          user={user}
           postId={id}
           getAllComments={getAllComments}
           commentSet={commentSet}

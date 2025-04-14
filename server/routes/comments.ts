@@ -41,15 +41,26 @@ try {
 // DELETE will destroy a singular comment from the database. BOTH the user that made the post
 // and the user that wrote the post have delete access.
 
-commentsRouter.delete('/:commentId/:userId', async (req:any, res:any) => {
-  const { commentId, userId } = req.params;
+commentsRouter.delete('/:id/:userId', async (req:any, res:any) => {
+  const { id, userId } = req.params;
   try {
     // maybe I check id's on the client's side?
-    const killComment = await prisma.comment.delete({
-      where: {id: commentId}
+    const checkCredentials = await prisma.comment.findFirst({
+      where: {
+        userId: +userId,
+        id: +id,
+      }
     })
-    res.status(200).send('comment deleted!');
-  } catch (err){
+    if(checkCredentials) {
+      const killComment = await prisma.comment.delete({
+        where: {id: +id}
+      })
+      res.status(200).send('comment deleted!');
+    } else {
+      res.status(403).send('you cannot delete this comment');
+    }
+
+    } catch (err){
     console.error('unable to delete comment', err);
     res.sendStatus(500);
   }

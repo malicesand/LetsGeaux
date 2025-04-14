@@ -32,11 +32,14 @@ const CommentForm: React.FC<CommentFormProps> = ({user, postId, getAllComments})
     }
   })
   const submitComment: SubmitHandler<FormFields> = (data: any) => {
+    console.log(user);
     const commentBody = {
       data: {
         userId: +user.id,
         postId: +postId,
         body: data.body,
+        postName: user.username
+
       }
     }
 
