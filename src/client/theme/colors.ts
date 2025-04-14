@@ -13,3 +13,14 @@
 //     },
 //   },
 // });
+// TODO size for mobile first
+//* Spacing
+//? Z index 
+// TODO Pick primary color
+// TODO Secondary
+// TODO Corners 
+//* Font
+//* Hierarchy for Headings, text, subheadings, captions etc (H1 ...) 
+//* Alignment
+//* Access
+//* NeoBrutalist Vibrant; Saturated and 
