@@ -35,7 +35,7 @@ const Suggestions: React.FC<SuggestionsProps>= ({ user }) => {
 
 const getDbSuggestions = () => {
   axios.get('/api/suggestions').then(({data}) => {
-    sortSuggestionSet(data);
+    // sortSuggestionSet(data);
     setDbSuggestionSet(data);
     console.log('db suggestions', data)
   })
@@ -64,7 +64,7 @@ const getDbSuggestions = () => {
 
   const getApiSuggestions = (query = "Restaurants") => {
       axios.get(`/api/suggestions/search/${user.id}`).then(({data: searchData}) => {
-        console.log(searchData);
+        console.log('search data', searchData);
           setSuggestionSet(searchData);
       })
 
@@ -93,7 +93,8 @@ const getDbSuggestions = () => {
         </Card>
       ))}
       <h2>You may enjoy:</h2>
-      {sortedSuggestionSet.map((currentSuggestion) => (
+      {/* {console.log('in he game', sortedSuggestionSet)} */}
+      {suggestionSet.map((currentSuggestion) => (
         <Card key={currentSuggestion.title}>
           <Suggestion
           user={user}
