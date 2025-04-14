@@ -30,11 +30,11 @@ imageRoute.post('/', async (req:any, res:any) => {
   }
 });
 
-imageRoute.get('/', async (req, res) => {
-  
-  
+imageRoute.get('/:userId', async (req, res) => {
+  const {userId} = req.params
   try {
     const images = await prisma.image.findMany({
+      where:{userId: +userId},
       orderBy: {
         id: 'desc', 
       },
