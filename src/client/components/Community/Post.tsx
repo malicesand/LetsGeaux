@@ -40,11 +40,18 @@ const startComments = () => {
 const endComments = () => {
   setIsCommenting(false);
 }
-
+// const postId = currentPost.id;
+const userId = user.id;
+const deletePost = () => {
+  axios.delete(`/api/posts/${id}/${userId}`).then(() => {
+    getAllPosts();
+  }).catch((err) => console.error('unable to delete post', err))
+}
 
   return (
     <Container>
       <Card sx={{boxShadow: 10 }}>
+        <Button onClick={deletePost}>Delete this post 💣</Button>
       <Typography> {body}</Typography>
       <Typography>By: {postName}</Typography>
       <Button>Like 🚀</Button>

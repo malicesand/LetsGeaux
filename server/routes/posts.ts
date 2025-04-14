@@ -32,24 +32,26 @@ postsRouter.post('/', async (req:any, res:any) => {
 
 
 // DELETE Will take out a post and all its connected comments. Only the user that posted the post can remove it.
-postsRouter.delete('/:postId/:userId', async (req: any, res: any) => {
-  const { postId, userId } = req.params;
+postsRouter.delete('/:id/:userId', async (req: any, res: any) => {
+  const { id, userId } = req.params;
   try {
     const credentials = await prisma.post.findFirst({
       where: {
-        id: +postId,
+        id: +id,
         userId: +userId,
       }
     })
-    if (!credentials) {
-      res.status(403).send('You cannot delete this post');
-    } else {
+    if (credentials) {
+      // console.log('in between postId', postId)
+      // const id = +postId
       const killPost = await prisma.post.delete({
         where: {
-          id: +postId,
+          id: +id
         }
       })
       res.status(200).send('delete successful');
+    } else {
+      res.status(403).send('You cannot delete this post');
     }
   } catch (err) {console.error('unable to delete', err);}
 });
