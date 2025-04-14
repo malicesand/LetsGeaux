@@ -69,21 +69,24 @@ model suggestion {
 }
 
 model post {
-  id   Int  @id @default(autoincrement())
-  user user @relation(fields: [userId], references: [id])
-
-  userId  Int
-  vote    vote[]
-  comment comment[]
+  id       Int       @id @default(autoincrement())
+  user     user      @relation(fields: [userId], references: [id])
+  body     String    @db.VarChar(255)
+  userId   Int
+  postName String    @db.TinyText
+  vote     vote[]
+  comment  comment[]
 }
 
 model comment {
-  id     Int    @id @default(autoincrement())
-  user   user   @relation(fields: [userId], references: [id])
-  post   post?  @relation(fields: [postId], references: [id])
-  userId Int
-  vote   vote[]
-  postId Int?
+  id       Int    @id @default(autoincrement())
+  user     user   @relation(fields: [userId], references: [id])
+  post     post?  @relation(fields: [postId], references: [id])
+  userId   Int
+  postName String @db.TinyText
+  body     String @db.VarChar(255)
+  vote     vote[]
+  postId   Int
 }
 
 model itinerary {
