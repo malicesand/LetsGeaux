@@ -35,37 +35,37 @@ const Suggestions: React.FC<SuggestionsProps>= ({ user }) => {
 
 const getDbSuggestions = () => {
   axios.get('/api/suggestions').then(({data}) => {
-    // sortSuggestionSet(data);
     setDbSuggestionSet(data);
     console.log('db suggestions', data)
   })
 }
-  const getAllSuggestions = () => {
-    const setUpSuggestions = async () => {
-      const suggs = await getDbSuggestions()
-        const apis = await getApiSuggestions();
-    }
-    setUpSuggestions();
+const getAllSuggestions = () => {
+  const setUpSuggestions = async () => {
+    const suggs = await getDbSuggestions()
+    const apis = await getApiSuggestions();
   }
-  // taking the API suggestions and filtering out the ones we already have in the database
-  const sortSuggestionSet = (array: []) => {
-    // create A clone.. may be superfluous..
-    const fakeSet = dbSuggestionSet;
-    // remove all values in that set that share the value of its title
-    console.log('values', (fakeSet))
-    const sortSet = array.filter((sugg: any) => !Object.values(dbSuggestionSet).includes(sugg.title));
-    // place the sorted set in state
-    setSortedSuggestionSet(sortSet);
+  setUpSuggestions();
+}
+// taking the API suggestions and filtering out the ones we already have in the database
+const sortSuggestionSet = (array: []) => {
+  // create A clone.. may be superfluous..
+  const fakeSet = dbSuggestionSet;
+  // remove all values in that set that share the value of its title
+  console.log('values', (fakeSet))
+  const sortSet = array.filter((sugg: any) => !Object.values(dbSuggestionSet).includes(sugg.title));
+  // place the sorted set in state
+  setSortedSuggestionSet(sortSet);
+  
+  
+  
+  
+}
 
-
-
-
-  }
-
-  const getApiSuggestions = (query = "Restaurants") => {
-      axios.get(`/api/suggestions/search/${user.id}`).then(({data: searchData}) => {
-        console.log('search data', searchData);
-          setSuggestionSet(searchData);
+const getApiSuggestions = (query = "Restaurants") => {
+  axios.get(`/api/suggestions/search/${user.id}`).then(({data: searchData}) => {
+    console.log('search data', searchData);
+    setSuggestionSet(searchData);
+      sortSuggestionSet(searchData);
       })
 
     .catch((err) => console.error('there was an issue', err));
@@ -93,7 +93,6 @@ const getDbSuggestions = () => {
         </Card>
       ))}
       <h2>You may enjoy:</h2>
-      {/* {console.log('in he game', sortedSuggestionSet)} */}
       {suggestionSet.map((currentSuggestion) => (
         <Card key={currentSuggestion.title}>
           <Suggestion

@@ -101,11 +101,6 @@ const getTripadvisorLocationIds = async (query: string = "restaurants", latLong:
 
 
 
-
-
-
-
-
 // and finally, this one grabs the image url
 const getTripAdvisorImage = (locationId) => {
   axios.get(`https://api.content.tripadvisor.com/api/v1/location/${locationId}/photos?language=en&key=${API_KEY}`)
@@ -118,50 +113,46 @@ const getTripAdvisorImage = (locationId) => {
 
 }
 
-/**
- * suggestionRouter.get(`/search`, async (req:any, res:any) => {
- try {
-   const locations: number[] = await getTripadvisorLocationIds().then((locationArray) => {
-     // const picture : string = await getTripAdvisorImage(locations)
-     getTripadvisorDetailedEntries(locationArray).then((entries) => {
-       const picture = getTripAdvisorImage(locationArray[0])
-       console.log('pic', picture);
-      res.status(200).send(entries);
-    })
-
-    }).catch((err) => {
-      console.error('had a hard time', err);
-      res.sendStatus(500);
-   })
-  } catch(err) {
-    throw err
-  }
-  })
- * 
- */
-
 
 
 // SEARCH flavored GET handling
 suggestionRouter.get(`/search/:id`, async (req:any, res:any) => {
   const { id } = req.params
  try {
+  // Pull in current list of saved suggestions
+  const savedSuggestions = await prisma.suggestion.findMany()
+  // pull the interest name from this user
   const userInterest = await prisma.$queryRaw`SELECT name FROM interest WHERE id IN (SELECT interestId FROM userInterest WHERE userId = ${id})`
-  console.log('fingers crossed for an interest:', userInterest[0])
+  // console.log('fingers crossed for an interest:', userInterest[0])
   // if (userInterest[0]) {
     const { name } = userInterest[0];
-    console.log('parsed:', name);
+    // console.log('parsed:', name);
     const locations: number[] = await getTripadvisorLocationIds(name.toLowerCase()).then((locationArray) => {
   //     console.log('locationArray', locationArray);
 
 
-  //     // const picture : string = await getTripAdvisorImage(locations)
+      // const picture : string = await getTripAdvisorImage(locations)
       getTripadvisorDetailedEntries(locationArray).then((entries) => {
+        Object.values(savedSuggestions).map((sugg) => {
+          // console.log("db", sugg)
+        })
+        let newEntries = [];
+        entries.forEach((entry) => {
+          // THIS LINE SORTS THEM CORRECTLY! ATTACH A FILTER TO IT, GIVE IT A VARIABLE AND SHIP IT OUT
+          console.log('entry', entry.title, (Object.values(savedSuggestions).every((sugg) => {
+            return sugg.title !== entry.title;
+          })))
+          if (Object.values(savedSuggestions).every((sugg) => {
+            return sugg.title !== entry.title;
+          })) {
+            newEntries.push(entry);
+          }
+        })
         //  const picture = getTripAdvisorImage(locationArray[0])
-        //  console.log('pic', picture);
-        res.status(200).send(entries);
+        //  console.log('sending out...', newEntries);
+        res.status(200).send(newEntries);
       })
-      
+
     }).catch((err) => {
       console.error('had a hard time', err);
       res.sendStatus(500);
