@@ -120,10 +120,14 @@ const App: React.FC = () => {
         <Route
           path='/itinerary'
           element={
-            <ProtectedRoute>{user && <Itinerary user={user} />}</ProtectedRoute>
+            <ProtectedRoute>{user && <Itinerary user={user} itinerary={{
+              id: 0,
+              name: '',
+              description: ''
+            }} />}</ProtectedRoute>
           }
         />
-
+    
         <Route
           path='/budgetbuddy'
           element={

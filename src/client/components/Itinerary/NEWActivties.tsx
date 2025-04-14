@@ -1,3 +1,6 @@
+
+
+
 import React, { useState, useEffect } from 'react';
 import { Container, Box, TextField, Button, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
@@ -13,6 +16,7 @@ interface Activity {
   phone: string;
   address: string;
   itineraryId: string;
+  creatorId?: string; 
 }
 
 interface Props {
@@ -43,7 +47,12 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
     const getActivities = async () => {
       try {
         const response = await axios.get(`/api/activity/${itineraryId}`);
-        setActivities(response.data);
+        console.log('Fetched activities:', response.data); 
+        if (response.data && Array.isArray(response.data)) {
+          setActivities(response.data); 
+        } else {
+          throw new Error('Invalid response format');
+        }
       } catch (err) {
         console.error('Error fetching activities:', err);
         setError('Error fetching activities.');
@@ -67,13 +76,14 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
       const response = await axios.post('/api/activity', formData);
       setActivities((prevActivities) => [...prevActivities, response.data]);
       resetForm();
-      setOpen(false);  // Close modal after adding activity
+      setOpen(false); 
       setMessage('Activity added successfully!');
-    } catch (err) {
-      console.error('Error creating activity:', err);
+    } catch (err: any) {
+      console.error('Error creating activity:', err.response?.data || err.message);
       setError('Error creating activity.');
     }
   };
+  
 
   const updateActivity = async () => {
     try {
