@@ -9,11 +9,21 @@ const prisma = new PrismaClient();
 // voteRouter.get().then().catch();
 // check with working votes for what comes in the req.body
 // BEFORE changing the post to upsert..
-voteRouter.post('/', async (req: any, res: any) => {
-  console.log('started the post, req it', req.body);
+voteRouter.post('/:id/:suggestionId', async (req: any, res: any) => {
+  const { userId, suggestionId } = req.params;
 
   try {
-  const makeVote = await prisma.vote.create(req.body)
+  const makeOneVote = await prisma.vote.upsert({
+    where: {
+        userId: +userId,
+        suggestionId: +suggestionId,
+    },
+    create: req.body.data,
+    update: {
+      polarity: req.body.data.polarity
+    }
+
+  })
   console.log('after the create..')
     res.status(201).send('Noted!');
   } catch (err) {

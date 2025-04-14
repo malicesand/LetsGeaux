@@ -18,6 +18,7 @@ const API_KEY = process.env.TRAVEL_ADVISOR_API_KEY;
 //  HELPERS //                                    enter lat long this way =>  42.3455,-71.10767
 //This one queries tripadvisor to get the location ids needed for detailed information. these ids are returned in an array.
 const getTripadvisorLocationIds = async (query: string = "restaurants", latLong: string = "30.001667%2C-90.092781") => {
+  console.log(query);
   try {
     //  https://api.content.tripadvisor.com/api/v1/location/nearby_search?latLong=42.3455%2C-71.10767&key={API_KEY}&category=${query}&language=en;
 
@@ -93,12 +94,12 @@ suggestionRouter.get(`/search/:id`, async (req:any, res:any) => {
   const userInterest = await prisma.$queryRaw`SELECT name FROM interest WHERE id IN (SELECT interestId FROM userInterest WHERE userId = ${id})`
   console.log('fingers crossed for an interest:', userInterest[0])
   // if (userInterest[0]) {
-  //   const { name } = userInterest[0];
-  //   console.log('parsed:', name);
-  //   const locations: number[] = await getTripadvisorLocationIds(name).then((locationArray) => {
+    const { name } = userInterest[0];
+    console.log('parsed:', name);
+    const locations: number[] = await getTripadvisorLocationIds(name.toLowerCase()).then((locationArray) => {
   //     console.log('locationArray', locationArray);
 
-      
+
   //     // const picture : string = await getTripAdvisorImage(locations)
   //     getTripadvisorDetailedEntries(locationArray).then((entries) => {
   //       //  const picture = getTripAdvisorImage(locationArray[0])
@@ -109,7 +110,7 @@ suggestionRouter.get(`/search/:id`, async (req:any, res:any) => {
   //   }).catch((err) => {
   //     console.error('had a hard time', err);
   //     res.sendStatus(500);
-  //   })
+    })
   // }
   } catch(err) {
     throw err
