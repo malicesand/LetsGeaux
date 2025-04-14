@@ -7,27 +7,12 @@ const prisma = new PrismaClient();
 //'/:id/:itemId/:type'
 
 // voteRouter.get().then().catch();
-
+// check with working votes for what comes in the req.body
+// BEFORE changing the post to upsert..
 voteRouter.post('/', async (req: any, res: any) => {
   console.log('started the post, req it', req.body);
-  // const { id, itemId, type } = req.params;
-// let votee;
-//   switch (type) {
-// case "post":
-//   votee = "post";
-//   break;
-// case "comment":
-//   votee = "comment";
-//   break;
-// case "suggestion":
-//   votee = "suggestion";
-//   break;
-//   }
+
   try {
-  console.log('oh lawd, she tryin')
-  // console.log()
-  // console.log()
-  
   const makeVote = await prisma.vote.create(req.body)
   console.log('after the create..')
     res.status(201).send('Noted!');
@@ -37,9 +22,27 @@ voteRouter.post('/', async (req: any, res: any) => {
   }
 })
 
-// voteRouter.patch().then().catch();
+/**
+ * UPSERT EXAMPLE:
+ * await prisma.like.upsert({
+  where: {
+    likeId: {
+      userId: 1,
+      postId: 1,
+    },
+  },
+  update: {
+    userId: 2,
+  },
+  create: {
+    userId: 2,
+    postId: 1,
+  },
+})
 
-// not super sure this will be needed yet, but:
+IF THE VOTE DISPLAYED HAS A USER ASSOCIATED, THE VOTE BUTTON WILL DO... SOMETHING
+ */
+// UNDO A LIKE
 // voteRouter.delete().then().catch();
 
 export default voteRouter

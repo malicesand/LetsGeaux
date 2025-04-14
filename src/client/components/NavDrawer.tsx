@@ -26,6 +26,7 @@ import AppShortcut from '@mui/icons-material/AppShortcut';
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import InterestForm from './InterestForm';
+import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -56,7 +57,7 @@ const NavDrawer: React.FC = () => {
     setOpen(true);
   };
   const handleLogout = async () => {
-    try {  
+    try {
       await axios.post('/logout')
           setOpen(false);
           setAuth(false);
@@ -67,7 +68,7 @@ const NavDrawer: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>     
+    <Box sx={{ display: 'flex' }}>
       <IconButton
         color='inherit'
         aria-label='open drawer'
@@ -123,7 +124,16 @@ const NavDrawer: React.FC = () => {
                 </ListItemIcon>
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
-          </ListItem>
+            </ListItem>
+            {/* maps */}
+          <ListItem key={'community'} disablePadding>
+              <ListItemButton component={Link}to='/community' onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <PeopleRoundedIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Community'} />
+              </ListItemButton>
+            </ListItem>
           {/*wishlist */}
           <ListItem key={'wishlist'} disablePadding>
             <ListItemButton component={Link}to='/wishlist' onClick={handleDrawerClose}>

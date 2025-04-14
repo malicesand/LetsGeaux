@@ -36,7 +36,7 @@ const getTripadvisorLocationIds = async (query: string = "restaurants", latLong:
 
   // This one queries trip advisor with an array of location ids and moves wanted info from the result to an object
   const getTripadvisorDetailedEntries = async (locations: number[]) => {
-    // console.log('deez loc', locations)
+    console.log('deez loc', locations)
     try {
 
       const detailedEntries = await locations.map(async (location) => {
@@ -87,20 +87,30 @@ const getTripAdvisorImage = (locationId) => {
 
 
 // SEARCH flavored GET handling
-suggestionRouter.get(`/search`, async (req:any, res:any) => {
+suggestionRouter.get(`/search/:id`, async (req:any, res:any) => {
+  const { id } = req.params
  try {
-   const locations: number[] = await getTripadvisorLocationIds().then((locationArray) => {
-     // const picture : string = await getTripAdvisorImage(locations)
-     getTripadvisorDetailedEntries(locationArray).then((entries) => {
-       const picture = getTripAdvisorImage(locationArray[0])
-       console.log('pic', picture);
-      res.status(200).send(entries);
-    })
+  const userInterest = await prisma.$queryRaw`SELECT name FROM interest WHERE id IN (SELECT interestId FROM userInterest WHERE userId = ${id})`
+  console.log('fingers crossed for an interest:', userInterest[0])
+  // if (userInterest[0]) {
+  //   const { name } = userInterest[0];
+  //   console.log('parsed:', name);
+  //   const locations: number[] = await getTripadvisorLocationIds(name).then((locationArray) => {
+  //     console.log('locationArray', locationArray);
 
-    }).catch((err) => {
-      console.error('had a hard time', err);
-      res.sendStatus(500);
-   })
+      
+  //     // const picture : string = await getTripAdvisorImage(locations)
+  //     getTripadvisorDetailedEntries(locationArray).then((entries) => {
+  //       //  const picture = getTripAdvisorImage(locationArray[0])
+  //       //  console.log('pic', picture);
+  //       res.status(200).send(entries);
+  //     })
+      
+  //   }).catch((err) => {
+  //     console.error('had a hard time', err);
+  //     res.sendStatus(500);
+  //   })
+  // }
   } catch(err) {
     throw err
   }
@@ -138,7 +148,7 @@ suggestionRouter.get('/', async (req: any, res: any) => {
 
     const allSuggs = await prisma.suggestion.findMany();
     console.log(allSuggs)
-    res.status(200).send('an answer', allSuggs.data);
+    res.status(200).send( allSuggs);
   } catch( err:any) {
     console.error("FAIL!!", err);
     res.sendStatus(500);

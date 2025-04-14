@@ -1,5 +1,4 @@
 const express = require('express');
-import axios from 'axios';
 import { PrismaClient } from '@prisma/client';
 
 const wishlistRouter = express.Router();
@@ -22,7 +21,7 @@ wishlistRouter.get('/:userId', async (req:any, res:any) => {
       const entry = await prisma.suggestion.findFirst({
         where: {id: suggestionId}
       });
-      // console.log(entry)
+
       return entry;
     })
     const allEntries = Promise.all(wishListEntries).then((entries) => {
