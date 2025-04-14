@@ -12,7 +12,7 @@ import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
 import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx'; 
-import { useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import Calendar from './Calendar.tsx';
 
 
@@ -50,8 +50,11 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   const [editingItinerary, setEditingItinerary] = useState<any | null>(null);
   const [error, setError] = useState<string>('');
   const location = useLocation()
-  const {partyId} = location.state || {}
-  
+  const {partyId, partyName, itineraryName: passeditineraryName} = location.state || {}
+ 
+  const{ id } = useParams();
+ 
+
   // Function to add activity to itinerary
   const addActivityToItinerary = async (itineraryId: string, activityData: any) => {
     try {
@@ -106,6 +109,14 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       console.error('Error creating itinerary:', err);
     }
   };
+  
+
+
+  useEffect(() => {
+    if (passeditineraryName && !editingItinerary) {
+      setItineraryName(passeditineraryName);
+    }
+  }, [passeditineraryName, editingItinerary]);
   
 
   // Fetch existing itineraries
@@ -186,6 +197,19 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
         <Typography variant="h4" gutterBottom>
           {editingItinerary ? 'Edit Itinerary' : 'Choose Dates for Your Trip'}
         </Typography>
+
+        {partyName && (
+  <Typography variant="h6" align="center" color="secondary">
+    Party: {partyName}
+  </Typography>
+)}
+
+{passeditineraryName && !editingItinerary && (
+  <Typography variant="h6" align="center" color="primary">
+    Viewing: {passeditineraryName}
+  </Typography>
+)}
+
 
         {error && <Typography color="error">{error}</Typography>}
 
