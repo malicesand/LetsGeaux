@@ -40,6 +40,22 @@ interface SuggestionProps {
   getAllWishlistSuggestions: Function;
   wishMode: Boolean;
   idDb: Boolean;
+  currentSuggestion: {
+    id: Number
+    title: String
+    upVotes: Number
+    downVotes: Number
+    timeAvailable: String
+    cost: Number
+    address: String
+    description: String
+    image: String
+    phoneNum: String
+    userId: Number
+    latitude: String
+    longitude: String
+
+  }
 
 }
 

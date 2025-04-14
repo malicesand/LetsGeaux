@@ -62,7 +62,7 @@ const getDbSuggestions = () => {
 
   }
 
-  const getApiSuggestions = () => {
+  const getApiSuggestions = (query = "Restaurants") => {
       axios.get(`/api/suggestions/search/${user.id}`).then(({data: searchData}) => {
         console.log(searchData);
           setSuggestionSet(searchData);
