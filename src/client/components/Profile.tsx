@@ -21,14 +21,14 @@ const ALL_INTERESTS = ['Restaurants', 'Hotels', 'Geos', 'Attractions'];
 const Profile: React.FC = () => {
   const location = useLocation();
   const { user } = location.state;
-
+  const [localUser, setLocalUser] = useState(user);
   const [interests, setInterests] = useState([]);
   const [selectedInterest, setSelectedInterest] = useState('');
 
   useEffect(() => {
     const fetchInterests = async () => {
       try {
-        const userId = user.id;
+        const userId = localUser.id;
         const response = await axios.get(`/api/interests/${userId}`);
         setInterests(response.data);
 
@@ -41,11 +41,11 @@ const Profile: React.FC = () => {
     };
 
     fetchInterests();
-  }, [user.id]);
+  }, [localUser.id]);
 
   const handleUpdateInterest = async () => {
     try {
-      const response = await axios.put(`/api/interests/${user.id}`, {
+      const response = await axios.put(`/api/interests/${localUser.id}`, {
         newInterest: selectedInterest,
       });
       setInterests([response.data.interest]);
@@ -81,10 +81,13 @@ const Profile: React.FC = () => {
         if (!error && result.event === 'success') {
           const imageUrl = result.info.secure_url;
           try {
-            await axios.patch(`/api/users/${user.id}/profile-pic`, {
+            await axios.patch(`/api/users/${localUser.id}/profile-pic`, {
               profilePic: imageUrl,
             });
-            user.profilePic = imageUrl;
+            setLocalUser((prevUser:any) => ({
+              ...prevUser,
+              profilePic: imageUrl,
+            }));
           } catch (err) {
             console.error('Failed to update profile pic in DB:', err);
           }
@@ -98,10 +101,10 @@ const Profile: React.FC = () => {
     <Container maxWidth="sm" sx={{ py: 4 }}>
       <Typography variant="h4" gutterBottom>Profile Page</Typography>
       <Stack spacing={2} alignItems="center">
-        <Avatar src={user.profilePic} alt="Profile Picture" sx={{ width: 150, height: 150 }} />
+        <Avatar src={localUser.profilePic} alt="Profile Picture" sx={{ width: 150, height: 150 }} />
         <Button variant="outlined" onClick={handleUploadWidget}>Change Profile Picture</Button>
-        <Typography variant="h6">{user.username}</Typography>
-        <Typography variant="body1">{user.email}</Typography>
+        <Typography variant="h6">{localUser.username}</Typography>
+        <Typography variant="body1">{localUser.email}</Typography>
       </Stack>
 
       <Box mt={4}>
@@ -137,7 +140,7 @@ const Profile: React.FC = () => {
       </Box>
 
       <Box mt={4}>
-        <ImageUpload userId={user.id} />
+        <ImageUpload userId={localUser.id} />
       </Box>
     </Container>
   );
