@@ -3,6 +3,14 @@ import { useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import TextField from '@mui/material/TextField';
+import DialogContentText from '@mui/material/DialogContentText';
 import MessageBoard from './MessageBoard';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
@@ -25,6 +33,10 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const [partyInfo, setPartyInfo] = useState<{id: number, name: string}[]>([])
   const [partyMembers, setPartyMembers] = useState<string[]>([]);
   // const userId = user.id //? delete
+  const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = useState<string>('')
+  const [emails, setEmails] = React.useState<string[]>([])
+  const [inviteSuccess, setInviteSuccess] = useState(false);
 
   if(!partyId || !partyName) {
     return <div>Loading party dashboard...</div>
@@ -32,8 +44,6 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   useEffect(() => {
     getUsersForParty(numericPartyId);
   },[numericPartyId])
-
-
 
   const getUsersForParty = async (partyId: number) => {
     console.log(partyId)
@@ -48,20 +58,120 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
     }
   };
 
+  const openModal = () => {
+    setOpen(true);
+  };
+
+  const closeModal = () => {
+    setOpen(false);
+  };
+
+  //* Send E-Vite *//
+  const sendEmail = async(emailList: string[], partyName:string) => {
+    try {
+      await axios.post('/api/group/sendInvite', { emails: emailList, partyName });
+      setInviteSuccess(true);
+      setInputValue('');
+      setEmails([]);
+      setTimeout(() => closeModal(), 3000)
+      setTimeout(() => setInviteSuccess(false), 4000)
+    } catch (error) {
+        console.error('could not send email', error)
+    }
+  }
+
   return (
-    <Box>
-      <Typography>
-        {partyName}
-      </Typography>
-      <AddItinerary user={user} partyId={numericPartyId} partyName={partyName}/>
-      <Box>
-        <MessageBoard user={user}/>
-      </Box>
-      <AddMember user={user} partyId={numericPartyId} partyName={partyName} />
-      <Box position= 'absolute' bottom = '10%'>
-        {/* <BudgetPieChart /> */}
-      </Box>
+  <Stack spacing={4} sx={{ p: 3 }}>
+  {/* Header Row */}
+  <Typography variant="h4" align="center" sx={{ flexGrow: 1, textAlign: 'center' }}>
+      {partyName}
+  </Typography>
+  <Box display='flex' justifyContent='left'>
+    <AddItinerary user={user} partyId={numericPartyId} partyName={partyName} />  
+  </Box>
+  <Box display = 'flex' justifyContent='left'>
+    <Typography>
+      Party Members
+        <Box component = 'ul' 
+          sx={{
+            padding: "0 0",
+            listStyle: 'none',
+            display: 'grid',
+            gap: '30px',
+            // gridTemplateColumns: ''
+          }}
+        >
+        </Box>
+        {partyMembers.map((member) => 
+          <Box component='li'>
+            {member}
+          </Box>
+        )}
+    </Typography>
+  </Box>
+  <Box display='flex' justifyContent='right' alignItems='center'>
+    <AddMember user={user} partyId={numericPartyId} partyName={partyName} />
+  </Box>
+  <Button variant='contained' onClick={openModal}>
+    Send an E-Vite
+  </Button>
+  <Dialog
+          open={open}
+          onClose={closeModal}
+          slotProps={{
+            paper: {
+              sx: { width: 500 },
+              component: 'form',
+             
+            }
+          }}
+        >
+         <Typography variant='subtitle1' sx={{ mt: 2 }}>
+            Invite your friends to join your travel party
+          </Typography>
+          <TextField
+            id='email'
+            placeholder='Enter email to invite (separate multiples with commas!)'
+            type='text'
+            fullWidth
+            value={inputValue}
+            onChange={(event) => {
+              const raw = event.target.value;
+              setInputValue(raw);
+              const parsedEmails = raw.split(',').map(email => email.trim()).filter(email => email.length > 0);
+              setEmails(parsedEmails)
+            }} 
+          />
+          <Button 
+            sx={{ mt: 1 }}
+            variant='outlined'
+            onClick={() => sendEmail(emails, inputValue)} disabled={emails.length === 0}
+            >
+            Invite
+          </Button>
+          {inviteSuccess && (
+            <Typography sx={{ mt: 1, color: 'green' }}>
+              Invite sent successfully!
+            </Typography>
+          )}
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
+            You can also invite friends later from your party dashboard.
+          </Typography>
+        
+  </Dialog>
+  {/* Message Board */}
+  {/* <Box display="flex" justifyContent="center" alignItems="center">
+    <Box sx={{ width: '60%' }}>
+      <MessageBoard user={user} />
     </Box>
+  </Box> */}
+  <Box display="flex" justifyContent="center">
+    {/* <BudgetPieChart /> */}
+  </Box>
+</Stack>
+
+  
+
   )
 };
 
