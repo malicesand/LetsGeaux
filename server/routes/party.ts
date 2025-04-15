@@ -118,7 +118,6 @@ partyRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
       },
     });
     const users = usersInParty.map(entry => entry.user);
-    console.log(users)
     res.json(users); 
   } catch (error) {
     console.error('failed to find members for this travel party', error);
