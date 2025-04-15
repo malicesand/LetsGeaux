@@ -25,11 +25,26 @@ const userId = user.id
   }
 
 
+  const handleVoteClick = (polarity: string) => {
+    const { id } = user;
+    const userId = id;
+    const { id: commentId } = currentComment;
+    const pol = 1;
+    const vote = {
+      userId: id,
+      commentId,
+      polarity: 1,
+    }
+  }
+
+
+
+
   return (
     <Container>
         <Typography>{body}</Typography>
         <Typography>By: {postName}</Typography>
-        <Button>Like 🚀</Button>
+        <Button onClick={handleVoteClick} >Like 🚀</Button>
         <Button onClick={deleteComment} >Delete 💣</Button>
     </Container>
   )
