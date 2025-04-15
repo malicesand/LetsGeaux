@@ -24,7 +24,7 @@ interface PartyDashboardProps {
 const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const { partyId } = useParams();
   const numericPartyId = parseInt(partyId || '', 10);
-  
+  // const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(undefined);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const partyName = searchParams.get('name');
@@ -35,13 +35,29 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = useState<string>('')
   const [emails, setEmails] = React.useState<string[]>([])
-  const [inviteSuccess, setInviteSuccess] = useState(false);
+  const [inviteSuccess, setInviteSuccess] = useState(false); 
 
   if(!partyId || !partyName) {
     return <div>Loading party dashboard...</div>
   }
   useEffect(() => {
     getUsersForParty(numericPartyId);
+    // const checkAuth = async () => {
+    //   try {
+    //     const response = await axios.get('/api/check-auth');
+    //     setIsAuthenticated(response.data.isAuthenticated);
+
+    //     if (response.data.isAuthenticated) {
+    //       const fetchedUser: user = response.data.user;
+    //       setUser(fetchedUser);
+    //       localStorage.removeItem('sessionId');
+    //     }
+    //   } catch (error) {
+    //     setIsAuthenticated(false);
+    //     console.error('Server: Err checking auth status', error);
+    //   }
+    // };
+    // checkAuth();
   },[numericPartyId])
 
   const getUsersForParty = async (partyId: number) => {
