@@ -1,12 +1,13 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import sgMail from '@sendgrid/mail';
-const groupRoute = express.Router();
+const partyRoute = express.Router();
 const prisma = new PrismaClient();
 
 
 // * Create Travel Party * //
-groupRoute.post('/', async (req: any, res: any) => {
+partyRoute.post('/', async (req: any, res: any) => {
+  // console.log(req.body)
   const {name} = req.body;
   try {
     const newParty = await prisma.party.create({data: { name }});
@@ -19,7 +20,8 @@ groupRoute.post('/', async (req: any, res: any) => {
 });
 
 //* Add Existing User to Party *//
-groupRoute.post('/userParty', async (req: any, res: any) => {
+partyRoute.post('/userParty', async (req: any, res: any) => {
+  console.log(`userPost creation${req.body}`)
   const {userId, partyId, } = req.body;
 
   try {
@@ -41,7 +43,7 @@ groupRoute.post('/userParty', async (req: any, res: any) => {
 
 //* Inviting Users to LetsGeaux Via Email *//
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-groupRoute.post('/sendInvite', async (req: any, res:any) => {
+partyRoute.post('/sendInvite', async (req: any, res:any) => {
   const {emails, partyName} = req.body
   console.log(partyName);
   console.log(emails);
@@ -68,7 +70,7 @@ groupRoute.post('/sendInvite', async (req: any, res:any) => {
 });
 
 // * Get A User's Parties * //
-groupRoute.get('/userParty/:userId', async (req: any, res: any) => {
+partyRoute.get('/userParty/:userId', async (req: any, res: any) => {
   const {userId} = req.params;
   try {
     let parties = await prisma.userParty.findMany({
@@ -84,7 +86,7 @@ groupRoute.get('/userParty/:userId', async (req: any, res: any) => {
 })
 
 // * Get a Party * //
-groupRoute.get('/:partyId', async(req: any, res: any) => {
+partyRoute.get('/:partyId', async(req: any, res: any) => {
   const {partyId} = req.params;
   try {
     let partyInfo = await prisma.party.findUnique({
@@ -101,7 +103,7 @@ groupRoute.get('/:partyId', async(req: any, res: any) => {
 })
 
 // * Get the Members of the Travel Party * //
-groupRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
+partyRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
   const {partyId} = req.params;
 
   try {
@@ -114,36 +116,10 @@ groupRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
       },
     });
     const users = usersInParty.map(entry => entry.user);
+    res.json(users); 
   } catch (error) {
     console.error('failed to find members for this travel party', error);
     res.status(500).json({ error: 'Could not fetch users in the party'});
   }
 });
-
-groupRoute.delete('/:partyId', async (req: any, res: any) => {
-  const {partyId} = req.params;
-  // delete userParties
-  const deleteUserParties = prisma.userParty.deleteMany({
-    where: {
-      partyId: +partyId,
-    },
-  })
-  // delete party
-  const deleteParty = prisma.party.delete({
-    where: {
-      id: +partyId,
-    },
-  })
-  // TODO add email to transaction? 
-  try { 
-    // transaction
-    const transaction = await prisma.$transaction([deleteUserParties, deleteParty]);
-    console.log(`Transaction Complete: Delete Party ${partyId}`);
-    res.status(200).json(`Transaction Complete: Delete Party ${partyId}`);
-  } catch (error) {
-    console.log(`Transaction Failure: Delete Party ${partyId}`, error);
-    res.status(500).json({ error: `Transaction Failure: Delete Party ${partyId}`});
-  };
-  
-})
-export default groupRoute;
+export default partyRoute;
