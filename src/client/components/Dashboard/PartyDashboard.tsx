@@ -23,7 +23,6 @@ interface PartyDashboardProps {
 
 const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const { partyId } = useParams();
-  console.log(partyId)
   const numericPartyId = parseInt(partyId || '', 10);
   
   const location = useLocation();
@@ -46,12 +45,10 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   },[numericPartyId])
 
   const getUsersForParty = async (partyId: number) => {
-    console.log(partyId)
     try {
       const response = await axios.get(`/api/group/usersInParty/${partyId}`);
       const users = response.data;
       const usernames = users.map((user:user) => user.username)
-      console.log(usernames);
       setPartyMembers(usernames);
     } catch (error) {
       console.error('failed to find members for one or all parties')
@@ -81,52 +78,53 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   }
 
   return (
-  <Stack spacing={4} sx={{ p: 3 }}>
-  {/* Header Row */}
-  <Typography variant="h4" align="center" sx={{ flexGrow: 1, textAlign: 'center' }}>
-      {partyName}
-  </Typography>
-  <Box display='flex' justifyContent='left'>
-    <AddItinerary user={user} partyId={numericPartyId} partyName={partyName} />  
-  </Box>
-  <Box display = 'flex' justifyContent='left'>
-    <Typography>
-      Party Members
-        <Box component = 'ul' 
-          sx={{
-            padding: "0 0",
-            listStyle: 'none',
-            display: 'grid',
-            gap: '30px',
-            // gridTemplateColumns: ''
-          }}
-        >
-        </Box>
-        {partyMembers.map((member) => 
-          <Box component='li'>
-            {member}
-          </Box>
-        )}
-    </Typography>
-  </Box>
-  <Box display='flex' justifyContent='right' alignItems='center'>
-    <AddMember user={user} partyId={numericPartyId} partyName={partyName} />
-  </Box>
-  <Button variant='contained' onClick={openModal}>
-    Send an E-Vite
-  </Button>
-  <Dialog
+    <Stack spacing={4} sx={{ p: 3 }}>
+      <Typography variant="h4" align="center" sx={{ flexGrow: 1, textAlign: 'center' }}>
+          {partyName}
+      </Typography>
+      <Box display='flex' justifyContent='left'>
+        <AddItinerary user={user} partyId={numericPartyId} partyName={partyName} />  
+      </Box>
+      <Box display = 'flex' justifyContent='left'>
+        <Typography>
+          Party Members
+            <Box component = 'ul' 
+              sx={{
+                padding: "0 0",
+                listStyle: 'none',
+                display: 'grid',
+                gap: '30px',
+                // gridTemplateColumns: ''
+              }}
+            >
+            </Box>
+              {partyMembers.map((member) => {
+                console.log(`${member} in map`);
+                return (
+                  
+                <Box key='member' component='li'>
+                  {member}
+                </Box>)}
+              )}
+        </Typography>
+      </Box>
+      <Box display='flex' justifyContent='right' alignItems='center'>
+        <AddMember user={user} partyId={numericPartyId} partyName={partyName} />
+      </Box>
+      <Button variant='contained' onClick={openModal}>
+        Send an E-Vite
+      </Button>
+        <Dialog
           open={open}
           onClose={closeModal}
           slotProps={{
             paper: {
               sx: { width: 500 },
               component: 'form',
-             
             }
           }}
         >
-         <Typography variant='subtitle1' sx={{ mt: 2 }}>
+          <Typography variant='subtitle1' sx={{ mt: 2 }}>
             Invite your friends to join your travel party
           </Typography>
           <TextField
@@ -142,36 +140,29 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
               setEmails(parsedEmails)
             }} 
           />
-          <Button 
-            sx={{ mt: 1 }}
-            variant='outlined'
-            onClick={() => sendEmail(emails, inputValue)} disabled={emails.length === 0}
-            >
-            Invite
-          </Button>
-          {inviteSuccess && (
-            <Typography sx={{ mt: 1, color: 'green' }}>
-              Invite sent successfully!
-            </Typography>
-          )}
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
-            You can also invite friends later from your party dashboard.
-          </Typography>
-        
-  </Dialog>
-  {/* Message Board */}
-  {/* <Box display="flex" justifyContent="center" alignItems="center">
-    <Box sx={{ width: '60%' }}>
-      <MessageBoard user={user} />
-    </Box>
-  </Box> */}
-  <Box display="flex" justifyContent="center">
-    {/* <BudgetPieChart /> */}
-  </Box>
-</Stack>
-
-  
-
+            <Button 
+              sx={{ mt: 1 }}
+              variant='outlined'
+              onClick={() => sendEmail(emails, inputValue)} disabled={emails.length === 0}
+              >
+              Invite
+            </Button>
+            {inviteSuccess && (
+              <Typography sx={{ mt: 1, color: 'green' }}>
+                Invite sent successfully!
+              </Typography>
+            )}
+        </Dialog>
+      {/* Message Board */}
+      {/* <Box display="flex" justifyContent="center" alignItems="center">
+        <Box sx={{ width: '60%' }}>
+          <MessageBoard user={user} />
+        </Box>
+      </Box> */}
+      <Box display="flex" justifyContent="center">
+        {/* <BudgetPieChart /> */}
+      </Box>
+    </Stack>
   )
 };
 

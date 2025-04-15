@@ -23,7 +23,7 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
   }, [userId])
 
   const getUserParties = async() => {
-    console.log(userId)
+    // console.log(userId)
     try {
       let response = await axios.get<userParty[]>(`api/group/userParty/${userId}`);
       const parties = response.data; // userParty array
@@ -46,7 +46,7 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
         id: res.data.id,
         name: res.data.name
       }));
-      console.log(names);
+      // console.log(names);
       setPartyInfo(names);
     } catch (error) {
       console.error('Could not find names for one or all partyIds')

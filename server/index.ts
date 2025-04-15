@@ -34,7 +34,7 @@ app.use(express.json());
 
 const port = 8000;
 app.use(cors({
-  origin: 'http://localhost:3000', 
+  origin: 'http://localhost:8000', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // 
   credentials: true, // missing so cookies werent sent which breaks session based auth
