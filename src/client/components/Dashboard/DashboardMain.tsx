@@ -3,7 +3,7 @@ import axios from 'axios';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-import CreateGroup from './CreateGroup';
+import CreateParty from './CreateParty';
 // import BudgetPieChart from './BudgetPieChart'
 import { user, userParty } from '../../../../types/models.ts';
 
@@ -23,9 +23,9 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
   }, [userId])
 
   const getUserParties = async() => {
-    console.log(userId)
+    // console.log(userId)
     try {
-      let response = await axios.get<userParty[]>(`api/group/userParty/${userId}`);
+      let response = await axios.get<userParty[]>(`api/party/userParty/${userId}`);
       const parties = response.data; // userParty array
       const partyIds = parties.map((party)=> {
         return party.partyId
@@ -39,14 +39,14 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
   const getPartyNames = async(partyIds: number[]) => {
     try {
       const requests = partyIds.map(id => 
-        axios.get<party>(`/api/group/${id}`)
+        axios.get<party>(`/api/party/${id}`)
       );
       const responses = await Promise.all(requests);
       const names = responses.map((res) => ({
         id: res.data.id,
         name: res.data.name
       }));
-      console.log(names);
+      // console.log(names);
       setPartyInfo(names);
     } catch (error) {
       console.error('Could not find names for one or all partyIds')
@@ -56,14 +56,14 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
 
   return (
     <Box>
-      <CreateGroup user={user} onPartyCreated={getUserParties}/>
+      <CreateParty user={user} onPartyCreated={getUserParties}/>
         <Typography >
           Your Travel Parties
         </Typography>
         <Box>
           {partyInfo.map((selectedParty) => (
             <Box key={selectedParty.id} mb={1}>
-              <Link to={`/party/${selectedParty.id}?name=${encodeURIComponent(selectedParty.name)}`}>
+              <Link to={`/${selectedParty.id}?name=${encodeURIComponent(selectedParty.name)}`}>
               <Typography variant='body1' color='primary'>
                 {selectedParty.name}
               </Typography>

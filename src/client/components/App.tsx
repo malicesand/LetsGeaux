@@ -194,7 +194,7 @@ const App: React.FC = () => {
         }
         />
       <Route
-        path='/party/:partyId'
+        path='/:partyId'
         element={
           <ProtectedRoute>
             <PartyDashboard user={user}/>
