@@ -45,7 +45,13 @@ const AddItinerary: React.FC<AddItineraryProps> = ({ user, partyId, partyName })
 
   const handleChoose = () => {
     if (selectedItinerary) {
-      navigate(`/itinerary/${selectedItinerary.id}`);
+      navigate(`/itinerary/${selectedItinerary.id}`,{
+        state: {
+          partyId,
+          partyName,
+          itineraryName: selectedItinerary.name
+        }
+      });
     }
   };
 

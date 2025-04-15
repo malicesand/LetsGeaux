@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Box, TextField, Button, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
+import { user } from '../../../../types/models';
 
 interface Activity {
   id: string;
@@ -22,6 +23,7 @@ interface Activity {
 interface Props {
   itineraryId: string;
   addActivity: (itineraryId: string, activityData: any) => Promise<void>;
+  //user: user;
 }
 
 const Activity: React.FC<Props> = ({ itineraryId }) => {
@@ -272,9 +274,19 @@ const Activity: React.FC<Props> = ({ itineraryId }) => {
             <Button onClick={() => handleUpdateClick(activity)} variant="outlined">
               Update
             </Button>
-            <Button onClick={() => deleteActivity(activity.id)} variant="outlined" color="secondary">
+            {/* {activity.creatorId === user.id && ( */}
+
+            <Button onClick={() =>{ 
+                  const confirmDelete = window.confirm("Are you sure you want to delete this activity?");
+                  if (confirmDelete) {
+
+              deleteActivity(activity.id)} 
+                  }}
+            
+            variant="outlined" color="secondary">
               Delete
             </Button>
+            {/* )} */}
           </Box>
         ))}
       </Box>
