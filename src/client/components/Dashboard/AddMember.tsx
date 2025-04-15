@@ -62,7 +62,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
     console.log(partyId)
     console.log(userId);
     try {
-      let response = await axios.post('/api/group/userParty', {userId, partyId});
+      let response = await axios.post('/api/party/userParty', {userId, partyId});
       console.log(response.data);
     } catch (error) {
       console.error('Could not create new userParty model', error);
