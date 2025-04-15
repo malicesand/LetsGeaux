@@ -55,10 +55,7 @@ const sortSuggestionSet = (array: []) => {
   const sortSet = array.filter((sugg: any) => !Object.values(dbSuggestionSet).includes(sugg.title));
   // place the sorted set in state
   setSortedSuggestionSet(sortSet);
-  
-  
-  
-  
+
 }
 
 const getApiSuggestions = (query = "Restaurants") => {

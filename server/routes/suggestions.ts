@@ -140,7 +140,7 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
           let newEntries = [];
           entries.forEach((entry) => {
             // THIS LINE SORTS THEM CORRECTLY! ATTACH A FILTER TO IT, GIVE IT A VARIABLE AND SHIP IT OUT
-          
+
             if (
               Object.values(savedSuggestions).every((sugg) => {
                 return sugg.title !== entry.title;
