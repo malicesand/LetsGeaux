@@ -5,41 +5,42 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, TextField, Button, Box, Card, CardContent, CardActions, Snackbar, Alert } from '@mui/material';
+import { Container, Typography, TextField, Button, Box, Card, CardContent, CardActions, Alert } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
-import { isBefore, isAfter, isSameDay } from 'date-fns';
 import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
 import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx'; 
-import { useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
+import Calendar from './Calendar.tsx';
+import { userInfo } from 'os';
 
-// interface ItineraryProps {
-//   user: user;
-// }
+
+
 interface ItineraryProps {
-  itinerary: {
-    id: number;
-    name: string;
-    description: string;
-   
-  };
-  user: {
-    id: number;
-    username: string;
-    email: string;
-    isVerified: boolean;
-    phoneNum: string;
-    isNotified: boolean;
-    googleId: string;
-    profilePic: string;
-    suggestionId: number;
-  };
-
+  user: user;
 }
+// interface ItineraryProps {
+//   itinerary: {
+//     id: number;
+//     name: string;
+//     description: string;
+   
+//  };
+//   user: {
+//     id: number;
+//     username: string;
+//     email: string;
+//     isVerified: boolean;
+//     phoneNum: string;
+//     isNotified: boolean;
+//     googleId: string;
+//     profilePic: string;
+//     suggestionId: number;
+//   };
+
+// }
 const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -50,8 +51,11 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   const [editingItinerary, setEditingItinerary] = useState<any | null>(null);
   const [error, setError] = useState<string>('');
   const location = useLocation()
-  const {partyId} = location.state || {}
-  
+  const {partyId, partyName, itineraryName: passeditineraryName} = location.state || {}
+ 
+  const{ id } = useParams();
+ 
+
   // Function to add activity to itinerary
   const addActivityToItinerary = async (itineraryId: string, activityData: any) => {
     try {
@@ -62,31 +66,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     }
   };
 
-  // Handle date change and determine start and end dates
-  const handleDateChange = (newDate: Date | null) => {
-    if (!startDate) {
-      setStartDate(newDate);
-    } else if (!endDate) {
-      if (isAfter(newDate, startDate)) {
-        setEndDate(newDate);
-      } else {
-        setStartDate(newDate);
-        setEndDate(null);
-      }
-    } else if (isSameDay(newDate, startDate) || isSameDay(newDate, endDate)) {
-      setStartDate(null);
-      setEndDate(null);
-    } else {
-      if (isBefore(newDate, startDate)) {
-        setStartDate(newDate);
-        setEndDate(null);
-      } else if (isAfter(newDate, endDate!)) {
-        setEndDate(newDate);
-      }
-    }
-  };
-
-  // Update selectedDates based on the startDate and endDate
+   // Update selectedDates based on the startDate and endDate
   useEffect(() => {
     if (startDate && endDate) {
       const dates = eachDayOfInterval({ start: startDate, end: endDate });
@@ -94,28 +74,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     }
   }, [startDate, endDate]);
 
-  // Function to highlight the range of days
-  const CustomPickersDay = (props: PickersDayProps<Date>) => {
-    const { day, selected, ...rest } = props;
-    const isInRange = startDate && endDate && isAfter(day, startDate) && isBefore(day, endDate);
-    const isSelected = isSameDay(day, startDate) || isSameDay(day, endDate) || isInRange;
 
-    return (
-      <PickersDay
-        {...rest}
-        day={day}
-        selected={isSelected}
-        sx={{
-          backgroundColor: isSelected ? 'primary.main' : 'transparent',
-          '&:hover': {
-            backgroundColor: 'primary.light',
-          },
-        }}
-      />
-    );
-  };
-
-  // Function to handle the itinerary form submission
+   // Function to handle the itinerary form submission
   const handleSubmit = async () => {
     if (!itineraryName || selectedDates.length === 0) {
       setError('Please provide a name and select dates for the itinerary');
@@ -152,6 +112,14 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   };
   
 
+
+  useEffect(() => {
+    if (passeditineraryName && !editingItinerary) {
+      setItineraryName(passeditineraryName);
+    }
+  }, [passeditineraryName, editingItinerary]);
+  
+
   // Fetch existing itineraries
   useEffect(() => {
     console.log(partyId, "partyId at itinerary")
@@ -181,8 +149,16 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     setEndDate(end);
   };
 
-  // Handle delete of an itinerary
-  const handleDelete = async (itineraryId: number) => {
+  // Handle delete of an itinerary, creator only
+  const handleDelete = async (itineraryId: number, creatorId: number) => {
+    if(user.id !== creatorId){
+      alert("Only the creator can delete this itinerary.");
+    return;
+  }
+  // conirm deletion
+  const confirmDelete = window.confirm("Are you sure you want to delete this itinerary?");
+  if (!confirmDelete) return;
+    
     try {
       await axios.delete(`/api/itinerary/${itineraryId}`);
       setItineraries(prev => prev.filter(itinerary => itinerary.id !== itineraryId));
@@ -201,7 +177,6 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     const updatedItineraryData = {
       id: editingItinerary.id,
       creator_id: editingItinerary.creator_id,
-      //member_id: editingItinerary.member_id,
       name: itineraryName,
       notes: itineraryNotes,
       begin: selectedDates[0].toISOString(),
@@ -232,16 +207,28 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
           {editingItinerary ? 'Edit Itinerary' : 'Choose Dates for Your Trip'}
         </Typography>
 
+        {partyName && (
+  <Typography variant="h6" align="center" color="secondary">
+    Party: {partyName}
+  </Typography>
+)}
+
+{passeditineraryName && !editingItinerary && (
+  <Typography variant="h6" align="center" color="primary">
+    Viewing: {passeditineraryName}
+  </Typography>
+)}
+
+
         {error && <Typography color="error">{error}</Typography>}
 
-        <Box display="flex" justifyContent="center" alignItems="center" my={2}>
-          <DateCalendar
-            value={startDate || endDate}
-            onChange={handleDateChange}
-            views={['day']}
-            slots={{
-              day: CustomPickersDay,
-            }}
+          <Box display="flex" justifyContent="center" alignItems="center" my={2}>
+          <Calendar
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
+            setSelectedDates={setSelectedDates}
           />
         </Box>
 
@@ -298,9 +285,11 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                 <Button variant="contained" color="secondary" onClick={() => handleEditClick(itinerary)}>
                   Edit
                 </Button>
-                <Button variant="contained" color="error" onClick={() => handleDelete(itinerary.id)}>
+                {user.id === itinerary.creatorId &&(
+                <Button variant="contained" color="error" onClick={() => handleDelete(itinerary.id, itinerary.creatorId)}>
                   Delete
                 </Button>
+                )}
               </CardActions>
               <Activity itineraryId={itinerary.id} addActivity={addActivityToItinerary} />
             </Card>

@@ -122,13 +122,11 @@ const App: React.FC = () => {
         <Route
           path='/itinerary'
           element={
-            <ProtectedRoute>{user && <Itinerary user={user} itinerary={{
-              id: 0,
-              name: '',
-              description: ''
-            }} />}</ProtectedRoute>
+            <ProtectedRoute>{user && <Itinerary user={user} />}</ProtectedRoute>
           }
         />
+
+        <Route path="/itinerary/:id" element={<Itinerary user={user} />} />
 
         <Route
           path='/budgetbuddy'

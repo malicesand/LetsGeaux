@@ -152,9 +152,8 @@ const Suggestion: React.FC<SuggestionProps> = ({
 
   const handleVoteClick = (polarity: string) => {
     const { id } = user;
-    console.log('id fer user')
+    const userId = id
     const { id: suggestionId } = currentSuggestion;
-    console.log('got suggestionstuff')
     const pol = polarity === 'up' ? 1 : 0
     const vote = {
       // details: {
@@ -165,11 +164,8 @@ const Suggestion: React.FC<SuggestionProps> = ({
       }
       // }
     }
-    console.log('user.id', id);
-    console.log('defined vote details')
     let voteDirection;
-    axios.post('api/vote', vote).then(() => {
-      console.log('into the post')
+    axios.post(`api/vote/${userId}/${suggestionId}`, vote).then(() => {
       if (polarity === 'up') {
         voteDirection = 'upVotes';
       } else {
