@@ -10,9 +10,9 @@ import { PrismaClient } from "@prisma/client";
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const prisma = new PrismaClient
 
-import partyRoute from './routes/party';
 
 // Import route modules
+import partyRoute from './routes/party';
 import budgetRoutes from './routes/budget';
 import suggestionRouter from './routes/suggestions';
 import usersRoute from './routes/users';
@@ -34,7 +34,7 @@ app.use(express.json());
 
 const port = 8000;
 app.use(cors({
-  origin: 'http://localhost:8000', 
+  origin: 'http://localhost:3000', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // 
   credentials: true, // missing so cookies werent sent which breaks session based auth
@@ -189,7 +189,7 @@ app.get('/', isAuthenticated, (req, res) => {
 
 // Catch-all route to handle all other paths and return the front-end app
 app.get('*/', (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.path);
+  // console.log(req.path);
   if (req.path.startsWith('/api') || req.path.startsWith('/auth') || req.path.startsWith('/logout')) {
     return next();
   }
