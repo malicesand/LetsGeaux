@@ -44,25 +44,9 @@ voteRouter.post('/:userId/:typeId/:type', async (req: any, res: any) => {
   }
 })
 
-/**
- * UPSERT EXAMPLE:
- * await prisma.like.upsert({
-  where: {
-    likeId: {
-      userId: 1,
-      postId: 1,
-    },
-  },
-  update: {
-    userId: 2,
-  },
-  create: {
-    userId: 2,
-    postId: 1,
-  },
-})
 
-IF THE VOTE DISPLAYED HAS A USER ASSOCIATED, THE VOTE BUTTON WILL DO... SOMETHING
+
+/*IF THE VOTE DISPLAYED HAS A USER ASSOCIATED, THE VOTE BUTTON WILL DO... SOMETHING
  */
 // UNDO A LIKE
 // voteRouter.delete().then().catch();
