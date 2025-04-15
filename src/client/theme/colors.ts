@@ -1,18 +1,35 @@
-// import { createTheme, alpha, getContrastRatio } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 
-// const violetBase = '#7F00FF';
-// const redButton = 'rgb(235, 0, 51)';
 
-// const theme = createTheme({
-//   palette: {
-//     red: {
-//       main: violetMain,
-//       light: alpha(violetBase, 0.5),
-//       dark: alpha(violetBase, 0.9),
-//       contrastText: getContrastRatio(violetMain, '#fff') > 4.5 ? '#fff' : '#111',
-//     },
-//   },
-// });
+const theme = createTheme({
+  palette: {
+  //  background: {
+  //   main: '#FDFD96'
+  //  },
+   primary: {
+     main: '#9723C9'
+   },
+   secondary: {
+      main: '#2FFF2F'
+   }
+  },
+  typography: {
+    fontFamily: 'Lexend Mega',
+    htmlFontSize: 16,
+    body1: {
+      fontFamily: 'DM Sans'
+    },
+    button: {
+
+    },
+    h1: {
+      fontFamily: 'Lexexend Mega',
+      fontSize: 40,
+      fontWeight: 900
+    }
+
+  },
+});
 
 //TODO Theme MA and Danielle
   //* Pick primary color

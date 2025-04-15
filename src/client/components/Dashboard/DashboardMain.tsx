@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { createTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import CreateGroup from './CreateGroup';
 // import BudgetPieChart from './BudgetPieChart'
@@ -57,7 +58,7 @@ const Dashboard: React.FC<DashboardProps>= ({ user }) => {
   return (
     <Box>
       <CreateGroup user={user} onPartyCreated={getUserParties}/>
-        <Typography >
+        <Typography variant='body1'>
           Your Travel Parties
         </Typography>
         <Box>
