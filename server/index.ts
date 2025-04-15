@@ -10,7 +10,7 @@ import { PrismaClient } from "@prisma/client";
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const prisma = new PrismaClient
 
-import groupRoute from './routes/group';
+import partyRoute from './routes/party';
 
 // Import route modules
 import budgetRoutes from './routes/budget';
@@ -174,7 +174,7 @@ app.use('/api/itinerary', itineraryRoute)
 app.use('/api/budget', budgetRoutes);
 app.use('/api/activity', activityRouter);
 app.use('/api/vote', voteRouter);
-app.use('/api/group', groupRoute);
+app.use('/api/party', partyRoute);
 app.use('/api/community', communityRouter);
 app.use('/api/posts', postsRouter);
 app.use('/api/comments', commentsRouter);
