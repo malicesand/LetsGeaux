@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Suggestion from '../Suggestion.tsx';
+
 import { Container, Typography, List, Card, Paper, Grid, Button, } from '@mui/material';
 import { user } from '../../../../types/models.ts';
 
@@ -14,6 +14,11 @@ interface CommentProps {
 const Comment: React.FC<CommentProps> = ({user, getAllComments, currentComment}) => {
   const { body, postName, id } = currentComment;
 
+  const [hasLiked, setHasLiked] = useState(false);
+
+
+
+
 const userId = user.id
 
 
@@ -24,17 +29,25 @@ const userId = user.id
     }).catch((err) => console.error('unable to delete', err))
   }
 
+// const checkUserForLikes = () = {
 
-  const handleVoteClick = (polarity: string) => {
+// }
+
+
+
+  const handleVoteClick = () => {
     const { id } = user;
     const userId = id;
     const { id: commentId } = currentComment;
-    const pol = 1;
     const vote = {
-      userId: id,
-      commentId,
-      polarity: 1,
+      data:
+      {
+        userId: id,
+        commentId,
+        polarity: 1,
+      }
     }
+    axios.post(`api/vote/${userId}/${commentId}/comment`, vote).then(() => {}).catch((err) => console.error('failed to place vote', err))
   }
 
 
