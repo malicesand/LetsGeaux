@@ -9,19 +9,31 @@ const prisma = new PrismaClient();
 // voteRouter.get().then().catch();
 // check with working votes for what comes in the req.body
 // BEFORE changing the post to upsert..
-voteRouter.post('/:id/:suggestionId', async (req: any, res: any) => {
-  const { userId, suggestionId } = req.params;
-
+voteRouter.post('/:userId/:typeId/:type', async (req: any, res: any) => {
+  const { userId, typeId, type } = req.params;
+  // creating an object for the where portion of upsert. start w user id, split off at type
+  // const id = userId
+  const typeCheck = {
+    id: +userId,
+  };
+  switch (type) {
+    case "suggestion":
+      typeCheck.suggestionId = +typeId;
+      break;
+    case "post":
+      typeCheck.postId = +typeId;
+      break;
+    case "comment":
+      typeCheck.commentId = +typeId;
+      break;
+  }
   try {
   const makeOneVote = await prisma.vote.upsert({
-    where: {
-        userId: +userId,
-        suggestionId: +suggestionId,
-    },
-    create: req.body.data,
+    where: typeCheck,
     update: {
       polarity: req.body.data.polarity
-    }
+    },
+    create: req.body.data,
 
   })
   console.log('after the create..')
