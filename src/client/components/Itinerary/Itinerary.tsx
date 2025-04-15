@@ -14,6 +14,7 @@ import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx'; 
 import { useParams, useLocation } from 'react-router-dom';
 import Calendar from './Calendar.tsx';
+import { userInfo } from 'os';
 
 
 
@@ -148,8 +149,16 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     setEndDate(end);
   };
 
-  // Handle delete of an itinerary
-  const handleDelete = async (itineraryId: number) => {
+  // Handle delete of an itinerary, creator only
+  const handleDelete = async (itineraryId: number, creatorId: number) => {
+    if(user.id !== creatorId){
+      alert("Only the creator can delete this itinerary.");
+    return;
+  }
+  // conirm deletion
+  const confirmDelete = window.confirm("Are you sure you want to delete this itinerary?");
+  if (!confirmDelete) return;
+    
     try {
       await axios.delete(`/api/itinerary/${itineraryId}`);
       setItineraries(prev => prev.filter(itinerary => itinerary.id !== itineraryId));
@@ -276,9 +285,11 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                 <Button variant="contained" color="secondary" onClick={() => handleEditClick(itinerary)}>
                   Edit
                 </Button>
-                <Button variant="contained" color="error" onClick={() => handleDelete(itinerary.id)}>
+                {user.id === itinerary.creatorId &&(
+                <Button variant="contained" color="error" onClick={() => handleDelete(itinerary.id, itinerary.creatorId)}>
                   Delete
                 </Button>
+                )}
               </CardActions>
               <Activity itineraryId={itinerary.id} addActivity={addActivityToItinerary} />
             </Card>
