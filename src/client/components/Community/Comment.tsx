@@ -28,7 +28,6 @@ const userId = user.id
   return (
     <Container>
         <Typography>{body}</Typography>
-        <div>{id}</div>
         <Typography>By: {postName}</Typography>
         <Button>Like 🚀</Button>
         <Button onClick={deleteComment} >Delete 💣</Button>
