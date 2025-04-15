@@ -15,6 +15,7 @@ import MessageBoard from './MessageBoard';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
 import AddItinerary from './AddItinerary';
+// import Itinerary from '../Itinerary/Itinerary.tsx';
 import { user } from '../../../../types/models.ts';
 
 interface PartyDashboardProps {
@@ -62,7 +63,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
 
   const getUsersForParty = async (partyId: number) => {
     try {
-      const response = await axios.get(`/api/group/usersInParty/${partyId}`);
+      const response = await axios.get(`/api/party/usersInParty/${partyId}`);
       const users = response.data;
       const usernames = users.map((user:user) => user.username)
       setPartyMembers(usernames);
@@ -77,12 +78,12 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
 
   const closeModal = () => {
     setOpen(false);
-  };
+  }; 
 
   //* Send E-Vite *//
-  const sendEmail = async(emailList: string[], partyName:string) => {
+  const sendEmail = async(emailList: string[], partyName: string) => {
     try {
-      await axios.post('/api/group/sendInvite', { emails: emailList, partyName });
+      await axios.post('/api/party/sendInvite', { email: emailList, partyName: partyName });
       setInviteSuccess(true);
       setInputValue('');
       setEmails([]);

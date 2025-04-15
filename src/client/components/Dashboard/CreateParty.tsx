@@ -58,6 +58,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
   const addUserToParty = async(userId:number, partyId:number, partyName: string) => {
     try {
       let response = await axios.post('/api/party/userParty', {userId, partyId});
+      console.log(`Success at Create.tsx ${partyName}`, response.data)
     } catch (error) {
       console.error('Could not create new userParty model', error);
     }
