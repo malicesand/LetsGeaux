@@ -188,8 +188,9 @@ app.get('/', isAuthenticated, (req, res) => {
 });
 
 // Catch-all route to handle all other paths and return the front-end app
-app.get('*', (req: Request, res: Response, next: NextFunction) => {
-  if (req.path.startsWith('api') || req.path.startsWith('auth') || req.path.startsWith('logout')) {
+app.get('*/', (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.path);
+  if (req.path.startsWith('/api') || req.path.startsWith('/auth') || req.path.startsWith('/logout')) {
     return next();
   }
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
