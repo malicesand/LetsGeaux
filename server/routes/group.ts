@@ -7,21 +7,19 @@ const prisma = new PrismaClient();
 
 // * Create Travel Party * //
 groupRoute.post('/', async (req: any, res: any) => {
-  // console.log(req.body)
   const {name} = req.body;
   try {
     const newParty = await prisma.party.create({data: { name }});
-    console.log('successfully created new travel party', newParty)
+    console.log(`Request complete: Create Party ${name}`)
     res.json(newParty)
   } catch(error) {
-    console.error('failed to create new party', error);
+    console.error(`Failure: Create Party ${name}`, error);
     res.status(500).json({ error:'failure creating party'});
   }
 });
 
 //* Add Existing User to Party *//
 groupRoute.post('/userParty', async (req: any, res: any) => {
-  console.log(`userPost creation${req.body}`)
   const {userId, partyId, } = req.body;
 
   try {
@@ -32,12 +30,12 @@ groupRoute.post('/userParty', async (req: any, res: any) => {
       }
     });
     
-    console.log("successfully added user to party",addUserToParty)
+    console.log('Request complete: Add User to Party')
     res.json(addUserToParty)
 
   } catch(error) {
-    console.error('failed to create new user party', error);
-    res.status(500).json({ error:'failure creating party'});
+    console.error('Failure: Add User to Party', error);
+    res.status(500).json({ error:'Failure: Add User to Party'});
   }
 })
 
@@ -62,7 +60,6 @@ groupRoute.post('/sendInvite', async (req: any, res:any) => {
   });
   try {
     await Promise.all(sendPromises);
-    console.log('Invites sent')
     res.json({message: 'Invites sent successfully'});
   } catch (error){
     console.error('Error sending invites:', error);
@@ -79,7 +76,6 @@ groupRoute.get('/userParty/:userId', async (req: any, res: any) => {
         userId: +userId,
       },
     })
-    // console.log('Found parties for user', parties);
     res.json(parties);
   } catch (error) {
     console.error('Could not find any parties for user');
@@ -118,11 +114,36 @@ groupRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
       },
     });
     const users = usersInParty.map(entry => entry.user);
-    console.log(users)
-    res.json(users); 
   } catch (error) {
     console.error('failed to find members for this travel party', error);
     res.status(500).json({ error: 'Could not fetch users in the party'});
   }
 });
+
+groupRoute.delete('/:partyId', async (req: any, res: any) => {
+  const {partyId} = req.params;
+  // delete userParties
+  const deleteUserParties = prisma.userParty.deleteMany({
+    where: {
+      partyId: +partyId,
+    },
+  })
+  // delete party
+  const deleteParty = prisma.party.delete({
+    where: {
+      id: +partyId,
+    },
+  })
+  // TODO add email to transaction? 
+  try { 
+    // transaction
+    const transaction = await prisma.$transaction([deleteUserParties, deleteParty]);
+    console.log(`Transaction Complete: Delete Party ${partyId}`);
+    res.status(200).json(`Transaction Complete: Delete Party ${partyId}`);
+  } catch (error) {
+    console.log(`Transaction Failure: Delete Party ${partyId}`, error);
+    res.status(500).json({ error: `Transaction Failure: Delete Party ${partyId}`});
+  };
+  
+})
 export default groupRoute;
