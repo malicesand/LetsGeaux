@@ -1,12 +1,12 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import sgMail from '@sendgrid/mail';
-const groupRoute = express.Router();
+const partyRoute = express.Router();
 const prisma = new PrismaClient();
 
 
 // * Create Travel Party * //
-groupRoute.post('/', async (req: any, res: any) => {
+partyRoute.post('/', async (req: any, res: any) => {
   // console.log(req.body)
   const {name} = req.body;
   try {
@@ -20,7 +20,7 @@ groupRoute.post('/', async (req: any, res: any) => {
 });
 
 //* Add Existing User to Party *//
-groupRoute.post('/userParty', async (req: any, res: any) => {
+partyRoute.post('/userParty', async (req: any, res: any) => {
   console.log(`userPost creation${req.body}`)
   const {userId, partyId, } = req.body;
 
@@ -43,7 +43,7 @@ groupRoute.post('/userParty', async (req: any, res: any) => {
 
 //* Inviting Users to LetsGeaux Via Email *//
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-groupRoute.post('/sendInvite', async (req: any, res:any) => {
+partyRoute.post('/sendInvite', async (req: any, res:any) => {
   const {emails, partyName} = req.body
   console.log(partyName);
   console.log(emails);
@@ -71,7 +71,7 @@ groupRoute.post('/sendInvite', async (req: any, res:any) => {
 });
 
 // * Get A User's Parties * //
-groupRoute.get('/userParty/:userId', async (req: any, res: any) => {
+partyRoute.get('/userParty/:userId', async (req: any, res: any) => {
   const {userId} = req.params;
   try {
     let parties = await prisma.userParty.findMany({
@@ -88,7 +88,7 @@ groupRoute.get('/userParty/:userId', async (req: any, res: any) => {
 })
 
 // * Get a Party * //
-groupRoute.get('/:partyId', async(req: any, res: any) => {
+partyRoute.get('/:partyId', async(req: any, res: any) => {
   const {partyId} = req.params;
   try {
     let partyInfo = await prisma.party.findUnique({
@@ -105,7 +105,7 @@ groupRoute.get('/:partyId', async(req: any, res: any) => {
 })
 
 // * Get the Members of the Travel Party * //
-groupRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
+partyRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
   const {partyId} = req.params;
 
   try {
@@ -118,11 +118,10 @@ groupRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
       },
     });
     const users = usersInParty.map(entry => entry.user);
-    console.log(users)
     res.json(users); 
   } catch (error) {
     console.error('failed to find members for this travel party', error);
     res.status(500).json({ error: 'Could not fetch users in the party'});
   }
 });
-export default groupRoute;
+export default partyRoute;
