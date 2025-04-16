@@ -82,8 +82,8 @@ const handleVoteClick = () => {
       axios.patch(`api/posts/likes/${currentPost.id}`, ballot);
     })
     .then(() => {
-      setHasLiked(true);
       getAllPosts();
+      setHasLiked(true);
     }).catch((err) => console.error('failed to cast vote', err));
 }
 

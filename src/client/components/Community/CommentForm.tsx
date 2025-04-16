@@ -26,7 +26,7 @@ interface CommentFormProps {
 const CommentForm: React.FC<CommentFormProps> = ({user, postId, getAllComments}) => {
   const [commentEditMode, setCommentEditMode] = useState()
   const form = useForm();
-  const { register, handleSubmit, setValue, setError, formState: { isSubmitting, errors } } = useForm<FormFields>({
+  const { register, handleSubmit, reset, setValue, setError, formState: { isSubmitting, errors } } = useForm<FormFields>({
     defaultValues: {
       body: '',
     }
@@ -45,6 +45,7 @@ const CommentForm: React.FC<CommentFormProps> = ({user, postId, getAllComments})
 
     axios.post(`/api/comments`, commentBody)
     .then(() => {
+      reset();
       getAllComments();
     })
     .catch((err) => console.error('unable to post comment', err))

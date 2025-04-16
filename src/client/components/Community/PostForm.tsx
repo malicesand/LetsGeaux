@@ -27,7 +27,7 @@ type FormFields = {
 const PostForm: React.FC<PostFormProps>= ({ user, getAllPosts }) => {
   const [postEditMode, setPostEditMode] = useState(false);
   const form = useForm();
-  const { register, handleSubmit, setValue, setError, formState: { isSubmitting, errors } } = useForm<FormFields>({
+  const { register, handleSubmit, reset, setValue, setError, formState: { isSubmitting, errors } } = useForm<FormFields>({
     defaultValues: {
       body: ''
     }
@@ -46,6 +46,7 @@ const PostForm: React.FC<PostFormProps>= ({ user, getAllPosts }) => {
 
     axios.post('/api/posts', postBody)
     .then(() => {
+      reset();
       getAllPosts();
     })
     .catch((err) => console.error("couldn't make post", err));
