@@ -30,7 +30,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const searchParams = new URLSearchParams(location.search);
   const partyName = searchParams.get('name');
   
-  const [partyInfo, setPartyInfo] = useState<{id: number, name: string}[]>([])
+  // const [partyInfo, setPartyInfo] = useState<{id: number, name: string}[]>([])
   const [partyMembers, setPartyMembers] = useState<string[]>([]);
   // const userId = user.id //? delete
   const [open, setOpen] = React.useState(false);
@@ -38,27 +38,13 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const [emails, setEmails] = React.useState<string[]>([])
   const [inviteSuccess, setInviteSuccess] = useState(false); 
 
-  if(!partyId || !partyName) {
-    return <div>Loading party dashboard...</div>
-  }
+  // if(!partyId || !partyName) {
+  //   return <div>Loading party dashboard...</div>
+  // }
   useEffect(() => {
     getUsersForParty(numericPartyId);
-    // const checkAuth = async () => {
-    //   try {
-    //     const response = await axios.get('/api/check-auth');
-    //     setIsAuthenticated(response.data.isAuthenticated);
-
-    //     if (response.data.isAuthenticated) {
-    //       const fetchedUser: user = response.data.user;
-    //       setUser(fetchedUser);
-    //       localStorage.removeItem('sessionId');
-    //     }
-    //   } catch (error) {
-    //     setIsAuthenticated(false);
-    //     console.error('Server: Err checking auth status', error);
-    //   }
-    // };
-    // checkAuth();
+    //! LOG TRUE console.log(`${partyName} @ useEffect party dash`) 
+    console.log(typeof partyName)
   },[numericPartyId])
 
   const getUsersForParty = async (partyId: number) => {
@@ -81,9 +67,10 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   }; 
 
   //* Send E-Vite *//
-  const sendEmail = async(emailList: string[], partyName: string) => {
+  const sendEmail = async(emailList: string[], partyName: string ) => { 
+    console.log(`${partyName} @ send email party dash`)
     try {
-      await axios.post('/api/party/sendInvite', { email: emailList, partyName: partyName });
+      await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName });
       setInviteSuccess(true);
       setInputValue('');
       setEmails([]);
@@ -116,7 +103,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
             >
             </Box>
               {partyMembers.map((member) => {
-                console.log(`${member} in map`);
+                // console.log(`${member} in map`);
                 return (
                   
                 <Box key='member' component='li'>
@@ -160,7 +147,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
             <Button 
               sx={{ mt: 1 }}
               variant='outlined'
-              onClick={() => sendEmail(emails, inputValue)} disabled={emails.length === 0}
+              onClick={() => sendEmail(emails, partyName)} disabled={emails.length === 0}
               >
               Invite
             </Button>
