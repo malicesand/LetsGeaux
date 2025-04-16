@@ -21,6 +21,14 @@ const Comment: React.FC<CommentProps> = ({user, getAllComments, currentComment})
     const { id: commentId } = currentComment;
     axios.delete(`api/vote/${userId}/${commentId}/comment`)
     .then(() => {
+      const ballot = {
+        data: {
+          direction: "down",
+        },
+      }
+      axios.patch(`api/comments/likes/${currentComment.id}`, ballot);
+    })
+    .then(() => {
       setHasLiked(false);
       getAllComments();
     }).catch((err) => console.error('unable to delete', err))
@@ -33,6 +41,9 @@ useEffect(() => {
 }, []);
 
 const userId = user.id
+
+
+
 
 
   const deleteComment = () => {
@@ -74,6 +85,14 @@ const userId = user.id
     }
     axios.post(`api/vote/${userId}/${commentId}/comment`, vote)
     .then(() => {
+      const ballot = {
+        data: {
+          direction: "up",
+        },
+      }
+      axios.patch(`api/comments/likes/${currentComment.id}`, ballot);
+    })
+    .then(() => {
       setHasLiked(true);
       getAllComments();
     })
@@ -87,6 +106,7 @@ const userId = user.id
     <Container>
         <Typography>{body}</Typography>
         <Typography>By: {postName}</Typography>
+        <Typography>Likes: {currentComment.likes}</Typography>
         {hasLiked ? (
           <Button onClick={handleVoteDeleteClick}>Unlike</Button>
         ) : (

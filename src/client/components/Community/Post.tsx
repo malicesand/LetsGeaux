@@ -120,6 +120,7 @@ const deletePost = () => {
         <Button onClick={deletePost}>Delete this post 💣</Button>
       <Typography> {body}</Typography>
       <Typography>By: {postName}</Typography>
+      <Typography>Likes: {currentPost.likes}</Typography>
       {!hasLiked
        ? (
          <Button onClick={handleVoteClick} >Like 🚀</Button>
