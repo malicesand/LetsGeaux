@@ -204,6 +204,12 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
+
+  <Route path='/calendar' element={
+          <ProtectedRoute>
+            <Calendar />
+          </ProtectedRoute>
+        } />
       </Routes>
 
     </>
