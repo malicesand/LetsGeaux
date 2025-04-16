@@ -7,16 +7,17 @@ const prisma = new PrismaClient();
 //'/:id/:itemId/:type'
 //pulling votes to check for matches on client side
 voteRouter.get(`/:userId/:typeId/:type`, async (req:any, res:any) => {
-const {userId, typeId, type} = req.params;
-
-const findTypeObj = {
-  userId: +userId
-}
-
-if (type === 'comment') {
-findTypeObj.commentId = +typeId;
-} else if (type === 'post') {
-  findTypeObj.postId = +type.id;
+  const { userId, typeId, type } = req.params
+  console.log('user comin in', userId, /*'type comin in', typeId, 'type name', type*/)
+  const findTypeObj = {
+    userId: +req.params.userId
+  }
+  const voteCategoryId = typeId;
+  if (type === 'comment') {
+    findTypeObj.commentId = +voteCategoryId;
+  } else if (type === 'post') {
+  
+  findTypeObj.postId = +voteCategoryId;
 }
 console.log('obj', findTypeObj)
 try {
@@ -25,20 +26,11 @@ const idForChecking = await prisma.vote.findFirst({
 })
 // console.log('the checking id', idForChecking)
 if (idForChecking !== null) {
-
-  const typeCheckObj = {
-    id: idForChecking.id
-  }
-  
-  if (type === 'comment') {
-    typeCheckObj.commentId = +typeId;
-  } else if (type === 'post') {
-    typeCheckObj.postId = +type.id;
-  }
-  
-  
+console.log('this is the checking object', idForChecking)
   const allMatches = await prisma.vote.findFirst({
-    where: typeCheckObj,
+    where: {
+      id: idForChecking.id
+    }
   })
   res.status(200).send(allMatches);
 } else {
@@ -55,14 +47,14 @@ if (idForChecking !== null) {
 })
 // check with working votes for what comes in the req.body
 // BEFORE changing the post to upsert..
-voteRouter.post('/:userId/:typeId/:type', async (req: any, res: any) => {
-  const { userId, typeId, type } = req.params;
-  // creating an object for the where portion of upsert. start w user id, split off at type
+voteRouter.post('/:userId/:typeId/:voteType', async (req: any, res: any) => {
+  const { userId, typeId, voteType } = req.params;
+  // creating an object for the where portion of upsert. start w user id, split off at voteType
   // const id = userId
   const typeCheck = {
     id: +userId,
   };
-  switch (type) {
+  switch (voteType) {
     case "suggestion":
       typeCheck.suggestionId = +typeId;
       break;
@@ -72,9 +64,9 @@ voteRouter.post('/:userId/:typeId/:type', async (req: any, res: any) => {
     case "comment":
       typeCheck.commentId = +typeId;
       break;
+
   }
   try {
-    console.log('the req', req.body)
   const makeOneVote = await prisma.vote.upsert({
     where: typeCheck,
     update: {
@@ -95,20 +87,23 @@ voteRouter.post('/:userId/:typeId/:type', async (req: any, res: any) => {
 /*IF THE VOTE DISPLAYED HAS A USER ASSOCIATED, THE VOTE BUTTON WILL DO... SOMETHING
  */
 // UNDO A LIKE
-voteRouter.delete(`/:userId/:typeId/:type`, async (req: any, res: any) => {
-  const {userId, typeId, type } = req.params;
+voteRouter.delete(`/:userId/:typeId/:voteType`, async (req: any, res: any) => {
+  const {userId, typeId, voteType } = req.params;
 
   // findingVote is the object that takes either a comment or post and looks for its userId/typeId in the vote schema.
   // this object is constructed to add suggestions more easily if needed
+  console.log('control flow')
   const findingVote = {
     userId: +userId
   }
   
-  if (type === 'comment') {
+  if (voteType === 'comment') {
     findingVote.commentId = +typeId;
-  } else if (type === 'post') {
-    findingVote.postId = +type.id;
+  } else if (voteType === 'post') {
+    findingVote.postId = +voteType.id;
   }
+  console.log('nekkid post id', postId)
+  console.log('finding vote', findingVote)
   try {
     // query for the first vote that matches  the values specified above
     const findVote = await prisma.vote.findFirst({
@@ -116,21 +111,13 @@ voteRouter.delete(`/:userId/:typeId/:type`, async (req: any, res: any) => {
     })
     if (findVote) {
       // this is the object for comparison with the newly found voteId. Thinking I can possibly just use this value to delete, now
-      const deletedVote = {
-        id: +findVote.id
-      }
-      
-      if (type === 'comment') {
-        deletedVote.commentId = +typeId;
-      } else if (type === 'post') {
-        deletedVote.postId = +type.id;
-      }
-      
       console.log('found', findVote)
       const loseVote = await prisma.vote.delete({
-        where: deletedVote,
+        where: {
+          id: +findVote.id
+        }
       })
-      console.log(loseVote);
+      // console.log(loseVote);
       res.status(200).send('successful deletion');
     } else {
       res.status(404).send('no vote found');

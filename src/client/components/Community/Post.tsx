@@ -73,7 +73,8 @@ const handleVoteClick = () => {
       polarity: 1
     }
   }
-    axios.post(`api/vote/${userId}/${postId}/post`, vote).then(() => {
+  console.log('topside postId',typeof postId)
+    axios.post(`api/vote/${userId}/${+postId}/post`, vote).then(() => {
       setHasLiked(true);
       getAllPosts();
     }).catch((err) => console.error('failed to cast vote', err));
