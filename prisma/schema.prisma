@@ -92,7 +92,7 @@ model comment {
 
 model itinerary {
   id        Int        @id @default(autoincrement())
-  partyId   Int?
+  partyId   Int?       @unique
   name      String     @db.VarChar(50)
   begin     DateTime
   end       DateTime
@@ -169,8 +169,8 @@ model userInterest {
 model party {
   id           Int            @id @default(autoincrement())
   name         String         @db.VarChar(50)
-  itineraryId  Int?
-  itinerary    itinerary[]
+  itineraryId  Int?           @unique
+  itinerary    itinerary? 
   image        image[]
   userParty    userParty[]
   budget       budget[]

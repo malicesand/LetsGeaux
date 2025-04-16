@@ -9,9 +9,25 @@ const itineraryRoute = express.Router();
 
 //GET all itineraries for the logged-in user (creator)
 itineraryRoute.get('/', async (req: any, res: any) => {
+  const userId = req.user.id;
+
   try {
+    // Find partyIds the user is in
+    const userParties = await prisma.userParty.findMany({
+      where: { userId },
+      select: { partyId: true },
+    });
+
+    const partyIds = userParties.map(p => p.partyId);
+
+    // Fetch itineraries created by user OR attached to a party the user is in
     const itineraries = await prisma.itinerary.findMany({
-      where: { creatorId: req.user.id },
+      where: {
+        OR: [
+          { creatorId: userId },
+          { party: { id: { in: partyIds } } },
+        ],
+      },
     });
     res.status(200).json(itineraries);
   } catch (error) {
@@ -62,9 +78,19 @@ itineraryRoute.post('/', async (req: any, res: any) => {
         downVotes: downVotes ?? 0, 
         createdAt: new Date(), 
         viewCode, // 
-        partyId, 
+        partyId: partyId ? Number(partyId) : null
       },
     });
+
+    // update party to new itinerary
+if (partyId) {
+  await prisma.party.update({
+    where: { id: Number(partyId) },
+    data: {
+      itineraryId: newItinerary.id, 
+    },
+  });
+}
 
     res.status(201).json(newItinerary);
     
@@ -83,16 +109,25 @@ itineraryRoute.patch('/:id', async (req: any, res: any) => {
   try {
     const itinerary = await prisma.itinerary.findUnique({
       where: { id: Number(id) },
-      include: { party: true },
     });
 
     if (!itinerary) return res.status(404).json({ error: 'Itinerary not found' });
 
     const userId = req.user.id;
-    const userPartyId = req.user.partyId;
+
+
+   let isInParty = false;
+    if (itinerary.partyId) {
+      const userParty = await prisma.userParty.findFirst({
+        where: {
+          userId,
+          partyId: itinerary.partyId,
+        },
+      });
+      isInParty = !!userParty;
+    }
 
     const isCreator = itinerary.creatorId === userId;
-    const isInParty = itinerary.partyId && itinerary.partyId === userPartyId;
 
     if (!isCreator && !isInParty) {
       return res.status(403).json({ error: 'You are not authorized to update this itinerary' });
