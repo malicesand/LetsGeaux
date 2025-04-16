@@ -69,24 +69,30 @@ model suggestion {
 }
 
 model post {
-  id       Int       @id @default(autoincrement())
-  user     user      @relation(fields: [userId], references: [id])
-  body     String    @db.VarChar(255)
-  userId   Int
-  postName String    @db.TinyText
-  vote     vote[]
-  comment  comment[]
+  id        Int       @id @default(autoincrement())
+  user      user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  body      String    @db.VarChar(255)
+  userId    Int
+  likes     Int       @default(0)
+  dislikes  Int       @default(0)
+  createdAt DateTime  @default(now())
+  postName  String?   @db.TinyText
+  vote      vote[]
+  comment   comment[]
 }
 
 model comment {
-  id       Int    @id @default(autoincrement())
-  user     user   @relation(fields: [userId], references: [id])
-  post     post?  @relation(fields: [postId], references: [id])
-  userId   Int
-  postName String @db.TinyText
-  body     String @db.VarChar(255)
-  vote     vote[]
-  postId   Int
+  id        Int      @id @default(autoincrement())
+  user      user     @relation(fields: [userId], references: [id])
+  post      post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    Int
+  likes     Int      @default(0)
+  dislikes  Int      @default(0)
+  createdAt DateTime @default(now())
+  postName  String?  @db.TinyText
+  body      String   @db.VarChar(255)
+  vote      vote[]
+  postId    Int
 }
 
 model itinerary {

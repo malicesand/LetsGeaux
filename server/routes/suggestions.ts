@@ -123,12 +123,13 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
     const userInterest =
       await prisma.$queryRaw`SELECT name FROM interest WHERE id IN (SELECT interestId FROM userInterest WHERE userId = ${id})`;
     // console.log('fingers crossed for an interest:', userInterest[0])
-    // if (userInterest[0]) {
-    const { name } = userInterest[0];
+    let query;
+    if (userInterest[0]) {
+      const { name } = userInterest[0];
+      query = name.toLowerCase();
+    }
     // console.log('parsed:', name);
-    const locations: number[] = await getTripadvisorLocationIds(
-      name.toLowerCase()
-    )
+    const locations: number[] = await getTripadvisorLocationIds(query)
       .then((locationArray) => {
         //     console.log('locationArray', locationArray);
 
