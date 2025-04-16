@@ -21,9 +21,7 @@ partyRoute.post('/', async (req: any, res: any) => {
 
 //* Add Existing User to Party *//
 partyRoute.post('/userParty', async (req: any, res: any) => {
-  console.log(`userPost creation${req.body}`)
   const {userId, partyId, } = req.body;
-
   try {
     const addUserToParty = await prisma.userParty.create({
       data: {
@@ -31,10 +29,8 @@ partyRoute.post('/userParty', async (req: any, res: any) => {
        partyId: +partyId
       }
     });
-    
     console.log('Request complete: Add User to Party')
     res.json(addUserToParty)
-
   } catch(error) {
     console.error('Failure: Add User to Party', error);
     res.status(500).json({ error:'Failure: Add User to Party'});
@@ -52,13 +48,13 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
   }
   const sendPromises = emails.map((email: string) => {
     const msg = {
-      to: email, // Change to your recipient
-      from: 'invite@letsgeauxnola.com', // Change to your verified sender
+      to: email, 
+      from: 'invite@letsgeauxnola.com', 
       subject: 'Join me on Lets Geaux Nola!',
       text: `Join my travel party ${partyName} on LetsGeauxNola.com!`,
-      html: `<strong>Join my travel party ${partyName} on LetsGeauxNola.com!</strong>`,
+      html: `<strong>Join my travel party ${partyName} on LetsGeauxNola.com!</strong>`, // TODO fix html
     };
-    return sgMail.send(msg)
+    return sgMail.send(msg) // TODO call post emails?
   });
   try {
     await Promise.all(sendPromises);
@@ -68,6 +64,28 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
     res.status(500).json({ error: 'Failed to send some or all invites' })
   }
 });
+
+//* Create Email Record *//
+partyRoute.post('/emails', async (req: any, res: any) => {
+  const {address, sender} = req.body;
+  
+  console.log(req.body, 'body');
+  console.log(address, 'address');
+  console.log(sender, 'sender');
+  try { 
+    const emailRecord = await prisma.emails.create({
+      data: {
+        address,
+        userId: +sender,
+      }
+    })
+    console.log(`Request Complete: Add Email Record ${address}`);
+    res.json(`Request Complete: Add Email Record ${address}`)
+  } catch (error) {
+    console.error(`Failure: Add Email Record ${address}`, error);
+    res.status(500).json({error: `Failure: Add Email Record ${address}`});
+  }
+})
 
 // * Get A User's Parties * //
 partyRoute.get('/userParty/:userId', async (req: any, res: any) => {
@@ -94,7 +112,6 @@ partyRoute.get('/:partyId', async(req: any, res: any) => {
         id: +partyId,
       }
     })
-    // console.log(`Found the userParty Names`);
     res.json(partyInfo);
   } catch (error) {
     console.error('Could not find any party names for this ID', error);
@@ -105,7 +122,6 @@ partyRoute.get('/:partyId', async(req: any, res: any) => {
 // * Get the Members of the Travel Party * //
 partyRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
   const {partyId} = req.params;
-
   try {
     const usersInParty = await prisma.userParty.findMany({
       where: {
@@ -126,21 +142,18 @@ partyRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
 //* Delete a Party *//
 partyRoute.delete('/:partyId', async (req: any, res: any) => {
   const {partyId} = req.params;
-  // delete userParties
   const deleteUserParties = prisma.userParty.deleteMany({
     where: {
       partyId: +partyId,
     },
   })
-  // delete party
   const deleteParty = prisma.party.delete({
     where: {
       id: +partyId,
     },
   })
-  // TODO add email to transaction? 
+  // TODO add email to transaction? Cascade?
   try { 
-    // transaction
     const transaction = await prisma.$transaction([deleteUserParties, deleteParty]);
     console.log(`Transaction Complete: Delete Party ${partyId}`);
     res.status(200).json(`Transaction Complete: Delete Party ${partyId}`);
