@@ -65,8 +65,9 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
   }; 
   //* Send E-Vite *//
   const sendEmail = async(emailList: string[], partyName:string) => {
+    console.log(partyName, 'create party')
     try {
-      await axios.post('/api/party/sendInvite', { emails: emailList, partyName });
+      await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName });
       setInviteSuccess(true);
       setInputValue('');
       setEmails([]);
@@ -144,7 +145,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
           <Button 
             sx={{ mt: 1 }}
             variant='outlined'
-            onClick={() => sendEmail(emails, inputValue)} disabled={emails.length === 0}
+            onClick={() => sendEmail(emails, partyName)} disabled={emails.length === 0}
             >
             Invite
           </Button>
