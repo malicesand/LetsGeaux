@@ -97,9 +97,12 @@ voteRouter.post('/:userId/:typeId/:type', async (req: any, res: any) => {
 // UNDO A LIKE
 voteRouter.delete(`/:userId/:typeId/:type`, async (req: any, res: any) => {
   const {userId, typeId, type } = req.params;
+<<<<<<< HEAD
 
   // findingVote is the object that takes either a comment or post and looks for its userId/typeId in the vote schema.
   // this object is constructed to add suggestions more easily if needed
+=======
+>>>>>>> e58e0e1a1bb1a96096695f451aa0f2c91dd3defd
   const findingVote = {
     userId: +userId
   }
@@ -110,12 +113,19 @@ voteRouter.delete(`/:userId/:typeId/:type`, async (req: any, res: any) => {
     findingVote.postId = +type.id;
   }
   try {
+<<<<<<< HEAD
     // query for the first vote that matches  the values specified above
+=======
+>>>>>>> e58e0e1a1bb1a96096695f451aa0f2c91dd3defd
     const findVote = await prisma.vote.findFirst({
       where: findingVote,
     })
     if (findVote) {
+<<<<<<< HEAD
       // this is the object for comparison with the newly found voteId. Thinking I can possibly just use this value to delete, now
+=======
+
+>>>>>>> e58e0e1a1bb1a96096695f451aa0f2c91dd3defd
       const deletedVote = {
         id: +findVote.id
       }
@@ -127,14 +137,20 @@ voteRouter.delete(`/:userId/:typeId/:type`, async (req: any, res: any) => {
       }
       
       console.log('found', findVote)
+<<<<<<< HEAD
       // querying the database for the above specified object, 
       // avoiding null values for the findVote.id with the if-statement
+=======
+>>>>>>> e58e0e1a1bb1a96096695f451aa0f2c91dd3defd
       const loseVote = await prisma.vote.delete({
         where: deletedVote,
       })
       console.log(loseVote);
       res.status(200).send('successful deletion');
+<<<<<<< HEAD
       // if findVote returns null, return 404.
+=======
+>>>>>>> e58e0e1a1bb1a96096695f451aa0f2c91dd3defd
     } else {
       res.status(404).send('no vote found');
     }
