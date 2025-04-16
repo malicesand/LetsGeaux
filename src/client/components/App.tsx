@@ -197,13 +197,6 @@ const App: React.FC = () => {
           }
         />
         <Route
-          path='/party/:partyId'
-          element={
-            <ProtectedRoute>
-              <PartyDashboard user={user} />
-            </ProtectedRoute>
-          }
-      <Route
           path='/:partyId'
           element={
             <ProtectedRoute>
@@ -218,3 +211,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
