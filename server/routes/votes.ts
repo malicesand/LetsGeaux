@@ -96,14 +96,12 @@ voteRouter.delete(`/:userId/:typeId/:voteType`, async (req: any, res: any) => {
   const findingVote = {
     userId: +userId
   }
-  
+  const voteCategoryId = typeId;
   if (voteType === 'comment') {
-    findingVote.commentId = +typeId;
+    findingVote.commentId = +voteCategoryId;
   } else if (voteType === 'post') {
-    findingVote.postId = +voteType.id;
+    findingVote.postId = +voteCategoryId;
   }
-  console.log('nekkid post id', postId)
-  console.log('finding vote', findingVote)
   try {
     // query for the first vote that matches  the values specified above
     const findVote = await prisma.vote.findFirst({
