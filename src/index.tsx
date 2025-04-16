@@ -5,11 +5,15 @@ import App from './client/components/App';
 import { SnackbarProvider } from 'notistack';
 import { BudgetNotificationProvider } from './client/components/BudgetBuddy/BudgetNotificationContext';
 import { UserProvider } from './client/components/UserContext';
+
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import theme from '../';
 const root = createRoot(document.getElementById('root'));
 document.body.style.backgroundColor = '#fdfd96';
 
 root.render(
   <BrowserRouter>
+   <ThemeProvider theme={theme}>
     <SnackbarProvider maxSnack={3}>
       <BudgetNotificationProvider>
         <UserProvider>
@@ -17,5 +21,6 @@ root.render(
         </UserProvider>
       </BudgetNotificationProvider>
     </SnackbarProvider>
+   </ThemeProvider>
   </BrowserRouter>
 );
