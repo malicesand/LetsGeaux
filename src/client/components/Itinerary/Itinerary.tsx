@@ -1,20 +1,12 @@
-
-
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, TextField, Button, Box, Card, CardContent, CardActions, Alert } from '@mui/material';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
 import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx'; 
 import { useParams, useLocation } from 'react-router-dom';
-import Calendar from './Calendar.tsx';
-import { userInfo } from 'os';
+import dayjs from 'dayjs';
+
 
 
 
@@ -51,10 +43,25 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   const [editingItinerary, setEditingItinerary] = useState<any | null>(null);
   const [error, setError] = useState<string>('');
   const location = useLocation()
-  const {partyId, partyName, itineraryName: passeditineraryName} = location.state || {}
- 
+
+  const { partyId, partyName, itineraryName: passeditineraryName, selectedDates: passedDates } = location.state || {};
+
   const{ id } = useParams();
  
+
+  useEffect(() => {
+    if (passedDates && Array.isArray(passedDates) && passedDates.length > 0) {
+      const convertedDates = passedDates.map((d: string) => new Date(d));
+      setSelectedDates(convertedDates);
+      setStartDate(new Date(passedDates[0]));
+      setEndDate(new Date(passedDates[passedDates.length - 1]));
+    }
+  }, []);
+  
+
+
+
+
 
   // Function to add activity to itinerary
   const addActivityToItinerary = async (itineraryId: string, activityData: any) => {
@@ -74,7 +81,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     }
   }, [startDate, endDate]);
 
-
+  
    // Function to handle the itinerary form submission
   const handleSubmit = async () => {
     if (!itineraryName || selectedDates.length === 0) {
@@ -82,7 +89,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       return;
     }
   
-    const itineraryData: any = {
+    const itineraryData = {
       creatorId: user.id, 
       name: itineraryName,
       notes: itineraryNotes,
@@ -91,12 +98,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       upVotes: 0,
       downVotes: 0,
       //if partyId exist, ad partyId
-     // ...(partyId && { partyId })
-      
-  if (partyId: any) {
-  itineraryData.partyId = partyId;
-    }
-
+      ...(partyId && { partyId })
+    
     };
    // console.log("Submitting:", itineraryData);
 
@@ -208,11 +211,9 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+
       <Container>
-        <Typography variant="h4" gutterBottom>
-          {editingItinerary ? 'Edit Itinerary' : 'Choose Dates for Your Trip'}
-        </Typography>
+      
 
         {partyName && (
   <Typography variant="h6" align="center" color="secondary">
@@ -230,20 +231,14 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
         {error && <Typography color="error">{error}</Typography>}
 
           <Box display="flex" justifyContent="center" alignItems="center" my={2}>
-          <Calendar
-            startDate={startDate}
-            endDate={endDate}
-            setStartDate={setStartDate}
-            setEndDate={setEndDate}
-            setSelectedDates={setSelectedDates}
-          />
+          
         </Box>
 
         {startDate && endDate && (
-          <Typography variant="h6" align="center" color="primary" mt={2}>
-            Selected Range: {startDate.toLocaleDateString()} to {endDate.toLocaleDateString()}
-          </Typography>
-        )}
+  <Typography variant="h6" align="center" color="primary" mt={2}>
+    Selected Range: {dayjs(startDate).format('MMMM D')} - {dayjs(endDate).format('MMMM D, YYYY')}
+  </Typography>
+)}
 
         <TextField
           label="Itinerary Name"
@@ -277,14 +272,19 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
         </Box>
         
         <Box mt={4}>
-          <Typography variant="h5">Create Your Itinerary</Typography>
+          <Typography variant="h5">Party Itineraries</Typography>
           {itineraries.map((itinerary, index) => (
             <Card key={index} sx={{ mb: 2 }}>
               <CardContent>
                 <Typography variant="h6">{itinerary.name}</Typography>
                 <Typography variant="body1">{itinerary.notes}</Typography>
-                <Typography variant="body2">{`Begin: ${new Date(itinerary.begin).toLocaleString()}`}</Typography>
-                <Typography variant="body2">{`End: ${new Date(itinerary.end).toLocaleString()}`}</Typography>
+                <Typography variant="body2">
+  Begin: {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY')}
+</Typography>
+<Typography variant="body2">
+  End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY')}
+</Typography>
+
                 {itinerary.message && <Alert severity="success">{itinerary.message}</Alert>}
 
               </CardContent>
@@ -303,7 +303,6 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
           ))}
         </Box>
       </Container>
-    </LocalizationProvider>
   );
 };
 
