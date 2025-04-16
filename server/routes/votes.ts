@@ -54,15 +54,16 @@ voteRouter.post('/:userId/:typeId/:voteType', async (req: any, res: any) => {
   const typeCheck = {
     id: +userId,
   };
+  const voteCategoryId = typeId;
   switch (voteType) {
     case "suggestion":
-      typeCheck.suggestionId = +typeId;
+      typeCheck.suggestionId = +voteCategoryId;
       break;
     case "post":
-      typeCheck.postId = +typeId;
+      typeCheck.postId = +voteCategoryId;
       break;
     case "comment":
-      typeCheck.commentId = +typeId;
+      typeCheck.commentId = +voteCategoryId;
       break;
 
   }

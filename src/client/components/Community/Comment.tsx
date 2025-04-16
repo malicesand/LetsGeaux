@@ -16,8 +16,21 @@ const Comment: React.FC<CommentProps> = ({user, getAllComments, currentComment})
 
   const [hasLiked, setHasLiked] = useState(false);
 
-
-
+  const handleVoteDeleteClick = () => {
+    const { id: userId } = user;
+    const { id: commentId } = currentComment;
+    axios.delete(`api/vote/${userId}/${commentId}/comment`)
+    .then(() => {
+      setHasLiked(false);
+      getAllComments();
+    }).catch((err) => console.error('unable to delete', err))
+  
+  }
+  
+useEffect(() => {
+  checkVoteStatus();
+  getAllComments();
+}, []);
 
 const userId = user.id
 
@@ -29,9 +42,21 @@ const userId = user.id
     }).catch((err) => console.error('unable to delete', err))
   }
 
-// const checkUserForLikes = () = {
-
-// }
+  const checkVoteStatus = async () => {
+    try {
+   
+      const ballotChecker = await axios.get(`/api/vote/${userId}/${currentComment.id}/comment`)
+      
+        if (ballotChecker.data !== "no match") {
+          setHasLiked(true);
+         } else {
+           setHasLiked(false);
+         }
+     } catch (err) {
+       console.error('failed to check votes', err)
+     }
+     }
+   
 
 
 
@@ -47,7 +72,12 @@ const userId = user.id
         polarity: 1,
       }
     }
-    axios.post(`api/vote/${userId}/${commentId}/comment`, vote).then(() => {}).catch((err) => console.error('failed to place vote', err))
+    axios.post(`api/vote/${userId}/${commentId}/comment`, vote)
+    .then(() => {
+      setHasLiked(true);
+      getAllComments();
+    })
+    .catch((err) => console.error('failed to place vote', err))
   }
 
 
@@ -57,7 +87,12 @@ const userId = user.id
     <Container>
         <Typography>{body}</Typography>
         <Typography>By: {postName}</Typography>
-        <Button onClick={handleVoteClick} >Like 🚀</Button>
+        {hasLiked ? (
+          <Button onClick={handleVoteDeleteClick}>Unlike</Button>
+        ) : (
+          <Button onClick={handleVoteClick} >Like 🚀</Button>
+
+        )}
         <Button onClick={deleteComment} >Delete 💣</Button>
     </Container>
   )

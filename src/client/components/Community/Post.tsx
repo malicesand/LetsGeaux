@@ -34,10 +34,9 @@ const getAllComments = () => {
 const checkVoteStatus = async () => {
  try {
 
-   const ballotCounter = await axios.get(`/api/vote/${userId}/${currentPost.id}/post`)
-   console.log('ballot', ballotCounter)
+   const ballotChecker = await axios.get(`/api/vote/${userId}/${currentPost.id}/post`)
    
-     if (ballotCounter.data !== "no match") {
+     if (ballotChecker.data !== "no match") {
        setHasLiked(true);
       } else {
         setHasLiked(false);
@@ -73,7 +72,6 @@ const handleVoteClick = () => {
       polarity: 1
     }
   }
-  console.log('topside postId',typeof postId)
     axios.post(`api/vote/${userId}/${+postId}/post`, vote).then(() => {
       setHasLiked(true);
       getAllPosts();
