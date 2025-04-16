@@ -1,26 +1,35 @@
-import React, { useState } from 'react';
-import { Container, Typography, Box } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Container, Typography, Box, Button } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'; // ability to click on days
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'; // wrapper for dates and calendar
 import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
-import { isBefore, isAfter, isSameDay } from 'date-fns'; // for highlighting days on calendar 
+import { isBefore, isAfter, isSameDay, eachDayOfInterval } from 'date-fns'; // for highlighting days on calendar 
+import { useNavigate } from 'react-router-dom';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
-interface CalendarProps {
-  startDate: Date | null;
-  endDate: Date | null;
-  setStartDate: (date: Date | null) => void;
-  setEndDate: (date: Date | null) => void;
-  setSelectedDates: (dates: Date[]) => void;
-}
+// interface CalendarProps {
+//   startDate: Date | null;
+//   endDate: Date | null;
+//   setStartDate: (date: Date | null) => void;
+//   setEndDate: (date: Date | null) => void;
+//   setSelectedDates: (dates: Date[]) => void;
+// }
 
-const Calendar: React.FC<CalendarProps> = ({
-  startDate,
-  endDate,
-  setStartDate,
-  setEndDate,
-  setSelectedDates
-}) => {
+const Calendar: React.FC = ()=> {
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  
+ 
+
+const navigate = useNavigate();
+useEffect (()=>{
+  if(startDate && endDate){
+    const dates = eachDayOfInterval({start: startDate, end: endDate });
+    setSelectedDates(dates);
+  }
+}, [startDate, endDate])
 
   // Handle date change and determine start and end dates
   const handleDateChange = (newDate: Date | null) => {
@@ -88,12 +97,23 @@ const Calendar: React.FC<CalendarProps> = ({
               day: CustomPickersDay, // Pass custom day renderer
             }}
           />
-        </Box>
-        {startDate && endDate && (
-          <Typography variant="h6" align="center" color="primary" mt={2}>
-            Selected Range: {startDate.toLocaleDateString()} to {endDate.toLocaleDateString()}
-          </Typography>
+          </Box>
+          {startDate && endDate && (
+          <Box display="flex" justifyContent="center" mt={4}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              const dates = eachDayOfInterval({ start: startDate, end: endDate });
+              navigate('/itinerary', { state: { selectedDates: dates } });
+            }}
+          >
+            Continue to Itinerary
+          </Button>
+          </Box>
         )}
+
+        
       </Container>
     </LocalizationProvider>
   );
