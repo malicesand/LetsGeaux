@@ -31,21 +31,28 @@ const getAllComments = () => {
   }).catch((err) => console.error('unable to gather comments', err));
 }
 
-const checkVoteStatus = () => {
-  axios.get(`/api/vote/${userId}/${currentPost.id}/post`).then(({data}) => {
-    if (data) {
-      console.log(data)
-      setHasLiked(true);
-    }
-  }).catch((err) => console.error('unable to search', err));
-}
+const checkVoteStatus = async () => {
+ try {
+
+   const ballotCounter = await axios.get(`/api/vote/${userId}/${currentPost.id}/post`)
+   console.log('ballot', ballotCounter)
+   
+     if (ballotCounter.data !== "no match") {
+       setHasLiked(true);
+      } else {
+        setHasLiked(false);
+      }
+  } catch (err) {
+    console.error('failed to check votes', err)
+  }
+  }
 
 
 
 
 useEffect(() => {
-  getAllComments();
   checkVoteStatus();
+  getAllComments();
 }, []);
 
 const startComments = () => {
