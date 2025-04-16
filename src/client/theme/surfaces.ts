@@ -44,4 +44,4 @@ export const components: Components = {
 export default components;
 //TODO
   //* Rounded Corners
-  //? Paper
+  //? Papers
