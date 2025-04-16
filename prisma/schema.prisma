@@ -29,7 +29,6 @@ model user {
   post         post[]
   comment      comment[]
   partyMessage partyMessage[]
-  emails       emails[]
 }
 
 model userParty {
@@ -243,16 +242,11 @@ model partyMessage {
   id        Int      @id @default(autoincrement())
   text      String
   createdAt DateTime @default(now())
-  member    user     @relation(fields: [userId], references: [id])
-  userId    Int
-  party     party    @relation(fields: [partyId], references: [id])
-  partyId   Int
-}
 
-model emails {
-  id        Int      @id @default(autoincrement())
-  address   String
-  createdAt DateTime @default(now())
-  sender    user     @relation(fields: [userId], references: [id])
-  userId    Int
+  // Relationships
+  member user @relation(fields: [userId], references: [id])
+  userId Int
+
+  party   party @relation(fields: [partyId], references: [id])
+  partyId Int
 }
