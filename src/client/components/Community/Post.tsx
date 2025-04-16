@@ -72,7 +72,16 @@ const handleVoteClick = () => {
       polarity: 1
     }
   }
-    axios.post(`api/vote/${userId}/${+postId}/post`, vote).then(() => {
+    axios.post(`api/vote/${userId}/${+postId}/post`, vote)
+    .then(() => {
+      const ballot = {
+        data: {
+          direction: "up",
+        },
+      }
+      axios.patch(`api/posts/likes/${currentPost.id}`, ballot);
+    })
+    .then(() => {
       setHasLiked(true);
       getAllPosts();
     }).catch((err) => console.error('failed to cast vote', err));
@@ -82,6 +91,14 @@ const handleVoteDeleteClick = () => {
   const { id: userId } = user;
   const { id: postId } = currentPost;
   axios.delete(`api/vote/${userId}/${postId}/post`)
+  .then(() => {
+    const ballot = {
+      data: {
+        direction: "down",
+      },
+    }
+    axios.patch(`api/posts/likes/${currentPost.id}`, ballot);
+  })
   .then(() => {
     setHasLiked(false);
     getAllPosts();
