@@ -82,7 +82,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       return;
     }
   
-    const itineraryData = {
+    const itineraryData: any = {
       creatorId: user.id, 
       name: itineraryName,
       notes: itineraryNotes,
@@ -90,9 +90,16 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       end: selectedDates[selectedDates.length - 1].toISOString(),
       upVotes: 0,
       downVotes: 0,
+      //if partyId exist, ad partyId
+     // ...(partyId && { partyId })
       
+  if (partyId: any) {
+  itineraryData.partyId = partyId;
+    }
+
     };
-  
+   // console.log("Submitting:", itineraryData);
+
     try {
       const response = await axios.post('/api/itinerary', itineraryData);
   
