@@ -14,6 +14,7 @@ export const sizing = {
   },
 };
 
+export default sizing;
 //TODO Size Rules
   //* Spacing
   //* Z index 
