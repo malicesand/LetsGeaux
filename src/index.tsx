@@ -6,6 +6,8 @@ import { SnackbarProvider } from 'notistack';
 import { BudgetNotificationProvider } from './client/components/BudgetBuddy/BudgetNotificationContext';
 import { UserProvider } from './client/components/UserContext';
 const root = createRoot(document.getElementById('root'));
+document.body.style.backgroundColor = '#fdfd96';
+
 root.render(
   <BrowserRouter>
     <SnackbarProvider maxSnack={3}>
