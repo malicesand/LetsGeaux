@@ -13,12 +13,12 @@ import FilledInput from '@mui/material/FilledInput';
 import Divider from '@mui/material/Divider';
 
 import { user } from '../../../../types/models.ts'
-interface groupProps {
+interface partyProps {
   user: user;
   onPartyCreated: () => void;
 }
 
-const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
+const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
   const userId = user.id;
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = useState<string>('')
@@ -42,7 +42,7 @@ const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
     const name = partyName
     setPartyName(name)
     try {
-      let response = await axios.post('/api/group', {name} );
+      let response = await axios.post('/api/party', {name} );
       const id = (response.data.id);
       onPartyCreated();
       setPartyId(id);
@@ -51,13 +51,14 @@ const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
       await addUserToParty(userId, id, partyName);
       onPartyCreated();
     } catch (error) {
-      console.error('failed to create new group');
+      console.error('failed to create new party');
     };
   };
   //* Add Current User to Party *//
   const addUserToParty = async(userId:number, partyId:number, partyName: string) => {
     try {
-      let response = await axios.post('/api/group/userParty', {userId, partyId});
+      let response = await axios.post('/api/party/userParty', {userId, partyId});
+      console.log(`Success at Create.tsx ${partyName}`, response.data)
     } catch (error) {
       console.error('Could not create new userParty model', error);
     }
@@ -65,7 +66,7 @@ const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
   //* Send E-Vite *//
   const sendEmail = async(emailList: string[], partyName:string) => {
     try {
-      await axios.post('/api/group/sendInvite', { emails: emailList, partyName });
+      await axios.post('/api/party/sendInvite', { emails: emailList, partyName });
       setInviteSuccess(true);
       setInputValue('');
       setEmails([]);
@@ -164,4 +165,4 @@ const CreateGroup: React.FC<groupProps> = ({user, onPartyCreated}) => {
   )
 };
 
-export default CreateGroup
+export default CreateParty

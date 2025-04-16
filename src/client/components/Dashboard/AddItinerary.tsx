@@ -56,8 +56,8 @@ const AddItinerary: React.FC<AddItineraryProps> = ({ user, partyId, partyName })
   };
 
   useEffect(()=>{
-    console.log('party', partyId)
-    console.log(typeof partyId)
+    // console.log('party', partyId)
+    // console.log(typeof partyId)
   })
   const handleCreate = (e: React.MouseEvent, partyId: number) => {
     e.preventDefault();
