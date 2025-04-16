@@ -1,6 +1,8 @@
 import React from 'react';
 import { user } from '../../../types/models.ts';
-import Dashboard from './Dashboard/DashboardMain'
+import Dashboard from './Dashboard/DashboardMain';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 interface HomeProps {
   user: user;
 }
@@ -8,7 +10,7 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({user}) => {
   return (
     <div>
-    <h1>HELLOOOOOOOOOO, {user.username}!!!</h1>
+    <Typography variant='h1' color='primary'>Hello, {user.username}!!!</Typography>
     <Dashboard user={user}/>
     </div>
   )
