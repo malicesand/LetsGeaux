@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useSnackbar } from 'notistack';
+
 
 interface ImageUploadProps {
   userId: number;
@@ -9,7 +11,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
   const [url, setImageUrl] = useState('');
   const [notes, setNotes] = useState('');
   const [images, setImages] = useState([]);
-
+  const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
     if (!document.querySelector('script[src="https://widget.cloudinary.com/v2.0/global/all.js"]')) {
       const script = document.createElement('script');
@@ -48,7 +50,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
     e.preventDefault();
 
     if (!url) {
-      alert('Please upload an image first.');
+      enqueueSnackbar('Please upload an image first.', { variant: 'warning' });
       return;
     }
 
@@ -59,7 +61,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
         userId,
       });
 
-      alert('Upload successful!');
+      enqueueSnackbar('Upload successful!', { variant: 'success' });
       setImageUrl('');
       setNotes('');
       getAllImages(); // refresh images
@@ -82,7 +84,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
       setImages((prev) => prev.filter((img) => img.id !== imageId));
     } catch (error) {
       console.error('Error deleting image:', error);
-      alert('Could not delete image.');
+      enqueueSnackbar('Could not delete image.', { variant: 'error' });
     }
   };
 
@@ -120,10 +122,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
       {images.map((image: any) => (
         <div key={image.id} style={{ marginBottom: '20px' }}>
           <img src={image.url} alt="Uploaded image" style={{ width: '200px', borderRadius: '8px' }} />
-          <div> Notes: {image.notes}</div> 
+          <div> Notes: {image.notes}</div>
           <button onClick={() => deleteImage(image.id)} style={{ marginTop: '5px', color: 'red' }}>
-      Delete
-    </button>
+            Delete
+          </button>
         </div>
       ))}
     </div>

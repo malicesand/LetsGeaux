@@ -33,13 +33,13 @@ import Dashboard from './Dashboard/DashboardMain.tsx'
 import ViewCodeForm from './Itinerary/viewCodeForm.tsx';
 import CommunityPage from './Community/CommunityPage.tsx';
 import PartyDashboard from './Dashboard/PartyDashboard.tsx';
-
+import { useUser } from './UserContext'
 import InterestForm from './InterestForm';
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(undefined);
   const [user, setUser] = useState<user | null>(null);
   const location = useLocation(); // gets current route
-
+  const { setLocalUser } = useUser();
   // Check Auth
   useEffect(() => {
     const checkAuth = async () => {
@@ -50,6 +50,7 @@ const App: React.FC = () => {
         if (response.data.isAuthenticated) {
           const fetchedUser: user = response.data.user;
           setUser(fetchedUser);
+          setLocalUser({ profilePic: fetchedUser.profilePic })
           localStorage.removeItem('sessionId');
         }
       } catch (error) {
@@ -76,7 +77,8 @@ const App: React.FC = () => {
   const showAppBar = isAuthenticated && location.pathname !== 'login' && location.pathname !== '/logout';
   return (
     <>
-      {showAppBar && <MainAppBar setIsAuthenticated={setIsAuthenticated} user={user}/>}
+
+      {showAppBar && <MainAppBar setIsAuthenticated={setIsAuthenticated} user={user} />}
       <Routes>
         <Route
           path='/login'
@@ -120,10 +122,11 @@ const App: React.FC = () => {
         <Route
           path='/itinerary'
           element={
-            <ProtectedRoute>{user && <Itinerary user={user}  />}</ProtectedRoute>
+            <ProtectedRoute>{user && <Itinerary user={user} />}</ProtectedRoute>
           }
         />
-      <Route path="/itinerary/:id" element={<Itinerary user={user} />} />
+
+        <Route path="/itinerary/:id" element={<Itinerary user={user} />} />
 
         <Route
           path='/budgetbuddy'
@@ -141,7 +144,7 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path='/Community'
           element={
             <ProtectedRoute>
@@ -155,55 +158,57 @@ const App: React.FC = () => {
             <ProtectedRoute>
               <Activities itineraryId={''} addActivity={function (itineraryId: string, activityData: any): Promise<void> {
                 throw new Error('Function not implemented.');
-              } }  />
+              }} />
             </ProtectedRoute>
           }
         />
-      <Route path='/profile' element={
-        <ProtectedRoute>
-          <Profile/>
-        </ProtectedRoute>
-      }/>
-      <Route path='/interestform' element={
-        <ProtectedRoute>
-         {user && <InterestForm user={user} />}
-        </ProtectedRoute>
-      }/>
-      <Route
-        path='/dashboard'
-        element={
+        <Route path='/profile' element={
           <ProtectedRoute>
-            {<Dashboard  user={user} />}
+            <Profile />
           </ProtectedRoute>
-        }
+        } />
+        <Route path='/interestform' element={
+          <ProtectedRoute>
+            {user && <InterestForm user={user} />}
+          </ProtectedRoute>
+        } />
+        <Route
+          path='/dashboard'
+          element={
+            <ProtectedRoute>
+              {<Dashboard user={user} />}
+            </ProtectedRoute>
+          }
         />
-      <Route
-        path='/logout'
-        element={
-          <ProtectedRoute>
-            <Logout />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path='/viewform'
-        element={
-          <ProtectedRoute>
-            {<ViewCodeForm/>}
-          </ProtectedRoute>
-        }
+        <Route
+          path='/logout'
+          element={
+            <ProtectedRoute>
+              <Logout />
+            </ProtectedRoute>
+          }
         />
-      <Route
-        path='/:partyId'
-        element={
-          <ProtectedRoute>
-            <PartyDashboard user={user}/>
-          </ProtectedRoute>
-        }
+        <Route
+          path='/viewform'
+          element={
+            <ProtectedRoute>
+              {<ViewCodeForm />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/:partyId'
+          element={
+            <ProtectedRoute>
+              <PartyDashboard user={user} />
+            </ProtectedRoute>
+          }
         />
       </Routes>
+
     </>
   );
 };
 
 export default App;
+
