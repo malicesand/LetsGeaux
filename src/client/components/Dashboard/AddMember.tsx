@@ -50,7 +50,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
   const getUsers = async(partyId: number) => {
     try {
       const response = await axios.get('/api/users');
-      console.log('got the users');
+      // console.log('got the users');
       setUsers(response.data);
       
     } catch (error) {
@@ -59,11 +59,11 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
   };
 
   const addMemberToParty = async(userId:number, partyId:number) => {
-    console.log(partyId)
-    console.log(userId);
+    // console.log(partyId)
+    // console.log(userId);
     try {
       let response = await axios.post('/api/party/userParty', {userId, partyId});
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.error('Could not create new userParty model', error);
     }

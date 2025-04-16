@@ -43,8 +43,6 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   // }
   useEffect(() => {
     getUsersForParty(numericPartyId);
-    //! LOG TRUE console.log(`${partyName} @ useEffect party dash`) 
-    console.log(typeof partyName)
   },[numericPartyId])
 
   const getUsersForParty = async (partyId: number) => {
@@ -68,7 +66,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
 
   //* Send E-Vite *//
   const sendEmail = async(emailList: string[], partyName: string ) => { 
-    console.log(`${partyName} @ send email party dash`)
+    // console.log(`${partyName} @ send email party dash`)
     try {
       await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName });
       setInviteSuccess(true);

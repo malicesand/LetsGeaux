@@ -122,4 +122,70 @@ partyRoute.get('/usersInParty/:partyId', async (req: any, res: any) => {
     res.status(500).json({ error: 'Could not fetch users in the party'});
   }
 });
+
+//* Delete a Party *//
+partyRoute.delete('/:partyId', async (req: any, res: any) => {
+  const {partyId} = req.params;
+  // delete userParties
+  const deleteUserParties = prisma.userParty.deleteMany({
+    where: {
+      partyId: +partyId,
+    },
+  })
+  // delete party
+  const deleteParty = prisma.party.delete({
+    where: {
+      id: +partyId,
+    },
+  })
+  // TODO add email to transaction? 
+  try { 
+    // transaction
+    const transaction = await prisma.$transaction([deleteUserParties, deleteParty]);
+    console.log(`Transaction Complete: Delete Party ${partyId}`);
+    res.status(200).json(`Transaction Complete: Delete Party ${partyId}`);
+  } catch (error) {
+    console.log(`Transaction Failure: Delete Party ${partyId}`, error);
+    res.status(500).json({ error: `Transaction Failure: Delete Party ${partyId}`});
+  };
+})
+
+//* Rename a Party *//
+partyRoute.patch('/:partyId', async (req: any, res: any) => {
+  const {partyId} = req.params;
+  const {name} = req.body;
+  try {
+    const renameParty = await prisma.party.update({
+      where: {id: +partyId},
+      data: {name: name},
+    })
+    console.log(`Request Complete: Rename Party ${partyId} to ${name}`);
+    res.json(`Request Complete: Rename Party ${partyId} to ${name}`)
+  } catch (error) {
+    console.error(`Failure: Rename Party ${partyId}`, error);
+    res.status(500).json({error: `Failure: Rename Party ${partyId}`});
+  }
+})
+
+//* Delete Party Member */
+// partyRoute.delete('/userParty/:partyId, userId', async (req: any, res: any) => {
+//   const {partyId, userId} = req.params;
+//   console.log(req.params);
+//   // delete userParty
+//   // const deleteMember = prisma.userParty.delete
+//   // delete party?
+//   try {
+//     const deleteMember = await prisma.userParty.delete({
+//       where: {partyId: +partyId}, {userId: +userId},
+      
+//     })
+    
+//     console.log(`Request Complete: Delete User ${userId} from Party ${partyId}`);
+//     res.status(200).json(`Request Complete: Delete User ${userId} from Party ${partyId}`)
+//   } catch (error) {
+//     console.error(`Failure: Delete ${userId}`, error);
+//     res.status(500).json({error:`Failure: Delete ${userId}`})
+//   }
+// }) 
+
 export default partyRoute;
