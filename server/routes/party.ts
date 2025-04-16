@@ -11,7 +11,7 @@ partyRoute.post('/', async (req: any, res: any) => {
   const {name} = req.body;
   try {
     const newParty = await prisma.party.create({data: { name }});
-    console.log(`Request complete: Create Party ${name}`)
+    // console.log(`Request complete: Create Party ${name}`)
     res.json(newParty)
   } catch(error) {
     console.error(`Failure: Create Party ${name}`, error);
@@ -29,7 +29,7 @@ partyRoute.post('/userParty', async (req: any, res: any) => {
        partyId: +partyId
       }
     });
-    console.log('Request complete: Add User to Party')
+    // console.log('Request complete: Add User to Party')
     res.json(addUserToParty)
   } catch(error) {
     console.error('Failure: Add User to Party', error);
@@ -38,15 +38,15 @@ partyRoute.post('/userParty', async (req: any, res: any) => {
 })
 
 //* Inviting Users to LetsGeaux Via Email *//
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+sgMail.setApiKey(process.env.SENDGRID_API_KEY as string)
 partyRoute.post('/sendInvite', async (req: any, res:any) => {
-  const {emails, partyName} = req.body
-  console.log(partyName);
-  console.log(emails);
+  const {emails, partyName, userId} = req.body
+  console.log(userId);
+  console.log(req.body)
   if (!emails || !Array.isArray(emails) || emails.length === 0) {
     return res.status(400).json({ error: 'No valid emails provided' });
   }
-  const sendPromises = emails.map((email: string) => {
+  const sendPromises = emails.map(async(email: string) => {
     const msg = {
       to: email, 
       from: 'invite@letsgeauxnola.com', 
@@ -54,7 +54,14 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
       text: `Join my travel party ${partyName} on LetsGeauxNola.com!`,
       html: `<strong>Join my travel party ${partyName} on LetsGeauxNola.com!</strong>`, // TODO fix html
     };
-    return sgMail.send(msg) // TODO call post emails?
+
+    try {
+      await sgMail.send(msg);  
+      await logEmailSent(email, userId);  
+    } catch (error) {
+      console.error('Error sending invite to:', email, error);
+    }
+
   });
   try {
     await Promise.all(sendPromises);
@@ -66,12 +73,24 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
 });
 
 //* Create Email Record *//
-partyRoute.post('/emails', async (req: any, res: any) => {
-  const {address, sender} = req.body;
+async function logEmailSent(address: string, senderId: string) {
   
-  console.log(req.body, 'body');
-  console.log(address, 'address');
-  console.log(sender, 'sender');
+  console.log('Logging email for:', address, 'from userId:', senderId);
+  try {
+    await prisma.emails.create({
+      data: {
+        address,
+        userId: +senderId,
+      }
+    });
+    console.log(`Logged email to ${address}`);
+  } catch (error) {
+    console.error(`Failed to log email:`, error);
+  }
+}
+
+/* partyRoute.post('/emails', async (req: any, res: any) => {
+  const {address, sender} = req.body;
   try { 
     const emailRecord = await prisma.emails.create({
       data: {
@@ -85,7 +104,7 @@ partyRoute.post('/emails', async (req: any, res: any) => {
     console.error(`Failure: Add Email Record ${address}`, error);
     res.status(500).json({error: `Failure: Add Email Record ${address}`});
   }
-})
+}) */
 
 // * Get A User's Parties * //
 partyRoute.get('/userParty/:userId', async (req: any, res: any) => {

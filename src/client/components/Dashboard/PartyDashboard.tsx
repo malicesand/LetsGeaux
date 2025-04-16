@@ -32,15 +32,13 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   
   // const [partyInfo, setPartyInfo] = useState<{id: number, name: string}[]>([])
   const [partyMembers, setPartyMembers] = useState<string[]>([]);
-  // const userId = user.id //? delete
+  const userId = user.id 
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = useState<string>('')
   const [emails, setEmails] = React.useState<string[]>([])
   const [inviteSuccess, setInviteSuccess] = useState(false); 
 
-  // if(!partyId || !partyName) {
-  //   return <div>Loading party dashboard...</div>
-  // }
+  
   useEffect(() => {
     getUsersForParty(numericPartyId);
   },[numericPartyId])
@@ -65,10 +63,10 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   }; 
 
   //* Send E-Vite *//
-  const sendEmail = async(emailList: string[], partyName: string ) => { 
+  const sendEmail = async(emailList: string[], partyName: string, userId: number ) => { 
     // console.log(`${partyName} @ send email party dash`)
     try {
-      await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName });
+      await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName, userId: userId });
       setInviteSuccess(true);
       setInputValue('');
       setEmails([]);
@@ -145,7 +143,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
             <Button 
               sx={{ mt: 1 }}
               variant='outlined'
-              onClick={() => sendEmail(emails, partyName)} disabled={emails.length === 0}
+              onClick={() => sendEmail(emails, partyName, userId)} disabled={emails.length === 0}
               >
               Invite
             </Button>
