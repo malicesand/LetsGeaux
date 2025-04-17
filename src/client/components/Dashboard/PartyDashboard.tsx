@@ -16,7 +16,7 @@ import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
 import AddItinerary from './AddItinerary';
 import Itinerary from '../Itinerary/Itinerary.tsx';
-import { user, emails } from '../../../../types/models.ts';
+import { user, email } from '../../../../types/models.ts';
 
 interface PartyDashboardProps {
   user: user;
@@ -65,12 +65,12 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   }; 
   
   //* Read Email Log *//
-  const getEmailLog = async (numericPartyId: string) => {
-    // console.log(`Sending email log request for Party:${partyId}`);
+  const getEmailLog = async (partyId: string) => {
+    //  log(`Sending email log request for Party:${partyId}`);
     try {
       const response = await axios.get(`/api/party/emails/${partyId}`);
       const emailData = response.data;
-      const addresses = emailData.map((emails: emails) => emails.address);
+      const addresses = emailData.map((email: email) => email.address);
       setEmails(addresses)
       console.log(`Fetched ${addresses.length} emails for party${partyId}`)
     } catch (error) {
@@ -79,13 +79,14 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   }
 
   //* Send E-Vite *//
-  const sendEmail = async(emailList: string[], partyName: string, userId: number, PartyId: string ) => { 
+  const sendEmail = async(emailList: string[], partyName: string, userId: number, partyId: string ) => { 
     // console.log(`${partyName} @ send email party dash`)
     try {
-      await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName, userId: userId, partyId: numericPartyId });
+      await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName, userId: userId, partyId: partyId });
       setInviteSuccess(true);
       setInputValue('');
       setEmails([]);
+      getEmailLog(partyId);
       setTimeout(() => closeModal(), 3000)
       setTimeout(() => setInviteSuccess(false), 4000)
     } catch (error) { 
@@ -160,7 +161,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
             <Button 
               sx={{ mt: 1 }}
               variant='outlined'
-              onClick={() => sendEmail(emails, partyName, userId, numericPartyId)} disabled={emails.length === 0}
+              onClick={() => sendEmail(emails, partyName, userId, partyId)} disabled={emails.length === 0}
               >
               Invite
             </Button>

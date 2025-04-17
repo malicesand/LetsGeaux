@@ -72,7 +72,6 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
 
 //* Create Email Record *//
 async function logEmailSent(address: string, senderId: string, partyId: string) {
-  
   console.log('Logging email for:', address, 'from userId:', senderId);
   try {
     await prisma.email.create({
