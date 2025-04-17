@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, TextField, Button, Box, Card, CardContent, CardActions, Alert } from '@mui/material';
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Card,
+  CardContent,
+  CardActions,
+  Alert
+} from '@mui/material';
 import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
 import { user } from '../../../../types/models.ts';
-import Activity from './NEWActivties.tsx'; 
+import Activity from './NEWActivties.tsx';
 import { useParams, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
-
-
-
 
 interface ItineraryProps {
   user: user;
@@ -18,7 +25,7 @@ interface ItineraryProps {
 //     id: number;
 //     name: string;
 //     description: string;
-   
+
 //  };
 //   user: {
 //     id: number;
@@ -36,18 +43,22 @@ interface ItineraryProps {
 const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]); 
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [itineraryName, setItineraryName] = useState('');
   const [itineraryNotes, setItineraryNotes] = useState('');
   const [itineraries, setItineraries] = useState<any[]>([]);
   const [editingItinerary, setEditingItinerary] = useState<any | null>(null);
   const [error, setError] = useState<string>('');
-  const location = useLocation()
+  const location = useLocation();
 
-  const { partyId, partyName, itineraryName: passeditineraryName, selectedDates: passedDates } = location.state || {};
+  const {
+    partyId,
+    partyName,
+    itineraryName: passeditineraryName,
+    selectedDates: passedDates
+  } = location.state || {};
 
-  const{ id } = useParams();
- 
+  const { id } = useParams();
 
   useEffect(() => {
     if (passedDates && Array.isArray(passedDates) && passedDates.length > 0) {
@@ -57,23 +68,24 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       setEndDate(new Date(passedDates[passedDates.length - 1]));
     }
   }, []);
-  
-
-
-
-
 
   // Function to add activity to itinerary
-  const addActivityToItinerary = async (itineraryId: string, activityData: any) => {
+  const addActivityToItinerary = async (
+    itineraryId: string,
+    activityData: any
+  ) => {
     try {
-      const response = await axios.post(`/api/itinerary/${itineraryId}/activity`, activityData);
+      const response = await axios.post(
+        `/api/itinerary/${itineraryId}/activity`,
+        activityData
+      );
       console.log('Activity added:', response.data);
     } catch (error) {
       console.error('Error adding activity:', error);
     }
   };
 
-   // Update selectedDates based on the startDate and endDate
+  // Update selectedDates based on the startDate and endDate
   useEffect(() => {
     if (startDate && endDate) {
       const dates = eachDayOfInterval({ start: startDate, end: endDate });
@@ -81,16 +93,15 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     }
   }, [startDate, endDate]);
 
-  
-   // Function to handle the itinerary form submission
+  // Function to handle the itinerary form submission
   const handleSubmit = async () => {
     if (!itineraryName || selectedDates.length === 0) {
       setError('Please provide a name and select dates for the itinerary');
       return;
     }
-  
+
     const itineraryData = {
-      creatorId: user.id, 
+      creatorId: user.id,
       name: itineraryName,
       notes: itineraryNotes,
       begin: selectedDates[0].toISOString(),
@@ -99,18 +110,17 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       downVotes: 0,
       //if partyId exist, ad partyId
       ...(partyId && { partyId })
-    
     };
-   // console.log("Submitting:", itineraryData);
+    // console.log("Submitting:", itineraryData);
 
     try {
       const response = await axios.post('/api/itinerary', itineraryData);
-  
+
       const newItinerary = {
-        ...response.data,  
+        ...response.data,
         message: `Itinerary created! View Itinerary with CODE: ${response.data.viewCode}`
       };
-  
+
       setItineraries(prev => [...prev, newItinerary]);
       setItineraryName('');
       setItineraryNotes('');
@@ -120,26 +130,22 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       console.error('Error creating itinerary:', err);
     }
   };
-  
-
 
   useEffect(() => {
     if (passeditineraryName && !editingItinerary) {
       setItineraryName(passeditineraryName);
     }
   }, [passeditineraryName, editingItinerary]);
-  
 
   // Fetch existing itineraries
   useEffect(() => {
-    console.log(partyId, "partyId at itinerary")
+    console.log(partyId, 'partyId at itinerary');
     const fetchItineraries = async () => {
       try {
         const response = await axios.get('/api/itinerary');
         setItineraries(response.data);
       } catch (err) {
         console.error('Error fetching itineraries:', err);
-        
       }
     };
 
@@ -161,17 +167,21 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
 
   // Handle delete of an itinerary, creator only
   const handleDelete = async (itineraryId: number, creatorId: number) => {
-    if(user.id !== creatorId){
-      alert("Only the creator can delete this itinerary.");
-    return;
-  }
-  // conirm deletion
-  const confirmDelete = window.confirm("Are you sure you want to delete this itinerary?");
-  if (!confirmDelete) return;
-    
+    if (user.id !== creatorId) {
+      alert('Only the creator can delete this itinerary.');
+      return;
+    }
+    // conirm deletion
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this itinerary?'
+    );
+    if (!confirmDelete) return;
+
     try {
       await axios.delete(`/api/itinerary/${itineraryId}`);
-      setItineraries(prev => prev.filter(itinerary => itinerary.id !== itineraryId));
+      setItineraries(prev =>
+        prev.filter(itinerary => itinerary.id !== itineraryId)
+      );
     } catch (err) {
       console.error('Error deleting itinerary:', err);
     }
@@ -192,12 +202,19 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       begin: selectedDates[0].toISOString(),
       end: selectedDates[selectedDates.length - 1].toISOString(),
       upVotes: editingItinerary.upVotes,
-      downVotes: editingItinerary.downVotes,
+      downVotes: editingItinerary.downVotes
     };
 
     try {
-      const response = await axios.patch(`/api/itinerary/${editingItinerary.id}`, updatedItineraryData);
-      setItineraries(prev => prev.map(itinerary => itinerary.id === editingItinerary.id ? response.data : itinerary));
+      const response = await axios.patch(
+        `/api/itinerary/${editingItinerary.id}`,
+        updatedItineraryData
+      );
+      setItineraries(prev =>
+        prev.map(itinerary =>
+          itinerary.id === editingItinerary.id ? response.data : itinerary
+        )
+      );
       setEditingItinerary(null);
       setItineraryName('');
       setItineraryNotes('');
@@ -211,98 +228,120 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   };
 
   return (
+    <Container>
+      {partyName && (
+        <Typography variant='h6' align='center' color='secondary'>
+          Party: {partyName}
+        </Typography>
+      )}
 
-      <Container>
-      
+      {passeditineraryName && !editingItinerary && (
+        <Typography variant='h6' align='center' color='primary'>
+          Viewing: {passeditineraryName}
+        </Typography>
+      )}
 
-        {partyName && (
-  <Typography variant="h6" align="center" color="secondary">
-    Party: {partyName}
-  </Typography>
-)}
+      {error && <Typography color='error'>{error}</Typography>}
 
-{passeditineraryName && !editingItinerary && (
-  <Typography variant="h6" align="center" color="primary">
-    Viewing: {passeditineraryName}
-  </Typography>
-)}
+      <Box
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        my={2}
+      ></Box>
 
+      {startDate && endDate && (
+        <Typography variant='h6' align='center' color='primary' mt={2}>
+          Selected Range: {dayjs(startDate).format('MMMM D')} -{' '}
+          {dayjs(endDate).format('MMMM D, YYYY')}
+        </Typography>
+      )}
 
-        {error && <Typography color="error">{error}</Typography>}
+      <TextField
+        label='Itinerary Name'
+        fullWidth
+        value={itineraryName}
+        onChange={e => setItineraryName(e.target.value)}
+        sx={{ marginBottom: 2 }}
+        required
+      />
 
-          <Box display="flex" justifyContent="center" alignItems="center" my={2}>
-          
-        </Box>
+      <TextField
+        label='Itinerary Notes'
+        fullWidth
+        value={itineraryNotes}
+        onChange={e => setItineraryNotes(e.target.value)}
+        multiline
+        rows={4}
+        sx={{ marginBottom: 2 }}
+      />
 
-        {startDate && endDate && (
-  <Typography variant="h6" align="center" color="primary" mt={2}>
-    Selected Range: {dayjs(startDate).format('MMMM D')} - {dayjs(endDate).format('MMMM D, YYYY')}
-  </Typography>
-)}
+      <Box display='flex' justifyContent='center' my={3}>
+        {editingItinerary ? (
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={handleEditSubmit}
+          >
+            Save Changes
+          </Button>
+        ) : (
+          <Button variant='contained' color='primary' onClick={handleSubmit}>
+            Save Itinerary
+          </Button>
+        )}
+      </Box>
 
-        <TextField
-          label="Itinerary Name"
-          fullWidth
-          value={itineraryName}
-          onChange={(e) => setItineraryName(e.target.value)}
-          sx={{ marginBottom: 2 }}
-          required
-        />
+      <Box mt={4}>
+        <Typography variant='h5'>Party Itineraries</Typography>
+        {itineraries.map((itinerary, index) => (
+          <Card key={index} sx={{ mb: 2 }}>
+            <CardContent>
+              <Typography variant='h6'>{itinerary.name}</Typography>
+              <Typography variant='body1'>{itinerary.notes}</Typography>
+              <Typography variant='body2'>
+                Begin: {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY')}
+              </Typography>
+              <Typography variant='body2'>
+                End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY')}
+              </Typography>
 
-        <TextField
-          label="Itinerary Notes"
-          fullWidth
-          value={itineraryNotes}
-          onChange={(e) => setItineraryNotes(e.target.value)}
-          multiline
-          rows={4}
-          sx={{ marginBottom: 2 }}
-        />
-
-        <Box display="flex" justifyContent="center" my={3}>
-          {editingItinerary ? (
-            <Button variant="contained" color="primary" onClick={handleEditSubmit}>
-              Save Changes
-            </Button>
-          ) : (
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
-              Save Itinerary
-            </Button>
-          )}
-        </Box>
-        
-        <Box mt={4}>
-          <Typography variant="h5">Party Itineraries</Typography>
-          {itineraries.map((itinerary, index) => (
-            <Card key={index} sx={{ mb: 2 }}>
-              <CardContent>
-                <Typography variant="h6">{itinerary.name}</Typography>
-                <Typography variant="body1">{itinerary.notes}</Typography>
-                <Typography variant="body2">
-  Begin: {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY')}
-</Typography>
-<Typography variant="body2">
-  End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY')}
-</Typography>
-
-                {itinerary.message && <Alert severity="success">{itinerary.message}</Alert>}
-
-              </CardContent>
-              <CardActions>
-                <Button variant="contained" color="secondary" onClick={() => handleEditClick(itinerary)}>
-                  Edit
-                </Button>
-                {user.id === itinerary.creatorId &&(
-                <Button variant="contained" color="error" onClick={() => handleDelete(itinerary.id, itinerary.creatorId)}>
+              {itinerary.message && (
+                <Alert severity='success'>{itinerary.message}</Alert>
+              )}
+            </CardContent>
+            <CardActions>
+              <Button
+                variant='contained'
+                color='secondary'
+                onClick={() => handleEditClick(itinerary)}
+              >
+                Edit
+              </Button>
+              {user.id === itinerary.creatorId && (
+                <Button
+                  variant='contained'
+                  color='error'
+                  onClick={() =>
+                    handleDelete(itinerary.id, itinerary.creatorId)
+                  }
+                >
                   Delete
                 </Button>
-                )}
-              </CardActions>
-              <Activity itineraryId={itinerary.id} addActivity={addActivityToItinerary} />
-            </Card>
-          ))}
-        </Box>
-      </Container>
+              )}
+            </CardActions>
+            <Activity
+              itineraryId={itinerary.id}
+              addActivity={addActivityToItinerary}
+              itineraryCreatorId={itinerary.creatorId}
+              user={user}
+              itineraryBegin={''}
+              itineraryEnd={''}
+            />
+          </Card>
+        ))}
+      </Box>
+    </Container>
   );
 };
 
