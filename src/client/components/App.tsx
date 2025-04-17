@@ -35,6 +35,7 @@ import CommunityPage from './Community/CommunityPage.tsx';
 import PartyDashboard from './Dashboard/PartyDashboard.tsx';
 import { useUser } from './UserContext'
 import InterestForm from './InterestForm';
+import CalendarPage from './Itinerary/CalendarPage.tsx';
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(undefined);
   const [user, setUser] = useState<user | null>(null);
@@ -157,14 +158,25 @@ const App: React.FC = () => {
           }
         />
         <Route
-          path='/activities'
-          element={
-            <ProtectedRoute>
-              <Activities itineraryId={''} itineraryCreatorId={user.id}
-              user={user} addActivity={addActivityToItinerary} itineraryBegin={''} itineraryEnd={''} />
-            </ProtectedRoute>
-          }
+  path='/activities'
+  element={
+    <ProtectedRoute>
+      {user ? (
+        <Activities
+          itineraryId={''}
+          itineraryCreatorId={user.id}
+          user={user}
+          addActivity={addActivityToItinerary}
+          itineraryBegin={''}
+          itineraryEnd={''}
         />
+      ) : (
+        <div>Loading user...</div>
+      )}
+    </ProtectedRoute>
+  }
+/>
+
         <Route path='/profile' element={
           <ProtectedRoute>
             <Profile />
@@ -208,11 +220,12 @@ const App: React.FC = () => {
           }
         />
 
-  <Route path='/calendar' element={
-          <ProtectedRoute>
-            <Calendar />
-          </ProtectedRoute>
-        } />
+<Route path='/calendar' element={
+  <ProtectedRoute>
+    <CalendarPage />
+  </ProtectedRoute>
+} />
+
       </Routes>
 
     </>
