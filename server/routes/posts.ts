@@ -55,6 +55,26 @@ postsRouter.patch("/likes/:id", async (req: any, res: any) => {
   }
 });
 
+// Actual Patch function for changing information in the form
+postsRouter.patch("/:id", async (req: any, res: any) => {
+  const { id } = req.params;
+  const { body } = req.body;
+  try {
+    const newPost = await prisma.post.update({
+      where: {
+        id: +id
+      },
+      data: {
+        body,
+      },
+    });
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("failed to change post", err);
+    res.sendStatus(500);
+  }
+});
+
 // DELETE Will take out a post and all its connected comments. Only the user that posted the post can remove it.
 postsRouter.delete("/:id/:userId", async (req: any, res: any) => {
   const { id, userId } = req.params;

@@ -17,6 +17,8 @@ interface PostProps {
   user: user,
   currentPost: any
   getAllPosts: Function
+  setPostEditMode: Function
+  editablePost: any
 
 }
 
