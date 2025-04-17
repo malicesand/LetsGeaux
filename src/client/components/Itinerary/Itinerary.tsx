@@ -60,15 +60,27 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
 
   const { id } = useParams();
 
+  //when page laods, checks state of data when passed to another page
+  //checks if state has begin and end date, then save it 
+  //builds list of all dates 
+  //if state has selectedDates, conver to objects
   useEffect(() => {
-    if (passedDates && Array.isArray(passedDates) && passedDates.length > 0) {
-      const convertedDates = passedDates.map((d: string) => new Date(d));
-      setSelectedDates(convertedDates);
-      setStartDate(new Date(passedDates[0]));
-      setEndDate(new Date(passedDates[passedDates.length - 1]));
+    if (location.state) {
+      if (location.state.begin && location.state.end) {
+        const begin = new Date(location.state.begin);
+        const end = new Date(location.state.end);
+        setStartDate(begin);
+        setEndDate(end);
+        setSelectedDates(eachDayOfInterval({ start: begin, end: end }));
+      } else if (location.state.selectedDates?.length > 0) {
+        const convertedDates = location.state.selectedDates.map((d: string) => new Date(d));
+        setSelectedDates(convertedDates);
+        setStartDate(convertedDates[0]);
+        setEndDate(convertedDates[convertedDates.length - 1]);
+      }
     }
   }, []);
-
+  
   // Function to add activity to itinerary
   const addActivityToItinerary = async (
     itineraryId: string,
@@ -100,6 +112,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       return;
     }
 
+
+    //create itinerary
     const itineraryData = {
       creatorId: user.id,
       name: itineraryName,
@@ -108,7 +122,6 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       end: selectedDates[selectedDates.length - 1].toISOString(),
       upVotes: 0,
       downVotes: 0,
-      //if partyId exist, ad partyId
       ...(partyId && { partyId })
     };
     // console.log("Submitting:", itineraryData);
@@ -131,6 +144,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     }
   };
 
+  //when components loads, prefill name of itinerary
   useEffect(() => {
     if (passeditineraryName && !editingItinerary) {
       setItineraryName(passeditineraryName);
@@ -193,7 +207,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
       setError('Please provide a name and select dates for the itinerary');
       return;
     }
-
+    //update itinerary
     const updatedItineraryData = {
       id: editingItinerary.id,
       creator_id: editingItinerary.creator_id,
@@ -330,14 +344,17 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                 </Button>
               )}
             </CardActions>
-            <Activity
-              itineraryId={itinerary.id}
-              addActivity={addActivityToItinerary}
-              itineraryCreatorId={itinerary.creatorId}
-              user={user}
-              itineraryBegin={''}
-              itineraryEnd={''}
-            />
+            {user && (
+  <Activity
+    itineraryId={itinerary.id}
+    addActivity={addActivityToItinerary}
+    itineraryCreatorId={itinerary.creatorId}
+    user={user}
+    itineraryBegin={''}
+    itineraryEnd={''}
+  />
+)}
+
           </Card>
         ))}
       </Box>
