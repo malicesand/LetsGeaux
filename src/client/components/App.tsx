@@ -75,6 +75,10 @@ const App: React.FC = () => {
 
   // Show AppBar if authenticated & not on the login page
   const showAppBar = isAuthenticated && location.pathname !== 'login' && location.pathname !== '/logout';
+  function addActivityToItinerary(itineraryId: string, activityData: any): Promise<void> {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <>
 
@@ -156,9 +160,8 @@ const App: React.FC = () => {
           path='/activities'
           element={
             <ProtectedRoute>
-              <Activities itineraryId={''} addActivity={function (itineraryId: string, activityData: any): Promise<void> {
-                throw new Error('Function not implemented.');
-              }} />
+              <Activities itineraryId={''} itineraryCreatorId={user.id}
+              user={user} addActivity={addActivityToItinerary} itineraryBegin={''} itineraryEnd={''} />
             </ProtectedRoute>
           }
         />
