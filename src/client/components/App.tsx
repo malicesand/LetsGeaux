@@ -35,6 +35,7 @@ import CommunityPage from './Community/CommunityPage.tsx';
 import PartyDashboard from './Dashboard/PartyDashboard.tsx';
 import { useUser } from './UserContext'
 import InterestForm from './InterestForm';
+import CalendarPage from './Itinerary/CalendarPage.tsx';
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(undefined);
   const [user, setUser] = useState<user | null>(null);
@@ -72,9 +73,12 @@ const App: React.FC = () => {
     return <>{children}</>;
   };
 
+  
 
   // Show AppBar if authenticated & not on the login page
   const showAppBar = isAuthenticated && location.pathname !== 'login' && location.pathname !== '/logout';
+  
+
   return (
 
     <>
@@ -152,16 +156,8 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path='/activities'
-          element={
-            <ProtectedRoute>
-              <Activities itineraryId={''} addActivity={function (itineraryId: string, activityData: any): Promise<void> {
-                throw new Error('Function not implemented.');
-              }} />
-            </ProtectedRoute>
-          }
-        />
+      
+
         <Route path='/profile' element={
           <ProtectedRoute>
             <Profile />
@@ -204,6 +200,13 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
+
+<Route path='/calendar' element={
+  <ProtectedRoute>
+    <CalendarPage />
+  </ProtectedRoute>
+} />
+
       </Routes>
     </>
 
