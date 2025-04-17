@@ -76,8 +76,8 @@ const App: React.FC = () => {
   // Show AppBar if authenticated & not on the login page
   const showAppBar = isAuthenticated && location.pathname !== 'login' && location.pathname !== '/logout';
   return (
-    <>
 
+    <>
       {showAppBar && <MainAppBar setIsAuthenticated={setIsAuthenticated} user={user} />}
       <Routes>
         <Route
@@ -205,8 +205,8 @@ const App: React.FC = () => {
           }
         />
       </Routes>
-
     </>
+
   );
 };
 
