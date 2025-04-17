@@ -68,7 +68,7 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
     res.json({message: 'Invites sent successfully'});
   } catch (error){
     console.error('Error sending invites:', error);
-    res.status(500).json({ error: 'Failed to send some or all invites' })
+    res.status(500).json({ error: 'Failed to send some or all invites' });
   }
 });
 
@@ -90,22 +90,21 @@ async function logEmailSent(address: string, senderId: string, partyId: string) 
   }
 }
 
-/* partyRoute.post('/emails', async (req: any, res: any) => {
-  const {address, sender} = req.body;
-  try { 
-    const emailRecord = await prisma.emails.create({
-      data: {
-        address,
-        userId: +sender,
-      }
+// * Get the Party's Email Log * //
+partyRoute.get('/emails/:partyId', async (req: any, res: any) => {
+  const {partyId} = req.params;
+  try {
+    let emailLog = await prisma.emails.findMany({
+      where: {
+        partyId: +partyId,
+      },
     })
-    console.log(`Request Complete: Add Email Record ${address}`);
-    res.json(`Request Complete: Add Email Record ${address}`)
+    res.json(emailLog);
   } catch (error) {
-    console.error(`Failure: Add Email Record ${address}`, error);
-    res.status(500).json({error: `Failure: Add Email Record ${address}`});
+    console.error('Error fetching emails from server:', error);
+    res.status(500).json({ error: 'Error fetching emails from server' });
   }
-}) */
+})
 
 // * Get A User's Parties * //
 partyRoute.get('/userParty/:userId', async (req: any, res: any) => {
