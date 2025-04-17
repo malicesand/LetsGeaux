@@ -76,9 +76,7 @@ const App: React.FC = () => {
 
   // Show AppBar if authenticated & not on the login page
   const showAppBar = isAuthenticated && location.pathname !== 'login' && location.pathname !== '/logout';
-  function addActivityToItinerary(itineraryId: string, activityData: any): Promise<void> {
-    throw new Error('Function not implemented.');
-  }
+  
 
   return (
 
