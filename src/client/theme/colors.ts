@@ -2,7 +2,7 @@ import { createTheme } from '@mui/material/styles';
 import { mainModule } from 'process';
 
 
-const theme = createTheme({
+ const theme = createTheme({
   palette: {
   //  background: {
   //   main: '#FDFD96'
@@ -38,7 +38,7 @@ const theme = createTheme({
     }
   },
 });
-export default theme
+export default theme 
 //TODO Theme MA and Danielle
   //* Pick primary color
   //* Secondary
