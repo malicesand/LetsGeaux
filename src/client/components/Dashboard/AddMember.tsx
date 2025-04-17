@@ -19,17 +19,18 @@ const SearchWrapper = styled('div')(() => ({
   position: 'absolute',
   left: '60%',
   bottom: '70%',
-  width: 300,
+  width: 300, 
 }));
 
 interface AddMemberProps {
   user: user;
   partyId: number;
   partyName: string;
+  getMembers: (param: number) => void;
 }
 
 
-const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
+const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembers}) => { 
   const [users, setUsers] =  useState<user[]>([])
   const [member, setMember] = useState<user['username']>()
   const[userId, setUserId] = useState<user['id']>()
@@ -47,7 +48,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
     setOpen(false);
   };
 
-  const getUsers = async(partyId: number) => {
+  const getUsers = async(partyId: number) => { 
     try {
       const response = await axios.get('/api/users');
       // console.log('got the users');
@@ -64,6 +65,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
     try {
       let response = await axios.post('/api/party/userParty', {userId, partyId});
       // console.log(response.data);
+      getMembers(partyId);
     } catch (error) {
       console.error('Could not create new userParty model', error);
     }

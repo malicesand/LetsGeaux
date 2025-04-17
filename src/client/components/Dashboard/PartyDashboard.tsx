@@ -15,7 +15,7 @@ import MessageBoard from './MessageBoard';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
 import AddItinerary from './AddItinerary';
-// import Itinerary from '../Itinerary/Itinerary.tsx';
+import Itinerary from '../Itinerary/Itinerary.tsx';
 import { user } from '../../../../types/models.ts';
 
 interface PartyDashboardProps {
@@ -43,7 +43,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
     getUsersForParty(numericPartyId);
   },[numericPartyId])
 
-  const getUsersForParty = async (partyId: number) => {
+  const getUsersForParty = async (partyId: number) => { 
     try {
       const response = await axios.get(`/api/party/usersInParty/${partyId}`);
       const users = response.data;
@@ -102,14 +102,14 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
                 // console.log(`${member} in map`);
                 return (
                   
-                <Box key='member' component='li'>
+                <Box key={member} component='li'>
                   {member}
                 </Box>)}
               )}
         </Typography>
       </Box>
       <Box display='flex' justifyContent='right' alignItems='center'>
-        <AddMember user={user} partyId={numericPartyId} partyName={partyName} />
+        <AddMember user={user} partyId={numericPartyId} partyName={partyName} getMembers={getUsersForParty}/> 
       </Box>
       <Button variant='contained' onClick={openModal}>
         Send an E-Vite
@@ -160,7 +160,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
         </Box>
       </Box> */}
       <Box display="flex" justifyContent="center">
-        {/* <BudgetPieChart /> */}
+        {/* <Itinerary user={user}/> */}
       </Box>
     </Stack>
   )
