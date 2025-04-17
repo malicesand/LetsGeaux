@@ -156,25 +156,7 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-  path='/activities'
-  element={
-    <ProtectedRoute>
-      {user ? (
-        <Activities
-          itineraryId={''}
-          itineraryCreatorId={user.id}
-          user={user}
-          addActivity={addActivityToItinerary}
-          itineraryBegin={''}
-          itineraryEnd={''}
-        />
-      ) : (
-        <div>Loading user...</div>
-      )}
-    </ProtectedRoute>
-  }
-/>
+      
 
         <Route path='/profile' element={
           <ProtectedRoute>
