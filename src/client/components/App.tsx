@@ -35,8 +35,6 @@ import CommunityPage from './Community/CommunityPage.tsx';
 import PartyDashboard from './Dashboard/PartyDashboard.tsx';
 import { useUser } from './UserContext'
 import InterestForm from './InterestForm';
-import theme from '../theme/colors'
-import { ThemeProvider } from '@mui/material/styles';
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(undefined);
   const [user, setUser] = useState<user | null>(null);
@@ -78,137 +76,137 @@ const App: React.FC = () => {
   // Show AppBar if authenticated & not on the login page
   const showAppBar = isAuthenticated && location.pathname !== 'login' && location.pathname !== '/logout';
   return (
+
     <>
-      <ThemeProvider theme={theme}>
-        {showAppBar && <MainAppBar setIsAuthenticated={setIsAuthenticated} user={user} />}
-        <Routes>
-          <Route
-            path='/login'
-            element={!isAuthenticated ? <Login /> : <Navigate to='/' replace />}
-          />
+      {showAppBar && <MainAppBar setIsAuthenticated={setIsAuthenticated} user={user} />}
+      <Routes>
+        <Route
+          path='/login'
+          element={!isAuthenticated ? <Login /> : <Navigate to='/' replace />}
+        />
 
-          <Route
-            path='/'
-            element={
-              <ProtectedRoute>{user && <Home user={user} />}</ProtectedRoute>
-            }
-          />
-          <Route
-            path='/maps'
-            element={
-              <ProtectedRoute>
-                <Maps />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/suggestions'
-            element={
-              <ProtectedRoute>
-                {user && <Suggestions user={user} />}
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/wishlist'
-            element={
-              <ProtectedRoute>{user && <Wishlist user={user} />}</ProtectedRoute>
-            }
-          />
-          <Route
-            path='/chatbot'
-            element={
-              <ProtectedRoute>{user && <ChatBot user={user} />}</ProtectedRoute>
-            }
-          />
-          <Route
-            path='/itinerary'
-            element={
-              <ProtectedRoute>{user && <Itinerary user={user} />}</ProtectedRoute>
-            }
-          />
-
-          <Route path="/itinerary/:id" element={<Itinerary user={user} />} />
-
-          <Route
-            path='/budgetbuddy'
-            element={
-              <ProtectedRoute>
-                <BudgetBuddy />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/routechoices'
-            element={
-              <ProtectedRoute>
-                <RouteChoices />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/Community'
-            element={
-              <ProtectedRoute>
-                {user && <CommunityPage user={user} />}
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/activities'
-            element={
-              <ProtectedRoute>
-                <Activities itineraryId={''} addActivity={function (itineraryId: string, activityData: any): Promise<void> {
-                  throw new Error('Function not implemented.');
-                }} />
-              </ProtectedRoute>
-            }
-          />
-          <Route path='/profile' element={
+        <Route
+          path='/'
+          element={
+            <ProtectedRoute>{user && <Home user={user} />}</ProtectedRoute>
+          }
+        />
+        <Route
+          path='/maps'
+          element={
             <ProtectedRoute>
-              <Profile />
+              <Maps />
             </ProtectedRoute>
-          } />
-          <Route path='/interestform' element={
+          }
+        />
+        <Route
+          path='/suggestions'
+          element={
             <ProtectedRoute>
-              {user && <InterestForm user={user} />}
+              {user && <Suggestions user={user} />}
             </ProtectedRoute>
-          } />
-          <Route
-            path='/dashboard'
-            element={
-              <ProtectedRoute>
-                {<Dashboard user={user} />}
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/logout'
-            element={
-              <ProtectedRoute>
-                <Logout />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/viewform'
-            element={
-              <ProtectedRoute>
-                {<ViewCodeForm />}
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/:partyId'
-            element={
-              <ProtectedRoute>
-                <PartyDashboard user={user} />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </ThemeProvider>
+          }
+        />
+        <Route
+          path='/wishlist'
+          element={
+            <ProtectedRoute>{user && <Wishlist user={user} />}</ProtectedRoute>
+          }
+        />
+        <Route
+          path='/chatbot'
+          element={
+            <ProtectedRoute>{user && <ChatBot user={user} />}</ProtectedRoute>
+          }
+        />
+        <Route
+          path='/itinerary'
+          element={
+            <ProtectedRoute>{user && <Itinerary user={user} />}</ProtectedRoute>
+          }
+        />
+
+        <Route path="/itinerary/:id" element={<Itinerary user={user} />} />
+
+        <Route
+          path='/budgetbuddy'
+          element={
+            <ProtectedRoute>
+              <BudgetBuddy />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/routechoices'
+          element={
+            <ProtectedRoute>
+              <RouteChoices />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/Community'
+          element={
+            <ProtectedRoute>
+              {user && <CommunityPage user={user} />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/activities'
+          element={
+            <ProtectedRoute>
+              <Activities itineraryId={''} addActivity={function (itineraryId: string, activityData: any): Promise<void> {
+                throw new Error('Function not implemented.');
+              }} />
+            </ProtectedRoute>
+          }
+        />
+        <Route path='/profile' element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } />
+        <Route path='/interestform' element={
+          <ProtectedRoute>
+            {user && <InterestForm user={user} />}
+          </ProtectedRoute>
+        } />
+        <Route
+          path='/dashboard'
+          element={
+            <ProtectedRoute>
+              {<Dashboard user={user} />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/logout'
+          element={
+            <ProtectedRoute>
+              <Logout />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/viewform'
+          element={
+            <ProtectedRoute>
+              {<ViewCodeForm />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/:partyId'
+          element={
+            <ProtectedRoute>
+              <PartyDashboard user={user} />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
     </>
+
   );
 };
 
