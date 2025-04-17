@@ -165,7 +165,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
       // }
     }
     let voteDirection;
-    axios.post(`api/vote/${userId}/${suggestionId}`, vote).then(() => {
+    axios.post(`api/vote/${userId}/${suggestionId}/suggestion`, vote).then(() => {
       if (polarity === 'up') {
         voteDirection = 'upVotes';
       } else {
