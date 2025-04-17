@@ -28,16 +28,15 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
   const [partyName, setPartyName] = useState<string>(''); //? delete partyName const?
   const [partyId, setPartyId] = useState<number>(null); //? delete partyId const?
 
+  // * Input Modal: partyName and eVite * //
   const openModal = () => {
     setOpen(true);
-  };
-
+  }; 
   const closeModal = () => {
     setOpen(false);
   };
 
-  
-  //* Request Handling *//
+  //* Create new Travel Party*//
   const createParty = async (partyName:string) => {
     const name = partyName
     setPartyName(name)
@@ -57,15 +56,14 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
   //* Add Current User to Party *//
   const addUserToParty = async(userId:number, partyId:number, partyName: string) => {
     try {
-      let response = await axios.post('/api/party/userParty', {userId, partyId});
-      console.log(`Success at Create.tsx ${partyName}`, response.data)
+      await axios.post('/api/party/userParty', {userId, partyId});
+      // console.log(`Success at Create.tsx ${partyName}`, response.data)
     } catch (error) {
       console.error('Could not create new userParty model', error);
     }
   }; 
   // //* Send E-Vite *//
   const sendEmail = async(emailList: string[], partyName:string, userId: number, partyId: number) => {
-    console.log(userId, 'create party')
     try {
       await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName, userId: userId, partyId: partyId });
       setInviteSuccess(true);

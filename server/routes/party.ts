@@ -73,7 +73,18 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
 //* Create Email Record *//
 async function logEmailSent(address: string, senderId: string, partyId: string) {
   console.log('Logging email for:', address, 'from userId:', senderId);
-  try {
+
+  try { 
+    const existing = await prisma.email.findFirst({
+      where: {
+        address,
+        partyId: +partyId,
+      },
+    });
+    if (existing) {
+      console.log(`Email to ${address} already logged for this party.`);
+      return; 
+    }
     await prisma.email.create({
       data: {
         address,
