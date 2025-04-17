@@ -42,7 +42,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   useEffect(() => {
     getUsersForParty(numericPartyId);
   },[numericPartyId])
-
+  //* Read Member List *//
   const getUsersForParty = async (partyId: number) => { 
     try {
       const response = await axios.get(`/api/party/usersInParty/${partyId}`);
@@ -53,20 +53,19 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
       console.error('failed to find members for one or all parties')
     }
   };
-
+  //* Email Input Dialog
   const openModal = () => {
     setOpen(true);
   };
-
   const closeModal = () => {
     setOpen(false);
   }; 
 
   //* Send E-Vite *//
-  const sendEmail = async(emailList: string[], partyName: string, userId: number ) => { 
+  const sendEmail = async(emailList: string[], partyName: string, userId: number, numericPartyId: number ) => { 
     // console.log(`${partyName} @ send email party dash`)
     try {
-      await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName, userId: userId });
+      await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName, userId: userId, partyId: numericPartyId });
       setInviteSuccess(true);
       setInputValue('');
       setEmails([]);
@@ -76,6 +75,9 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
         console.error('could not send email', error)
     }
   }
+
+  //* Read Email Log *//
+
 
   return (
     <Stack spacing={4} sx={{ p: 3 }}>
@@ -108,12 +110,12 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
               )}
         </Typography>
       </Box>
-      <Box display='flex' justifyContent='right' alignItems='center'>
+      <Box display='flex' justifyContent='left'>
         <AddMember user={user} partyId={numericPartyId} partyName={partyName} getMembers={getUsersForParty}/> 
       </Box>
-      <Button variant='contained' onClick={openModal}>
+      {<Button size='small' variant='contained' onClick={openModal}>
         Send an E-Vite
-      </Button>
+      </Button>}
         <Dialog
           open={open}
           onClose={closeModal}
@@ -143,7 +145,7 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
             <Button 
               sx={{ mt: 1 }}
               variant='outlined'
-              onClick={() => sendEmail(emails, partyName, userId)} disabled={emails.length === 0}
+              onClick={() => sendEmail(emails, partyName, userId, numericPartyId)} disabled={emails.length === 0}
               >
               Invite
             </Button>

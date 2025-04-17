@@ -44,7 +44,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
     try {
       let response = await axios.post('/api/party', {name} );
       const id = (response.data.id);
-      onPartyCreated();
+      // onPartyCreated();
       setPartyId(id);
       setPartySuccess(true);
       setTimeout(() => setPartySuccess(false), 10000)
@@ -63,11 +63,11 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
       console.error('Could not create new userParty model', error);
     }
   }; 
-  //* Send E-Vite *//
-  const sendEmail = async(emailList: string[], partyName:string, userId: number) => {
+  // //* Send E-Vite *//
+  const sendEmail = async(emailList: string[], partyName:string, userId: number, partyId: number) => {
     console.log(userId, 'create party')
     try {
-      await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName, userId: userId });
+      await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName, userId: userId, partyId: partyId });
       setInviteSuccess(true);
       setInputValue('');
       setEmails([]);
@@ -145,7 +145,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
           <Button 
             sx={{ mt: 1 }}
             variant='outlined'
-            onClick={() => sendEmail(emails, partyName, userId)} disabled={emails.length === 0}
+            onClick={() => sendEmail(emails, partyName, userId, partyId)} disabled={emails.length === 0}
             >
             Invite
           </Button>

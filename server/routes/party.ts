@@ -40,8 +40,8 @@ partyRoute.post('/userParty', async (req: any, res: any) => {
 //* Inviting Users to LetsGeaux Via Email *//
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string)
 partyRoute.post('/sendInvite', async (req: any, res:any) => {
-  const {emails, partyName, userId} = req.body
-  console.log(userId);
+  const {emails, partyName, userId, partyId} = req.body;
+  console.log(partyId);
   console.log(req.body)
   if (!emails || !Array.isArray(emails) || emails.length === 0) {
     return res.status(400).json({ error: 'No valid emails provided' });
@@ -57,7 +57,7 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
 
     try {
       await sgMail.send(msg);  
-      await logEmailSent(email, userId);  
+      await logEmailSent(email, userId, partyId);  
     } catch (error) {
       console.error('Error sending invite to:', email, error);
     }
@@ -73,7 +73,7 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
 });
 
 //* Create Email Record *//
-async function logEmailSent(address: string, senderId: string) {
+async function logEmailSent(address: string, senderId: string, partyId: string) {
   
   console.log('Logging email for:', address, 'from userId:', senderId);
   try {
@@ -81,6 +81,7 @@ async function logEmailSent(address: string, senderId: string) {
       data: {
         address,
         userId: +senderId,
+        partyId: +partyId
       }
     });
     console.log(`Logged email to ${address}`);

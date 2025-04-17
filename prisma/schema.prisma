@@ -176,11 +176,13 @@ model party {
   id           Int            @id @default(autoincrement())
   name         String         @db.VarChar(50)
   itineraryId  Int?           @unique
-  itinerary    itinerary? 
+  itinerary    itinerary?
   image        image[]
   userParty    userParty[]
   budget       budget[]
   partyMessage partyMessage[]
+
+  emails emails[]
 }
 
 model reminder {
@@ -261,4 +263,6 @@ model emails {
   createdAt DateTime @default(now())
   sender    user     @relation(fields: [userId], references: [id])
   userId    Int
+  partyId   Int
+  party     party    @relation(fields: [partyId], references: [id])
 }
