@@ -19,10 +19,11 @@ interface PostProps {
   getAllPosts: Function
   setPostEditMode: Function
   editablePost: any
+  setEditablePost: Function
 
 }
 
-const Post: React.FC<PostProps> = ({user, currentPost, getAllPosts}) => {
+const Post: React.FC<PostProps> = ({user, currentPost, getAllPosts, setEditablePost, setPostEditMode}) => {
   const { body, id, postName } = currentPost
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentSet, setCommentSet] =useState([]);
@@ -37,7 +38,6 @@ const checkVoteStatus = async () => {
  try {
 
    const ballotChecker = await axios.get(`/api/vote/${userId}/${currentPost.id}/post`)
-   
      if (ballotChecker.data !== "no match") {
        setHasLiked(true);
       } else {
@@ -62,6 +62,14 @@ const startComments = () => {
 const endComments = () => {
   setIsCommenting(false);
 }
+
+const handleEditClick = () => {
+  setEditablePost(currentPost);
+  setPostEditMode(true);
+}
+
+
+
 
 const handleVoteClick = () => {
   const { id: userId } = user;
@@ -148,6 +156,7 @@ const deletePost = () => {
       : (
         null
       )}
+      <Button onClick={handleEditClick}>Edit this post</Button>
       </Card>
     </Container>
   )

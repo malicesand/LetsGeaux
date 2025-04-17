@@ -36,44 +36,45 @@ const PostForm: React.FC<PostFormProps>= ({ user, getAllPosts, editablePost, pos
   })
 
 useEffect(() => {
+  console.log('we in it!!!!', editablePost)
   if (postEditMode) {
     setValue("body", editablePost.body)
   }
-}, []);
+}, [editablePost]);
 
 
-  const submitForm: SubmitHandler<FormFields> = (data:any) => {
+const submitForm: SubmitHandler<FormFields> = (data:any) => {
+  if (!postEditMode) {
     const { id, username } = user;
     const postBody = {
-
-        data: {
-          userId: +id,
-          body: data.body,
-          postName: username
-        }
+      data: {
+        userId: +id,
+        body: data.body,
+        postName: username
       }
-
+    }
     axios.post('/api/posts', postBody)
     .then(() => {
       reset();
       getAllPosts();
     })
     .catch((err) => console.error("couldn't make post", err));
-  }
-
-  const patchForm: SubmitHandler<FormFields> = (data: any) => {
+  } else {
     console.log(data);
     const { id } = editablePost;
     const patchwork = {
+      
         body: data.body
     }
-    axios.patch(`/api/posts/${id}`).then(() => {
+    axios.patch(`/api/posts/${id}`, patchwork).then(() => {
       reset();
       getAllPosts();
+      setPostEditMode(false);
     }).catch((err) => {
       console.error('could not patch form', err);
     })
-  }
+    }
+    }
 
 
 
@@ -96,7 +97,7 @@ useEffect(() => {
       />
       {errors.body && <div>{errors.body.message}</div>}
         {postEditMode ? (
-          <Button type="button" onClick="wee" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Edit Post"}</Button>
+          <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Edit Post"}</Button>
 
         ) : (
           <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Send Post"}</Button>

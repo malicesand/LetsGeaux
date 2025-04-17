@@ -59,6 +59,7 @@ postsRouter.patch("/likes/:id", async (req: any, res: any) => {
 postsRouter.patch("/:id", async (req: any, res: any) => {
   const { id } = req.params;
   const { body } = req.body;
+  console.log('in body', req.body);
   try {
     const newPost = await prisma.post.update({
       where: {

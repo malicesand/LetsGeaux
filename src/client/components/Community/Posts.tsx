@@ -33,6 +33,7 @@ const Posts: React.FC<PostProps> = ({user, postSet, getAllPosts}) => {
             getAllPosts={getAllPosts}
             setPostEditMode={setPostEditMode}
             editablePost={editablePost}
+            setEditablePost={setEditablePost}
             />
           </Paper>
 
