@@ -73,6 +73,7 @@ const App: React.FC = () => {
     return <>{children}</>;
   };
 
+  
 
   // Show AppBar if authenticated & not on the login page
   const showAppBar = isAuthenticated && location.pathname !== 'login' && location.pathname !== '/logout';
