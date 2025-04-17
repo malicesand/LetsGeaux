@@ -56,20 +56,20 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
   };
 
   return (
-    <AppBar position='static' sx={{ background: 'purple' }}>
+    <AppBar position='static' sx={{ background: 'primary' }}>
       <Container maxWidth='xl' sx={{ sm: 'block' }}>
         <Toolbar disableGutters>
           <NavDrawer />
           <StreetcarIcon sx={{ color: 'black', display: { xs: 'none', md: 'flex', sm: 'block' }, mr: 1 }} />
           <Typography
             component='a'
-            variant='h6'
+            variant='h5'
             noWrap
             href='/'
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex', sm: 'block' },
-              fontFamily: 'monospace',
+              fontFamily: 'Lexend Mega, sans-serif',
               fontWeight: 700,
               letterSpacing: '.3rem',
               color: 'white',

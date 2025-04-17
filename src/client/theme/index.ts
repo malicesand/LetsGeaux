@@ -1,50 +1,47 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme,} from '@mui/material/styles';
 // overrides
 // your palette
-import { primary, secondary } from './colors';
+import  theme from './colors';
 // spacing / breakpoints
 import { sizing } from './sizing';
 // shape / shadows
-import { components } from './surfaces';
+
+import { components, borderRadius, shadows} from './surfaces';
 
 // 1 build palette from colors.ts
 // 2 use your sizing.ts for spacing / breakpoints
 // 3 use surfaces.ts for shape, shadows, elevations
 // 4 pull in component overrides
-const theme = createTheme({
+const theme1 = createTheme({
   palette: {
-    primary:   { main: primary.primary },
-    secondary: { main: secondary.secondary },
-    background: {
-      // default: colors.background,
-      // paper:   colors.surface,
-    },
-    text: {
-      // primary: colors.onSurface,
-      // secondary: colors.onSurfaceVariant,
-    },
+   
+    primary:   { main:'#9723C9'  },
+    secondary: { main: '#2FFF2F' },
+    // background: {
+    //   // default: colors.background,
+    //   // paper:   colors.surface,
+    // },
+    // text: {
+    //   // primary: colors.onSurface,
+    //   // secondary: colors.onSurfaceVariant,
+    // },
   },
-
+// this information is in the colors file 
   // typography, font sizes etc.
-  typography: {
-    fontFamily: `'Lexend Mega', sans-serif`,
-    h1:     { fontSize: 40, fontWeight: 900 },
-    body1:  { fontFamily: `'DM Sans', sans-serif` },
-    button: { textTransform: 'none' },
-  },
+  typography: theme.typography,
 
   // spacing scale & breakpoints |pixels, rems|
-  spacing: sizing.spacingUnit,   //(factor) => `${factor * 8}px`
-  breakpoints: sizing.breakpoints,
+  // spacing: sizing.spacingUnit,   //(factor) => `${factor * 8}px`
+  // breakpoints: sizing.breakpoints,
 
   // corner rounding & shadows
   shape: {
-    borderRadius: components.borderRadius,
+    borderRadius: borderRadius,
   },
-  shadows: components.shadows,
+  shadows: shadows,
 
   // finally component defaults & style overrides
   components,
 });
 
-export default theme;
+export default theme1;
