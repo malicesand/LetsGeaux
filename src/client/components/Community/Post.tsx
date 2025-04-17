@@ -28,6 +28,9 @@ const Post: React.FC<PostProps> = ({user, currentPost, getAllPosts, setEditableP
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentSet, setCommentSet] =useState([]);
   const [hasLiked, setHasLiked] = useState(false);
+  const [commentEditMode, setCommentEditMode] = useState(false);
+  const [editableComment, setEditableComment] = useState(null);
+
 const getAllComments = () => {
   axios.get(`/api/comments/${+id}`).then(({data}) => {
     setCommentSet(data)
@@ -125,6 +128,7 @@ const deletePost = () => {
 }
 
   return (
+    // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!!
     <Container>
       <Card sx={{boxShadow: 10 }}>
         <Button onClick={deletePost}>Delete this post 💣</Button>
@@ -141,7 +145,14 @@ const deletePost = () => {
       <Button onClick={startComments}>see comments</Button>
       {isCommenting ? (
         <Paper>
-          <CommentForm postId={id} user={user} getAllComments={getAllComments} />
+          <CommentForm
+          postId={id}
+          user={user}
+          getAllComments={getAllComments}
+          setCommentEditMode={setCommentEditMode}
+          editableComment={editableComment}
+          commentEditMode={commentEditMode}
+          />
           <Comments
           user={user}
           postId={id}
@@ -149,6 +160,9 @@ const deletePost = () => {
           commentSet={commentSet}
           isCommenting={isCommenting}
           endComments={endComments}
+          setEditableComment={setEditableComment}
+          setCommentEditMode={setCommentEditMode}
+          commentEditMode={commentEditMode}
           />
           <Button onClick={endComments}>Close window</Button>
         </Paper>

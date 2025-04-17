@@ -66,6 +66,25 @@ commentsRouter.patch('/likes/:id', async (req:any, res:any) => {
   }
 });
 
+// genuine patch function to change the body of a comment
+commentsRouter.patch("/:id", async (req: any, res: any) => {
+  const { id } = req.params;
+  const { body } = req.body;
+  try {
+    const newPost = await prisma.comment.update({
+      where: {
+        id: +id
+      },
+      data: {
+        body,
+      },
+    });
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("failed to change comment", err);
+    res.sendStatus(500);
+  }
+});
 
 
 // DELETE will destroy a singular comment from the database. BOTH the user that made the post

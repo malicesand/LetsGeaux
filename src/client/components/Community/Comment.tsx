@@ -5,13 +5,18 @@ import { Container, Typography, List, Card, Paper, Grid, Button, } from '@mui/ma
 import { user } from '../../../../types/models.ts';
 
 interface CommentProps {
-  user: user,
+  user: user
   getAllComments: Function
   currentComment: any
+  setEditableComment: Function
+  setCommentEditMode: Function
+  commentEditMode: boolean
+
+
 }
 
 
-const Comment: React.FC<CommentProps> = ({user, getAllComments, currentComment}) => {
+const Comment: React.FC<CommentProps> = ({user, getAllComments, currentComment, setEditableComment, commentEditMode, setCommentEditMode}) => {
   const { body, postName, id } = currentComment;
 
   const [hasLiked, setHasLiked] = useState(false);
@@ -68,7 +73,11 @@ const userId = user.id
      }
      }
    
-
+     const handleEditClick = () => {
+      console.log('handling edit')
+      setEditableComment(currentComment);
+      setCommentEditMode(true);
+    }
 
 
   const handleVoteClick = () => {
@@ -103,6 +112,7 @@ const userId = user.id
 
 
   return (
+    // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!
     <Container>
         <Typography>{body}</Typography>
         <Typography>By: {postName}</Typography>
@@ -114,6 +124,7 @@ const userId = user.id
 
         )}
         <Button onClick={deleteComment} >Delete 💣</Button>
+        <Button onClick={handleEditClick}>Edit this comment</Button>
     </Container>
   )
 }

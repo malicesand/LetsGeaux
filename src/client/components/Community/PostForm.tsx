@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import {
   Container,
@@ -66,11 +66,13 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
       
         body: data.body
     }
-    axios.patch(`/api/posts/${id}`, patchwork).then(() => {
+    axios.patch(`/api/posts/${id}`, patchwork)
+    .then(() => {
       reset();
       getAllPosts();
       setPostEditMode(false);
-    }).catch((err) => {
+    })
+    .catch((err) => {
       console.error('could not patch form', err);
     })
     }
