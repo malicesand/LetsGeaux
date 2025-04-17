@@ -3,10 +3,9 @@ import { Container, Typography, Box, Button } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'; // ability to click on days
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'; // wrapper for dates and calendar
-import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
+import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay'; // custom date render
 import { isBefore, isAfter, isSameDay, eachDayOfInterval } from 'date-fns'; // for highlighting days on calendar 
 import { useNavigate } from 'react-router-dom';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 // interface CalendarProps {
 //   startDate: Date | null;
@@ -15,8 +14,12 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 //   setEndDate: (date: Date | null) => void;
 //   setSelectedDates: (dates: Date[]) => void;
 // }
+interface CalendarProps {
+  partyId: number;
+  onSubmit: (startDate: Date, endDate: Date) => void;
+}
 
-const Calendar: React.FC = ()=> {
+const Calendar: React.FC <CalendarProps>= ({ partyId, onSubmit })=> {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
@@ -24,6 +27,8 @@ const Calendar: React.FC = ()=> {
  
 
 const navigate = useNavigate();
+
+// get all datse between start and end
 useEffect (()=>{
   if(startDate && endDate){
     const dates = eachDayOfInterval({start: startDate, end: endDate });
@@ -69,7 +74,7 @@ useEffect (()=>{
 
     return (
       <PickersDay
-        {...rest}
+        {...rest} // default props passed to Pickers day
         day={day}
         selected={isSelected}
         sx={{
@@ -104,9 +109,11 @@ useEffect (()=>{
             variant="contained"
             color="primary"
             onClick={() => {
-              const dates = eachDayOfInterval({ start: startDate, end: endDate });
-              navigate('/itinerary', { state: { selectedDates: dates } });
+              if (startDate && endDate) {
+                onSubmit(startDate, endDate);
+              }
             }}
+            
           >
             Continue to Itinerary
           </Button>
