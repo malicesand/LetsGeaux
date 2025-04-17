@@ -81,8 +81,8 @@ const App: React.FC = () => {
   }
 
   return (
-    <>
 
+    <>
       {showAppBar && <MainAppBar setIsAuthenticated={setIsAuthenticated} user={user} />}
       <Routes>
         <Route
@@ -227,8 +227,8 @@ const App: React.FC = () => {
 } />
 
       </Routes>
-
     </>
+
   );
 };
 
