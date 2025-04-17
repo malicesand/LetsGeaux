@@ -23,7 +23,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
-import Grid from '@mui/material/Grid';
 
 interface Activity {
   id: string;
@@ -92,6 +91,7 @@ const Activity: React.FC<Props> = ({
     getActivities();
   }, [itineraryId]);
 
+  //form handler to update state when user types into input fields
   const handleChange = (
     e: React.ChangeEvent<{ name?: string; value: any }>
   ) => {
@@ -103,7 +103,7 @@ const Activity: React.FC<Props> = ({
       }));
     }
   };
-
+  // create new actvities
   const postActivity = async () => {
     try {
       const response = await axios.post('/api/activity', formData);
@@ -120,6 +120,7 @@ const Activity: React.FC<Props> = ({
     }
   };
 
+  //edit activities
   const updateActivity = async () => {
     try {
       const updatedActivity = { ...formData };
@@ -141,6 +142,8 @@ const Activity: React.FC<Props> = ({
     }
   };
 
+
+  // delete activities
   const deleteActivity = async (id: string) => {
     try {
       await axios.delete(`/api/activity/${id}`);
@@ -152,6 +155,8 @@ const Activity: React.FC<Props> = ({
     }
   };
 
+
+  //reset/clear form 
   const resetForm = () => {
     setFormData({
       id: '',
@@ -167,6 +172,7 @@ const Activity: React.FC<Props> = ({
     });
   };
 
+  //function when update button is clicked
   const handleUpdateClick = (activity: Activity) => {
     setFormData({
       id: activity.id,
@@ -335,9 +341,9 @@ const Activity: React.FC<Props> = ({
           <Typography variant='h5' gutterBottom>
             Activities List
           </Typography>
-          <Grid container spacing={2}>
+          <Box>
           {activities.map(activity => (
-            <Grid item xs={12} sm={6} md={4} key={activity.id}>
+            <Box key={activity.id} mb={2}>
             <Card>
               <CardContent>
               <Typography variant='h6'>{activity.name}</Typography>
@@ -373,11 +379,10 @@ const Activity: React.FC<Props> = ({
               )}
               </CardActions>
         </Card>
-      </Grid>
+      </Box>
     ))}
-  </Grid>
             </Box>
-      
+            </Box>
         
       </Container>
     </LocalizationProvider>
