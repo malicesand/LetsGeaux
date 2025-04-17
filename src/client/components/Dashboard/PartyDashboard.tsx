@@ -16,7 +16,7 @@ import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
 import AddItinerary from './AddItinerary';
 import Itinerary from '../Itinerary/Itinerary.tsx';
-import { user } from '../../../../types/models.ts';
+import { user, emails } from '../../../../types/models.ts';
 
 interface PartyDashboardProps {
   user: user;
@@ -37,11 +37,14 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const [inputValue, setInputValue] = useState<string>('')
   const [emails, setEmails] = React.useState<string[]>([])
   const [inviteSuccess, setInviteSuccess] = useState(false); 
+  const [emailLog, setEmailLog] = useState<string[]>([]);
 
   
   useEffect(() => {
     getUsersForParty(numericPartyId);
+    getEmailLog(partyId);
   },[numericPartyId])
+
   //* Read Member List *//
   const getUsersForParty = async (partyId: number) => { 
     try {
@@ -60,9 +63,23 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
   const closeModal = () => {
     setOpen(false);
   }; 
+  
+  //* Read Email Log *//
+  const getEmailLog = async (numericPartyId: string) => {
+    // console.log(`Sending email log request for Party:${partyId}`);
+    try {
+      const response = await axios.get(`/api/party/emails/${partyId}`);
+      const emailData = response.data;
+      const addresses = emailData.map((emails: emails) => emails.address);
+      setEmails(addresses)
+      console.log(`Fetched ${addresses.length} emails for party${partyId}`)
+    } catch (error) {
+      console.error(`Failure: emailLog request for party ${partyId}`, error)
+    }
+  }
 
   //* Send E-Vite *//
-  const sendEmail = async(emailList: string[], partyName: string, userId: number, numericPartyId: number ) => { 
+  const sendEmail = async(emailList: string[], partyName: string, userId: number, PartyId: string ) => { 
     // console.log(`${partyName} @ send email party dash`)
     try {
       await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName, userId: userId, partyId: numericPartyId });
@@ -71,12 +88,10 @@ const PartyDashboard: React.FC<PartyDashboardProps>= ({ user }) => {
       setEmails([]);
       setTimeout(() => closeModal(), 3000)
       setTimeout(() => setInviteSuccess(false), 4000)
-    } catch (error) {
+    } catch (error) { 
         console.error('could not send email', error)
     }
   }
-
-  //* Read Email Log *//
 
 
   return (

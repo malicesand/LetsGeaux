@@ -41,8 +41,6 @@ partyRoute.post('/userParty', async (req: any, res: any) => {
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string)
 partyRoute.post('/sendInvite', async (req: any, res:any) => {
   const {emails, partyName, userId, partyId} = req.body;
-  console.log(partyId);
-  console.log(req.body)
   if (!emails || !Array.isArray(emails) || emails.length === 0) {
     return res.status(400).json({ error: 'No valid emails provided' });
   }
@@ -77,7 +75,7 @@ async function logEmailSent(address: string, senderId: string, partyId: string) 
   
   console.log('Logging email for:', address, 'from userId:', senderId);
   try {
-    await prisma.emails.create({
+    await prisma.email.create({
       data: {
         address,
         userId: +senderId,
@@ -94,17 +92,18 @@ async function logEmailSent(address: string, senderId: string, partyId: string) 
 partyRoute.get('/emails/:partyId', async (req: any, res: any) => {
   const {partyId} = req.params;
   try {
-    let emailLog = await prisma.emails.findMany({
+    let emailLog = await prisma.email.findMany({
       where: {
         partyId: +partyId,
       },
-    })
+    });
+    // console.log(emailLog)
     res.json(emailLog);
   } catch (error) {
     console.error('Error fetching emails from server:', error);
     res.status(500).json({ error: 'Error fetching emails from server' });
-  }
-})
+  };
+});
 
 // * Get A User's Parties * //
 partyRoute.get('/userParty/:userId', async (req: any, res: any) => {
@@ -114,7 +113,7 @@ partyRoute.get('/userParty/:userId', async (req: any, res: any) => {
       where: {
         userId: +userId,
       },
-    })
+    });
     res.json(parties);
   } catch (error) {
     console.error('Could not find any parties for user');
@@ -170,8 +169,7 @@ partyRoute.delete('/:partyId', async (req: any, res: any) => {
     where: {
       id: +partyId,
     },
-  })
-  // TODO add email to transaction? Cascade?
+  });
   try { 
     const transaction = await prisma.$transaction([deleteUserParties, deleteParty]);
     console.log(`Transaction Complete: Delete Party ${partyId}`);
