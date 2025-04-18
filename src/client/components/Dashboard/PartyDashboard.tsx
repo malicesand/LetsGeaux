@@ -19,7 +19,7 @@ import { user, email } from '../../../../types/models.ts';
 interface PartyDashboardProps {
   user: user;
 }
-
+// TODO conditional to on render so that only party members can access a dashboard
 const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const theme = useTheme();
   const { partyId } = useParams();
@@ -82,6 +82,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     partyName: string,
     userId: number,
     partyId: string
+    // ! viewCode: string,
   ) => {
     // console.log(`${partyName} @ send email party dash`)
     try {
@@ -90,6 +91,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         partyName: partyName,
         userId: userId,
         partyId: partyId
+        // TODO viewCode: viewCode
       });
       setInviteSuccess(true);
       setInputValue('');
@@ -104,133 +106,144 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
 
   return (
     <React.Fragment>
-    <Typography variant='h4'align='center'
-      sx={{ flexGrow: 1, textAlign: 'center', mt: 5 }}
-    >
-      {partyName}
-    </Typography>
-    <Box 
-      sx={{ 
-        width: '100%', 
-        maxWidth: '300px', 
-        margin: '0',             
-        border: '2px solid black',    
-        borderRadius: theme.shape.borderRadius, 
-        padding: 3,                  
-        mt: 7,    
-        pt: 4      
-      }}
-    >
-      <Stack spacing={4} sx={{ width: '100%',}}>
-        <Box
-          display='flex'
-          flexDirection='column'
-          alignItems='flex-start'
-          gap={2}
-        >
-          <AddItinerary
-            user={user}
-            partyId={numericPartyId}
-            partyName={partyName}
-          />
-          <Typography>Party Members</Typography>
-          <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
-            {partyMembers.map(member => (
-              <Box component='li' key={member}>
-                {member}
-              </Box>
-            ))}
-          </Box>
-          <AddMember
-            user={user}
-            partyId={numericPartyId}
-            partyName={partyName}
-            getMembers={getUsersForParty}
-          />
-          <Button
-            size='medium'
-            color='secondary'
-            variant='contained'
-            onClick={openModal}
-            sx={{ width: 'auto' }}
+      <Typography variant='h3'align='center'
+        sx={{ flexGrow: 1, textAlign: 'center', mt: 5 }}
+      >
+        {partyName}
+      </Typography>
+      <Box 
+        sx={{ 
+          width: '100%', 
+          maxWidth: '300px', 
+          margin: '0',             
+          border: '2px solid black',    
+          borderRadius: 4, 
+          padding: 3,                  
+          mt: 7,    
+          pt: 4      
+        }}
+      >
+        <Stack spacing={4} sx={{ width: '100%',}}>
+          <Box
+            display='flex'
+            flexDirection='column'
+            alignItems='flex-start'
+            gap={2}
           >
-            Send an E-Vite
-          </Button>
-          <Dialog
-            open={open}
-            onClose={closeModal}
-            slotProps={{
-              paper: {
-                sx: { width: 500 },
-                component: 'form'
-              }
-            }}
-          >
-            <Typography variant='subtitle1' sx={{ mt: 2 }}>
-              Invite your friends to join your travel party
-            </Typography>
-            <TextField
-              id='email'
-              placeholder='Enter Multiple Emails'
-              type='text'
-              fullWidth
-              value={inputValue}
-              onChange={event => {
-                const raw = event.target.value;
-                setInputValue(raw);
-                const parsedEmails = raw
-                  .split(',')
-                  .map(email => email.trim())
-                  .filter(email => email.length > 0);
-                setEmails(parsedEmails);
-              }}
+            <AddItinerary
+              user={user}
+              partyId={numericPartyId}
+              partyName={partyName}
+            />
+            <Container
+                sx={{
+                  maxWidth: 500,
+                  border: '2px solid black',
+                  borderRadius: 4,
+                  margin: '0 auto',
+                  p: 2
+                }}
+              >
+
+            <Typography variant='h5' textAlign='center'>Party Members</Typography>
+            <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
+              {partyMembers.map(member => (
+                <Typography variant='body1' component='li' key={member}>
+                  {member}
+                </Typography >
+              ))}
+            </Box>
+              </Container>
+            <AddMember
+              user={user}
+              partyId={numericPartyId}
+              partyName={partyName}
+              getMembers={getUsersForParty}
             />
             <Button
-              sx={{ mt: 1 }}
-              variant='outlined'
-              onClick={() => sendEmail(emails, partyName, userId, partyId)}
-              disabled={emails.length === 0}
+              size='medium'
+              // color='secondary'
+              variant='contained'
+              onClick={openModal}
+              sx={{ width: 'auto', m: 'auto', p: 'auto' }}
             >
-              Invite
+              Send an E-Vite
             </Button>
-            {inviteSuccess && (
-              <Typography sx={{ mt: 1, color: 'green' }}>
-                Invite sent successfully!
-              </Typography>
-            )}
-          </Dialog>
-          {emailLog.length > 0 && (
-            <Container
-              sx={{
-                maxWidth: 500,
-                border: '2px solid black',
-                borderRadius: theme.shape.borderRadius,
-                margin: '0 auto',
-                p: 2
+            <Dialog
+              open={open}
+              onClose={closeModal}
+              slotProps={{
+                paper: {
+                  sx: { width: 500, borderRadius: 12 },
+                  component: 'form'
+                }
               }}
             >
-              <Typography gutterBottom>Sent Invitations</Typography>
-              <Box component='ul' sx={{ listStyle: 'none', padding: 0, m: 0 }}>
-                {emailLog.map((mail, i) => (
-                  <Box key={i} component='li' sx={{ mb: 0.5 }}>
-                    {mail}
-                  </Box>
-                ))}
-              </Box>
-            </Container>
-          )}
-          {/* Message Board */}
-          {/* <Box display="flex" justifyContent="center" alignItems="center">
-          <Box sx={{ width: '60%' }}>
-            <MessageBoard user={user} />
+              <Typography variant='subtitle1' sx={{ mt: 2 }}>
+                Invite your friends to join your travel party
+              </Typography>
+              <TextField
+                id='email'
+                placeholder='Enter Multiple Emails'
+                type='text'
+                fullWidth
+                value={inputValue}
+                onChange={event => {
+                  const raw = event.target.value;
+                  setInputValue(raw);
+                  const parsedEmails = raw
+                    .split(',')
+                    .map(email => email.trim())
+                    .filter(email => email.length > 0);
+                  setEmails(parsedEmails);
+                }}
+              />
+              <Button
+                sx={{ mt: 1 }}
+                variant='outlined'
+                onClick={() => sendEmail(emails, partyName, userId, partyId)}
+                disabled={emails.length === 0}
+              >
+                Invite
+              </Button>
+              {inviteSuccess && (
+                <Typography sx={{ mt: 1, color: 'green' }}>
+                  Invite sent successfully!
+                </Typography>
+              )}
+            </Dialog>
+            {emailLog.length > 0 && (
+              <Container
+                sx={{
+                  maxWidth: 500,
+                  border: '2px solid black',
+                  borderRadius: 4,
+                  margin: '0 auto',
+                  p: 2
+                }}
+              >
+                <Typography variant='h5' gutterBottom>Sent Invitations</Typography>
+                <Box  component='ul' sx={{ listStyle: 'none', padding: 0, m: 0 }}>
+                  {emailLog.map((mail, i) => (
+                    <Typography key={i} variant='body1' component='li' sx={{ mb: 0.5 }}>
+                      {mail}
+                    </Typography>
+                  ))}
+                </Box>
+              </Container>
+            )}
+            {/* Message Board */}
+            {/* <Box display="flex" justifyContent="center" alignItems="center">
+            <Box sx={{ width: '60%' }}>
+              <MessageBoard user={user} />
+            </Box>
+          </Box> */}
+            {/* <Box display="flex" justifyContent="center"> */}
+            {/* <Itinerary user={user}/> */}
           </Box>
-        </Box> */}
-          {/* <Box display="flex" justifyContent="center"> */}
-          {/* <Itinerary user={user}/> */}
-        </Box>
-      </Stack>
-    </Box>
-</React.Fragment>
+        </Stack>
+      </Box>
+    </React.Fragment>
   );
 };
 export default PartyDashboard;
