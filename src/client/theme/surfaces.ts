@@ -1,6 +1,6 @@
 import { Components, Theme } from '@mui/material/styles';
 
-export const borderRadius = 4; 
+export const borderRadius = 8; 
 
 // Neo-brutalist shadows — mostly off or harsh
 export const shadows: Theme['shadows'] = [
@@ -33,7 +33,7 @@ export const components: Components<Theme> = {
       root: {
         marginBottom: 16,
         '& .MuiOutlinedInput-root': {
-          border: '2px solid black',
+          border: '4px solid black',
           borderRadius,
         },
       },
@@ -42,18 +42,18 @@ export const components: Components<Theme> = {
   MuiCard: {
     styleOverrides: {
       root: {
-        border: '2px solid black',
+        border: '4px solid black',
         borderRadius,
         boxShadow: 'none',
         padding: 16,
-        backgroundColor: '#fff',
+        backgroundColor: '#9723C9',
       },
     },
   },
   MuiDialog: {
     styleOverrides: {
       paper: {
-        border: '2px solid black',
+        border: '4px solid black',
         borderRadius,
         boxShadow: 'none',
         padding: 24,
@@ -61,18 +61,25 @@ export const components: Components<Theme> = {
       },
     },
   },
+  MuiBox:{
+styleOverrides:{
+  root:{
+    
+  }
+}
+  },
   MuiButton: {
     defaultProps: { disableElevation: true },
     styleOverrides: {
       root: {
-        border: '2px solid black',
-        borderRadius,
+        border: '4px solid black',
+        borderRadius:12,
         padding: '8px 16px',
-        textTransform: 'uppercase',
+         textTransform: 'uppercase',
         fontWeight: 700,
-        backgroundColor: '#fff',
+        backgroundColor: '#9723C9',
         '&:hover': {
-          backgroundColor: '#f0f0f0',
+          backgroundColor: '#a388ee',
         },
       },
     },

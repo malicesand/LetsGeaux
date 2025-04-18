@@ -1,6 +1,6 @@
 
 
-
+// export default AddItinerary;
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +10,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  MenuItem,
-  TextField,
   Box,
   Typography
 } from '@mui/material';
@@ -25,45 +23,45 @@ interface AddItineraryProps {
 }
 
 const AddItinerary: React.FC<AddItineraryProps> = ({ user, partyId, partyName }) => {
-  const [itineraries, setItineraries] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [selectedItinerary, setSelectedItinerary] = useState<any | null>(null);
   const navigate = useNavigate();
 
+  //fetch all itineraries
+  //if found setIntinerary if set to null
   useEffect(() => {
     const fetchItineraries = async () => {
       try {
         const response = await axios.get(`/api/itinerary?userId=${user.id}`);
-        setItineraries(response.data);
+        const allItineraries = response.data;
+
+        const partyItinerary = allItineraries.find(
+          (itinerary: any) => itinerary.partyId === partyId
+        );
+
+        if (partyItinerary) {
+          setSelectedItinerary(partyItinerary);
+        } else {
+          setSelectedItinerary(null);
+        }
       } catch (err) {
         console.error('Error fetching itineraries:', err);
       }
     };
 
     fetchItineraries();
-  }, [user.id]);
+  }, [user.id, partyId]);
 
-  const handleChoose = () => {
-    if (selectedItinerary) {
-      navigate(`/itinerary/${selectedItinerary.id}`,{
-        state: {
-          partyId,
-          partyName,
-          itineraryName: selectedItinerary.name
-        }
-      });
-    }
+  //when no itinerary exists, sen to calendar page
+  const handleCreate = () => {
+    navigate('/calendar', { state: { partyId } });
   };
 
-  useEffect(()=>{
-    // console.log('party', partyId)
-    // console.log(typeof partyId)
-  })
-  const handleCreate = (e: React.MouseEvent, partyId: number) => {
-    e.preventDefault();
-    navigate('/itinerary', { state: { partyId } });
+//close modal
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedItinerary(null);
   };
-  
 
   return (
     <Box>
@@ -71,39 +69,45 @@ const AddItinerary: React.FC<AddItineraryProps> = ({ user, partyId, partyName })
         Add a Shared Itinerary
       </Button>
 
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>Travel Party Itinerary</DialogTitle>
 
         <DialogContent>
-          <Typography gutterBottom>Choose an existing itinerary or create a new one for the party <strong>{partyName}</strong>.</Typography>
+          <Typography gutterBottom>
+            {selectedItinerary
+              ? `A shared itinerary already exists for ${partyName}.`
+              : `No shared itinerary yet. Create one for ${partyName}.`}
+          </Typography>
 
-          <TextField
-            fullWidth
-            select
-            label="Select an Itinerary"
-            value={selectedItinerary?.id || ''}
-            onChange={(e) => {
-              const selected = itineraries.find(i => i.id === parseInt(e.target.value));
-              setSelectedItinerary(selected || null);
-            }}
-            sx={{ mt: 2 }}
-          >
-            <MenuItem value="">-- Select --</MenuItem>
-            {itineraries.map(itinerary => (
-              <MenuItem key={itinerary.id} value={itinerary.id}>
-                {itinerary.name}
-              </MenuItem>
-            ))}
-          </TextField>
+          {selectedItinerary && (
+            <Box mt={2}>
+              <Typography variant="body1">Itinerary: {selectedItinerary.name}</Typography>
+            </Box>
+          )}
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={handleChoose} disabled={!selectedItinerary}>
-            Choose
-          </Button>
-          <Button onClick={(e) => handleCreate(e, partyId)} variant="contained" color="primary">
-            Create New Itinerary
-          </Button>
+          {selectedItinerary ? (
+            <Button
+              onClick={() =>
+                navigate(`/itinerary/${selectedItinerary.id}`, {
+                  state: {
+                    partyId,
+                    partyName,
+                    itineraryName: selectedItinerary.name,
+                  },
+                })
+              }
+              variant="contained"
+              color="primary"
+            >
+              View Itinerary
+            </Button>
+          ) : (
+            <Button onClick={handleCreate} variant="contained" color="primary">
+              Create New Itinerary
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>

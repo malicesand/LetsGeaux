@@ -19,7 +19,7 @@ import { mainModule } from 'process';
     htmlFontSize: 16,
     body1: {
       fontFamily: 'DM Sans',
-      fontSize: 20
+      fontSize: 14
     },
     button: {
      fontFamily: 'Lexend Mega'
@@ -35,6 +35,10 @@ import { mainModule } from 'process';
     h3:{
       fontFamily:'Lexend Mega',
       fontWeight: 500
+    },
+    h5:{
+      fontFamily:'DM Sans',
+      fontWeight: 700
     }
   },
 });
