@@ -28,23 +28,22 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
   const [partyName, setPartyName] = useState<string>(''); //? delete partyName const?
   const [partyId, setPartyId] = useState<number>(null); //? delete partyId const?
 
+  // * Input Modal: partyName and eVite * //
   const openModal = () => {
     setOpen(true);
-  };
-
+  }; 
   const closeModal = () => {
     setOpen(false);
   };
 
-  
-  //* Request Handling *//
+  //* Create new Travel Party*//
   const createParty = async (partyName:string) => {
     const name = partyName
     setPartyName(name)
     try {
       let response = await axios.post('/api/party', {name} );
       const id = (response.data.id);
-      onPartyCreated();
+      // onPartyCreated();
       setPartyId(id);
       setPartySuccess(true);
       setTimeout(() => setPartySuccess(false), 10000)
@@ -57,16 +56,16 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
   //* Add Current User to Party *//
   const addUserToParty = async(userId:number, partyId:number, partyName: string) => {
     try {
-      let response = await axios.post('/api/party/userParty', {userId, partyId});
-      console.log(`Success at Create.tsx ${partyName}`, response.data)
+      await axios.post('/api/party/userParty', {userId, partyId});
+      // console.log(`Success at Create.tsx ${partyName}`, response.data)
     } catch (error) {
       console.error('Could not create new userParty model', error);
     }
   }; 
-  //* Send E-Vite *//
-  const sendEmail = async(emailList: string[], partyName:string) => {
+  // //* Send E-Vite *//
+  const sendEmail = async(emailList: string[], partyName:string, userId: number, partyId: number) => {
     try {
-      await axios.post('/api/party/sendInvite', { emails: emailList, partyName });
+      await axios.post('/api/party/sendInvite', { emails: emailList, partyName: partyName, userId: userId, partyId: partyId });
       setInviteSuccess(true);
       setInputValue('');
       setEmails([]);
@@ -144,7 +143,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
           <Button 
             sx={{ mt: 1 }}
             variant='outlined'
-            onClick={() => sendEmail(emails, inputValue)} disabled={emails.length === 0}
+            onClick={() => sendEmail(emails, partyName, userId, partyId)} disabled={emails.length === 0}
             >
             Invite
           </Button>

@@ -15,21 +15,15 @@ import { user } from '../../../../types/models.ts'
  
 const filter = createFilterOptions<user>();
 
-const SearchWrapper = styled('div')(() => ({
-  position: 'absolute',
-  left: '60%',
-  bottom: '70%',
-  width: 300,
-}));
-
 interface AddMemberProps {
   user: user;
   partyId: number;
   partyName: string;
+  getMembers: (param: number) => void;
 }
 
 
-const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
+const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembers}) => { 
   const [users, setUsers] =  useState<user[]>([])
   const [member, setMember] = useState<user['username']>()
   const[userId, setUserId] = useState<user['id']>()
@@ -39,31 +33,29 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
     getUsers(partyId);
   }, []);
 
+  // * Modal: Add Member Confirmation * //
   const openModal = () => {
     setOpen(true);
   };
-
   const closeModal = () => {
     setOpen(false);
   };
 
-  const getUsers = async(partyId: number) => {
+  // * Fetch all Users with Let's Geaux Accounts * //
+  const getUsers = async(partyId: number) => { 
     try {
       const response = await axios.get('/api/users');
-      console.log('got the users');
-      setUsers(response.data);
-      
+      // console.log('got the users');
+      setUsers(response.data);     
     } catch (error) {
       console.error('failed to get users for add Member search', error)
     };
   };
-
+  // * Modal Button Click Handler * //
   const addMemberToParty = async(userId:number, partyId:number) => {
-    console.log(partyId)
-    console.log(userId);
     try {
-      let response = await axios.post('/api/party/userParty', {userId, partyId});
-      console.log(response.data);
+      await axios.post('/api/party/userParty', {userId, partyId});
+      getMembers(partyId);
     } catch (error) {
       console.error('Could not create new userParty model', error);
     }
@@ -71,7 +63,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
 
   return ( 
     <React.Fragment>
-      <SearchWrapper>
+      <Box sx={{ width: '100%', maxWidth: 300 }}>
         <Autocomplete
           id="user-search"
           freeSolo
@@ -94,8 +86,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
               placeholder="Add a user to this party" 
           />}
         />
-      </SearchWrapper>
-      <div>
+      </Box>
       <Modal
         open={open}
         onClose={closeModal}
@@ -115,18 +106,19 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
             transform: 'translate(-50%, -50%)',
             width: 400,
             bgcolor: 'background.paper',
-            borderRadius: 2,
-            boxShadow: 24,
+            // borderRadius: 2,
+            borderColor: 'secondary',
+            // boxShadow: 24,
             p: 4,
             textAlign: 'center',
           }}>
-            <Typography  variant="h6" component="h2">
+            <Typography  variant="h6" component="h3">
               Would you like to add {member} to {partyName}?
             </Typography>
             <Box mt={2} display="flex" justifyContent="center" gap={2}>
               <Button
                 variant="contained"
-                color="primary"
+                color='secondary'
                 onClick={() => {
                   if (userId && partyId) {
                     addMemberToParty(userId, partyId);
@@ -143,7 +135,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName}) => {
           </Box>
         </Fade>
       </Modal>
-      </div>
+    
     </React.Fragment>
 
 
