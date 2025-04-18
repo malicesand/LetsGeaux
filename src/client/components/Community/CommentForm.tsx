@@ -88,9 +88,9 @@ useEffect(() => {
           placeholder="Write your own comment"
           />
           {commentEditMode ? (
-            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "changing.." : "edit comment"}</Button>
+            <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "changing.." : "edit comment"}</Button>
           ) : (
-            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending.." : "post comment"}</Button>
+            <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending.." : "post comment"}</Button>
           )
           }
         </form>

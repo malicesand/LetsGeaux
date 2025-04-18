@@ -34,7 +34,7 @@ const Comments: React.FC<CommentsProps> = ({ user, commentSet, getAllComments, c
       />
       </Card>
       ))}
-      <Button onClick={endComments}>back to posts</Button>
+      <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={endComments}>back to posts</Button>
 
     </Container>
 

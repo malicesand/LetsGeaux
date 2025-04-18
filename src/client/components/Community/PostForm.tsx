@@ -99,10 +99,10 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
       />
       {errors.body && <div>{errors.body.message}</div>}
         {postEditMode ? (
-          <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Edit Post"}</Button>
+          <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Edit Post"}</Button>
 
         ) : (
-          <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Send Post"}</Button>
+          <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Send Post"}</Button>
 
         ) }
         </form>

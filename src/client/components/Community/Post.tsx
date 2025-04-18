@@ -134,18 +134,18 @@ const deletePost = () => {
     // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!!
     <Container>
       <Card sx={{boxShadow: 10 }}>
-        <Button onClick={deletePost}>Delete this post 💣</Button>
+        <Button  sx={{ borderWidth: 4, color: 'white' }} onClick={deletePost}>Delete this post 💣</Button>
       <Typography> {body}</Typography>
       <Typography>By: {postName}</Typography>
-      <Typography>Likes: {currentPost.likes}</Typography>
+      <Typography color="white">Likes: {currentPost.likes}</Typography>
       {!hasLiked
        ? (
-         <Button onClick={handleVoteClick} >Like 🚀</Button>
+         <Button sx={{ borderWidth: 4, color: 'white' }} onClick={handleVoteClick} >Like 🚀</Button>
       ) : (
-        <Button onClick={handleVoteDeleteClick}>Unlike</Button>
+        <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleVoteDeleteClick}>Unlike</Button>
         // null
       )}
-      <Button onClick={startComments}>see comments</Button>
+      <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={startComments}>see comments</Button>
       {isCommenting ? (
         <Paper>
           <CommentForm
@@ -167,13 +167,13 @@ const deletePost = () => {
           setCommentEditMode={setCommentEditMode}
           commentEditMode={commentEditMode}
           />
-          <Button onClick={endComments}>Close window</Button>
+          <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={endComments}>Close window</Button>
         </Paper>
       )
       : (
         null
       )}
-      <Button onClick={handleEditClick}>Edit this post</Button>
+      <Button  sx={{ borderWidth: 4, color: 'white' }}  onClick={handleEditClick}>Edit this post</Button>
       </Card>
     </Container>
   )

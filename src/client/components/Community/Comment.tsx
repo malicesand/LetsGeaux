@@ -118,13 +118,13 @@ const userId = user.id
         <Typography>By: {postName}</Typography>
         <Typography>Likes: {currentComment.likes}</Typography>
         {hasLiked ? (
-          <Button onClick={handleVoteDeleteClick}>Unlike</Button>
+          <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleVoteDeleteClick}>Unlike</Button>
         ) : (
-          <Button onClick={handleVoteClick} >Like 🚀</Button>
+          <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleVoteClick} >Like 🚀</Button>
 
         )}
-        <Button onClick={deleteComment} >Delete 💣</Button>
-        <Button onClick={handleEditClick}>Edit this comment</Button>
+        <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={deleteComment} >Delete 💣</Button>
+        <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleEditClick}>Edit this comment</Button>
     </Container>
   )
 }
