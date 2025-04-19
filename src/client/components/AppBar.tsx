@@ -56,7 +56,12 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
   };
 
   return (
-    <AppBar position='static' sx={{ background: 'primary' }}>
+    <AppBar position='static' sx={{
+      border: '4px solid black',
+      borderRadius: 4,
+    }}
+
+    >
       <Container maxWidth='xl' sx={{ sm: 'block' }}>
         <Toolbar disableGutters>
           <NavDrawer />
@@ -72,7 +77,7 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
               fontFamily: 'Lexend Mega, sans-serif',
               fontWeight: 700,
               letterSpacing: '.3rem',
-              color: 'white',
+              color: 'black',
               textDecoration: 'none'
             }}
           >

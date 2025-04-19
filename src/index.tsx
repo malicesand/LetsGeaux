@@ -8,20 +8,31 @@ import { UserProvider } from './client/components/UserContext';
 import { ThemeProvider } from '@mui/material/styles';
 import theme1 from './client/theme/index'
 const root = createRoot(document.getElementById('root'));
-document.body.style.backgroundColor = '#fdfd96';
+import geometry from './client/theme/inspiration-geometry.png'
 
+import { Box } from '@mui/material';
+document.body.style.backgroundColor = '#a684ff';
+//document.body.style.backgroundImage = geometry
 root.render(
-  <BrowserRouter>
+  <Box className='geometry'
+    style={{
+      backgroundImage: `url(${geometry})`,
+      backgroundSize: "repeat",
 
-    <SnackbarProvider maxSnack={3}>
-      <BudgetNotificationProvider>
-        <UserProvider>
-          <ThemeProvider theme={theme1}>
-            <App />
-          </ThemeProvider>
-        </UserProvider>
-      </BudgetNotificationProvider>
-    </SnackbarProvider>
 
-  </BrowserRouter>
+    }}>
+    <BrowserRouter>
+
+      <SnackbarProvider maxSnack={3}>
+        <BudgetNotificationProvider>
+          <UserProvider>
+            <ThemeProvider theme={theme1}>
+              <App />
+            </ThemeProvider>
+          </UserProvider>
+        </BudgetNotificationProvider>
+      </SnackbarProvider>
+
+    </BrowserRouter>
+  </Box>
 );

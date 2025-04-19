@@ -61,13 +61,7 @@ export const components: Components<Theme> = {
       },
     },
   },
-  MuiBox:{
-styleOverrides:{
-  root:{
-    
-  }
-}
-  },
+  
   MuiButton: {
     defaultProps: { disableElevation: true },
     styleOverrides: {
@@ -77,7 +71,7 @@ styleOverrides:{
         padding: '8px 16px',
          textTransform: 'uppercase',
         fontWeight: 700,
-        backgroundColor: '#9723C9',
+        backgroundColor: '#bbf451',
         '&:hover': {
           backgroundColor: '#a388ee',
         },
