@@ -90,7 +90,8 @@ const NavDrawer: React.FC = () => {
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            backgroundColor: '#fff085'
           }
         }}
         variant='persistent'
@@ -112,7 +113,7 @@ const NavDrawer: React.FC = () => {
           <ListItem key={'suggestions'} disablePadding>
             <ListItemButton component={Link} to='/suggestions' onClick={handleDrawerClose}>
               <ListItemIcon>
-                <PiLightbulbBold />
+                <PiLightbulbBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
               <ListItemText primary={'Suggestions'} />
             </ListItemButton>
@@ -121,7 +122,7 @@ const NavDrawer: React.FC = () => {
           <ListItem key={'maps'} disablePadding>
             <ListItemButton component={Link} to='/maps' onClick={handleDrawerClose}>
               <ListItemIcon>
-                <PiMapTrifoldBold size={30} sx={{ color: 'black' }} />
+                <PiMapTrifoldBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
               <ListItemText primary={'Maps'} />
             </ListItemButton>
@@ -130,7 +131,7 @@ const NavDrawer: React.FC = () => {
           <ListItem key={'community'} disablePadding>
             <ListItemButton component={Link} to='/community' onClick={handleDrawerClose}>
               <ListItemIcon>
-                <PiUsersThreeBold size={30} sx={{ color: 'black' }} />
+                <PiUsersThreeBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
               <ListItemText primary={'Community'} />
             </ListItemButton>
@@ -139,7 +140,7 @@ const NavDrawer: React.FC = () => {
           <ListItem key={'wishlist'} disablePadding>
             <ListItemButton component={Link} to='/wishlist' onClick={handleDrawerClose}>
               <ListItemIcon>
-                <PiListHeartBold size={30} />
+                <PiListHeartBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
               <ListItemText primary={'Wishlist'} />
             </ListItemButton>
@@ -157,7 +158,7 @@ const NavDrawer: React.FC = () => {
           <ListItem key={'itinerary'} disablePadding>
             <ListItemButton component={Link} to='/itinerary' onClick={handleDrawerClose}>
               <ListItemIcon>
-                <PiCalendarPlusBold size={30} />
+                <PiCalendarPlusBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
               <ListItemText primary={'Itinerary'} />
             </ListItemButton>
@@ -166,7 +167,7 @@ const NavDrawer: React.FC = () => {
           <ListItem key={'chat'} disablePadding>
             <ListItemButton component={Link} to='/chatbot' onClick={handleDrawerClose}>
               <ListItemIcon>
-                <PiChatsBold size={30} />
+                <PiChatsBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
               <ListItemText primary={`Gata AI Chat`} />
             </ListItemButton>
@@ -174,7 +175,7 @@ const NavDrawer: React.FC = () => {
           {/* Budget Buddy */}
           <ListItem key={'BudgetBuddy'} disablePadding>
             <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
-              <ListItemIcon><PiReceiptBold size={30} /></ListItemIcon>
+              <ListItemIcon><PiReceiptBold size={30} style={{ color: 'black' }} /></ListItemIcon>
               <ListItemText primary="Budget Buddy" />
             </ListItemButton>
           </ListItem>
@@ -198,7 +199,7 @@ const NavDrawer: React.FC = () => {
           <ListItem key={'logout'} disablePadding>
             <ListItemButton component={Link} to='/logout' onClick={handleLogout}>
               <ListItemIcon>
-                <PiArrowSquareRightBold size={30} sx={{ color: 'black' }} />
+                <PiArrowSquareRightBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
               <ListItemText primary={'Logout'} />
             </ListItemButton>
