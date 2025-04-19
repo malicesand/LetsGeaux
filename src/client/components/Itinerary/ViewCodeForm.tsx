@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Box } from '@mui/material';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const ViewCodeForm = () => {
   const [viewCode, setViewCode] = useState('');
   const [itinerary, setItinerary] = useState<any>(null);
   const [error, setError] = useState<string>('');
-const navigate = useNavigate()
+
   // Handle viewCode input change
   const handleViewCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setViewCode(e.target.value);
