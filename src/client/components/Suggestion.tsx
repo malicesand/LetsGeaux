@@ -211,9 +211,9 @@ const Suggestion: React.FC<SuggestionProps> = ({
           <Button variant="filled" onClick={handleAddToActivities}>add to activities!</Button>
           {wishMode
             ?
-            <Button onClick={handleRemoveFromWishlist}>Remove from wishlist</Button>
+            <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleRemoveFromWishlist}>Remove from wishlist</Button>
             :
-            <Button onClick={addToWishlist} variant="filled">add to wishlist!</Button>
+            <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={addToWishlist} variant="filled">add to wishlist!</Button>
           }
           <ImageList>
             <ImageListItem key="ItemText" cols={4}>
@@ -238,8 +238,8 @@ const Suggestion: React.FC<SuggestionProps> = ({
               {isDb ? (
                 <Grid>
                   <Typography>Vote on this suggestion<ThumbsUpDownRoundedIcon /></Typography>
-              <Button onClick={() => handleVoteClick('up')}><ThumbUpAltRoundedIcon /></Button>
-              <Button onClick={() => handleVoteClick('down')}><ThumbDownAltRoundedIcon /></Button>
+              <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={() => handleVoteClick('up')}><ThumbUpAltRoundedIcon /></Button>
+              <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={() => handleVoteClick('down')}><ThumbDownAltRoundedIcon /></Button>
                 </Grid>
               ) : (null)}
 
