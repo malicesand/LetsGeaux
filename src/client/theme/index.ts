@@ -39,7 +39,7 @@ const theme1 = createTheme({
     borderRadius: borderRadius,
   },
   shadows: shadows,
-
+  spacing: 8,
   // finally component defaults & style overrides
   components,
 });
