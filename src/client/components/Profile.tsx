@@ -99,14 +99,19 @@ const Profile: React.FC = () => {
 
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Typography variant="h2" gutterBottom textTransform="uppercase">Profile</Typography>
+      <Typography variant="h2" gutterBottom textTransform="uppercase" align="center">Profile</Typography>
       <Stack spacing={2} alignItems="center">
         <Avatar
           src={contextUser.profilePic}
           alt="Profile Picture"
           sx={{ width: 150, height: 150, border: '4px solid black' }}
         />
-        <Button variant="outlined" onClick={handleUploadWidget} sx={{ borderWidth: 4, color: 'white' }}>Change Profile Picture</Button>
+
+
+        <Button variant="contained" onClick={handleUploadWidget}
+          sx={{ mt: 2, color: 'primary' }}>
+
+          Change Profile Picture</Button>
         <Typography variant="body1" textTransform="uppercase">{contextUser.username}</Typography><Typography variant="body1">{contextUser.email}</Typography>
       </Stack>
 

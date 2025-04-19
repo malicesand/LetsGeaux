@@ -13,20 +13,21 @@ import {
   Drawer,
   Divider
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { PiListBold } from "react-icons/pi";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import LogoutIcon from '@mui/icons-material/LogoutSharp';
-import MapIcon from '@mui/icons-material/MapOutlined';
-import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
-import ChatIcon  from '@mui/icons-material/TryOutlined';
-import TravelExploreIcon from '@mui/icons-material/TravelExplore';
+import { PiArrowSquareRightBold } from "react-icons/pi";
+import { PiMapTrifoldBold } from "react-icons/pi";
+import { PiLightbulbBold } from "react-icons/pi";
+import { PiChatsBold } from "react-icons/pi";
+import { PiCalendarPlusBold } from "react-icons/pi";
 import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';
-import AppShortcut from '@mui/icons-material/AppShortcut';
+import { PiListHeartBold } from "react-icons/pi";
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { PiReceiptBold } from "react-icons/pi";
 import InterestForm from './InterestForm';
-import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
+import { PiUsersThreeBold } from "react-icons/pi";
+
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -59,9 +60,9 @@ const NavDrawer: React.FC = () => {
   const handleLogout = async () => {
     try {
       await axios.post('/logout')
-          setOpen(false);
-          setAuth(false);
-          navigate('/logout');
+      setOpen(false);
+      setAuth(false);
+      navigate('/logout');
     } catch (error) {
       console.error('Error logging out at client', error);
     };
@@ -81,7 +82,7 @@ const NavDrawer: React.FC = () => {
           open && { display: 'none' }
         ]}
       >
-        <MenuIcon />
+        <PiListBold />
       </IconButton>
       <Drawer
         sx={{
@@ -89,7 +90,8 @@ const NavDrawer: React.FC = () => {
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            backgroundColor: '#fff085'
           }
         }}
         variant='persistent'
@@ -109,95 +111,95 @@ const NavDrawer: React.FC = () => {
         <List>
           {/* suggestions */}
           <ListItem key={'suggestions'} disablePadding>
-              <ListItemButton component={Link}to='/suggestions' onClick={handleDrawerClose}>
-                <ListItemIcon>
-                  <TipsIcon />
-                </ListItemIcon>
-                <ListItemText primary={'Suggestions'} />
-              </ListItemButton>
-            </ListItem>
+            <ListItemButton component={Link} to='/suggestions' onClick={handleDrawerClose}>
+              <ListItemIcon>
+                <PiLightbulbBold size={30} style={{ color: 'black' }} />
+              </ListItemIcon>
+              <ListItemText primary={'Suggestions'} />
+            </ListItemButton>
+          </ListItem>
           {/* maps */}
           <ListItem key={'maps'} disablePadding>
-              <ListItemButton component={Link}to='/maps' onClick={handleDrawerClose}>
-                <ListItemIcon>
-                  <MapIcon />
-                </ListItemIcon>
-                <ListItemText primary={'Maps'} />
-              </ListItemButton>
-            </ListItem>
-            {/* maps */}
+            <ListItemButton component={Link} to='/maps' onClick={handleDrawerClose}>
+              <ListItemIcon>
+                <PiMapTrifoldBold size={30} style={{ color: 'black' }} />
+              </ListItemIcon>
+              <ListItemText primary={'Maps'} />
+            </ListItemButton>
+          </ListItem>
+          {/* maps */}
           <ListItem key={'community'} disablePadding>
-              <ListItemButton component={Link}to='/community' onClick={handleDrawerClose}>
-                <ListItemIcon>
-                  <PeopleRoundedIcon />
-                </ListItemIcon>
-                <ListItemText primary={'Community'} />
-              </ListItemButton>
-            </ListItem>
+            <ListItemButton component={Link} to='/community' onClick={handleDrawerClose}>
+              <ListItemIcon>
+                <PiUsersThreeBold size={30} style={{ color: 'black' }} />
+              </ListItemIcon>
+              <ListItemText primary={'Community'} />
+            </ListItemButton>
+          </ListItem>
           {/*wishlist */}
           <ListItem key={'wishlist'} disablePadding>
-            <ListItemButton component={Link}to='/wishlist' onClick={handleDrawerClose}>
+            <ListItemButton component={Link} to='/wishlist' onClick={handleDrawerClose}>
               <ListItemIcon>
-                <AppShortcut />
+                <PiListHeartBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
               <ListItemText primary={'Wishlist'} />
             </ListItemButton>
           </ListItem>
-          <ListItem key={'calendar'} disablePadding>
-            <ListItemButton component={Link}to='/calendar' onClick={handleDrawerClose}>
+          {/* <ListItem key={'calendar'} disablePadding>
+            <ListItemButton component={Link} to='/calendar' onClick={handleDrawerClose}>
               <ListItemIcon>
                 <TravelExploreIcon />
               </ListItemIcon>
               <ListItemText primary={'Calendar'} />
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
 
           {/* itinerary*/}
           <ListItem key={'itinerary'} disablePadding>
-            <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
+            <ListItemButton component={Link} to='/itinerary' onClick={handleDrawerClose}>
               <ListItemIcon>
-                <TravelExploreIcon />
+                <PiCalendarPlusBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
               <ListItemText primary={'Itinerary'} />
             </ListItemButton>
           </ListItem>
           {/* chat */}
           <ListItem key={'chat'} disablePadding>
-            <ListItemButton component={Link}to='/chatbot' onClick={handleDrawerClose}>
+            <ListItemButton component={Link} to='/chatbot' onClick={handleDrawerClose}>
               <ListItemIcon>
-                <ChatIcon />
+                <PiChatsBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
-              <ListItemText primary={`Gata AI Chat`} /> 
+              <ListItemText primary={`Gata AI Chat`} />
             </ListItemButton>
           </ListItem>
           {/* Budget Buddy */}
           <ListItem key={'BudgetBuddy'} disablePadding>
             <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
-              <ListItemIcon><AttachMoneyIcon sx={{ color: 'grey' }} /></ListItemIcon>
+              <ListItemIcon><PiReceiptBold size={30} style={{ color: 'black' }} /></ListItemIcon>
               <ListItemText primary="Budget Buddy" />
             </ListItemButton>
           </ListItem>
           {/* Route Choices  */}
-          <ListItem key={'InterestForm'} disablePadding>
+          {/* <ListItem key={'InterestForm'} disablePadding>
             <ListItemButton component={Link} to="/interestform" onClick={handleDrawerClose}>
-              <ListItemIcon><PinDropOutlinedIcon/></ListItemIcon>
+              <ListItemIcon><PinDropOutlinedIcon sx={{ color: 'black' }} /></ListItemIcon>
               <ListItemText primary="Interest Form" />
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
           {/* Activites */}
-          <ListItem key={'viewform'} disablePadding>
+          {/* <ListItem key={'viewform'} disablePadding>
             <ListItemButton component={Link} to='/viewform' onClick={handleDrawerClose}>
               <ListItemIcon>
-                <LogoutIcon />
+                <PiArrowSquareRightBold />
               </ListItemIcon>
               <ListItemText primary={'ViewForm'} />
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
             <ListItemButton component={Link} to='/logout' onClick={handleLogout}>
               <ListItemIcon>
-                <LogoutIcon />
+                <PiArrowSquareRightBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
               <ListItemText primary={'Logout'} />
             </ListItemButton>
