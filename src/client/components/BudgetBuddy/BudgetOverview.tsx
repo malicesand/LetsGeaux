@@ -171,7 +171,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
               color={percent < 50 ? 'primary' : percent < 85 ? 'warning' : 'error'}
             />
             <Stack direction="row" spacing={1} mt={2}>
-              <Button size="small" variant="outlined" onClick={() => openEditModal(budget)}>Edit</Button>
+              <Button size="small" variant="outlined" color="white" onClick={() => openEditModal(budget)}>Edit</Button>
               <Button size="small" variant="outlined" color="error" onClick={() => openDeleteModal(budget)}>Delete</Button>
               {updatedEntryId === budget.id && <Chip label="Updated!" color="success" size="small" />}
             </Stack>
