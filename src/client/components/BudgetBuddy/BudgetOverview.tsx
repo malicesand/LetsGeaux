@@ -43,7 +43,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
   const { addNotification } = useBudgetNotifications();
 
   // fefine the thresholds
-  const thresholds = [25, 50, 75, 90];
+  const thresholds = [40, 50, 75, 90, 95];
 
   const fetchBudgets = async () => {
     if (!selectedItineraryId) return;
