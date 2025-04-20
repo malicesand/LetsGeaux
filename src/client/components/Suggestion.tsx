@@ -222,7 +222,13 @@ const Suggestion: React.FC<SuggestionProps> = ({
                   {title}
                 </Typography>
               </ListItemText>
-              <img width="50" height="50" src="https://static.vecteezy.com/system/resources/previews/002/187/723/original/coming-soon-neon-signs-style-text-free-vector.jpg"></img>
+              {image ? (
+                <img style={{ width: "100px", marginTop: "10px" }}width="10" height="10" src={`${image}`}></img>
+
+              ) : (
+                <img width="50" height="50" src="https://static.vecteezy.com/system/resources/previews/002/187/723/original/coming-soon-neon-signs-style-text-free-vector.jpg"></img>
+// set typography to "body"
+              )}
               <Typography>{description}</Typography>
               <Typography><b>Contact number:</b> {phoneNum}</Typography>
               <Typography><b>address:</b> {address}</Typography>
@@ -238,8 +244,8 @@ const Suggestion: React.FC<SuggestionProps> = ({
               {isDb ? (
                 <Grid>
                   <Typography>Vote on this suggestion<ThumbsUpDownRoundedIcon /></Typography>
-              <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={() => handleVoteClick('up')}><ThumbUpAltRoundedIcon /></Button>
-              <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={() => handleVoteClick('down')}><ThumbDownAltRoundedIcon /></Button>
+              <Button sx={{ borderWidth: 4 }}  onClick={() => handleVoteClick('up')}><ThumbUpAltRoundedIcon /></Button>
+              <Button sx={{ borderWidth: 4 }}  onClick={() => handleVoteClick('down')}><ThumbDownAltRoundedIcon /></Button>
                 </Grid>
               ) : (null)}
 
