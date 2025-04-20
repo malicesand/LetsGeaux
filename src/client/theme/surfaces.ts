@@ -90,11 +90,11 @@ export const components: Components<Theme> = {
   
         '&:hover': {
           backgroundColor: theme.palette.secondary.main,
-          boxShadow: theme.shadows[2], // your custom neo-brutalist shadow
+          boxShadow: theme.shadows[2], 
         },
   
         '&:active': {
-          boxShadow: theme.shadows[1], // smaller press shadow if desired
+          boxShadow: theme.shadows[1], 
         },
       }),
     },
