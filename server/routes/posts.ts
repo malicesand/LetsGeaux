@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 postsRouter.get("/", async (req: any, res: any) => {
   try {
     const allPosts = await prisma.post.findMany();
-    res.status(200).send(allPosts);
+    res.status(200).send(allPosts.reverse());
   } catch (err) {
     console.error("unable to get posts", err);
     res.sendStatus(500);
