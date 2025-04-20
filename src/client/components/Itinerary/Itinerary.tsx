@@ -319,7 +319,10 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               <Typography variant='body2'>
                 End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY')}
               </Typography>
-
+              <Typography variant='caption' color='secondary'>
+    View Code: {itinerary.viewCode}
+  </Typography>
+  
               {itinerary.message && (
                 <Alert severity='success'>{itinerary.message}</Alert>
               )}
