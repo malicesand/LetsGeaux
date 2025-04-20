@@ -90,17 +90,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
       </Typography>
       <Stack spacing={2} alignItems="center">
         <Button
-          variant="outlined"
+          variant="contained"
           sx={{
-            border: '4px solid black',
-            borderRadius: 12,
-            padding: '10px 20px',
-            textTransform: 'uppercase',
-            fontWeight: 700,
-            backgroundColor: 'transparent',
-            '&:hover': {
-              backgroundColor: '#eee',
-            },
+            mt: 2,
+            color: 'primary'
           }}
           onClick={handleUploadWidget}
         >
@@ -141,18 +134,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
 
           <Button
             type="submit"
-            variant="outlined"
+            variant="contained"
             sx={{
               mt: 2,
-              border: '4px solid black',
-              borderRadius: 12,
-              padding: '10px 20px',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              backgroundColor: 'transparent',
-              '&:hover': {
-                backgroundColor: '#eee',
-              },
+              color: 'primary'
             }}
           >
             Submit
@@ -177,14 +162,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
               </Typography>
               <Button
                 onClick={() => deleteImage(image.id)}
+                variant="contained"
                 sx={{
-                  mt: 1,
-                  color: 'white',
-                  textTransform: 'uppercase',
-                  fontWeight: 700,
-                  '&:hover': {
-                    backgroundColor: '#ffdddd',
-                  },
+                  mt: 2,
+                  color: 'primary'
                 }}
               >
                 Delete
