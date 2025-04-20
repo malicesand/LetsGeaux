@@ -85,16 +85,19 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
 
   return (
     <Box sx={{ maxWidth: '600px', margin: 'auto', py: 4 }}>
-      <Typography variant="h4" gutterBottom sx={{ textTransform: 'uppercase', fontWeight: 700 }}>
-        Upload an Image
+
+      <Typography
+        variant="h3"
+        align='center'
+        sx={{ py: 4 }}
+      >
+        Upload A Trip Image
       </Typography>
-      <Stack spacing={2} alignItems="center">
+
+      <Box spacing={2} alignItems="center">
         <Button
           variant="contained"
-          sx={{
-            mt: 2,
-            color: 'primary'
-          }}
+          sx={{ mt: 2, color: 'primary' }}
           onClick={handleUploadWidget}
         >
           Upload Image
@@ -110,7 +113,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
           </Box>
         )}
 
-        <form onSubmit={handleSubmit} style={{ marginTop: '10px' }}>
+        <form onSubmit={handleSubmit} style={{ marginTop: '10px', width: '100%' }}>
           <TextField
             placeholder="Add some notes..."
             value={notes}
@@ -131,51 +134,69 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
               },
             }}
           />
-
           <Button
             type="submit"
             variant="contained"
-            sx={{
-              mt: 2,
-              color: 'primary'
-            }}
+            sx={{ mt: 2, color: 'primary' }}
           >
             Submit
           </Button>
         </form>
 
-        <Typography variant="h5" sx={{ textTransform: 'uppercase', fontWeight: 700, mt: 4 }}>
-          Uploaded Images
-        </Typography>
-        {images.length === 0 ? (
-          <Typography>No images uploaded yet.</Typography>
-        ) : (
-          images.map((image: any) => (
-            <Box key={image.id} sx={{ mb: 4 }}>
+      </Box>
+      <Typography
+        variant="h3"
+        align='center'
+      >
+        Uploaded Images
+      </Typography>
+
+      {images.length === 0 ? (
+        <Typography>No images uploaded yet.</Typography>
+      ) : (
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 3,
+            justifyContent: 'center',
+            mt: 2,
+          }}
+        >
+          {images.map((image: any) => (
+            <Box
+              key={image.id}
+              sx={{
+                border: '2px solid black',
+                borderRadius: 4,
+                padding: 2,
+                maxWidth: 220,
+                textAlign: 'center',
+              }}
+            >
               <img
                 src={image.url}
                 alt="Uploaded image"
-                style={{ width: '200px', borderRadius: '4px' }}
+                style={{ width: '100%', borderRadius: '4px' }}
               />
-              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+              <Typography variant="body1" sx={{ fontWeight: 500, mt: 1 }}>
                 Notes: {image.notes}
               </Typography>
               <Button
                 onClick={() => deleteImage(image.id)}
                 variant="contained"
-                sx={{
-                  mt: 2,
-                  color: 'primary'
-                }}
+                sx={{ mt: 1, color: 'primary' }}
               >
                 Delete
               </Button>
             </Box>
-          ))
-        )}
-      </Stack>
+          ))}
+        </Box>
+      )}
     </Box>
+
   );
-};
+}
+
 
 export default ImageUpload;
