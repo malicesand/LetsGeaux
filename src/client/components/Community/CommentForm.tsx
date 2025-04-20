@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useEffect} from 'react';
 import axios from 'axios';
 import { user } from '../../../../types/models.ts';
 import {
@@ -21,34 +21,59 @@ interface CommentFormProps {
   user: user;
   postId: string;
   getAllComments: Function;
+  setCommentEditMode: Function;
+  editableComment: any;
+  commentEditMode: boolean;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({user, postId, getAllComments}) => {
-  const [commentEditMode, setCommentEditMode] = useState()
+const CommentForm: React.FC<CommentFormProps> = ({user, postId, commentEditMode, setCommentEditMode, editableComment, getAllComments}) => {
   const form = useForm();
-  const { register, handleSubmit, setValue, setError, formState: { isSubmitting, errors } } = useForm<FormFields>({
+  const { register, handleSubmit, reset, setValue, setError, formState: { isSubmitting, errors } } = useForm<FormFields>({
     defaultValues: {
       body: '',
     }
   })
-  const submitComment: SubmitHandler<FormFields> = (data: any) => {
-    console.log(user);
-    const commentBody = {
-      data: {
-        userId: +user.id,
-        postId: +postId,
-        body: data.body,
-        postName: user.username
 
-      }
-    }
-
-    axios.post(`/api/comments`, commentBody)
-    .then(() => {
-      getAllComments();
-    })
-    .catch((err) => console.error('unable to post comment', err))
+useEffect(() => {
+  if (commentEditMode) {
+    setValue("body", editableComment.body);
   }
+}, [editableComment]);
+
+
+  const submitComment: SubmitHandler<FormFields> = (data: any) => {
+    if (!commentEditMode) {
+
+      const commentBody = {
+        data: {
+          userId: +user.id,
+          postId: +postId,
+          body: data.body,
+          postName: user.username
+
+        }
+      }
+
+      axios.post(`/api/comments`, commentBody)
+      .then(() => {
+        reset();
+        getAllComments();
+      })
+      .catch((err) => console.error('unable to post comment', err))
+    } else {
+      const { id } = editableComment;
+      const commsFix = {
+        body: data.body,
+      }
+      axios.patch(`api/comments/${id}`, commsFix)
+      .then(() => {
+        reset();
+        getAllComments();
+        setCommentEditMode(false);
+      })
+      .catch((err) => console.error('could not change comment', err));
+    }
+    }
   return (
     <Container>
       <Grid container spacing={3}>
@@ -62,7 +87,12 @@ const CommentForm: React.FC<CommentFormProps> = ({user, postId, getAllComments})
           type="textarea"
           placeholder="Write your own comment"
           />
-          <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending.." : "post comment"}</Button>
+          {commentEditMode ? (
+            <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "changing.." : "edit comment"}</Button>
+          ) : (
+            <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending.." : "post comment"}</Button>
+          )
+          }
         </form>
       </Grid>
     </Container>

@@ -5,13 +5,18 @@ import { Container, Typography, List, Card, Paper, Grid, Button, } from '@mui/ma
 import { user } from '../../../../types/models.ts';
 
 interface CommentProps {
-  user: user,
+  user: user
   getAllComments: Function
   currentComment: any
+  setEditableComment: Function
+  setCommentEditMode: Function
+  commentEditMode: boolean
+
+
 }
 
 
-const Comment: React.FC<CommentProps> = ({user, getAllComments, currentComment}) => {
+const Comment: React.FC<CommentProps> = ({user, getAllComments, currentComment, setEditableComment, commentEditMode, setCommentEditMode}) => {
   const { body, postName, id } = currentComment;
 
   const [hasLiked, setHasLiked] = useState(false);
@@ -20,6 +25,14 @@ const Comment: React.FC<CommentProps> = ({user, getAllComments, currentComment})
     const { id: userId } = user;
     const { id: commentId } = currentComment;
     axios.delete(`api/vote/${userId}/${commentId}/comment`)
+    .then(() => {
+      const ballot = {
+        data: {
+          direction: "down",
+        },
+      }
+      axios.patch(`api/comments/likes/${currentComment.id}`, ballot);
+    })
     .then(() => {
       setHasLiked(false);
       getAllComments();
@@ -33,6 +46,9 @@ useEffect(() => {
 }, []);
 
 const userId = user.id
+
+
+
 
 
   const deleteComment = () => {
@@ -57,7 +73,11 @@ const userId = user.id
      }
      }
    
-
+     const handleEditClick = () => {
+      console.log('handling edit')
+      setEditableComment(currentComment);
+      setCommentEditMode(true);
+    }
 
 
   const handleVoteClick = () => {
@@ -74,6 +94,14 @@ const userId = user.id
     }
     axios.post(`api/vote/${userId}/${commentId}/comment`, vote)
     .then(() => {
+      const ballot = {
+        data: {
+          direction: "up",
+        },
+      }
+      axios.patch(`api/comments/likes/${currentComment.id}`, ballot);
+    })
+    .then(() => {
       setHasLiked(true);
       getAllComments();
     })
@@ -84,16 +112,19 @@ const userId = user.id
 
 
   return (
+    // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!
     <Container>
         <Typography>{body}</Typography>
         <Typography>By: {postName}</Typography>
+        <Typography>Likes: {currentComment.likes}</Typography>
         {hasLiked ? (
-          <Button onClick={handleVoteDeleteClick}>Unlike</Button>
+          <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleVoteDeleteClick}>Unlike</Button>
         ) : (
-          <Button onClick={handleVoteClick} >Like 🚀</Button>
+          <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleVoteClick} >Like 🚀</Button>
 
         )}
-        <Button onClick={deleteComment} >Delete 💣</Button>
+        <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={deleteComment} >Delete 💣</Button>
+        <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleEditClick}>Edit this comment</Button>
     </Container>
   )
 }

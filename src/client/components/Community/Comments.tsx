@@ -13,18 +13,28 @@ interface CommentsProps {
   endComments: Function,
   isCommenting: boolean,
   postId: string,
+  editableComment: any;
+  setEditableComment: Function,
+  setCommentEditMode: Function,
+  commentEditMode: boolean,
 }
 
-const Comments: React.FC<CommentsProps> = ({ user, commentSet, getAllComments, endComments, postId }) => {
+const Comments: React.FC<CommentsProps> = ({ user, commentSet, getAllComments, commentEditMode, endComments, postId, setEditableComment, setCommentEditMode }) => {
   return (
     <Container>
-      {/* <CommentForm postId={postId} user={user} getAllComments={getAllComments} postId={postId} /> */}
       {commentSet.map((currentComment: any) => (
         <Card key={currentComment.id}>
-      <Comment currentComment={currentComment} user={user} getAllComments={getAllComments} />
+      <Comment
+      currentComment={currentComment}
+      user={user}
+      getAllComments={getAllComments}
+      setEditableComment={setEditableComment}
+      setCommentEditMode={setCommentEditMode}
+      commentEditMode={commentEditMode}
+      />
       </Card>
       ))}
-      <Button onClick={endComments}>back to posts</Button>
+      <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={endComments}>back to posts</Button>
 
     </Container>
 

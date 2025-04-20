@@ -104,7 +104,7 @@ const submitForm =  () => {
             <Input {...register("image")} type="text" placeholder="Add url"></Input>
             <Input {...register("phoneNum")} type="text" placeholder='contact number'></Input>
             <Input {...register("address")} type="text" placeholder='address'></Input>
-            <Button disabled={isSubmitting} type="submit">{isSubmitting ? "submitting" : "Submit"}</Button>
+            <Button sx={{ borderWidth: 4, color: 'white' }}  disabled={isSubmitting} type="submit">{isSubmitting ? "submitting" : "Submit"}</Button>
           </form>
         </Grid>
     </Container>
