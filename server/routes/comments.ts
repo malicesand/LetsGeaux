@@ -38,6 +38,55 @@ try {
   res.sendStatus(500);
 }
 })
+
+// PATCH to add/remove numbers from likes count:
+commentsRouter.patch('/likes/:id', async (req:any, res:any) => {
+  const { id } = req.params;
+  const { direction } = req.body.data;
+  let addNum;
+  if (direction === "up") {
+    addNum = 1;
+  } else {
+    addNum = -1;
+  }
+  try {
+    const setLikes = await prisma.comment.update({
+      where: {
+        id: +id,
+      },
+      data: {
+        likes: {
+          increment: addNum,
+        },
+      },
+    });
+  } catch (err) {
+    console.error("unable to change likes", err);
+    res.sendStatus(500);
+  }
+});
+
+// genuine patch function to change the body of a comment
+commentsRouter.patch("/:id", async (req: any, res: any) => {
+  const { id } = req.params;
+  const { body } = req.body;
+  try {
+    const newPost = await prisma.comment.update({
+      where: {
+        id: +id
+      },
+      data: {
+        body,
+      },
+    });
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("failed to change comment", err);
+    res.sendStatus(500);
+  }
+});
+
+
 // DELETE will destroy a singular comment from the database. BOTH the user that made the post
 // and the user that wrote the post have delete access.
 

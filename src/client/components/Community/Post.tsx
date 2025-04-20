@@ -9,22 +9,31 @@ import {
   Grid,
   Button,
 } from '@mui/material';
+// import * as dayjs from 'dayjs';
 import Comments from './Comments.tsx';
 import CommentForm from './CommentForm.tsx';
 import { user } from '../../../../types/models.ts';
+
+// dayjs().format()
 
 interface PostProps {
   user: user,
   currentPost: any
   getAllPosts: Function
+  setPostEditMode: Function
+  editablePost: any
+  setEditablePost: Function
 
 }
 
-const Post: React.FC<PostProps> = ({user, currentPost, getAllPosts}) => {
+const Post: React.FC<PostProps> = ({user, currentPost, getAllPosts, setEditablePost, setPostEditMode}) => {
   const { body, id, postName } = currentPost
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentSet, setCommentSet] =useState([]);
   const [hasLiked, setHasLiked] = useState(false);
+  const [commentEditMode, setCommentEditMode] = useState(false);
+  const [editableComment, setEditableComment] = useState(null);
+
 const getAllComments = () => {
   axios.get(`/api/comments/${+id}`).then(({data}) => {
     setCommentSet(data)
@@ -35,7 +44,6 @@ const checkVoteStatus = async () => {
  try {
 
    const ballotChecker = await axios.get(`/api/vote/${userId}/${currentPost.id}/post`)
-   
      if (ballotChecker.data !== "no match") {
        setHasLiked(true);
       } else {
@@ -61,6 +69,14 @@ const endComments = () => {
   setIsCommenting(false);
 }
 
+const handleEditClick = () => {
+  setEditablePost(currentPost);
+  setPostEditMode(true);
+}
+
+
+
+
 const handleVoteClick = () => {
   const { id: userId } = user;
   const { id: postId } = currentPost;
@@ -72,9 +88,18 @@ const handleVoteClick = () => {
       polarity: 1
     }
   }
-    axios.post(`api/vote/${userId}/${+postId}/post`, vote).then(() => {
-      setHasLiked(true);
+    axios.post(`api/vote/${userId}/${+postId}/post`, vote)
+    .then(() => {
+      const ballot = {
+        data: {
+          direction: "up",
+        },
+      }
+      axios.patch(`api/posts/likes/${currentPost.id}`, ballot);
+    })
+    .then(() => {
       getAllPosts();
+      setHasLiked(true);
     }).catch((err) => console.error('failed to cast vote', err));
 }
 
@@ -82,6 +107,14 @@ const handleVoteDeleteClick = () => {
   const { id: userId } = user;
   const { id: postId } = currentPost;
   axios.delete(`api/vote/${userId}/${postId}/post`)
+  .then(() => {
+    const ballot = {
+      data: {
+        direction: "down",
+      },
+    }
+    axios.patch(`api/posts/likes/${currentPost.id}`, ballot);
+  })
   .then(() => {
     setHasLiked(false);
     getAllPosts();
@@ -98,22 +131,31 @@ const deletePost = () => {
 }
 
   return (
+    // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!!
     <Container>
       <Card sx={{boxShadow: 10 }}>
-        <Button onClick={deletePost}>Delete this post 💣</Button>
+        <Button  sx={{ borderWidth: 4, color: 'white' }} onClick={deletePost}>Delete this post 💣</Button>
       <Typography> {body}</Typography>
       <Typography>By: {postName}</Typography>
+      <Typography color="white">Likes: {currentPost.likes}</Typography>
       {!hasLiked
        ? (
-         <Button onClick={handleVoteClick} >Like 🚀</Button>
+         <Button sx={{ borderWidth: 4, color: 'white' }} onClick={handleVoteClick} >Like 🚀</Button>
       ) : (
-        <Button onClick={handleVoteDeleteClick}>Unlike</Button>
+        <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleVoteDeleteClick}>Unlike</Button>
         // null
       )}
-      <Button onClick={startComments}>see comments</Button>
+      <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={startComments}>see comments</Button>
       {isCommenting ? (
         <Paper>
-          <CommentForm postId={id} user={user} getAllComments={getAllComments} />
+          <CommentForm
+          postId={id}
+          user={user}
+          getAllComments={getAllComments}
+          setCommentEditMode={setCommentEditMode}
+          editableComment={editableComment}
+          commentEditMode={commentEditMode}
+          />
           <Comments
           user={user}
           postId={id}
@@ -121,13 +163,17 @@ const deletePost = () => {
           commentSet={commentSet}
           isCommenting={isCommenting}
           endComments={endComments}
+          setEditableComment={setEditableComment}
+          setCommentEditMode={setCommentEditMode}
+          commentEditMode={commentEditMode}
           />
-          <Button onClick={endComments}>Close window</Button>
+          <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={endComments}>Close window</Button>
         </Paper>
       )
       : (
         null
       )}
+      <Button  sx={{ borderWidth: 4, color: 'white' }}  onClick={handleEditClick}>Edit this post</Button>
       </Card>
     </Container>
   )
