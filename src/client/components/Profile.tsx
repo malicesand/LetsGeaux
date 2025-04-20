@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import {
@@ -27,7 +27,6 @@ const Profile: React.FC = () => {
   const [interests, setInterests] = useState([]);
   const [selectedInterest, setSelectedInterest] = useState('');
 
-  // Set context user on load (if not already set)
   useEffect(() => {
     if (!contextUser?.id) {
       setLocalUser(user);
@@ -94,22 +93,30 @@ const Profile: React.FC = () => {
   };
 
   const currentInterest = interests[0]?.name;
-  const interestOptions = ALL_INTERESTS.filter((i) => i !== currentInterest);
+  const interestOptions = useMemo(() => ALL_INTERESTS.filter((i) => i !== currentInterest), [currentInterest]);
 
   if (!contextUser) return <Typography>Loading...</Typography>;
 
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>Profile Page</Typography>
+      <Typography variant="h2" gutterBottom textTransform="uppercase" align="center">Profile</Typography>
       <Stack spacing={2} alignItems="center">
-        <Avatar src={contextUser.profilePic} alt="Profile Picture" sx={{ width: 150, height: 150 }} />
-        <Button variant="outlined" onClick={handleUploadWidget}>Change Profile Picture</Button>
-        <Typography variant="h6">{contextUser.username}</Typography>
-        <Typography variant="body1">{contextUser.email}</Typography>
+        <Avatar
+          src={contextUser.profilePic}
+          alt="Profile Picture"
+          sx={{ width: 150, height: 150, border: '4px solid black' }}
+        />
+
+
+        <Button variant="contained" onClick={handleUploadWidget}
+          sx={{ mt: 2, color: 'primary' }}>
+
+          Change Profile Picture</Button>
+        <Typography variant="body1" textTransform="uppercase">{contextUser.username}</Typography><Typography variant="body1">{contextUser.email}</Typography>
       </Stack>
 
       <Box mt={4}>
-        <Typography variant="h6">Current Interest:</Typography>
+        <Typography variant="h5" textTransform="uppercase" fontWeight='700' >Current Interest:</Typography>
         <Typography variant="body1">{currentInterest || 'None'}</Typography>
       </Box>
 

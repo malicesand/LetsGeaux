@@ -1,48 +1,56 @@
 import { createTheme } from '@mui/material/styles';
-import { mainModule } from 'process';
 
 
- const theme = createTheme({
-  palette: {
-  //  background: {
-  //   main: '#FDFD96'
-  //  },
-   primary: {
-     main: '#9723C9'
-   },
-   secondary: {
-      main: '#2FFF2F'
-   }
+export const typography: TypographyOptions = {
+  fontFamily: 'Lexend Mega',
+  htmlFontSize: 14,
+  body1: {
+    fontFamily: 'DM Sans',
+    fontSize: 14,
+    fontWeight: 500,
+    textTransform: 'none',
   },
-  typography: {
+  button: {
     fontFamily: 'Lexend Mega',
-    htmlFontSize: 16,
-    body1: {
-      fontFamily: 'DM Sans',
-      fontSize: 14
-    },
-    button: {
-     fontFamily: 'Lexend Mega'
-    },
-    h1: {
-      fontFamily: 'Lexend Mega',
-      fontSize: 36,
-      fontWeight: 700
-    },
-    h2:{
-      fontFamily:'Lexend Mega'
-    },
-    h3:{
-      fontFamily:'Lexend Mega',
-      fontWeight: 500
-    },
-    h5:{
-      fontFamily:'DM Sans',
-      fontWeight: 700
-    }
+    fontWeight: 800,
+    textTransform: 'uppercase',
+    fontSize: 14,
   },
-});
-export default theme 
+  h1: {
+    fontFamily: 'Lexend Mega',
+    fontSize: 36,
+    fontWeight: 900,
+    textTransform: 'uppercase',
+  },
+  h2: {
+    fontFamily: 'Lexend Mega',
+    fontWeight: 800,
+    fontSize: 24,
+    textTransform: 'uppercase',
+  },
+  h3: {
+    fontFamily: 'Lexend Mega',
+    fontWeight: 700,
+    fontSize: 21,
+    textTransform: 'uppercase',
+  },
+  h4: {
+    fontFamily: 'Lexend Mega',
+    fontWeight: 700,
+    fontSize: 18,
+  },
+  h5: {
+    fontFamily: 'Lexend Mega',
+    fontWeight: 600,
+    fontSize: 16,
+  },
+  h6: {
+    fontFamily: 'Lexend Mega',
+    fontWeight: 600,
+    fontSize: 14,
+  },
+  
+};
 //TODO Theme MA and Danielle
   //* Pick primary color
   //* Secondary

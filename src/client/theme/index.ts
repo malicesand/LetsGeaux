@@ -1,7 +1,7 @@
 import { createTheme,} from '@mui/material/styles';
 // overrides
 // your palette
-import  theme from './colors';
+import  {typography} from './colors';
 // spacing / breakpoints
 import { sizing } from './sizing';
 // shape / shadows
@@ -15,7 +15,7 @@ import { components, borderRadius, shadows} from './surfaces';
 const theme1 = createTheme({
   palette: {
    
-    primary:   { main:'#9723C9'  },
+    primary:   { main:'#bbf451'  },
     secondary: { main: '#2FFF2F' },
     // background: {
     //   // default: colors.background,
@@ -28,7 +28,7 @@ const theme1 = createTheme({
   },
 // this information is in the colors file 
   // typography, font sizes etc.
-  typography: theme.typography,
+  typography: typography,
 
   // spacing scale & breakpoints |pixels, rems|
   // spacing: sizing.spacingUnit,   //(factor) => `${factor * 8}px`
@@ -39,7 +39,7 @@ const theme1 = createTheme({
     borderRadius: borderRadius,
   },
   shadows: shadows,
-
+  spacing: 8,
   // finally component defaults & style overrides
   components,
 });

@@ -1,4 +1,5 @@
 import { Components, Theme } from '@mui/material/styles';
+import theme1 from './index';
 
 export const borderRadius = 8; 
 
@@ -19,6 +20,7 @@ export const components: Components<Theme> = {
       root: {
         paddingLeft: 16,
         paddingRight: 16,
+        
       },
     },
   },
@@ -35,6 +37,17 @@ export const components: Components<Theme> = {
         '& .MuiOutlinedInput-root': {
           border: '4px solid black',
           borderRadius,
+          backgroundColor: '#A78BFA', 
+          padding: '16px',
+          '& fieldset': {
+            border: 'none',
+          },
+          '&:hover fieldset': {
+            border: 'none',
+          },
+          '&.Mui-focused fieldset': {
+            border: 'none',
+          },
         },
       },
     },
@@ -46,7 +59,8 @@ export const components: Components<Theme> = {
         borderRadius,
         boxShadow: 'none',
         padding: 16,
-        backgroundColor: '#9723C9',
+        variant:"contained",
+        
       },
     },
   },
@@ -61,31 +75,29 @@ export const components: Components<Theme> = {
       },
     },
   },
-  MuiBox:{
-styleOverrides:{
-  root:{
-    
-  }
-}
-  },
+  
   MuiButton: {
     defaultProps: { disableElevation: true },
     styleOverrides: {
-      root: {
+      root: ({ theme }) => ({
         border: '4px solid black',
-        borderRadius:12,
+        borderRadius: 12,
         padding: '8px 16px',
-         textTransform: 'uppercase',
+        textTransform: 'uppercase',
         fontWeight: 700,
-        backgroundColor: '#9723C9',
+        backgroundColor: theme.palette.primary.main,
+        transition: 'box-shadow 0.2s ease, background-color 0.2s ease',
+  
         '&:hover': {
-          backgroundColor: '#a388ee',
+          backgroundColor: theme.palette.secondary.main,
+          boxShadow: theme.shadows[2], // your custom neo-brutalist shadow
         },
-      },
+  
+        '&:active': {
+          boxShadow: theme.shadows[1], // smaller press shadow if desired
+        },
+      }),
     },
-  },
-};
+  }
+}
 
-//TODO
-  //* Rounded Corners
-  //? Papers
