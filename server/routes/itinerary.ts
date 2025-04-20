@@ -192,6 +192,11 @@ itineraryRoute.get('/view/:viewCode', async (req: any, res: any) => {
         activity: true,
         route: true,
         creator: { select: { id: true } },
+        party: {
+          select: {
+            name: true, 
+          },
+        },
       },
     });
 
@@ -205,5 +210,36 @@ itineraryRoute.get('/view/:viewCode', async (req: any, res: any) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+// GET itinerary by partyId — used to fetch the viewCode for a party's itinerary
+itineraryRoute.get('/party/:partyId', async (req: any, res: any) => {
+  const { partyId } = req.params;
+
+  try {
+    const itinerary = await prisma.itinerary.findFirst({
+      where: {
+        partyId: Number(partyId),
+      },
+      select: {
+        id: true,
+        name: true,
+        viewCode: true,
+        begin: true,
+        end: true,
+      },
+    });
+
+    if (!itinerary) {
+      return res.status(404).json({ error: 'Itinerary not found for this party' });
+    }
+
+    res.json(itinerary);
+  } catch (error) {
+    console.error('Error fetching itinerary by partyId:', error);
+    res.status(500).json({ error: 'Failed to fetch itinerary by partyId' });
+  }
+});
+
 
 export default itineraryRoute;
