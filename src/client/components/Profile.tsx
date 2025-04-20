@@ -99,7 +99,7 @@ const Profile: React.FC = () => {
 
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Typography variant="h2" gutterBottom textTransform="uppercase" align="center">Profile</Typography>
+      <Typography variant="h2" gutterBottom align="center">Profile</Typography>
       <Stack spacing={2} alignItems="center">
         <Avatar
           src={contextUser.profilePic}
@@ -115,40 +115,50 @@ const Profile: React.FC = () => {
         <Typography variant="body1" textTransform="uppercase">{contextUser.username}</Typography><Typography variant="body1">{contextUser.email}</Typography>
       </Stack>
 
-      <Box mt={4}>
+      <Box mt={4}
+        sx={{
+          border: '4px solid black',
+          borderRadius: 4,
+          padding: 4,
+          maxWidth: 300,
+          textAlign: 'center',
+
+          mx: 'auto'
+        }}
+      >
         <Typography variant="h5" textTransform="uppercase" fontWeight='700' >Current Interest:</Typography>
         <Typography variant="body1">{currentInterest || 'None'}</Typography>
-      </Box>
 
-      <Box mt={3}>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">Change Interest</FormLabel>
-          <RadioGroup
-            value={selectedInterest}
-            onChange={(e) => setSelectedInterest(e.target.value)}
-          >
-            {interestOptions.map((interest) => (
-              <FormControlLabel
-                key={interest}
-                value={interest}
-                control={<Radio />}
-                label={interest}
-              />
-            ))}
-          </RadioGroup>
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ mt: 2 }}
-            onClick={handleUpdateInterest}
-          >
-            Update Interest
-          </Button>
-        </FormControl>
-      </Box>
+        <Box mt={3}>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Change Interest</FormLabel>
+            <RadioGroup
+              value={selectedInterest}
+              onChange={(e) => setSelectedInterest(e.target.value)}
+            >
+              {interestOptions.map((interest) => (
+                <FormControlLabel
+                  key={interest}
+                  value={interest}
+                  control={<Radio />}
+                  label={interest}
+                />
+              ))}
+            </RadioGroup>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2 }}
+              onClick={handleUpdateInterest}
+            >
+              Update Interest
+            </Button>
+          </FormControl>
+        </Box>
 
+      </Box>
       <Box mt={4}>
-        <ImageUpload userId={contextUser.id} />
+        {/* <ImageUpload userId={contextUser.id} /> */}
       </Box>
     </Container>
   );
