@@ -338,7 +338,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               {user.id === itinerary.creatorId && (
                 <Button
                   variant='contained'
-                  color='error'
+                  color='secondary'
                   onClick={() =>
                     handleDelete(itinerary.id, itinerary.creatorId)
                   }

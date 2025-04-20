@@ -327,12 +327,12 @@ const Activity: React.FC<Props> = ({
         </Box>
 
         {error && (
-          <Snackbar open autoHideDuration={6000}>
+          <Snackbar open autoHideDuration={3000}>
             <Alert severity='error'>{error}</Alert>
           </Snackbar>
         )}
         {message && (
-          <Snackbar open autoHideDuration={6000}>
+          <Snackbar open autoHideDuration={3000}>
             <Alert severity='success'>{message}</Alert>
           </Snackbar>
         )}
@@ -358,8 +358,10 @@ const Activity: React.FC<Props> = ({
               <Button
                 onClick={() => handleUpdateClick(activity)}
                 variant='outlined'
+                color='secondary'
+                sx={{ color: 'black' }}
               >
-                Update
+                Edit
               </Button>
               {user.id === itineraryCreatorId && (
                 <Button
@@ -372,7 +374,8 @@ const Activity: React.FC<Props> = ({
                     }
                   }}
                   variant='outlined'
-                  color='secondary'
+                  color='primary'
+                  sx={{ color: 'black' }}
                 >
                   Delete
                 </Button>
