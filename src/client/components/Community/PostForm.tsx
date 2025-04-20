@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import {
   Container,
@@ -17,6 +17,9 @@ import { user } from '../../../../types/models.ts';
 interface PostFormProps {
   user: user,
   getAllPosts: Function
+  editablePost: any
+  postEditMode: boolean
+  setPostEditMode: Function
 }
 
 type FormFields = {
@@ -24,32 +27,59 @@ type FormFields = {
 }
 
 
-const PostForm: React.FC<PostFormProps>= ({ user, getAllPosts }) => {
-  const [postEditMode, setPostEditMode] = useState(false);
+const PostForm: React.FC<PostFormProps>= ({ user, getAllPosts, editablePost, postEditMode, setPostEditMode }) => {
   const form = useForm();
-  const { register, handleSubmit, setValue, setError, formState: { isSubmitting, errors } } = useForm<FormFields>({
+  const { register, handleSubmit, reset, setValue, setError, formState: { isSubmitting, errors } } = useForm<FormFields>({
     defaultValues: {
       body: ''
     }
   })
-  const submitForm: SubmitHandler<FormFields> = (data:any) => {
+
+useEffect(() => {
+  console.log('we in it!!!!', editablePost)
+  if (postEditMode) {
+    setValue("body", editablePost.body)
+  }
+}, [editablePost]);
+
+
+const submitForm: SubmitHandler<FormFields> = (data:any) => {
+  if (!postEditMode) {
     const { id, username } = user;
-    // console.log(user.username)
     const postBody = {
-
-        data: {
-          userId: +id,
-          body: data.body,
-          postName: username
-        }
+      data: {
+        userId: +id,
+        body: data.body,
+        postName: username
       }
-
+    }
     axios.post('/api/posts', postBody)
     .then(() => {
+      reset();
       getAllPosts();
     })
     .catch((err) => console.error("couldn't make post", err));
-  }
+  } else {
+    console.log(data);
+    const { id } = editablePost;
+    const patchwork = {
+      
+        body: data.body
+    }
+    axios.patch(`/api/posts/${id}`, patchwork)
+    .then(() => {
+      reset();
+      getAllPosts();
+      setPostEditMode(false);
+    })
+    .catch((err) => {
+      console.error('could not patch form', err);
+    })
+    }
+    }
+
+
+
   return (
     <Container>
       <Grid container spacing={3}>
@@ -68,7 +98,13 @@ const PostForm: React.FC<PostFormProps>= ({ user, getAllPosts }) => {
       placeholder="let geaux!"
       />
       {errors.body && <div>{errors.body.message}</div>}
-        <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Send Post"}</Button>
+        {postEditMode ? (
+          <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Edit Post"}</Button>
+
+        ) : (
+          <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Send Post"}</Button>
+
+        ) }
         </form>
       </Grid>
     </Container>
