@@ -52,6 +52,20 @@ export const components: Components<Theme> = {
       },
     },
   },
+  // new overide added customize dropdown/select to match purple style
+  MuiSelect: {
+    styleOverrides: {
+      select: {
+        backgroundColor: '#A78BFA',
+        border: '4px solid black',
+        borderRadius: 8,
+        fontWeight: 700,
+      },
+      icon: {
+        color: 'black',
+      },
+    },
+  },
   MuiCard: {
     styleOverrides: {
       root: {

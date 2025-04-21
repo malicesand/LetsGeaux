@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,46 +14,78 @@ import { user } from '../../../types/models.ts';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from './NavDrawer';
-import Profile from './Profile';
 import { useUser } from './UserContext';
 //import Badge and NotificationsIcon for the notification bell
 import Badge from '@mui/material/Badge';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 //Import the dynamic notifications hook
 import { useBudgetNotifications } from './BudgetBuddy/BudgetNotificationContext';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
+
 interface MainAppBarProps {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
   user: user;
 }
-const setting = ['Profile']
+
 const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => {
   const { localUser } = useUser();
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
+  //get dynamic notifications from context instead of hardcoded notifications
+  const { notifications } = useBudgetNotifications();
+
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   //state for notifications menu anchor element
-  const [anchorElNotifications, setAnchorElNotifications] = React.useState<null | HTMLElement>(null);
+  const [anchorElNotifications, setAnchorElNotifications] = useState<null | HTMLElement>(null);
+  const [readItems, setReadItems] = useState<Set<number>>(new Set());
+
+  const [animateBell, setAnimateBell] = useState(false);
+  useEffect(() => {
+    if (notifications.length > 0) {
+      setAnimateBell(true);
+      const timeout = setTimeout(() => setAnimateBell(false), 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [notifications]);
+  //handlers for opening/closing notifications menu
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
-
   // nav instructions to user preferences?
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  //handlers for opening/closing notifications menu
+
   const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNotifications(event.currentTarget);
   };
 
   const handleCloseNotifications = () => {
     setAnchorElNotifications(null);
+    // reset unread when closing the menu
+    setTimeout(() => {
+      setReadItems(new Set(notifications.map((_, i) => i)));
+    }, 250);
   };
-  const navigate = useNavigate();
-  //get dynamic notifications from context instead of hardcoded notifications
-  const { notifications } = useBudgetNotifications();
+
+  const handleMarkAsRead = (index: number) => {
+    setReadItems(prev => new Set(prev).add(index));
+    handleCloseNotifications();
+  };
+
+  const handleClearAll = () => {
+    setReadItems(new Set(notifications.map((_, i) => i)));
+    handleCloseNotifications();
+  };
 
   const goToProfile = () => {
     navigate('/profile', { state: { from: '/', user } });
   };
+
+  const unreadCount = notifications.length - readItems.size;
 
   return (
     <AppBar
@@ -169,7 +201,6 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
                 )}
               </Menu>
             </Box>
-          </Box>
         </Toolbar>
       </Container>
     </AppBar>
