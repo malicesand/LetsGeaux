@@ -306,10 +306,29 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
         )}
       </Box>
 
-      <Box mt={4}>
+      <Box   //display='flex'
+  //justifyContent='center'
+  //alignItems='center'
+  my={2}
+  sx={{
+    backgroundColor: '#A684FF',  
+    padding: '16px',             
+    borderRadius: '8px',         
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', 
+  }}
+>
         <Typography variant='h5'>Party Itineraries</Typography>
         {itineraries.map((itinerary, index) => (
-          <Card key={index} sx={{ mb: 2 }}>
+          <Card key={index}
+          sx={{
+            mb: 2,
+            backgroundColor: '#A684FF',
+            borderRadius: '8px',         
+            padding: 2,
+            boxShadow: 'none',
+            //border: '2px solid #000',
+            border: '4px solid black',
+          }}>
             <CardContent>
               <Typography variant='h6'>{itinerary.name}</Typography>
               <Typography variant='body1'>{itinerary.notes}</Typography>
