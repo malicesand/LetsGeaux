@@ -156,11 +156,6 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                 alignItems='flex-start'
                 gap={2}
               >
-                <AddItinerary
-                  user={user}
-                  partyId={numericPartyId}
-                  partyName={partyName}
-                />
                 <Container
                   sx={{
                     maxWidth: 500,

@@ -14,6 +14,7 @@ import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
 import { user } from '../../../../types/models.ts';
 import Activity from '../Itinerary/NEWActivties.tsx';
+import AddItinerary from './AddItinerary.tsx';
 import { useParams, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 
@@ -224,59 +225,69 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
     }
   };
 
-  return (
-    
-<Container>
+  return (  
+    <Container>
       <Box mt={4}>
-        <Typography variant='h5'>Itinerary</Typography>
-        {itineraries.map((itinerary, index) => (
-          <Card key={index} sx={{ mb: 2 }}>
-            <CardContent>
-              <Typography variant='h6'>{itinerary.name}</Typography>
-              <Typography variant='body1'>{itinerary.notes}</Typography>
-              <Typography variant='body2'>
-                Begin: {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY')}
-              </Typography>
-              <Typography variant='body2'>
-                End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY')}
-              </Typography>
+        <Typography variant='h3'>Itinerary</Typography>
+        {itineraries.length > 0 ? (
+          itineraries.map((itinerary, index) => (
+            <Card key={index} sx={{ mb: 2 }}>
+              <CardContent>
+                <Typography variant='h3'>{itinerary.name}</Typography>
+                <Typography variant='body1'>{itinerary.notes}</Typography>
+                <Typography variant='body2'>
+                  Begin: {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY')}
+                </Typography>
+                <Typography variant='body2'>
+                  End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY')}
+                </Typography>
 
-              {itinerary.message && (
-                <Alert severity='success'>{itinerary.message}</Alert>
-              )}
-            </CardContent>
-            <CardActions>
-              <Button
-                variant='contained'
-                
-                onClick={() => handleEditClick(itinerary)}
-              >
-                Edit
-              </Button>
-              {user.id === itinerary.creatorId && (
+                {itinerary.message && (
+                  <Alert severity='success'>{itinerary.message}</Alert>
+                )}
+              </CardContent>
+              <CardActions>
                 <Button
                   variant='contained'
-                  onClick={() =>
-                    handleDelete(itinerary.id, itinerary.creatorId)
-                  }
+                  
+                  onClick={() => handleEditClick(itinerary)}
                 >
-                  Delete
+                  Edit
                 </Button>
+                {user.id === itinerary.creatorId && (
+                  <Button
+                    variant='contained'
+                    onClick={() =>
+                      handleDelete(itinerary.id, itinerary.creatorId)
+                    }
+                  >
+                    Delete
+                  </Button>
+                )}
+              </CardActions>
+              {user && (
+                <Activity
+                  itineraryId={itinerary.id}
+                  addActivity={addActivityToItinerary}
+                  itineraryCreatorId={itinerary.creatorId}
+                  user={user}
+                  itineraryBegin={''}
+                  itineraryEnd={''}
+                />
               )}
-            </CardActions>
-            {user && (
-  <Activity
-    itineraryId={itinerary.id}
-    addActivity={addActivityToItinerary}
-    itineraryCreatorId={itinerary.creatorId}
-    user={user}
-    itineraryBegin={''}
-    itineraryEnd={''}
-  />
-)}
-
-          </Card>
-        ))}
+            </Card>
+          ))
+        ) : (
+          <Typography variant='body1' sx={{ mt: 2}}>
+            Your Party's Shared Itinerary will display here once it is created. 
+          
+           <AddItinerary
+                            user={user}
+                            partyId={partyId}
+                            partyName={partyName}
+                            />
+                            </Typography>
+        )}
       </Box>
     </Container>
   );
