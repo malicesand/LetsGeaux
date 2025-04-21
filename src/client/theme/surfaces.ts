@@ -52,6 +52,20 @@ export const components: Components<Theme> = {
       },
     },
   },
+  // new overide added customize dropdown/select to match purple style
+  MuiSelect: {
+    styleOverrides: {
+      select: {
+        backgroundColor: '#A78BFA',
+        border: '4px solid black',
+        borderRadius: 8,
+        fontWeight: 700,
+      },
+      icon: {
+        color: 'black',
+      },
+    },
+  },
   MuiCard: {
     styleOverrides: {
       root: {
@@ -90,11 +104,11 @@ export const components: Components<Theme> = {
   
         '&:hover': {
           backgroundColor: theme.palette.secondary.main,
-          boxShadow: theme.shadows[2], // your custom neo-brutalist shadow
+          boxShadow: theme.shadows[2], 
         },
   
         '&:active': {
-          boxShadow: theme.shadows[1], // smaller press shadow if desired
+          boxShadow: theme.shadows[1], 
         },
       }),
     },

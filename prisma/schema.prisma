@@ -18,6 +18,7 @@ model user {
   image        image[]
   profilePic   String?            @db.VarChar(150)
   // memberId...
+  budget       budget[]           @relation("UserBudgets")
   reminder     reminder[]
   vote         vote[]
   itinerary    itinerary[]
@@ -215,14 +216,13 @@ model budget {
   id        Int      @id @default(autoincrement())
   spent     Decimal
   notes     String   @db.VarChar(255)
-  // groupItinerary_id Int?
   createdAt DateTime @default(now())
   limit     Decimal
   updatedAt DateTime @updatedAt
   category  String   @default("")
-  party     party?   @relation(fields: [partyId], references: [id]) //@relation(fields: [groupItinerary_id], references: [itinerary_id])
-
-  // @@index([groupItinerary_id], map: "budget_groupItinerary_id_fkey")
+  party     party?   @relation(fields: [partyId], references: [id])
+  creatorId Int?
+  creator   user?    @relation("UserBudgets", fields: [creatorId], references: [id])
   partyId Int?
 }
 

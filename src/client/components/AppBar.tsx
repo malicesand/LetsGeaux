@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,140 +14,195 @@ import { user } from '../../../types/models.ts';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
 import NavDrawer from './NavDrawer';
-import Profile from './Profile';
 import { useUser } from './UserContext';
 //import Badge and NotificationsIcon for the notification bell
 import Badge from '@mui/material/Badge';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 //Import the dynamic notifications hook
 import { useBudgetNotifications } from './BudgetBuddy/BudgetNotificationContext';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
+
 interface MainAppBarProps {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
   user: user;
 }
-const setting = ['Profile']
+
 const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => {
   const { localUser } = useUser();
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
+  //get dynamic notifications from context instead of hardcoded notifications
+  const { notifications } = useBudgetNotifications();
+
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   //state for notifications menu anchor element
-  const [anchorElNotifications, setAnchorElNotifications] = React.useState<null | HTMLElement>(null);
+  const [anchorElNotifications, setAnchorElNotifications] = useState<null | HTMLElement>(null);
+  const [readItems, setReadItems] = useState<Set<number>>(new Set());
+
+  const [animateBell, setAnimateBell] = useState(false);
+  useEffect(() => {
+    if (notifications.length > 0) {
+      setAnimateBell(true);
+      const timeout = setTimeout(() => setAnimateBell(false), 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [notifications]);
+  //handlers for opening/closing notifications menu
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
-
   // nav instructions to user preferences?
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  //handlers for opening/closing notifications menu
+
   const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNotifications(event.currentTarget);
   };
 
   const handleCloseNotifications = () => {
     setAnchorElNotifications(null);
+    // reset unread when closing the menu
+    setTimeout(() => {
+      setReadItems(new Set(notifications.map((_, i) => i)));
+    }, 250);
   };
-  const navigate = useNavigate();
-  //get dynamic notifications from context instead of hardcoded notifications
-  const { notifications } = useBudgetNotifications();
+
+  const handleMarkAsRead = (index: number) => {
+    setReadItems(prev => new Set(prev).add(index));
+    handleCloseNotifications();
+  };
+
+  const handleClearAll = () => {
+    setReadItems(new Set(notifications.map((_, i) => i)));
+    handleCloseNotifications();
+  };
 
   const goToProfile = () => {
     navigate('/profile', { state: { from: '/', user } });
   };
 
-  return (
-    <AppBar position='static' sx={{
-      border: '4px solid black',
-      borderRadius: 4,
-    }}
+  const unreadCount = notifications.length - readItems.size;
 
+  return (
+    <AppBar
+      position="static"
+      elevation={0}
+      sx={{
+        border: '4px solid black',
+        borderRadius: 4,
+      }}
     >
       <Container maxWidth='xl' sx={{ sm: 'block' }}>
-        <Toolbar disableGutters>
-          <NavDrawer />
-          <StreetcarIcon sx={{ color: 'black', display: { xs: 'none', md: 'flex', sm: 'block' }, mr: 1 }} />
-          <Typography
-            component='a'
-            variant='h5'
-            noWrap
-            href='/'
+        <Toolbar disableGutters
+          sx={{
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'flex-start', sm: 'center' },
+            gap: { xs: 1, sm: 2 },
+            px: { xs: 1, sm: 2 },
+            py: { xs: 1, sm: 1.5 },
+          }}
+
+        >
+          <Box
             sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex', sm: 'block' },
-              fontFamily: 'Lexend Mega, sans-serif',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'black',
-              textDecoration: 'none'
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              width: '100%',
+              justifyContent: { xs: 'space-between', sm: 'flex-start' },
             }}
           >
-            Let's Geaux
-          </Typography>
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open Preferences">
-              <IconButton onClick={goToProfile} sx={{ p: 0 }}>
-                <Avatar alt="Gata" src={`${localUser?.profilePic}`} />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+            <NavDrawer />
+            <StreetcarIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: 'black' }} />
+
+            <Typography
+              component='a'
+              variant='h5'
+              noWrap
+              href='/'
+              sx={{
+                mr: 2,
+                display: { xs: 'none', md: 'flex', sm: 'block' },
+                fontFamily: 'Lexend Mega, sans-serif',
+                fontWeight: 900,
+                letterSpacing: '.3rem',
+                color: 'black',
+                textDecoration: 'none'
               }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
             >
-              {/* {setting.map((setting) => (
+              LET'S GEAUX
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+
+              <Tooltip title="Open Preferences">
+                <IconButton onClick={goToProfile} sx={{ p: 0 }}>
+                  <Avatar alt="Gata" src={`${localUser?.profilePic}`} />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {/* {setting.map((setting) => (
               <MenuItem key={setting} component='a' href='/profile' onClick={handleCloseUserMenu}>
                 <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
               </MenuItem>
             ))} */}
-            </Menu>
-            {/* notification Bell Section */}
-            <IconButton
-              size="large"
-              aria-label="show notifications"
-              color="inherit"
-              onClick={handleOpenNotifications}
-              sx={{ ml: 2 }}
-            >
-              <Badge badgeContent={notifications.length} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <Menu
-              id="notification-menu"
-              anchorEl={anchorElNotifications}
-              open={Boolean(anchorElNotifications)}
-              onClose={handleCloseNotifications}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-            >
-              {notifications.length === 0 ? (
-                <MenuItem onClick={handleCloseNotifications}>No notifications</MenuItem>
-              ) : (
-                notifications.map((note, index) => (
-                  <MenuItem key={index} onClick={handleCloseNotifications}>
-                    {/* display dynamic notification message */}
-                    {note.message}
-                  </MenuItem>
-                ))
-              )}
-            </Menu>
+              </Menu>
+              {/* notification Bell Section */}
+              <IconButton
+                size="large"
+                aria-label="show notifications"
+                color="inherit"
+                onClick={handleOpenNotifications}
+                sx={{ ml: 2 }}
+              >
+                <Badge badgeContent={notifications.length} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <Menu
+                id="notification-menu"
+                anchorEl={anchorElNotifications}
+                open={Boolean(anchorElNotifications)}
+                onClose={handleCloseNotifications}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+              >
+                {notifications.length === 0 ? (
+                  <MenuItem onClick={handleCloseNotifications}>No notifications</MenuItem>
+                ) : (
+                  notifications.map((note, index) => (
+                    <MenuItem key={index} onClick={handleCloseNotifications}>
+                      {/* display dynamic notification message */}
+                      {note.message}
+                    </MenuItem>
+                  ))
+                )}
+              </Menu>
+            </Box>
           </Box>
         </Toolbar>
       </Container>

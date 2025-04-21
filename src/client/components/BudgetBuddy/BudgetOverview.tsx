@@ -43,7 +43,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
   const { addNotification } = useBudgetNotifications();
 
   // fefine the thresholds
-  const thresholds = [25, 50, 75, 90];
+  const thresholds = [40, 50, 75, 90, 95];
 
   const fetchBudgets = async () => {
     if (!selectedItineraryId) return;
@@ -171,7 +171,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
               color={percent < 50 ? 'primary' : percent < 85 ? 'warning' : 'error'}
             />
             <Stack direction="row" spacing={1} mt={2}>
-              <Button size="small" variant="outlined" onClick={() => openEditModal(budget)}>Edit</Button>
+              <Button size="small" variant="outlined" color="white" onClick={() => openEditModal(budget)}>Edit</Button>
               <Button size="small" variant="outlined" color="error" onClick={() => openDeleteModal(budget)}>Delete</Button>
               {updatedEntryId === budget.id && <Chip label="Updated!" color="success" size="small" />}
             </Stack>
