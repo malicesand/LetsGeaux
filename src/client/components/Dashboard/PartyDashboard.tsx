@@ -36,6 +36,22 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const [emails, setEmails] = React.useState<string[]>([]);
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [emailLog, setEmailLog] = useState<string[]>([]);
+  const [viewCode, setViewCode] = useState('');
+
+  useEffect(() => {
+    const fetchViewCode = async () => {
+      try {
+        const response = await axios.get(`/api/itinerary/party/${numericPartyId}`);
+        if (response.data?.viewCode) {
+          setViewCode(response.data.viewCode);
+        }
+      } catch (err) {
+        console.error('Failed to fetch viewCode:', err);
+      }
+    };
+    fetchViewCode();
+  }, [numericPartyId]);
+  
 
   useEffect(() => {
     getUsersForParty(numericPartyId);
@@ -91,8 +107,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     emailList: string[],
     partyName: string,
     userId: number,
-    partyId: string
-    // ! viewCode: string,
+    partyId: string,
+     viewCode: string,
   ) => {
     // console.log(`${partyName} @ send email party dash`)
     try {
@@ -100,8 +116,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         emails: emailList,
         partyName: partyName,
         userId: userId,
-        partyId: partyId
-        // TODO viewCode: viewCode
+        partyId: partyId,
+        viewCode: viewCode
       });
       setInviteSuccess(true);
       setInputValue('');

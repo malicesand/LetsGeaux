@@ -30,12 +30,14 @@ import { user } from '../../../types/models.ts';
 //import Activity from './NEWActivties.tsx';
 import Profile from './Profile.tsx';
 import Dashboard from './Dashboard/DashboardMain.tsx'
-import ViewCodeForm from './Itinerary/viewCodeForm.tsx';
+import ViewCodeForm from './Itinerary/ViewCodeForm.tsx';
 import CommunityPage from './Community/CommunityPage.tsx';
 import PartyDashboard from './Dashboard/PartyDashboard.tsx';
 import { useUser } from './UserContext'
 import InterestForm from './InterestForm';
-import CalendarPage from './Itinerary/CalendarPage.tsx';
+import CalendarPage from  './Itinerary/CalendarPage.tsx';
+import ViewItinerary from './Itinerary/ViewItinerary.tsx';
+import EmailCode from './Itinerary/EmailViewCode.tsx';
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(undefined);
   const [user, setUser] = useState<user | null>(null);
@@ -206,6 +208,9 @@ const App: React.FC = () => {
     <CalendarPage />
   </ProtectedRoute>
 } />
+
+<Route path="/view/:viewCode" element={<ViewItinerary />} />
+<Route path="/view" element={<EmailCode />} />
 
       </Routes>
     </>
