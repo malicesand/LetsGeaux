@@ -71,6 +71,14 @@ const Activity: React.FC<Props> = ({
   const [error, setError] = useState<string | null>(null); // Error handling
   const [message, setMessage] = useState<string>(''); // Success message
 
+  const sortedActivities = [...activities].sort((a, b) => {
+    const dateTimeA = dayjs(`${a.date} ${a.time}`, 'MMMM D, YYYY h:mm A').toDate();
+    const dateTimeB = dayjs(`${b.date} ${b.time}`, 'MMMM D, YYYY h:mm A').toDate();
+    return dateTimeA.getTime() - dateTimeB.getTime();
+  });
+  
+  
+
   // Fetch activities when the component mounts
   useEffect(() => {
     const getActivities = async () => {
@@ -343,7 +351,7 @@ const Activity: React.FC<Props> = ({
             Activities List
           </Typography>
           <Box display="flex" flexWrap="wrap" gap={2}>
-            {activities.map(activity => (
+            {sortedActivities.map(activity => (
               <Box key={activity.id} sx={{
                 width: 300,
                 minHeight: 300, 
