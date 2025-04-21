@@ -18,7 +18,6 @@ const detectContext = (input: string): PromptKey => {
   return detectedContext || "default";
 };
 
-
 //* Create a New Session Id *//
 chatsRoute.post('/new-session', (req: Request, res: Response) => {
   try {
@@ -64,7 +63,6 @@ chatsRoute.get('/messages/:sessionId', async (req: Request, res, Response) => {
     res.status(500).json({error: 'failed to fetch user history messages'})
   }
 });
-
 
 //* Gemini API Handling *//
 chatsRoute.post('/', async (req: Request, res: Response ) => {
