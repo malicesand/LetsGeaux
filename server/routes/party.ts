@@ -23,13 +23,25 @@ partyRoute.post('/', async (req: any, res: any) => {
 partyRoute.post('/userParty', async (req: any, res: any) => {
   const {userId, partyId, } = req.body;
   try {
+    const existing = await prisma.userParty.findFirst({
+      where: {
+        userId: +userId,
+        partyId: +partyId,
+      },
+    });
+
+    if (existing) {
+      console.log(`User ${userId} already in Party ${partyId}`);
+      return;
+    }
+
     const addUserToParty = await prisma.userParty.create({
       data: {
        userId,
        partyId: +partyId
       }
     });
-    // console.log('Request complete: Add User to Party')
+    console.log('Request complete: Add User to Party')
     res.json(addUserToParty)
   } catch(error) {
     console.error('Failure: Add User to Party', error);
