@@ -85,64 +85,74 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
 
   return (
     <Box sx={{ maxWidth: '600px', margin: 'auto', py: 4 }}>
-
-      <Typography
-        variant="h3"
-        align='center'
-        sx={{ py: 4 }}
+      <Box align="center"
+        sx={{
+          border: '4px solid black',
+          borderRadius: 4,
+          padding: 4,
+          maxWidth: 400,
+          width: '100%',
+          textAlign: 'center',
+          mx: 'auto'
+        }}
       >
-        Upload A Trip Image
-      </Typography>
-
-      <Box spacing={2} alignItems="center">
-        <Button
-          variant="contained"
-          sx={{ mt: 2, color: 'primary' }}
-          onClick={handleUploadWidget}
+        <Typography
+          variant="h3"
+          align='center'
+          sx={{ py: 4 }}
         >
-          Upload Image
-        </Button>
+          Upload A Trip Image
+        </Typography>
 
-        {url && (
-          <Box sx={{ mt: 2 }}>
-            <img
-              src={url}
-              alt="Uploaded preview"
-              style={{ width: '200px', marginTop: '10px', borderRadius: '8px' }}
-            />
-          </Box>
-        )}
-
-        <form onSubmit={handleSubmit} style={{ marginTop: '10px', width: '100%' }}>
-          <TextField
-            placeholder="Add some notes..."
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            rows={4}
-            multiline
-            fullWidth
-            variant="outlined"
-            sx={{
-              marginTop: 2,
-              '& .MuiOutlinedInput-root': {
-                border: '4px solid black',
-                borderRadius: 4,
-              },
-              '& .MuiInputBase-input': {
-                padding: '10px',
-                fontWeight: 500,
-              },
-            }}
-          />
+        <Box spacing={2} alignItems="center">
           <Button
-            type="submit"
             variant="contained"
             sx={{ mt: 2, color: 'primary' }}
+            onClick={handleUploadWidget}
           >
-            Submit
+            Upload Image
           </Button>
-        </form>
 
+          {url && (
+            <Box sx={{ mt: 2 }}>
+              <img
+                src={url}
+                alt="Uploaded preview"
+                style={{ width: '200px', marginTop: '10px', borderRadius: '8px' }}
+              />
+            </Box>
+          )}
+
+          <form onSubmit={handleSubmit} style={{ marginTop: '10px', width: '100%' }}>
+            <TextField
+              placeholder="Add some notes..."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={4}
+              multiline
+              fullWidth
+              variant="outlined"
+              sx={{
+                marginTop: 2,
+                '& .MuiOutlinedInput-root': {
+                  border: '4px solid black',
+                  borderRadius: 4,
+                },
+                '& .MuiInputBase-input': {
+                  padding: '10px',
+                  fontWeight: 500,
+                },
+              }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ mt: 2, color: 'primary' }}
+            >
+              Submit
+            </Button>
+          </form>
+        </Box>
       </Box>
       <Typography
         variant="h3"
