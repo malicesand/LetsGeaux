@@ -40,7 +40,7 @@ partyRoute.post('/userParty', async (req: any, res: any) => {
 //* Inviting Users to LetsGeaux Via Email *//
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string)
 partyRoute.post('/sendInvite', async (req: any, res:any) => {
-  const {emails, partyName, userId, partyId} = req.body;
+  const {emails, partyName, userId, partyId, viewCode} = req.body;
   if (!emails || !Array.isArray(emails) || emails.length === 0) {
     return res.status(400).json({ error: 'No valid emails provided' });
   }
@@ -50,7 +50,9 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
       from: 'invite@letsgeauxnola.com', 
       subject: 'Join me on Lets Geaux Nola!',
       text: `Join my travel party ${partyName} on LetsGeauxNola.com!`,
-      html: `<strong>Join my travel party ${partyName} on LetsGeauxNola.com!</strong>`, // TODO fix html
+      html: `<strong>Join my travel party ${partyName} on LetsGeauxNola.com!</strong>
+    View itinerary at http://letsgeauxnola.com/view and enter this code: <strong>${viewCode}</strong>
+      `, // TODO fix html
     };
 
     try {

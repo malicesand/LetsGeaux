@@ -13,8 +13,7 @@ import {
   Alert,
   Card,
   CardActions,
-  CardContent,
-  
+  CardContent
 } from '@mui/material';
 import axios from 'axios';
 import { user } from '../../../../types/models';
@@ -142,7 +141,6 @@ const Activity: React.FC<Props> = ({
     }
   };
 
-
   // delete activities
   const deleteActivity = async (id: string) => {
     try {
@@ -155,8 +153,7 @@ const Activity: React.FC<Props> = ({
     }
   };
 
-
-  //reset/clear form 
+  //reset/clear form
   const resetForm = () => {
     setFormData({
       id: '',
@@ -314,10 +311,14 @@ const Activity: React.FC<Props> = ({
                   margin='normal'
                 />
                 <DialogActions>
-                  <Button onClick={handleClose} color='primary'>
+                  <Button
+                    onClick={handleClose}
+                    color='primary'
+                    sx={{ color: 'black' }}
+                  >
                     Cancel
                   </Button>
-                  <Button type='submit' color='primary'>
+                  <Button type='submit' color='primary' sx={{ color: 'black' }}>
                     {formData.id ? 'Update Activity' : 'Add Activity'}
                   </Button>
                 </DialogActions>
@@ -327,12 +328,12 @@ const Activity: React.FC<Props> = ({
         </Box>
 
         {error && (
-          <Snackbar open autoHideDuration={6000}>
+          <Snackbar open autoHideDuration={3000}>
             <Alert severity='error'>{error}</Alert>
           </Snackbar>
         )}
         {message && (
-          <Snackbar open autoHideDuration={6000}>
+          <Snackbar open autoHideDuration={3000}>
             <Alert severity='success'>{message}</Alert>
           </Snackbar>
         )}
@@ -342,48 +343,57 @@ const Activity: React.FC<Props> = ({
             Activities List
           </Typography>
           <Box>
-          {activities.map(activity => (
-            <Box key={activity.id} mb={2}>
-            <Card>
-              <CardContent>
-              <Typography variant='h6'>{activity.name}</Typography>
-              <Typography>{activity.description}</Typography>
-              <Typography>{activity.time}</Typography>
-              <Typography>{activity.date}</Typography>
-              <Typography>{activity.location}</Typography>
-              <Typography>{activity.phone}</Typography>
-              <Typography>{activity.address}</Typography>
-              </CardContent>
-          <CardActions>
-              <Button
-                onClick={() => handleUpdateClick(activity)}
-                variant='outlined'
-              >
-                Update
-              </Button>
-              {user.id === itineraryCreatorId && (
-                <Button
-                  onClick={() => {
-                    const confirmDelete = window.confirm(
-                      'Are you sure you want to delete this activity?'
-                    );
-                    if (confirmDelete) {
-                      deleteActivity(activity.id);
-                    }
+            {activities.map(activity => (
+              <Box key={activity.id} mb={2}>
+                <Card
+                  sx={{
+                    backgroundColor: '#A684FF',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
                   }}
-                  variant='outlined'
-                  color='secondary'
                 >
-                  Delete
-                </Button>
-              )}
-              </CardActions>
-        </Card>
-      </Box>
-    ))}
-            </Box>
-            </Box>
-        
+                  <CardContent>
+                    <Typography variant='h6'>{activity.name}</Typography>
+                    <Typography>{activity.description}</Typography>
+                    <Typography>{activity.time}</Typography>
+                    <Typography>{activity.date}</Typography>
+                    <Typography>{activity.location}</Typography>
+                    <Typography>{activity.phone}</Typography>
+                    <Typography>{activity.address}</Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      onClick={() => handleUpdateClick(activity)}
+                      variant='outlined'
+                      color='secondary'
+                      sx={{ color: 'black' }}
+                    >
+                      Edit
+                    </Button>
+                    {user.id === itineraryCreatorId && (
+                      <Button
+                        onClick={() => {
+                          const confirmDelete = window.confirm(
+                            'Are you sure you want to delete this activity?'
+                          );
+                          if (confirmDelete) {
+                            deleteActivity(activity.id);
+                          }
+                        }}
+                        variant='outlined'
+                        color='primary'
+                        sx={{ color: 'black' }}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </CardActions>
+                </Card>
+              </Box>
+            ))}
+          </Box>
+        </Box>
       </Container>
     </LocalizationProvider>
   );
