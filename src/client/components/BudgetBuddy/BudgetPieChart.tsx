@@ -47,10 +47,8 @@ const BudgetPieChart: React.FC<Props> = ({ selectedItineraryId }) => {
         params: { partyId: selectedItineraryId }
       });
 
-      //inspect whats coming back
       console.log("Fetched category data:", res.data);
 
-      // validate that the response is actually an array
       if (!Array.isArray(res.data)) {
         console.error('Invalid data format for categories:', res.data);
         return;
@@ -74,7 +72,6 @@ const BudgetPieChart: React.FC<Props> = ({ selectedItineraryId }) => {
       console.error('Error fetching categories:', err);
     }
   };
-
 
   useEffect(() => {
     fetchCategories();
@@ -156,7 +153,12 @@ const BudgetPieChart: React.FC<Props> = ({ selectedItineraryId }) => {
                 <Typography variant="body2">Limit: ${entry.limit}</Typography>
                 <Typography variant="body2">Notes: {entry.notes || 'None'}</Typography>
                 <Box mt={1}>
-                  <Button variant="outlined" size="small" onClick={() => openEditModal(entry)} sx={{ mr: 1 }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => openEditModal(entry)}
+                    sx={{ mr: 1, color: 'white', border: '4px solid black', backgroundColor: '#bbf451' }}
+                  >
                     Update
                   </Button>
                   <Button variant="outlined" size="small" color="error" onClick={() => handleDelete(entry.id)}>
@@ -181,7 +183,12 @@ const BudgetPieChart: React.FC<Props> = ({ selectedItineraryId }) => {
               <Typography><strong>Spent:</strong> ${entry.spent}</Typography>
               <Typography><strong>Notes:</strong> {entry.notes || 'None'}</Typography>
               <Box mt={1}>
-                <Button variant="outlined" size="small" onClick={() => openEditModal(entry)} sx={{ mr: 1 }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => openEditModal(entry)}
+                  sx={{ mr: 1, color: 'white', border: '4px solid black', backgroundColor: '#bbf451' }}
+                >
                   Update
                 </Button>
                 <Button variant="outlined" size="small" color="error" onClick={() => handleDelete(entry.id)}>
@@ -204,7 +211,7 @@ const BudgetPieChart: React.FC<Props> = ({ selectedItineraryId }) => {
           <TextField label="Notes" fullWidth multiline margin="dense" value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEditOpen(false)}>Cancel</Button>
+          <Button onClick={() => setEditOpen(false)} sx={{ color: 'black' }}>Cancel</Button>
           <Button variant="contained" onClick={handleEditSave}>Save</Button>
         </DialogActions>
       </Dialog>
