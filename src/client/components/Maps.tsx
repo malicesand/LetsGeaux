@@ -203,16 +203,26 @@ const Maps = () => {
       {/* Input Fields */}
       <Box display="flex" flexDirection="column" gap={2} mb={2}>
         <TextField
-          label="Enter the start address or place"
+          label="Enter the start address or attraction"
           variant="outlined"
           value={origin}
           onChange={(e) => setOrigin(e.target.value)}
+          InputLabelProps={{
+            sx: {
+              top: -6,
+            }
+          }}
         />
         <TextField
-          label="Enter destination address or place"
+          label="Enter destination address or attraction"
           variant="outlined"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
+          InputLabelProps={{
+            sx: {
+              top: -6,
+            }
+          }}
         />
         <Button
           variant="contained"
