@@ -13,6 +13,7 @@ import {
   // Button,
   // SpeedDial,
   // CircularProgress
+  Box,
 } from '@mui/material'
 import Suggestion from './Suggestion';
 import { user } from '../../../types/models.ts';
@@ -75,7 +76,7 @@ const getApiSuggestions = (query = "Restaurants") => {
       <h2>user picks</h2>
       <h2></h2>
       {dbSuggestionSet.map((currentSuggestion: any) => (
-        <Card key={currentSuggestion.id}>
+        <Box sx={{ border: "4px solid black", borderRadius: "4", p: 4, mb: "8px" }} key={currentSuggestion.id}>
           <Suggestion
           user={user}
           isDb={true}
@@ -84,11 +85,11 @@ const getApiSuggestions = (query = "Restaurants") => {
           setSuggestionEditMode={setSuggestionEditMode}
           setEditableSuggestion={setEditableSuggestion}
           />
-        </Card>
+        </Box>
       ))}
       <h2>You may enjoy:</h2>
       {suggestionSet.map((currentSuggestion) => (
-        <Card key={currentSuggestion.title}>
+        <Box key={currentSuggestion.title}>
           <Suggestion
           user={user}
           currentSuggestion={currentSuggestion}
@@ -98,7 +99,7 @@ const getApiSuggestions = (query = "Restaurants") => {
           setSuggestionSet={setSuggestionSet}
           setEditableSuggestion={setEditableSuggestion}
           />
-        </Card>
+        </Box>
       ))}
       {/* <SuggestionForm
 suggestionSet={suggestionSet}

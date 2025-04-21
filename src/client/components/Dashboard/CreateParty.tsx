@@ -115,7 +115,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
             variant='standard'
           />
           <DialogActions>
-            <Button type='submit'>Create</Button>
+            <Button variant='contained' type='submit'>Create</Button>
           </DialogActions>
           {partySuccess && (
             <Typography sx={{ mt: 1, color: 'green' }}>
@@ -142,7 +142,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
           />
           <Button 
             sx={{ mt: 1 }}
-            variant='outlined'
+            variant='contained'
             onClick={() => sendEmail(emails, partyName, userId, partyId)} disabled={emails.length === 0}
             >
             Invite
@@ -152,12 +152,12 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
               Invite sent successfully!
             </Typography>
           )}
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
+          <Typography variant="h6" color="text.secondary" sx={{ mt: 1 }}>
             You can also invite friends later from your party dashboard.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeModal}>Close</Button>
+          <Button variant='contained' onClick={closeModal}>Close</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>

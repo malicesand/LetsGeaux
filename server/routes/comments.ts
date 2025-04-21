@@ -18,7 +18,7 @@ commentsRouter.get(/*Id from the post*/'/:id', async (req: any, res: any) => {
         postId: +id,
       }
     })
-    res.status(200).send(allComments/**I think I can sort them by time in here.. */)
+    res.status(200).send(allComments.reverse())
   } catch (err) {
     console.error(err);
     res.sendStatus(500);

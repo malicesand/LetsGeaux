@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import { Container, Typography, List, Card, Paper, Grid} from '@mui/material';
 import Post from './Post.tsx';
 import PostForm from './PostForm.tsx';
@@ -25,16 +25,16 @@ const Posts: React.FC<PostProps> = ({user, postSet, getAllPosts}) => {
       editablePost={editablePost}
       />
         {postSet.map((currentPost) => (
-          <Paper key={currentPost.id}>
             <Post
+            key={currentPost.id}
             currentPost={currentPost}
             user={user}
             getAllPosts={getAllPosts}
             setPostEditMode={setPostEditMode}
             editablePost={editablePost}
             setEditablePost={setEditablePost}
+            postEditMode={postEditMode}
             />
-          </Paper>
 
         ))}
 
