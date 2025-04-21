@@ -129,9 +129,9 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   return (
     <React.Fragment>
       <Typography
-        variant='h3'
+        variant='h1'
         align='center'
-        sx={{ flexGrow: 1, textAlign: 'center', mt: 5 }}
+        sx={{ flexGrow: 1, textAlign: 'center', m: 5, p: '4px' }}
       >
         {partyName}
       </Typography>
@@ -142,7 +142,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
               width: '100%',
               maxWidth: '300px',
               margin: '0',
-              border: '2px solid black',
+              border: '4px solid black',
               borderRadius: 4,
               padding: 3,
               mt: 7,
@@ -164,7 +164,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                 <Container
                   sx={{
                     maxWidth: 500,
-                    border: '2px solid black',
+                    border: '4px solid black',
                     borderRadius: 4,
                     margin: '0 auto',
                     p: 2
@@ -227,7 +227,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                   />
                   <Button
                     sx={{ mt: 1 }}
-                    variant='outlined'
+                    variant='contained'
                     onClick={() =>
                       sendEmail(emails, partyName, userId, partyId)
                     }
@@ -245,7 +245,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                   <Container
                     sx={{
                       maxWidth: 500,
-                      border: '2px solid black',
+                      border: '4px solid black',
                       borderRadius: 4,
                       margin: '0 auto',
                       p: 2

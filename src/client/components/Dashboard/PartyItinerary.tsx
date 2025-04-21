@@ -248,7 +248,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
             <CardActions>
               <Button
                 variant='contained'
-                color='secondary'
+                
                 onClick={() => handleEditClick(itinerary)}
               >
                 Edit
@@ -256,7 +256,6 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
               {user.id === itinerary.creatorId && (
                 <Button
                   variant='contained'
-                  color='error'
                   onClick={() =>
                     handleDelete(itinerary.id, itinerary.creatorId)
                   }

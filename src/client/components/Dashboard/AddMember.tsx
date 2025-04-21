@@ -115,7 +115,6 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
             <Box mt={2} display="flex" justifyContent="center" gap={2}>
               <Button
                 variant="contained"
-                color='secondary'
                 onClick={() => {
                   if (userId && partyId) {
                     addMemberToParty(userId, partyId);
@@ -125,7 +124,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
               >
                 Confirm
               </Button>
-              <Button variant="outlined" onClick={closeModal}>
+              <Button variant="contained" onClick={closeModal}>
                 Cancel
               </Button>
             </Box>
