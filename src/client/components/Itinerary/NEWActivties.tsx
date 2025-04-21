@@ -342,9 +342,15 @@ const Activity: React.FC<Props> = ({
           <Typography variant='h5' gutterBottom>
             Activities List
           </Typography>
-          <Box>
+          <Box display="flex" flexWrap="wrap" gap={2}>
             {activities.map(activity => (
-              <Box key={activity.id} mb={2}>
+              <Box key={activity.id} sx={{
+                width: 300,
+                minHeight: 300, 
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}>
                 <Card
                   sx={{
                     backgroundColor: '#A684FF',
@@ -353,7 +359,7 @@ const Activity: React.FC<Props> = ({
                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
                   }}
                 >
-                  <CardContent>
+                  <CardContent sx={{ flexGrow: 1 }}>
                     <Typography variant='h6'>{activity.name}</Typography>
                     <Typography>{activity.description}</Typography>
                     <Typography>{activity.time}</Typography>
