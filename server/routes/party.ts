@@ -50,12 +50,12 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
       from: 'invite@letsgeauxnola.com', 
       subject: 'Join me on Lets Geaux Nola!',
       text: `Join my travel party ${partyName} on LetsGeauxNola.com!
-      View the itinerary at: https://letsgeauxnola.com/view/${viewCode}
+      View the itinerary at: http://letsgeauxnola.com/view/${viewCode}
 Or go to http://letsgeauxnola.com/view and enter this code: ${viewCode}
       `,
       html: `<strong>Join my travel party ${partyName} on LetsGeauxNola.com!</strong>
-      View the itinerary at: https://letsgeauxnola.com/view/${viewCode}
-Or go to https://letsgeauxnola.com/view and enter this code: <strong>${viewCode}</strong>
+      View the itinerary at: http://letsgeauxnola.com/view/${viewCode}
+Or go to http://letsgeauxnola.com/view and enter this code: <strong>${viewCode}</strong>
       `, // TODO fix html
     };
 
