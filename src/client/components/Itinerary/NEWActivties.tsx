@@ -314,10 +314,10 @@ const Activity: React.FC<Props> = ({
                   margin='normal'
                 />
                 <DialogActions>
-                  <Button onClick={handleClose} color='primary'>
+                  <Button onClick={handleClose} color='primary' sx={{ color: 'black' }}>
                     Cancel
                   </Button>
-                  <Button type='submit' color='primary'>
+                  <Button type='submit' color='primary'sx={{ color: 'black' }} >
                     {formData.id ? 'Update Activity' : 'Add Activity'}
                   </Button>
                 </DialogActions>
