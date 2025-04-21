@@ -6,16 +6,16 @@ const prisma = new PrismaClient();
 
 //'/:id/:itemId/:type'
 //pulling votes to check for matches on client side
-voteRouter.get(`/:userId/:typeId/:type`, async (req:any, res:any) => {
-  const { userId, typeId, type } = req.params
+voteRouter.get(`/:userId/:typeId/:voteType`, async (req:any, res:any) => {
+  const { userId, typeId, voteType } = req.params
   console.log('user comin in', userId, /*'type comin in', typeId, 'type name', type*/)
   const findTypeObj = {
     userId: +req.params.userId
   }
   const voteCategoryId = typeId;
-  if (type === 'comment') {
+  if (voteType === 'comment') {
     findTypeObj.commentId = +voteCategoryId;
-  } else if (type === 'post') {
+  } else if (voteType === 'post') {
   
   findTypeObj.postId = +voteCategoryId;
 }

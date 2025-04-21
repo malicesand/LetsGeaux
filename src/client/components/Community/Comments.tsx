@@ -1,9 +1,19 @@
 import React from 'react';
 // import axios from 'axios';
-import Suggestion from '../Suggestion.tsx';
-import { Container, Typography, List, Card, Paper, Grid, Button} from '@mui/material';
+import {
+  Container,
+  Typography,
+  List,
+  Card,
+  Paper,
+  Grid,
+  Box,
+  Button,
+
+} from '@mui/material';
 import Comment from './Comment.tsx'
 import CommentForm from './CommentForm.tsx';
+import { PiArrowBendDoubleUpLeftBold } from "react-icons/pi";
 import { user } from '../../../../types/models.ts';
 
 interface CommentsProps {
@@ -21,9 +31,10 @@ interface CommentsProps {
 
 const Comments: React.FC<CommentsProps> = ({ user, commentSet, getAllComments, commentEditMode, endComments, postId, setEditableComment, setCommentEditMode }) => {
   return (
-    <Container>
+    <Container sx={{backgroundColor: "primary"}}>
+      <Button title="Back to posts" sx={{ borderWidth: 4, color: 'black', mt: "4px", mb: "4px" }}  onClick={endComments}><PiArrowBendDoubleUpLeftBold /></Button>
       {commentSet.map((currentComment: any) => (
-        <Card key={currentComment.id}>
+        <Box key={currentComment.id} sx={{ backgroundColor: 'primary' }}>
       <Comment
       currentComment={currentComment}
       user={user}
@@ -32,9 +43,8 @@ const Comments: React.FC<CommentsProps> = ({ user, commentSet, getAllComments, c
       setCommentEditMode={setCommentEditMode}
       commentEditMode={commentEditMode}
       />
-      </Card>
+      </Box>
       ))}
-      <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={endComments}>back to posts</Button>
 
     </Container>
 

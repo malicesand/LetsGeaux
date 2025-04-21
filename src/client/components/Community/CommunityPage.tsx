@@ -1,6 +1,5 @@
 import React, { useState, useEffect }from 'react';
 import axios from 'axios';
-import Suggestion from '../Suggestion.tsx';
 import { Container, Typography, List, Card, Paper, Grid} from '@mui/material';
 import Posts from './Posts.tsx';
 import { user } from '../../../../types/models.ts';
@@ -25,7 +24,7 @@ useEffect(() => {
 
   return (
     <Container>
-      <Typography variant='h1'>Welcome to da pawty!</Typography>
+      <Typography variant='h1'>Welcome to the neighborhood!</Typography>
       <Grid>
         <Posts postSet={postSet} user={user} getAllPosts={getAllPosts} />
         {/* Actually, I don't think the comments will be rendered directly from here.. */}

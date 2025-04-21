@@ -24,13 +24,16 @@ import {
   ImageListItem,
   ListItemText,
 } from '@mui/material';
+import { PiShootingStarFill } from "react-icons/pi";
+import { PiStarHalfThin } from "react-icons/pi";
+
 // import {
 //   AddToQueueRounded,
 //   ArrowForwardIos,
 // }  from '@mui/icons-material';
 import ThumbsUpDownRoundedIcon from '@mui/icons-material/ThumbsUpDown';
-import ThumbDownAltRoundedIcon from '@mui/icons-material/ThumbDownAltRounded';
-import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
+import { PiThumbsDownFill } from "react-icons/pi";
+import { PiThumbsUpFill } from "react-icons/pi";
 import { user } from '../../../types/models.ts';
 
 interface SuggestionProps {
@@ -118,6 +121,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
         latitude,
         longitude,
         phoneNum,
+        image,
         title,
         upVotes: 0,
         downVotes: 0,
@@ -129,6 +133,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
   }
 
   const handleAddToActivities = () => {
+    
     const details = {
       data: {
         address: currentSuggestion.address,
@@ -149,42 +154,59 @@ const Suggestion: React.FC<SuggestionProps> = ({
       console.error('unable to change suggestion', err);
     })
   }
-
+  
   const handleVoteClick = (polarity: string) => {
+  // if (!positiveForPastVotes) {
     const { id } = user;
     const userId = id
     const { id: suggestionId } = currentSuggestion;
     const pol = polarity === 'up' ? 1 : 0
     const vote = {
       // details: {
-      data: {
-        user: { connect: { id: +user.id } },
-        suggestion: { connect: { id: suggestionId } },
-        polarity: pol,
+        data: {
+          user: { connect: { id: +user.id } },
+          suggestion: { connect: { id: suggestionId } },
+          polarity: pol,
+        }
+        // }
       }
-      // }
-    }
-    let voteDirection;
-    axios.post(`api/vote/${userId}/${suggestionId}/suggestion`, vote).then(() => {
-      if (polarity === 'up') {
-        voteDirection = 'upVotes';
-      } else {
-        voteDirection = 'downVotes';
-      }
-      axios.patch(`api/suggestions/${suggestionId}`, [voteDirection])
-      console.log('into the patch(post details)')
-    })
+      let voteDirection;
+      axios.post(`api/vote/${userId}/${suggestionId}/suggestion`, vote).then(() => {
+        if (polarity === 'up') {
+          voteDirection = 'upVotes';
+        } else {
+          voteDirection = 'downVotes';
+        }
+        axios.patch(`api/suggestions/${suggestionId}`, [voteDirection])
+        console.log('into the patch(post details)')
+      })
       .then(() => alert("YOU VOTED!"))
       .catch((err) => console.error('there is an issue with your vote', err));
-
-    /**
-     * set an axios request to vote with our existing userId and the current suggestion's
-     * id(maybe both in params?)
-     * At some point set a set of statements that would just check the polarity for
-     * the same vote and change it if need be instead of letting them vote ...
-     * maybe disable the vote button visibly on things they've already voted on..
-     */
-  }
+    // } else {
+      // alert('YOU ALREADY VOTED!!')
+    // }
+      
+        /**
+         * set an axios request to vote with our existing userId and the current suggestion's
+         * id(maybe both in params?)
+         * At some point set a set of statements that would just check the polarity for
+         * the same vote and change it if need be instead of letting them vote ...
+         * maybe disable the vote button visibly on things they've already voted on..
+        */
+      }
+      
+//       const positiveForPastVotes = async () => {
+//         const voteStatus = await axios.get(`api/vote/${user.id}/${currentSuggestion.id}/suggestion`)
+//         console.log('this is what comes of voteStatusess')
+//         if (voteStatus.data) {
+//          const logging = await console.log('data true')
+//           return true;
+//         } else {
+//           const logging = await console.log('no data, but what', voteStatus)
+//           console.log('no data, but what?')
+//           return false;
+//         }
+// }
 
 
   const handleRemoveFromWishlist = () => {
@@ -201,19 +223,23 @@ const Suggestion: React.FC<SuggestionProps> = ({
 
 
   }
-  const { title, description, phoneNum, latitude, longitude, address, hours, image } = currentSuggestion;
+  const { title, description, phoneNum, upVotes, downVotes, latitude, longitude, address, hours, image } = currentSuggestion;
   return (
     <Container>
       <Grid item size={6}>
-        <Card>
+        {/* <Card> */}
           {/* <Typography variant="h3">Featured Foray:</Typography> */}
           {/* <Button variant="filled">Next attraction</Button> */}
-          <Button variant="filled" onClick={handleAddToActivities}>add to activities!</Button>
+          <Button
+          variant="filled"
+          onClick={handleAddToActivities}
+          sx={{ marginRight: "4px" }}
+          >add to activities!</Button>
           {wishMode
             ?
-            <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleRemoveFromWishlist}>Remove from wishlist</Button>
+            <Button title="remove from wishlist" sx={{ borderWidth: 4, color:"black" }}  onClick={handleRemoveFromWishlist}> <PiStarHalfThin /> </Button>
             :
-            <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={addToWishlist} variant="filled">add to wishlist!</Button>
+            <Button title="add to wishlist" sx={{ borderWidth: 4, color:"black" }}  onClick={addToWishlist} variant="filled"> <PiShootingStarFill /> </Button>
           }
           <ImageList>
             <ImageListItem key="ItemText" cols={4}>
@@ -223,10 +249,10 @@ const Suggestion: React.FC<SuggestionProps> = ({
                 </Typography>
               </ListItemText>
               {image ? (
-                <img style={{ width: "100px", marginTop: "10px" }}width="10" height="10" src={`${image}`}></img>
+                <img style={{ width: "100px", marginTop: "10px" }}src={`${image}`}></img>
 
               ) : (
-                <img width="50" height="50" src="https://static.vecteezy.com/system/resources/previews/002/187/723/original/coming-soon-neon-signs-style-text-free-vector.jpg"></img>
+                <img style={{ width: "100px", marginTop: "10px" }} src="https://static.vecteezy.com/system/resources/previews/002/187/723/original/coming-soon-neon-signs-style-text-free-vector.jpg"></img>
 // set typography to "body"
               )}
               <Typography>{description}</Typography>
@@ -244,45 +270,15 @@ const Suggestion: React.FC<SuggestionProps> = ({
               {isDb ? (
                 <Grid>
                   <Typography>Vote on this suggestion<ThumbsUpDownRoundedIcon /></Typography>
-              <Button sx={{ borderWidth: 4 }}  onClick={() => handleVoteClick('up')}><ThumbUpAltRoundedIcon /></Button>
-              <Button sx={{ borderWidth: 4 }}  onClick={() => handleVoteClick('down')}><ThumbDownAltRoundedIcon /></Button>
+                  <Typography> {upVotes}</Typography>
+              <Button title="vote suggestion up" sx={{ borderWidth: 4, color: "black" }}  onClick={() => handleVoteClick('up')}><PiThumbsUpFill /></Button>
+                  <Typography> {downVotes}</Typography>
+              <Button title="vote suggestion down" sx={{ borderWidth: 4, color: "black" }}  onClick={() => handleVoteClick('down')}><PiThumbsDownFill /></Button>
                 </Grid>
               ) : (null)}
-
-
-
-
-
-
-              <Accordion
-                expanded={expanded}
-                onChange={handleExpansion}
-                slots={{ transition: Fade as AccordionSlots['transition'] }}
-              //     sx={[
-              //       expanded
-              //  ? {
-              //         [`& .${AccordionClasses.region}`]: {
-              //           height: 'auto',
-              //         },
-              //         [`& .${accordionDetailsClasses.root}`]: {
-              //           display: 'block',
-              //         },
-              //       }
-              //       : {
-              //         [`& .${accordionClasses.region}`]: {
-              //           height: 0,
-              //         },
-              //         [`& .${accordionDetailsClasses.root}`]: {
-              //           display: 'none',
-              //         },
-              //       }
-              //     ]}
-              >
-                <Typography></Typography>
-              </Accordion>
             </ImageListItem>
           </ImageList>
-        </Card>
+        {/* </Card> */}
 
       </Grid>
 
