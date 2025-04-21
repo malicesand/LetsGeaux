@@ -104,7 +104,9 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
             gap: { xs: 1, sm: 2 },
             px: { xs: 1, sm: 2 },
             py: { xs: 1, sm: 1.5 },
-          }}>
+          }}
+
+        >
           <Box
             sx={{
               display: 'flex',
@@ -201,6 +203,7 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
                 )}
               </Menu>
             </Box>
+          </Box>
         </Toolbar>
       </Container>
     </AppBar>
