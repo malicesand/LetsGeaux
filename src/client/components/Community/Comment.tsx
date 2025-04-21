@@ -1,7 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-import { Container, Typography, List, Card, Paper, Grid, Button, } from '@mui/material';
+import {
+  Container,
+  Typography,
+  List,
+  Card,
+  Paper,
+  Grid,
+  Box,
+  Button,
+} from '@mui/material';
+import { PiHandHeartFill } from "react-icons/pi";
+import { PiHandPalmFill } from "react-icons/pi";
+import { PiBombFill } from "react-icons/pi";
+import { PiXFill } from "react-icons/pi";
+
+import { PiNotePencilFill } from "react-icons/pi";
 import { user } from '../../../../types/models.ts';
 
 interface CommentProps {
@@ -20,6 +35,7 @@ const Comment: React.FC<CommentProps> = ({user, getAllComments, currentComment, 
   const { body, postName, id } = currentComment;
 
   const [hasLiked, setHasLiked] = useState(false);
+  const [currentLikes,setCurrentLikes] = useState(currentComment.likes);
 
   const handleVoteDeleteClick = () => {
     const { id: userId } = user;
@@ -113,19 +129,28 @@ const userId = user.id
 
   return (
     // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!
-    <Container>
+    <Box sx={{border: "4px solid black", borderRadius: "4", p: 4, mb: "8px"}}>
         <Typography>{body}</Typography>
         <Typography>By: {postName}</Typography>
         <Typography>Likes: {currentComment.likes}</Typography>
         {hasLiked ? (
-          <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleVoteDeleteClick}>Unlike</Button>
+          <Button title="Remove like" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={handleVoteDeleteClick}><PiHandPalmFill /></Button>
         ) : (
-          <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleVoteClick} >Like 🚀</Button>
+          <Button title="Like comment" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={handleVoteClick} ><PiHandHeartFill /></Button>
 
         )}
-        <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={deleteComment} >Delete 💣</Button>
-        <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleEditClick}>Edit this comment</Button>
-    </Container>
+        <Button title="Delete comment" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={deleteComment} ><PiBombFill /></Button>
+       {commentEditMode ? (
+        // <Button title="Cancel edit" sx={{ borderWidth: 4, color: "black" }} onClick={() => {
+        //   setCommentEditMode(false);
+          
+        // }}><PiXFill /></Button>
+        null
+       ) : (
+         <Button title="Edit this comment" sx={{ borderWidth: 4, color: 'black' }}  onClick={handleEditClick}>< PiNotePencilFill/></Button>
+        )}
+
+    </Box>
   )
 }
 

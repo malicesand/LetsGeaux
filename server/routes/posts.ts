@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 postsRouter.get("/", async (req: any, res: any) => {
   try {
     const allPosts = await prisma.post.findMany();
-    res.status(200).send(allPosts);
+    res.status(200).send(allPosts.reverse());
   } catch (err) {
     console.error("unable to get posts", err);
     res.sendStatus(500);
@@ -19,6 +19,7 @@ postsRouter.get("/", async (req: any, res: any) => {
 
 // POST must connect to the user(params). Happens when a form is submitted. Must add createdAt tag
 postsRouter.post("/", async (req: any, res: any) => {
+  console.log('dabody', req.body)
   try {
     const newPost = await prisma.post.create(req.body);
     res.status(201).send("posted successfully");
@@ -58,7 +59,7 @@ postsRouter.patch("/likes/:id", async (req: any, res: any) => {
 // Actual Patch function for changing information in the form
 postsRouter.patch("/:id", async (req: any, res: any) => {
   const { id } = req.params;
-  const { body } = req.body;
+  const { body, title } = req.body;
   try {
     const newPost = await prisma.post.update({
       where: {
@@ -66,6 +67,7 @@ postsRouter.patch("/:id", async (req: any, res: any) => {
       },
       data: {
         body,
+        title,
       },
     });
     res.sendStatus(200);
