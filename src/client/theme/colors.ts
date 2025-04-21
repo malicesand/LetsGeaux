@@ -3,10 +3,10 @@ import { createTheme } from '@mui/material/styles';
 
 export const typography: TypographyOptions = {
   fontFamily: 'Lexend Mega',
-  htmlFontSize: 14,
+  htmlFontSize: 16,
   body1: {
     fontFamily: 'DM Sans',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 500,
     textTransform: 'none',
   },

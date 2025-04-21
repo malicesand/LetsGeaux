@@ -6,8 +6,11 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 // Middleware to ensure user is logged in
-function isLoggedIn(req, res, next) {
-  req.user ? next() : res.sendStatus(401);
+function isLoggedIn(req: any, res: Response, next: Function) {
+  if (!req.user || !req.user.id) {
+    return res.sendStatus(401);
+  }
+  next();
 }
 
 // Get budget info
