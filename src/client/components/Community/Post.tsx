@@ -6,11 +6,18 @@ import {
   List,
   Card,
   Paper,
+  TextField,
   Grid,
   Button,
+  Box,
 } from '@mui/material';
 // import * as dayjs from 'dayjs';
 import Comments from './Comments.tsx';
+import { PiHandHeartFill } from "react-icons/pi";
+import { PiHandPalmFill } from "react-icons/pi";
+import { PiBombFill } from "react-icons/pi";
+import { PiNotePencilFill } from "react-icons/pi";
+
 import CommentForm from './CommentForm.tsx';
 import { user } from '../../../../types/models.ts';
 
@@ -23,10 +30,12 @@ interface PostProps {
   setPostEditMode: Function
   editablePost: any
   setEditablePost: Function
+  postEditMode: boolean
+
 
 }
 
-const Post: React.FC<PostProps> = ({user, currentPost, getAllPosts, setEditablePost, setPostEditMode}) => {
+const Post: React.FC<PostProps> = ({user, currentPost, getAllPosts, setEditablePost, postEditMode, setPostEditMode}) => {
   const { body, id, postName } = currentPost
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentSet, setCommentSet] =useState([]);
@@ -133,21 +142,25 @@ const deletePost = () => {
   return (
     // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!!
     <Container>
-      <Card sx={{boxShadow: 10 }}>
-        <Button  sx={{ borderWidth: 4, color: 'white' }} onClick={deletePost}>Delete this post 💣</Button>
+      <Box sx={{ border: "4px solid black", borderRadius: "4", p: 2, mb: "8px" }}>
+        <Button
+        title="delete post"
+        sx={{ borderWidth: 4, color: 'black', p: '6px' }}
+        onClick={deletePost}><PiBombFill /></Button>
+        <Typography variant='h3'>{currentPost.title}</Typography>
       <Typography> {body}</Typography>
       <Typography>By: {postName}</Typography>
-      <Typography color="white">Likes: {currentPost.likes}</Typography>
+      <Typography>Likes: {currentPost.likes}</Typography>
       {!hasLiked
        ? (
-         <Button sx={{ borderWidth: 4, color: 'white' }} onClick={handleVoteClick} >Like 🚀</Button>
+         <Button title="Like this post" sx={{ borderWidth: 4, color: 'black', p: '6px', marginRight: "4px"}} onClick={handleVoteClick} ><PiHandHeartFill /></Button>
       ) : (
-        <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={handleVoteDeleteClick}>Unlike</Button>
+        <Button title="remove like" sx={{ borderWidth: 4, color: 'black', p: '6px', marginRight: "4px"}}  onClick={handleVoteDeleteClick}><PiHandPalmFill /></Button>
         // null
       )}
-      <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={startComments}>see comments</Button>
+      <Button sx={{ borderWidth: 4, color: 'black' , p: '6px', marginRight: "4px"}}  onClick={startComments}>see comments</Button>
       {isCommenting ? (
-        <Paper>
+        <>
           <CommentForm
           postId={id}
           user={user}
@@ -167,14 +180,18 @@ const deletePost = () => {
           setCommentEditMode={setCommentEditMode}
           commentEditMode={commentEditMode}
           />
-          <Button sx={{ borderWidth: 4, color: 'white' }}  onClick={endComments}>Close window</Button>
-        </Paper>
+          {/* <Button sx={{ borderWidth: 4, color: 'black' }}  onClick={endComments}>Close window</Button> */}
+        </>
       )
       : (
         null
       )}
-      <Button  sx={{ borderWidth: 4, color: 'white' }}  onClick={handleEditClick}>Edit this post</Button>
-      </Card>
+      {postEditMode ? (
+        null
+      ) : (
+        <Button  title="Edit this post"sx={{ borderWidth: 4, color: 'black', p: '6px', marginRight: "4px"}}  onClick={handleEditClick}><PiNotePencilFill /></Button>
+      )}
+      </Box>
     </Container>
   )
 }

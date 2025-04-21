@@ -7,10 +7,15 @@ import {
   Card,
   Paper,
   Grid,
+  TextField,
   Input,
   Button,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { PiPencilLineBold } from "react-icons/pi";
+import { PiNotePencilFill } from "react-icons/pi";
+import { PiXFill } from "react-icons/pi";
+
 import { user } from '../../../../types/models.ts';
 
 
@@ -36,11 +41,16 @@ const PostForm: React.FC<PostFormProps>= ({ user, getAllPosts, editablePost, pos
   })
 
 useEffect(() => {
-  console.log('we in it!!!!', editablePost)
   if (postEditMode) {
+    setValue("title", editablePost.title)
     setValue("body", editablePost.body)
   }
 }, [editablePost]);
+
+const abortEdit = () => {
+  setPostEditMode(false);
+  reset();
+}
 
 
 const submitForm: SubmitHandler<FormFields> = (data:any) => {
@@ -50,7 +60,8 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
       data: {
         userId: +id,
         body: data.body,
-        postName: username
+        postName: username,
+        title: data.title,
       }
     }
     axios.post('/api/posts', postBody)
@@ -60,11 +71,11 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
     })
     .catch((err) => console.error("couldn't make post", err));
   } else {
-    console.log(data);
     const { id } = editablePost;
     const patchwork = {
       
-        body: data.body
+        body: data.body,
+        title: data.title,
     }
     axios.patch(`/api/posts/${id}`, patchwork)
     .then(() => {
@@ -85,8 +96,17 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
       <Grid container spacing={3}>
         <Typography>Write a post!</Typography>
         <form onSubmit={handleSubmit(submitForm)} >
-      <textarea
-      rows="10"
+      <TextField
+      sx={{ mb: '10px', mt: '5px', height: '50px', width: '200px' }}
+      variant="outlined"{...register("title")}
+      size='small'
+      name="title"
+      type="text"
+      placeholder="Title Post here"
+      ></TextField>
+      <TextField
+      sx= {{mb: '5px', mt: '10px'}}
+      rows="4"
       cols="100"
       {...register("body", {
         required: "You haven't written anything yet!",
@@ -94,15 +114,19 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
         message: "You haven't written anything yet!",
       })}
       name="body"
-      type="textarea"
-      placeholder="let geaux!"
+      placeholder="Write a post"
       />
       {errors.body && <div>{errors.body.message}</div>}
+      {postEditMode ? (
+        <Button title="Cancel Edit" sx={{ borderWidth: 4, color: 'black', p: '4px' }} onClick={abortEdit}><PiXFill /></Button>
+      ) : (
+        null
+      )}
         {postEditMode ? (
-          <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Edit Post"}</Button>
+          <Button title="Amend post" sx={{ borderWidth: 4, color: 'black', p: '4px'}}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : <PiNotePencilFill />}</Button>
 
         ) : (
-          <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Send Post"}</Button>
+          <Button title="Send post"  sx={{ borderWidth: 4, color: 'black', p: '4px'}}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : <PiPencilLineBold />}</Button>
 
         ) }
         </form>

@@ -1,4 +1,4 @@
-import React, { useEffect} from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import { user } from '../../../../types/models.ts';
 import {
@@ -8,9 +8,14 @@ import {
   Card,
   Paper,
   Grid,
+  TextField,
   Button,
   Input,
 } from '@mui/material';
+import { PiPencilLineBold } from "react-icons/pi";
+import { PiNotePencilFill } from "react-icons/pi";
+import { PiXFill } from "react-icons/pi";
+
 import { useForm } from 'react-hook-form';
 
 type FormFields = {
@@ -26,7 +31,7 @@ interface CommentFormProps {
   commentEditMode: boolean;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({user, postId, commentEditMode, setCommentEditMode, editableComment, getAllComments}) => {
+const CommentForm: React.FC<CommentFormProps> = ({ user, postId, commentEditMode, setCommentEditMode, editableComment, getAllComments }) => {
   const form = useForm();
   const { register, handleSubmit, reset, setValue, setError, formState: { isSubmitting, errors } } = useForm<FormFields>({
     defaultValues: {
@@ -34,13 +39,16 @@ const CommentForm: React.FC<CommentFormProps> = ({user, postId, commentEditMode,
     }
   })
 
-useEffect(() => {
-  if (commentEditMode) {
-    setValue("body", editableComment.body);
+  useEffect(() => {
+    if (commentEditMode) {
+      setValue("body", editableComment.body);
+    }
+  }, [editableComment]);
+
+  const abortEdit = () => {
+    setCommentEditMode(false);
+    reset();
   }
-}, [editableComment]);
-
-
   const submitComment: SubmitHandler<FormFields> = (data: any) => {
     if (!commentEditMode) {
 
@@ -55,42 +63,48 @@ useEffect(() => {
       }
 
       axios.post(`/api/comments`, commentBody)
-      .then(() => {
-        reset();
-        getAllComments();
-      })
-      .catch((err) => console.error('unable to post comment', err))
+        .then(() => {
+          reset();
+          getAllComments();
+        })
+        .catch((err) => console.error('unable to post comment', err))
     } else {
       const { id } = editableComment;
       const commsFix = {
         body: data.body,
       }
       axios.patch(`api/comments/${id}`, commsFix)
-      .then(() => {
-        reset();
-        getAllComments();
-        setCommentEditMode(false);
-      })
-      .catch((err) => console.error('could not change comment', err));
+        .then(() => {
+          reset();
+          getAllComments();
+          setCommentEditMode(false);
+        })
+        .catch((err) => console.error('could not change comment', err));
     }
-    }
+  }
   return (
     <Container>
       <Grid container spacing={3}>
-        <Typography>Leave a comment</Typography>
+        {/* <Typography>Leave a comment</Typography> */}
         <form onSubmit={handleSubmit(submitComment)}>
-          <textarea
-          rows="5"
-          cols= "50"
-          {...register("body")}
-          name="body"
-          type="textarea"
-          placeholder="Write your own comment"
+          <TextField
+            cols="50"
+            rows="5"
+            {...register("body")}
+            name="body"
+            type="textarea"
+            placeholder="Write your own comment"
           />
           {commentEditMode ? (
-            <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "changing.." : "edit comment"}</Button>
+            <Button title="Cancel Edit" sx={{ borderWidth: 4, color: 'black' }} onClick={abortEdit}><PiXFill/></Button>
+
           ) : (
-            <Button sx={{ borderWidth: 4, color: 'white' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending.." : "post comment"}</Button>
+            null
+          )}
+          {commentEditMode ? (
+            <Button title="amend comment" sx={{ borderWidth: 4, color: 'black' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "changing.." : <PiNotePencilFill />}</Button>
+          ) : (
+            <Button title="post comment" sx={{ borderWidth: 4, color: 'black' }} type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending.." : <PiPencilLineBold />}</Button>
           )
           }
         </form>

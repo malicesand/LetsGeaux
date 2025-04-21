@@ -42,7 +42,7 @@ const getTripadvisorLocationIds = async (
 
 const throttled = pThrottle({
   limit: 1,
-  interval: 500
+  interval: 1000
 });
 
 const throttledTripAdvisorDetailedEntries = throttled(async (location: number) => {
