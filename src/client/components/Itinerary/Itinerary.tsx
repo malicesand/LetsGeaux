@@ -18,6 +18,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface ItineraryProps {
   user: user;
@@ -369,16 +370,19 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                 Edit
               </Button> */}
               {user.id === itinerary.creatorId && (
-                <Button
-                  variant='contained'
-                  color='secondary'
-                  onClick={() =>
-                    handleDelete(itinerary.id, itinerary.creatorId)
-                  }
-                >
-                  Delete
-                </Button>
-              )}
+  <IconButton
+    onClick={() => handleDelete(itinerary.id, itinerary.creatorId)}
+    sx={{
+      position: 'absolute',
+      bottom: 8,
+      right: 8, 
+      color: 'black',
+    }}
+  >
+    <DeleteIcon />
+  </IconButton>
+)}
+
             </CardActions>
             {user && (
   <Activity
