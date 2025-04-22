@@ -28,7 +28,7 @@ const AddItinerary: React.FC<AddItineraryProps> = ({ user, partyId, partyName })
   const navigate = useNavigate();
 
   //fetch all itineraries
-  //if found setIntinerary if set to null
+  //if found setItinerary if set to null
   useEffect(() => {
     const fetchItineraries = async () => {
       try {

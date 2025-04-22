@@ -9,6 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import TextField from '@mui/material/TextField';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack'
 import MailIcon from '@mui/icons-material/MailOutlineOutlined';//! find a more fun icon
 
 import { user, chatHistory, message } from '../../../../types/models.ts';
@@ -18,16 +19,7 @@ interface ChatMessage {
   botMessage: string;
   humanMessage: string;
 }
-// type Sessions: {
 
-// }
-
-// interface UserSession {
-
-// }
-// interface UserSessions {
-//   sessions: Array<chatHistory>
-// }
 interface ChatHistProps {
   user: user;
 }
@@ -42,8 +34,8 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null)
   const [editedTitle, setEditedTitle] = useState<string>('');
-
   const userId = user.id;
+
   //* Fetch Conversations *//
   const getUserSessions = async () => {
     try {
@@ -60,10 +52,12 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
           `/api/chats/messages/${session.sessionId}`
         );
         // console.log(msgRes);
-        sessionMessages.push({
-          session: session,
-          messages: msgRes.data
-        });
+        if (msgRes.data.length >= 1) {
+          sessionMessages.push({
+            session: session,
+            messages: msgRes.data
+          });
+        }
       }
       setSessionsWithMessages(sessionMessages);
     } catch (error) {
@@ -81,7 +75,7 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
     setEditingSessionId(sessionId);
     setEditedTitle(currentTitle || '');
   };
-
+  // * Save New Name * //
   const saveEditedName = async (sessionId: string) => {
     try {
       
@@ -95,6 +89,7 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
       console.error('Failed to change name on client', error);
     }
   }
+   // * Delete Session * //
   const handleDelete = async(sessionId: string) => {
     // console.log(sessionId)
     try {
@@ -108,23 +103,12 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
     }
 
   }
-  // const handleNameChange = async (id: string) => {
-  //   console.log('name change clicked');
-  //   try {
-  //     const response = await axios.patch(`/api/chat-history/${id}`, {
-  //       conversationName: 'New Name'
-  //     })
-  //   } catch (error) {
-  //     console.error('Failed to change name on client', error);
-  //   }
-  // };
-  
 
   return (
     <List>
       {sessionsWithMessages.map(({ session, messages }) => (
         <React.Fragment  key={session.sessionId}>
-          <ListItem id='session.sessionId' onClick={() =>
+          <ListItem sx={{cursor: 'pointer'}} id='session.sessionId' onClick={() =>
             setExpandedSessionId(prev =>
               prev === session.sessionId ? null : session.sessionId)
           }>
@@ -146,12 +130,34 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
             ) : (
               <ListItemText
                 primary={session.conversationName || 'Untitled Conversation'}
+                slotProps={{ 
+                  primary: {
+                    variant: 'h4',
+                  },
+                  secondary: { variant: 'h5',}
+                }}
                 secondary={`Last active: ${new Date(session.lastActive).toLocaleString()}`}
               />
             )}
           </ListItem>
 
-          <ButtonGroup orientation='vertical' sx={{ pl:2 }}> 
+          {expandedSessionId === session.sessionId && (
+            <List component='div' disablePadding sx={{ pl: 4, cursor: 'pointer' }}>
+              {messages.map(msg => (
+                <ListItem key={msg.id}>
+                  <ListItemText 
+                    primary={`You: ${msg.userMessage}`}
+                    secondary={`Gata: ${msg.botResponse}`}
+                    slotProps = {{
+                      primary: {variant: 'body1',},
+                      secondary: {variant: 'body1',},
+                    }}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
+           <ButtonGroup orientation='horizontal' sx={{ pl:2, cursor: 'pointer' }}> 
             <Button 
               // id='change-name'
               variant='contained'
@@ -161,25 +167,12 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
               Change Name 
             </Button>
             <Divider/>
-            <Button variant='outlined'
+            <Button 
             variant='contained'
             onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
               handleDelete(session.sessionId)}}
             > Delete Session </Button>
           </ButtonGroup>
-
-          {expandedSessionId === session.sessionId && (
-            <List component='div' disablePadding sx={{ pl: 4 }}>
-              {messages.map(msg => (
-                <ListItem key={msg.id}>
-                  <ListItemText
-                    primary={`You: ${msg.userMessage}`}
-                    secondary={`Bot: ${msg.botResponse}`}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          )}
           <Divider />
         </React.Fragment>
       ))}

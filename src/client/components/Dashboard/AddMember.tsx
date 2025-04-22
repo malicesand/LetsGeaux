@@ -9,7 +9,7 @@ import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
 import Fade from '@mui/material/Fade';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
+// import { styled } from '@mui/material/styles';
 
 import { user } from '../../../../types/models.ts'
  
@@ -30,7 +30,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
   const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
-    getUsers(partyId);
+    getUsers(); // ? DELETED partyId: number
   }, []);
 
   // * Modal: Add Member Confirmation * //
@@ -42,10 +42,9 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
   };
 
   // * Fetch all Users with Let's Geaux Accounts * //
-  const getUsers = async(partyId: number) => { 
+  const getUsers = async() => { // ? DELETED partyId: number
     try {
-      const response = await axios.get('/api/users');
-      // console.log('got the users');
+      const response = await axios.get('/api/users'); // TODO conditional for existing user
       setUsers(response.data);     
     } catch (error) {
       console.error('failed to get users for add Member search', error)
@@ -54,7 +53,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
   // * Modal Button Click Handler * //
   const addMemberToParty = async(userId:number, partyId:number) => {
     try {
-      await axios.post('/api/party/userParty', {userId, partyId});
+      await axios.post('/api/party/userParty', {userId, partyId}); // TODO: conditional for existing users
       getMembers(partyId);
     } catch (error) {
       console.error('Could not create new userParty model', error);
@@ -83,7 +82,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
           renderInput={(params) => 
             <TextField 
               {...params} 
-              placeholder="Add a user to this party" 
+              placeholder="Add an existing user to your party" 
           />}
         />
       </Box>
@@ -106,9 +105,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
             transform: 'translate(-50%, -50%)',
             width: 400,
             bgcolor: 'background.paper',
-            // borderRadius: 2,
             borderColor: 'secondary',
-            // boxShadow: 24,
             p: 4,
             textAlign: 'center',
           }}>
@@ -118,7 +115,6 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
             <Box mt={2} display="flex" justifyContent="center" gap={2}>
               <Button
                 variant="contained"
-                color='secondary'
                 onClick={() => {
                   if (userId && partyId) {
                     addMemberToParty(userId, partyId);
@@ -128,7 +124,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
               >
                 Confirm
               </Button>
-              <Button variant="outlined" onClick={closeModal}>
+              <Button variant="contained" onClick={closeModal}>
                 Cancel
               </Button>
             </Box>

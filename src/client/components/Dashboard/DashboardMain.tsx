@@ -81,7 +81,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         {partyInfo.map((selectedParty) => (
           <Box key={selectedParty.id} mb={1}>
             <Link to={`/${selectedParty.id}?name=${encodeURIComponent(selectedParty.name)}`}>
-              <Typography variant="body1" color="primary">
+              <Typography variant='h5' color="primary">
                 {selectedParty.name}
               </Typography>
             </Link>
