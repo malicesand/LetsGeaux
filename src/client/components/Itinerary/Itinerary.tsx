@@ -16,6 +16,8 @@ import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx';
 import { useParams, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
+import IconButton from '@mui/material/IconButton';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface ItineraryProps {
   user: user;
@@ -321,13 +323,13 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
         {itineraries.map((itinerary, index) => (
           <Card key={index}
           sx={{
-            mb: 2,
-            backgroundColor: '#A684FF',
-            borderRadius: '8px',         
-            padding: 2,
-            boxShadow: 'none',
-            //border: '2px solid #000',
-            border: '4px solid black',
+            position: 'relative', 
+    mb: 2,
+    backgroundColor: '#A684FF',
+    borderRadius: '8px',
+    padding: 2,
+    boxShadow: 'none',
+    border: '4px solid black',
           }}>
             <CardContent>
               <Typography variant='h6'>{itinerary.name}</Typography>
@@ -347,13 +349,25 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               )}
             </CardContent>
             <CardActions>
-              <Button
+            <IconButton
+  onClick={() => handleEditClick(itinerary)}
+  sx={{
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    color: 'black'
+  }}
+>
+  <EditIcon />
+</IconButton>
+
+              {/* <Button
                 variant='contained'
                 color='secondary'
                 onClick={() => handleEditClick(itinerary)}
               >
                 Edit
-              </Button>
+              </Button> */}
               {user.id === itinerary.creatorId && (
                 <Button
                   variant='contained'
