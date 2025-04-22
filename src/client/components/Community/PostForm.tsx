@@ -25,6 +25,7 @@ interface PostFormProps {
   editablePost: any
   postEditMode: boolean
   setPostEditMode: Function
+  postCredentialCheck: Function
 }
 
 type FormFields = {
@@ -94,7 +95,6 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
   return (
     <Container>
       <Grid container spacing={3}>
-        <Typography>Write a post!</Typography>
         <form onSubmit={handleSubmit(submitForm)} >
       <TextField
       sx={{ mb: '10px', mt: '5px', height: '50px', width: '200px' }}

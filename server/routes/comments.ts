@@ -23,8 +23,28 @@ commentsRouter.get(/*Id from the post*/'/:id', async (req: any, res: any) => {
     console.error(err);
     res.sendStatus(500);
   }
-  })
+  });
 
+  // get request specifically for checking whether or not this user is allowed to edit this comment
+  commentsRouter.get(`/:id/:userId`, async (req: any, res: any) => {
+    const { id, userId } = req.params;
+    try {
+      const credentials = await prisma.comment.findFirst({
+        where: {
+          id: +id,
+          userId: +userId,
+        },
+      });
+      if (credentials) {
+        res.status(200).send(true);
+      } else {
+        res.status(200).send(false);
+      }
+    } catch (err) {
+      console.error('failed to check credentials', err);
+      res.sendStatus(500);
+    }
+  });
 // POST: Comment must connect to the Post or comment[so these need a postId&&commentId]
 // Also must connect with the user that sent the comment
 

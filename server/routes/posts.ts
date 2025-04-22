@@ -17,6 +17,30 @@ postsRouter.get("/", async (req: any, res: any) => {
   }
 });
 
+
+// Set up handling for a credential check: just to vanish the edit option from the client-side
+postsRouter.get(`/:id/:userId`, async (req: any, res: any) => {
+  const { id, userId } = req.params;
+  try {
+    const credentials = await prisma.post.findFirst({
+      where: {
+        id: +id,
+        userId: +userId,
+      },
+    });
+    if (credentials) {
+      res.status(200).send(true);
+    } else {
+      res.status(200).send(false);
+    }
+  } catch (err) {
+    console.error('failed to check credentials', err);
+    res.sendStatus(500);
+  }
+});
+
+
+
 // POST must connect to the user(params). Happens when a form is submitted. Must add createdAt tag
 postsRouter.post("/", async (req: any, res: any) => {
   console.log('dabody', req.body)
@@ -88,8 +112,6 @@ postsRouter.delete("/:id/:userId", async (req: any, res: any) => {
       },
     });
     if (credentials) {
-      // console.log('in between postId', postId)
-      // const id = +postId
       const killPost = await prisma.post.delete({
         where: {
           id: +id,
