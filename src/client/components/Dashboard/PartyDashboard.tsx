@@ -13,7 +13,8 @@ import MessageBoard from './MessageBoard';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
 import AddItinerary from './AddItinerary';
-import Itinerary from './PartyItinerary.tsx';
+// import Itinerary from './PartyItinerary.tsx';
+import Itinerary from './DashItin.tsx';
 import { user, email } from '../../../../types/models.ts';
 
 interface PartyDashboardProps {
@@ -36,26 +37,16 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const [emails, setEmails] = React.useState<string[]>([]);
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [emailLog, setEmailLog] = useState<string[]>([]);
-  const [viewCode, setViewCode] = useState('');
+  const [viewCode, setViewCode] = useState<string>('');
 
-  useEffect(() => {
-    const fetchViewCode = async () => {
-      try {
-        const response = await axios.get(`/api/itinerary/party/${numericPartyId}`);
-        if (response.data?.viewCode) {
-          setViewCode(response.data.viewCode);
-        }
-      } catch (err) {
-        console.error('Failed to fetch viewCode:', err);
-      }
-    };
-    fetchViewCode();
-  }, [numericPartyId]);
+
   
 
   useEffect(() => {
+    fetchViewCode(numericPartyId);
     getUsersForParty(numericPartyId);
     getEmailLog(partyId);
+    // fetchItinerary(partyId)
   }, [numericPartyId]);
 
   //* Read Member List *//
@@ -71,15 +62,33 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   };
   // * Delete Members From A Party * //
   const deleteMembers = async (userId: number, partyId: string) => {
-    console.log(`Deleting user${userId} from party ${partyId}  `);
+    // console.log(`Deleting user${userId} from party ${partyId}  `);
     try {
       const response = await axios.get(`/api/party/:userId/:partyId`);
-      console.log(`user: ${userId} removed from party: ${partyId}`);
+      // console.log(`user: ${userId} removed from party: ${partyId}`);
     } catch (error) {
       console.error(
         `Failed to remove user ${userId} from party ${partyId}:`,
         error
       );
+    }
+  };
+
+  //* Get Itinerary View Code *//
+  const fetchViewCode = async (numericPartyId: number) => {
+    // console.log('fetching view code')
+    // console.log(`numeric partyId @ useEffect ${numericPartyId}`)
+    try {
+      const response = await axios.get(`/api/itinerary/party/${numericPartyId}`);
+      
+      
+      if (response.data?.viewCode) {
+        setViewCode(response.data.viewCode);
+      }
+        console.log(`view code at fetch ${response.data.viewCode}`)
+      
+    } catch (err) {
+      console.error('Failed to fetch viewCode:', err);
     }
   };
   //* Email Input Dialog
@@ -89,6 +98,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const closeModal = () => {
     setOpen(false);
   };
+
   //* Fetch Invites *//
   const getEmailLog = async (partyId: string) => {
     //  log(`Sending email log request for Party:${partyId}`);
@@ -97,7 +107,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
       const emailData = response.data;
       const addresses = emailData.map((email: email) => email.address);
       setEmailLog(addresses);
-      console.log(`Fetched ${addresses.length} emails for party${partyId}`);
+      // console.log(`Fetched ${addresses.length} emails for party${partyId}`);
     } catch (error) {
       console.error(`Failure: emailLog request for party ${partyId}`, error);
     }
@@ -108,9 +118,10 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     partyName: string,
     userId: number,
     partyId: string,
-     viewCode: string,
+    viewCode: string,
   ) => {
     // console.log(`${partyName} @ send email party dash`)
+    console.log(`view code at evite ${viewCode}`)
     try {
       await axios.post('/api/party/sendInvite', {
         emails: emailList,
@@ -139,7 +150,24 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   }
   // * Delete Party * //
   const deleteParty = async (userId: number, partyId: string) => {
-    
+    console.log(`Deleting Party ${partyId}`);
+    try {
+      
+    } catch (error) {
+      console.error(`Error deleting party`, error)
+    }
+  }
+
+  // * Fetch Itinerary *//
+  const fetchItinerary = async (partyId: string) => {
+    console.log(`Fetching itinerary`);
+    try {
+      const response = await axios.get(`/api/itinerary/party/${partyId}`);//postman verified
+      console.log(response.data)
+      
+    } catch (error) {
+      console.error(`Error occurred fetching party itinerary for party ${partyId}`)
+    }
   }
 
   return (
@@ -240,7 +268,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                     sx={{ mt: 1 }}
                     variant='contained'
                     onClick={() =>
-                      sendEmail(emails, partyName, userId, partyId)
+                      sendEmail(emails, partyName, userId, partyId, viewCode)
                     }
                     disabled={emails.length === 0}
                   >
@@ -299,6 +327,11 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
               partyId={numericPartyId}
               partyName={partyName}
             />
+            {/* <Itinerary
+              user={user}
+              partyId={numericPartyId}
+              partyName={partyName}
+            /> */}
           </Box>
         </Stack>
       </Box>
