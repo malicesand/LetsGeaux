@@ -75,7 +75,7 @@ const Activity: React.FC<Props> = ({
   });
   const [open, setOpen] = useState(false); // Modal open state
   const [error, setError] = useState<string | null>(null); // Error handling
-  const [message, setMessage] = useState<string>(''); // Success message
+  // const [message, setMessage] = useState<string>(''); // Success message
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
     null
@@ -132,7 +132,7 @@ const Activity: React.FC<Props> = ({
       setActivities(prevActivities => [...prevActivities, response.data]);
       resetForm();
       setOpen(false);
-      setMessage('Activity added successfully!');
+      enqueueSnackbar('Activity added successfully!', { variant: 'success' });
     } catch (err: any) {
       console.error(
         'Error creating activity:',
@@ -157,7 +157,8 @@ const Activity: React.FC<Props> = ({
       );
       resetForm();
       setOpen(false); // Close modal after updating activity
-      setMessage('Activity updated successfully!');
+      enqueueSnackbar('Activity updated successfully!', { variant: 'success' });
+
     } catch (err) {
       console.error('Error updating activity:', err);
       setError('Error updating activity.');
@@ -242,7 +243,8 @@ const Activity: React.FC<Props> = ({
     try {
       await axios.delete(`/api/activity/${activityToDelete.id}`);
       setActivities(prev => prev.filter(a => a.id !== activityToDelete.id));
-      setMessage('Activity deleted successfully!');
+      enqueueSnackbar('Activity deleted successfully!', { variant: 'success' });
+
     } catch (err) {
       console.error('Error deleting activity:', err);
       setError('Error deleting activity.');
@@ -313,6 +315,13 @@ const Activity: React.FC<Props> = ({
                   minDate={dayjs(itineraryBegin)}
                   maxDate={dayjs(itineraryEnd)}
                   slotProps={{
+                    actionBar: {
+                      sx: {
+                        '& .MuiButton-textPrimary': {
+                          color: 'black',
+                        }
+                      }
+                    },
                     textField: { fullWidth: true, margin: 'normal',required: true, InputLabelProps: {
                       sx: { top: -6 }
                     }}
@@ -340,6 +349,13 @@ const Activity: React.FC<Props> = ({
                   }}
                   ampm
                   slotProps={{
+                    actionBar: {
+                      sx: {
+                        '& .MuiButton-textPrimary': {
+                          color: 'black',
+                        }
+                      }
+                    },
                     textField: { fullWidth: true, margin: 'normal', required:true, InputLabelProps: {
                       sx: { top: -6 }
                     } }
@@ -426,11 +442,11 @@ const Activity: React.FC<Props> = ({
             <Alert severity='error'>{error}</Alert>
           </Snackbar>
         )}
-        {message && (
+        {/* {message && (
           <Snackbar open autoHideDuration={3000}>
             <Alert severity='success'>{message}</Alert>
           </Snackbar>
-        )}
+        )} */}
 
         <Box textAlign='center' mb={2}>
           <Typography variant='h5' gutterBottom>
