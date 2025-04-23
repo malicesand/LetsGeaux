@@ -26,6 +26,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import newLogo from '../theme/cropedLogo.png'
+import { Link as RouterLink } from 'react-router-dom';
 interface MainAppBarProps {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
   user: user;
@@ -109,20 +110,20 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
           }}
             /></Box>
           {/* <StreetcarIcon sx={{ color: 'black', display: { xs: 'none', md: 'flex', sm: 'block' }, mr: 1 }} /> */}
-          <Typography
-            variant='h3'
-            noWrap
-            href='/'
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex', sm: 'block' },
-              letterSpacing: '.3rem',
-              color: 'black',
-              textDecoration: 'none'
-            }}
-          >
-            Let's Geaux
-          </Typography>
+          <RouterLink to='/' style={{ textDecoration: 'none' }}>
+            <Typography
+              variant='h3'
+              noWrap
+              sx={{
+                mr: 2,
+                display: { xs: 'none', md: 'flex', sm: 'block' },
+                letterSpacing: '.3rem',
+                color: 'black',
+              }}
+            >
+              Let's Geaux
+            </Typography>
+          </RouterLink>
 
           <Box sx={{ flexGrow: 1 }} />
 
