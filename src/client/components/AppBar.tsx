@@ -89,7 +89,7 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
   const unreadCount = notifications.length - readItems.size;
 
   return (
-    <AppBar position='static' sx={{ border: '4px solid black', borderRadius: 4 }}>
+    <AppBar position='static' sx={{ border: '4px solid black', borderRadius: 4, mb: 2 }}>
       <Container maxWidth='xl' sx={{ px: 0 }}>
         <Toolbar disableGutters >
           <NavDrawer />
@@ -112,13 +112,14 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
           {/* <StreetcarIcon sx={{ color: 'black', display: { xs: 'none', md: 'flex', sm: 'block' }, mr: 1 }} /> */}
           <RouterLink to='/' style={{ textDecoration: 'none' }}>
             <Typography
-              variant='h3'
+              variant='h2'
               noWrap
               sx={{
                 mr: 2,
                 display: { xs: 'none', md: 'flex', sm: 'block' },
                 letterSpacing: '.3rem',
                 color: 'black',
+                ml: 1
               }}
             >
               Let's Geaux

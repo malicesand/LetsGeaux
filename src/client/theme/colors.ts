@@ -32,7 +32,7 @@ export const typography: TypographyOptions = {
     fontFamily: 'Lexend Mega',
     fontWeight: 700,
     fontSize: 21,
-    textTransform: 'uppercase',
+    textTransform: 'none',
   },
   h4: {
     fontFamily: 'Lexend Mega',
