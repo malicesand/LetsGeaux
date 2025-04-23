@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-
+import { TypographyOptions } from '@mui/material/styles/createTypography'
 
 export const typography: TypographyOptions = {
   fontFamily: 'Lexend Mega',
