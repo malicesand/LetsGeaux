@@ -165,16 +165,16 @@ const Activity: React.FC<Props> = ({
   };
 
   // delete activities
-  const deleteActivity = async (id: string) => {
-    try {
-      await axios.delete(`/api/activity/${id}`);
-      setActivities(activities.filter(activity => activity.id !== id));
-      setMessage('Activity deleted successfully!');
-    } catch (err) {
-      console.error('Error deleting activity:', err);
-      setError('Error deleting activity.');
-    }
-  };
+  // const deleteActivity = async (id: string) => {
+  //   try {
+  //     await axios.delete(`/api/activity/${id}`);
+  //     setActivities(activities.filter(activity => activity.id !== id));
+  //     setMessage('Activity deleted successfully!');
+  //   } catch (err) {
+  //     console.error('Error deleting activity:', err);
+  //     setError('Error deleting activity.');
+  //   }
+  // };
 
   //reset/clear form
   const resetForm = () => {
@@ -255,11 +255,17 @@ const Activity: React.FC<Props> = ({
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Container>
         <Box mb={4}>
-          <Dialog open={open} onClose={handleClose}>
+          <Dialog open={open} onClose={handleClose}
+          PaperProps={{
+            sx: {
+              backgroundColor: '#A684FF', 
+            }
+          }}>
             <DialogTitle>
               {formData.id ? 'Update Activity' : 'Create Activity'}
             </DialogTitle>
             <DialogContent>
+              
               <form onSubmit={handleSubmit}>
                 <TextField
                   label='Activity Name'
@@ -268,6 +274,13 @@ const Activity: React.FC<Props> = ({
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  required
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <TextField
                   label='Description'
@@ -276,6 +289,13 @@ const Activity: React.FC<Props> = ({
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  required
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <DatePicker
                   label='Activity Date'
@@ -293,12 +313,15 @@ const Activity: React.FC<Props> = ({
                   minDate={dayjs(itineraryBegin)}
                   maxDate={dayjs(itineraryEnd)}
                   slotProps={{
-                    textField: { fullWidth: true, margin: 'normal' }
+                    textField: { fullWidth: true, margin: 'normal',required: true, InputLabelProps: {
+                      sx: { top: -6 }
+                    }}
                   }}
+                  
                 />
 
                 <TimePicker
-                  label='Activity Time'
+                  label='Activity Time '
                   value={
                     formData.time
                       ? dayjs(
@@ -317,41 +340,69 @@ const Activity: React.FC<Props> = ({
                   }}
                   ampm
                   slotProps={{
-                    textField: { fullWidth: true, margin: 'normal' }
+                    textField: { fullWidth: true, margin: 'normal', required:true, InputLabelProps: {
+                      sx: { top: -6 }
+                    } }
                   }}
+                  
                 />
 
                 <TextField
-                  label='Location'
+                  label='Location '
                   name='location'
                   value={formData.location}
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  required
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <TextField
-                  label='Image URL'
+                  label='Image URL (optional)'
                   name='image'
                   value={formData.image}
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <TextField
-                  label='Phone'
+                  label='Phone (optional)'
                   name='phone'
                   value={formData.phone}
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <TextField
-                  label='Address'
+                  label='Address (optional)'
                   name='address'
                   value={formData.address}
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <DialogActions>
                   <Button
