@@ -19,7 +19,7 @@ const Logout: React.FC = () => {
           padding: 4,
           maxWidth: 400,
           textAlign: 'center',
-          backgroundColor: '#fff',
+          backgroundColor: '#c4a1ff',
         }}
       >
         <PiArrowSquareRightBold size={100} />

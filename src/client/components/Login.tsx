@@ -19,7 +19,7 @@ const Login: React.FC = () => {
           padding: 4,
           maxWidth: 400,
           textAlign: 'center',
-          backgroundColor: '#fff',
+          backgroundColor: '#c4a1ff',
         }}
       >
         <PiGoogleLogoBold size={100} style={{ marginBottom: '2rem' }} />
@@ -34,7 +34,7 @@ const Login: React.FC = () => {
           href="/auth/google"
 
         >
-          Authenticate with Google
+          Login with Google
         </Button>
       </Card>
     </Box>
