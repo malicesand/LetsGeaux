@@ -13,7 +13,8 @@ import {
 import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
 import { user, itinerary } from '../../../../types/models.ts';
-import Activity from '../Itinerary/NEWActivties.tsx';
+// import Activity from '../Itinerary/NEWActivties.tsx';
+import Activity from './Activities.tsx';
 import AddItinerary from './AddItinerary.tsx';
 import { useParams, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -68,8 +69,10 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
   // Function to add activity to itinerary
   const addActivityToItinerary = async (
     itineraryId: string,
-    activityData: any
+    activityData: any,
+    
   ) => {
+    
     try {
       const response = await axios.post(
         `/api/itinerary/${itineraryId}/activity`,
@@ -184,8 +187,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
         `/api/itinerary/${editingItinerary.id}`,   
         updatedItineraryData
       );
-      setItineraries(prev =>
-        prev.map(itinerary =>
+      setItinerary(prev => (
           itinerary.id === editingItinerary.id ? response.data : itinerary
         )
       );
@@ -240,7 +242,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
               </CardActions>
               {user && (
                 <Activity
-                  itineraryId={itinerary.id.toString()}
+                  itineraryId={itinerary.id}
                   addActivity={addActivityToItinerary}
                   itineraryCreatorId={itinerary.creatorId}
                   user={user}

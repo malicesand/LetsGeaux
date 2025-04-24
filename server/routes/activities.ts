@@ -33,10 +33,10 @@ const hasActivityPermission = async (userId: number, itineraryId: number) => {
 // POST
 activityRouter.post('/', async (req: any, res: any) => {
   try {
-    const userId = req.user.id;
-    console.log('User ID:', userId); 
+    // const userId = req.user.id;
+    // console.log('User ID:', userId); 
 
-    const { itineraryId, name, description, time, date, location, image, phone, address } = req.body;
+    const { itineraryId, name, description, time, date, location, image, phone, address, userId } = req.body;
     
     // Check if required fields are present
     if (!itineraryId || !name || !description || !time || !date || !location) {
