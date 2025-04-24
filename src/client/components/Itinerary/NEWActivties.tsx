@@ -17,12 +17,20 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { user } from '../../../../types/models';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
+import IconButton from '@mui/material/IconButton';
+import { PiTrash } from "react-icons/pi";
+import { PiPencilLine } from "react-icons/pi";
+import Fab from '@mui/material/Fab';
+import { useSnackbar } from 'notistack';
+import { PiPlusBold } from "react-icons/pi";
+import Tooltip from '@mui/material/Tooltip';
 
+//defines structure of activity object
 interface Activity {
   id: string;
   name: string;
@@ -36,7 +44,7 @@ interface Activity {
   itineraryId: string;
   creatorId?: string;
 }
-
+//type check(typescript) for props passed to Ativity component
 interface Props {
   itineraryId: string;
   itineraryCreatorId: number;
@@ -54,7 +62,11 @@ const Activity: React.FC<Props> = ({
   itineraryBegin,
   itineraryEnd
 }) => {
+
+  //list of activities
   const [activities, setActivities] = useState<Activity[]>([]);
+  
+  //input vlaues for the create/edit form
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -67,9 +79,32 @@ const Activity: React.FC<Props> = ({
     address: '',
     itineraryId: itineraryId
   });
-  const [open, setOpen] = useState(false); // Modal open state
+  //controls the ativity modal
+  const [open, setOpen] = useState(false); 
+  
+//stores error message
   const [error, setError] = useState<string | null>(null); // Error handling
-  const [message, setMessage] = useState<string>(''); // Success message
+  // const [message, setMessage] = useState<string>(''); // Success message
+  
+  //delete confirmation dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  //stores the activity of delete
+  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
+    null
+  );
+//copies activity and sortd ativity by time and date
+  const sortedActivities = [...activities].sort((a, b) => {
+    const dateTimeA = dayjs(
+      `${a.date} ${a.time}`,
+      'MMMM D, YYYY h:mm A'
+    ).toDate();
+    const dateTimeB = dayjs(
+      `${b.date} ${b.time}`,
+      'MMMM D, YYYY h:mm A'
+    ).toDate();
+    return dateTimeA.getTime() - dateTimeB.getTime();
+  });
+  const { enqueueSnackbar } = useSnackbar();
 
   // Fetch activities when the component mounts
   useEffect(() => {
@@ -109,7 +144,7 @@ const Activity: React.FC<Props> = ({
       setActivities(prevActivities => [...prevActivities, response.data]);
       resetForm();
       setOpen(false);
-      setMessage('Activity added successfully!');
+      enqueueSnackbar('Activity added successfully!', { variant: 'success' });
     } catch (err: any) {
       console.error(
         'Error creating activity:',
@@ -134,22 +169,11 @@ const Activity: React.FC<Props> = ({
       );
       resetForm();
       setOpen(false); // Close modal after updating activity
-      setMessage('Activity updated successfully!');
+      enqueueSnackbar('Activity updated successfully!', { variant: 'success' });
+
     } catch (err) {
       console.error('Error updating activity:', err);
       setError('Error updating activity.');
-    }
-  };
-
-  // delete activities
-  const deleteActivity = async (id: string) => {
-    try {
-      await axios.delete(`/api/activity/${id}`);
-      setActivities(activities.filter(activity => activity.id !== id));
-      setMessage('Activity deleted successfully!');
-    } catch (err) {
-      console.error('Error deleting activity:', err);
-      setError('Error deleting activity.');
     }
   };
 
@@ -203,21 +227,48 @@ const Activity: React.FC<Props> = ({
       postActivity(); // Otherwise, create a new activity
     }
   };
+  // caled when trash can is clicked
+  const handleOpenDeleteDialog = (activity: Activity) => {
+    setActivityToDelete(activity);
+    setDeleteDialogOpen(true);
+  };
+//closes and clears ativity
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setActivityToDelete(null);
+  };
+//removes deleted acitivty
+  const handleConfirmDelete = async () => {
+    if (!activityToDelete) return;
+
+    try {
+      await axios.delete(`/api/activity/${activityToDelete.id}`);
+      setActivities(prev => prev.filter(a => a.id !== activityToDelete.id));
+      enqueueSnackbar('Activity deleted successfully!', { variant: 'success' });
+
+    } catch (err) {
+      console.error('Error deleting activity:', err);
+      setError('Error deleting activity.');
+    } finally {
+      handleCloseDeleteDialog();
+    }
+  };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Container>
         <Box mb={4}>
-          <Button variant='contained' color='primary' onClick={handleOpen}>
-            Add Activity
-          </Button>
-
-          {/* Modal for adding/editing activity */}
-          <Dialog open={open} onClose={handleClose}>
+          <Dialog open={open} onClose={handleClose}
+          PaperProps={{
+            sx: {
+              backgroundColor: '#A684FF', 
+            }
+          }}>
             <DialogTitle>
               {formData.id ? 'Update Activity' : 'Create Activity'}
             </DialogTitle>
             <DialogContent>
+              
               <form onSubmit={handleSubmit}>
                 <TextField
                   label='Activity Name'
@@ -226,6 +277,13 @@ const Activity: React.FC<Props> = ({
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  required
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <TextField
                   label='Description'
@@ -234,81 +292,134 @@ const Activity: React.FC<Props> = ({
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  required
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <DatePicker
                   label='Activity Date'
-                  value={formData.date ? new Date(formData.date) : null}
+                  value={
+                    formData.date ? dayjs(formData.date, 'MMMM D, YYYY') : null
+                  }
                   onChange={newDate => {
                     if (newDate) {
                       setFormData(prev => ({
                         ...prev,
-                        date: dayjs(newDate).format('MMMM D, YYYY')
+                        date: newDate.format('MMMM D, YYYY')
                       }));
                     }
                   }}
-                  minDate={new Date(itineraryBegin)}
-                  maxDate={new Date(itineraryEnd)}
+                  minDate={dayjs(itineraryBegin)}
+                  maxDate={dayjs(itineraryEnd)}
                   slotProps={{
-                    textField: { fullWidth: true, margin: 'normal' }
+                    actionBar: {
+                      sx: {
+                        '& .MuiButton-textPrimary': {
+                          color: 'black',
+                        }
+                      }
+                    },
+                    textField: { fullWidth: true, margin: 'normal',required: true, InputLabelProps: {
+                      sx: { top: -6 }
+                    }}
                   }}
+                  
                 />
 
                 <TimePicker
-                  label='Activity Time'
+                  label='Activity Time '
                   value={
                     formData.time
                       ? dayjs(
                           `1970-01-01 ${formData.time}`,
                           'YYYY-MM-DD h:mm A'
-                        ).toDate()
+                        )
                       : null
                   }
                   onChange={newTime => {
                     if (newTime) {
-                      const timeString = dayjs(newTime).format('h:mm A');
                       setFormData(prev => ({
                         ...prev,
-                        time: timeString
+                        time: newTime.format('h:mm A')
                       }));
                     }
                   }}
                   ampm
                   slotProps={{
-                    textField: { fullWidth: true, margin: 'normal' }
+                    actionBar: {
+                      sx: {
+                        '& .MuiButton-textPrimary': {
+                          color: 'black',
+                        }
+                      }
+                    },
+                    textField: { fullWidth: true, margin: 'normal', required:true, InputLabelProps: {
+                      sx: { top: -6 }
+                    } }
                   }}
+                  
                 />
 
                 <TextField
-                  label='Location'
+                  label='Location '
                   name='location'
                   value={formData.location}
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  required
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <TextField
-                  label='Image URL'
+                  label='Image URL (optional)'
                   name='image'
                   value={formData.image}
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <TextField
-                  label='Phone'
+                  label='Phone (optional)'
                   name='phone'
                   value={formData.phone}
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <TextField
-                  label='Address'
+                  label='Address (optional)'
                   name='address'
                   value={formData.address}
                   onChange={handleChange}
                   fullWidth
                   margin='normal'
+                  InputLabelProps={{
+                    sx: {
+                      top: -6,
+                    }
+                  }}
+        
                 />
                 <DialogActions>
                   <Button
@@ -332,28 +443,39 @@ const Activity: React.FC<Props> = ({
             <Alert severity='error'>{error}</Alert>
           </Snackbar>
         )}
-        {message && (
+        {/* {message && (
           <Snackbar open autoHideDuration={3000}>
             <Alert severity='success'>{message}</Alert>
           </Snackbar>
-        )}
+        )} */}
 
-        <Box>
+        <Box textAlign='center' mb={2}>
           <Typography variant='h5' gutterBottom>
             Activities List
           </Typography>
-          <Box>
-            {activities.map(activity => (
-              <Box key={activity.id} mb={2}>
+          <Box display='flex' flexWrap='wrap' gap={2}>
+            {sortedActivities.map(activity => (
+              <Box
+                key={activity.id}
+                sx={{
+                  width: 300,
+                  minHeight: 300,
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between'
+                }}
+              >
                 <Card
                   sx={{
                     backgroundColor: '#A684FF',
                     padding: '16px',
                     borderRadius: '8px',
-                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    position: 'relative'
                   }}
                 >
-                  <CardContent>
+                  <CardContent sx={{ flexGrow: 1 }}>
                     <Typography variant='h6'>{activity.name}</Typography>
                     <Typography>{activity.description}</Typography>
                     <Typography>{activity.time}</Typography>
@@ -362,38 +484,79 @@ const Activity: React.FC<Props> = ({
                     <Typography>{activity.phone}</Typography>
                     <Typography>{activity.address}</Typography>
                   </CardContent>
-                  <CardActions>
-                    <Button
-                      onClick={() => handleUpdateClick(activity)}
-                      variant='outlined'
-                      color='secondary'
-                      sx={{ color: 'black' }}
+
+                  <IconButton
+                    onClick={() => handleUpdateClick(activity)}
+                    sx={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      color: 'black'
+                    }}
+                  >
+                    <PiPencilLine />
+                    {/* <EditIcon /> */}
+                  </IconButton>
+
+                  {user.id === itineraryCreatorId && (
+                    <IconButton
+                      onClick={() => handleOpenDeleteDialog(activity)}
+                      sx={{
+                        position: 'absolute',
+                        bottom: 8,
+                        right: 8,
+                        color: 'black'
+                      }}
                     >
-                      Edit
-                    </Button>
-                    {user.id === itineraryCreatorId && (
-                      <Button
-                        onClick={() => {
-                          const confirmDelete = window.confirm(
-                            'Are you sure you want to delete this activity?'
-                          );
-                          if (confirmDelete) {
-                            deleteActivity(activity.id);
-                          }
-                        }}
-                        variant='outlined'
-                        color='primary'
-                        sx={{ color: 'black' }}
-                      >
-                        Delete
-                      </Button>
-                    )}
-                  </CardActions>
+                      <PiTrash />
+
+                      {/* <DeleteIcon /> */}
+                    </IconButton>
+                  )}
                 </Card>
               </Box>
             ))}
           </Box>
+
+        
+          <Box mt={4} display='flex' justifyContent='center'>
+          <Tooltip title="Add New Activity" arrow>
+
+            <Fab
+              color='primary'
+              aria-label='add'
+              onClick={handleOpen}
+              sx={{
+                backgroundColor: '#A684FF',
+                '&:hover': { backgroundColor: '#8257E5' }
+              }}
+            >
+<PiPlusBold />
+
+            </Fab>
+            </Tooltip>
+          </Box>
         </Box>
+        <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
+          <DialogTitle>Confirm Deletion</DialogTitle>
+          <DialogContent>
+            <Typography>
+              Are you sure you want to delete{' '}
+              <strong>{activityToDelete?.name}</strong>?
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDeleteDialog} sx={{ color: 'black' }}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmDelete} //color="error"
+              sx={{ color: 'black' }}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </LocalizationProvider>
   );

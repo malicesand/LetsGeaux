@@ -1,86 +1,80 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, Button } from '@mui/material';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'; // ability to click on days
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'; // wrapper for dates and calendar
-import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay'; // custom date render
-import { isBefore, isAfter, isSameDay, eachDayOfInterval } from 'date-fns'; // for highlighting days on calendar 
-import { useNavigate } from 'react-router-dom';
 
-// interface CalendarProps {
-//   startDate: Date | null;
-//   endDate: Date | null;
-//   setStartDate: (date: Date | null) => void;
-//   setEndDate: (date: Date | null) => void;
-//   setSelectedDates: (dates: Date[]) => void;
-// }
-interface CalendarProps {
-  partyId: number;
-  onSubmit: (startDate: Date, endDate: Date) => void;
+import React, { useEffect, useState } from 'react';
+import { Container, Typography, Box, Button } from '@mui/material';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+//used to compare dates for range seletion
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore)
+//passing date state for reusability 
+export interface CalendarProps {
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
+  setStartDate: (date: Dayjs | null) => void;
+  setEndDate: (date: Dayjs | null) => void;
+  setSelectedDates: (dates: Date[]) => void;
 }
 
-const Calendar: React.FC <CalendarProps>= ({ partyId, onSubmit })=> {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  
- 
-
-const navigate = useNavigate();
-
-// get all datse between start and end
-useEffect (()=>{
-  if(startDate && endDate){
-    const dates = eachDayOfInterval({start: startDate, end: endDate });
-    setSelectedDates(dates);
-  }
-}, [startDate, endDate])
-
-  // Handle date change and determine start and end dates
-  const handleDateChange = (newDate: Date | null) => {
-    if (!startDate) {
-      // Set the start date if it's not already set
-      setStartDate(newDate);
-    } else if (!endDate) {
-      // If start date is set, set the end date
-      if (isAfter(newDate, startDate)) {
-        setEndDate(newDate);
-      } else {
-        // If new date is earlier, reset to allow re-selection of the range
-        setStartDate(newDate);
-        setEndDate(null);
+const Calendar: React.FC<CalendarProps> = ({
+  startDate,
+  endDate,
+  setStartDate,
+  setEndDate,
+  setSelectedDates,
+}) => {
+  // when both dates are selected, loop through every date in the range
+  useEffect(() => {
+    if (startDate && endDate) {
+      const range: Date[] = [];
+      let current = startDate;
+      while (current.isSameOrBefore(endDate, 'day')) {
+        range.push(current.toDate());
+        current = current.add(1, 'day');
       }
-    } else if (isSameDay(newDate, startDate) || isSameDay(newDate, endDate)) {
-      // If the clicked date is already selected, reset the entire range
-      setStartDate(null);
+      setSelectedDates(range);
+    }
+  }, [startDate, endDate, setSelectedDates]);
+
+  // handles ppicking start date and end date, and reset then starting over
+  const handleDateChange = (newDate: Dayjs | null) => {
+    if (!newDate) return;
+
+    if (!startDate || (startDate && endDate)) {
+      setStartDate(newDate);
+      setEndDate(null);
+    } else if (newDate.isBefore(startDate, 'day')) {
+      setStartDate(newDate);
       setEndDate(null);
     } else {
-      // Update range when a new date is selected
-      if (isBefore(newDate, startDate)) {
-        setStartDate(newDate);
-        setEndDate(null); // Clear the end date if the new start date is earlier
-      } else if (isAfter(newDate, endDate!)) {
-        setEndDate(newDate);
-      }
+      setEndDate(newDate);
     }
   };
 
-  // Function to highlight the range of days
-  const CustomPickersDay = (props: PickersDayProps<Date>) => {
-    const { day, selected, ...rest } = props;
+  // highlight eah day that falls in date range
+  const CustomPickersDay = (props: PickersDayProps<Dayjs>) => {
+    const { day, ...rest } = props;
 
-    const isInRange = startDate && endDate && isAfter(day, startDate) && isBefore(day, endDate);
-    const isSelected = isSameDay(day, startDate) || isSameDay(day, endDate) || isInRange;
+    const isSelected =
+      startDate &&
+      endDate &&
+      day.isSameOrAfter(startDate, 'day') &&
+      day.isSameOrBefore(endDate, 'day');
 
     return (
       <PickersDay
-        {...rest} // default props passed to Pickers day
+        {...rest}
         day={day}
         selected={isSelected}
         sx={{
-          backgroundColor: isSelected ? 'primary.main' : 'transparent',
+          backgroundColor: isSelected ? 'primary.main' : undefined,
           '&:hover': {
-            backgroundColor: 'primary.light',
+            backgroundColor: isSelected ? 'primary.light' : undefined,
           },
         }}
       />
@@ -88,44 +82,82 @@ useEffect (()=>{
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Container>
-        <Typography variant="h4" gutterBottom>
-        Choose Days For Trip
+        <Typography variant="h5" align="center" gutterBottom>
+          Choose Days For Trip
         </Typography>
-        <Box display="flex" justifyContent="center" alignItems="center" my={2}>
+        <Box display="flex" justifyContent="center" my={2}>
           <DateCalendar
-            value={startDate || endDate} // Make the calendar show the selected date
+            value={endDate || startDate}
             onChange={handleDateChange}
             views={['day']}
-            slots={{
-              day: CustomPickersDay, // Pass custom day renderer
-            }}
+            slots={{ day: CustomPickersDay }}
           />
-          </Box>
-          {startDate && endDate && (
-          <Box display="flex" justifyContent="center" mt={4}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              if (startDate && endDate) {
-                onSubmit(startDate, endDate);
-              }
-            }}
+        </Box>
+       
+        {(startDate || endDate) && (
+          <Box display="flex" gap={2} justifyContent="center" mt={2}>
+            {startDate && (
+              <TimePicker
+                label="Start Time"
+                value={startDate}
+                onChange={(newTime) => {
+                  if (newTime) {
+                    setStartDate(startDate.hour(newTime.hour()).minute(newTime.minute()));
+                  }
+                }}
+                sx={{ width: 155 }}
+                slotProps={{
+                  textField: {
+                    InputLabelProps: {
+                      sx: { top: -6 }
+                    }
+                  },
+                  actionBar: {
+                    sx: {
+                      '& .MuiButton-textPrimary': {
+                        color: 'black', 
+                      },
+                    },
+                  },
+                }}
+                
+              />
+            )}
             
-          >
-            Continue to Itinerary
-          </Button>
+            {endDate && (
+              <TimePicker
+                label="End Time"
+                value={endDate}
+                onChange={(newTime) => {
+                  if (newTime) {
+                    setEndDate(endDate.hour(newTime.hour()).minute(newTime.minute()));
+                  }
+                }}
+                
+                sx={{ width: 155 }}
+                slotProps={{
+                  textField: {
+                    InputLabelProps: {
+                      sx: { top: -6 }
+                    }
+                  },
+                  actionBar: {
+                    sx: {
+                      '& .MuiButton-textPrimary': {
+                        color: 'black', 
+                      },
+                    },
+                  },
+                }}
+              />
+            )}
           </Box>
         )}
-
-        
       </Container>
     </LocalizationProvider>
   );
 };
 
 export default Calendar;
-
-
