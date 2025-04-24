@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import { PiPencilLine, PiTrashDuotone } from "react-icons/pi";
+import { PiPencilBold, PiTrashDuotone } from "react-icons/pi";
 import Modal from '@mui/material/Modal';
 import Stack from '@mui/material/Stack';
 import Dialog from '@mui/material/Dialog';
@@ -53,7 +53,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const numericPartyId = parseInt(partyId || '', 10);
   const partyName = searchParams.get('name')
   const userId = user.id;
-  //* Members and Emails *//
+  //* Members and Emails Constants *//
   const [partyMembers, setPartyMembers] = useState<PartyMember[]>([]);
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = useState<string>('');
@@ -61,7 +61,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [emailLog, setEmailLog] = useState<string[]>([]);
   const [viewCode, setViewCode] = useState<string>('');
-  //* Manage Party *//
+  //* Manage Party Constants *//
   const [newName, setNewName] = useState<party['name']>('');
   const [membersToRemove, setMembersToRemove] = useState<user['id'][]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -77,164 +77,171 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     // fetchItinerary(partyId)
   }, [numericPartyId]);
 
-  //* Get Requests *//
-    // Read Member List //
-    const getUsersForParty = async (partyId: number) => {
-      try {
-        const response = await axios.get(`/api/party/usersInParty/${partyId}`);
-        const users = response.data;
-        // const avatars = users.map((user: user) => user.profilePic)
-        // const usernames = users.map((user: user) => user.username);
-        const userObjects = users.map((user: user) => ({
-          username: user.username,
-          avatar: user.profilePic,
-          id: user.id
-        }))
-        setPartyMembers(userObjects);
-      } catch (error) {
-        console.error('failed to find members for one or all parties');
-      }
-    };
-    // Fetch Itinerary //
-    const fetchItinerary = async (partyId: string) => {
-      console.log(`Fetching itinerary`);
-      try {
-        const response = await axios.get(`/api/itinerary/party/${partyId}`);//postman verified
-        console.log(response.data)
-        
-      } catch (error) {
-        console.error(`Error occurred fetching party itinerary for party ${partyId}`)
-      }
-    }
-    // Get Itinerary View Code //
-    const fetchViewCode = async (numericPartyId: number) => {
-      // console.log('fetching view code')
-      // console.log(`numeric partyId @ useEffect ${numericPartyId}`)
-      try {
-        const response = await axios.get(`/api/itinerary/party/${numericPartyId}`);
-        
-        
-        if (response.data?.viewCode) {
-          setViewCode(response.data.viewCode);
-        }
-          console.log(`view code at fetch ${response.data.viewCode}`)
-        
-      } catch (err) {
-        console.error('Failed to fetch viewCode:', err);
-      }
-    };
+  //* GET REQUESTS *//
 
-  //* Email *//
-    const openModal = () => {
-      setOpen(true);
-    };
-    const closeModal = () => {
-      setOpen(false);
-    };
-    //* Fetch Invites *//
-    const getEmailLog = async (partyId: string) => {
-      //  log(`Sending email log request for Party:${partyId}`);
-      try {
-        const response = await axios.get(`/api/party/emails/${partyId}`);
-        const emailData = response.data;
-        const addresses = emailData.map((email: email) => email.address);
-        setEmailLog(addresses);
-        // console.log(`Fetched ${addresses.length} emails for party${partyId}`);
-      } catch (error) {
-        console.error(`Failure: emailLog request for party ${partyId}`, error);
-      }
-    };
-    //* Send E-Vite *//
-    const sendEmail = async (
-      emailList: string[],
-      partyName: string,
-      userId: number,
-      partyId: string,
-      viewCode: string,
-    ) => {
-      // console.log(`${partyName} @ send email party dash`)
-      console.log(`view code at evite ${viewCode}`)
-      try {
-        await axios.post('/api/party/sendInvite', {
-          emails: emailList,
-          partyName: partyName,
-          userId: userId,
-          partyId: partyId,
-          viewCode: viewCode
-        });
-        setInviteSuccess(true);
-        setInputValue('');
-        setEmails([]);
-        getEmailLog(partyId);
-        setTimeout(() => closeModal(), 3000);
-        setTimeout(() => setInviteSuccess(false), 4000);
-      } catch (error) {
-        console.error('could not send email', error);
-      }
-    };
+  //* Member List *//
+  const getUsersForParty = async (partyId: number) => {
+    try {
+      const response = await axios.get(`/api/party/usersInParty/${partyId}`);
+      const users = response.data;
+      // const avatars = users.map((user: user) => user.profilePic)
+      // const usernames = users.map((user: user) => user.username);
+      const userObjects = users.map((user: user) => ({
+        username: user.username,
+        avatar: user.profilePic,
+        id: user.id
+      }))
+      setPartyMembers(userObjects);
+    } catch (error) {
+      console.error('failed to find members for one or all parties');
+    }
+  };
 
-  //* Manage Party *//
-    const renameModal = () => {
-      console.log('click')
-      setRenameOpen(true);
+  //* Fetch Itinerary *//
+  const fetchItinerary = async (partyId: string) => {
+    console.log(`Fetching itinerary`);
+    try {
+      const response = await axios.get(`/api/itinerary/party/${partyId}`);//postman verified
+      console.log(response.data)
+      
+    } catch (error) {
+      console.error(`Error occurred fetching party itinerary for party ${partyId}`)
     }
-    const closeRename  = () => {
-      setRenameOpen(false);
+  };
+
+  //* Get Itinerary View Code *//
+  const fetchViewCode = async (numericPartyId: number) => {
+    // console.log('fetching view code')
+    // console.log(`numeric partyId @ useEffect ${numericPartyId}`)
+    try {
+      const response = await axios.get(`/api/itinerary/party/${numericPartyId}`);
+      if (response.data?.viewCode) {
+        setViewCode(response.data.viewCode);
+      }
+        console.log(`view code at fetch ${response.data.viewCode}`)
+    } catch (err) {
+      console.error('Failed to fetch viewCode:', err);
     }
-    // Toggle member removal //
-    const toggleMember = (id: number) => {
-      setDeleteColor('purple')
-      setMembersToRemove(prev =>
-        prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
+  };
+
+  //* EMAIL *//
+  const openModal = () => {
+    setOpen(true);
+  };
+  const closeModal = () => {
+    setOpen(false);
+  };
+
+  //* Fetch Invites *//
+  const getEmailLog = async (partyId: string) => {
+    //  log(`Sending email log request for Party:${partyId}`);
+    try {
+      const response = await axios.get(`/api/party/emails/${partyId}`);
+      const emailData = response.data;
+      const addresses = emailData.map((email: email) => email.address);
+      setEmailLog(addresses);
+      // console.log(`Fetched ${addresses.length} emails for party${partyId}`);
+    } catch (error) {
+      console.error(`Failure: emailLog request for party ${partyId}`, error);
+    }
+  };
+
+  //* Send E-Vite *//
+  const sendEmail = async (
+    emailList: string[],
+    partyName: string,
+    userId: number,
+    partyId: string,
+    viewCode: string,
+   ) => {
+    // console.log(`${partyName} @ send email party dash`)
+    console.log(`view code at evite ${viewCode}`)
+    try {
+      await axios.post('/api/party/sendInvite', {
+        emails: emailList,
+        partyName: partyName,
+        userId: userId,
+        partyId: partyId,
+        viewCode: viewCode
+      });
+      setInviteSuccess(true);
+      setInputValue('');
+      setEmails([]);
+      getEmailLog(partyId);
+      setTimeout(() => closeModal(), 3000);
+      setTimeout(() => setInviteSuccess(false), 4000);
+    } catch (error) {
+      console.error('could not send email', error);
+    }
+  };
+
+  //* MANAGE PARTY *//
+  const renameModal = () => {
+    console.log('click')
+    setRenameOpen(true);
+  }
+  const closeRename  = () => {
+    setRenameOpen(false);
+  }
+
+  //* Toggle member removal *//
+  const toggleMember = (id: number) => {
+    setDeleteColor('purple')
+    setMembersToRemove(prev =>
+      prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
+    );
+  };
+
+  //* Final confirm handler for deleting *//
+  const handleConfirmActions = () => {
+    setRenameOpen(false);
+    setConfirmOpen(false);
+    if (newName) renameParty(numericPartyId, newName);
+    if (membersToRemove.length) {
+      membersToRemove.map((member) => {
+        deleteMembers(member, numericPartyId)
+      })};
+    if (leaveParty) deleteMembers(userId, numericPartyId);
+  };
+
+  //*  Rename Party *//
+  const renameParty = async (partyId: number, newName: string) => {
+    try {
+      await axios.patch(`/api/party/${partyId}`, {name: newName});
+    } catch (error) {
+      console.error(`Failure: rename party${partyId} to ${newName} `)
+    }
+  };
+
+  //* Delete Members From A Party *//
+  const deleteMembers = async (memberId: number, partyId: number) => {
+    console.log(`Deleting user${memberId} from party ${partyId}`);
+    try {
+      const response = await axios.delete(`/api/party/${memberId}/${partyId}`);
+      console.log(`user: ${memberId} removed from party: ${partyId}`);
+      if (memberId === userId){
+        navigate('/')
+      } else {
+        getUsersForParty(partyId);
+      }
+    } catch (error) {
+      console.error(
+        `Failed to remove user ${memberId} from party ${partyId}:`,
+        error
       );
-    };
-    // Final confirm handler for deleting //
-    const handleConfirmActions = () => {
-      setRenameOpen(false);
-      setConfirmOpen(false);
-      if (newName) renameParty(numericPartyId, newName);
-      if (membersToRemove.length) {
-        membersToRemove.map((member) => {
-          deleteMembers(member, numericPartyId)
-        })};
-      if (leaveParty) deleteMembers(userId, numericPartyId);
-    };
-    //  Rename Party //
-    const renameParty = async (partyId: number, newName: string) => {
-      try {
-        await axios.patch(`/api/party/${partyId}`, {name: newName});
-        
-      } catch (error) {
-        console.error(`Failure: rename party${partyId} to ${newName} `)
-      }
     }
-    // Delete Members From A Party
-    const deleteMembers = async (memberId: number, partyId: number) => {
-      console.log(`Deleting user${memberId} from party ${partyId}`);
-      try {
-        const response = await axios.delete(`/api/party/${memberId}/${partyId}`);
-        console.log(`user: ${memberId} removed from party: ${partyId}`);
-        if (memberId === userId){
-          navigate('/')
-        } else {
-          getUsersForParty(partyId);
-        }
-      } catch (error) {
-        console.error(
-          `Failed to remove user ${memberId} from party ${partyId}:`,
-          error
-        );
-      }
-    };
-    // Delete Party  //
-    const deleteParty = async (userId: number, partyId: string) => {
-      console.log(`Deleting Party ${partyId}`);
-      try {
-        
-      } catch (error) {
-        console.error(`Error deleting party`, error)
-      }
+  };
+
+  //* Delete Party  *//
+  const deleteParty = async (userId: number, partyId: string) => {
+    console.log(`Deleting Party ${partyId}`);
+    try {
+      
+    } catch (error) {
+      console.error(`Error deleting party`, error)
     }
+  }
+
 
   return (
     <React.Fragment>
@@ -250,7 +257,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
       {/* Manage Party Icon */}
         <Tooltip title='Manage Party'>
           <IconButton onClick={renameModal}>
-            <PiPencilLine/>
+            <PiPencilBold/>
           </IconButton>
         </Tooltip>
       </Box>
@@ -314,6 +321,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                     partyName={partyName}
                     getMembers={getUsersForParty}
                   />
+                {/* Email Handling */}
                   <Button
                     size='medium'
                     // color='secondary'
