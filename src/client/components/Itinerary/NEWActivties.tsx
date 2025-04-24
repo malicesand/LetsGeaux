@@ -23,12 +23,14 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import { PiTrash } from "react-icons/pi";
+import { PiPencilLine } from "react-icons/pi";
 import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
 import { useSnackbar } from 'notistack';
+import { PiPlusBold } from "react-icons/pi";
+import Tooltip from '@mui/material/Tooltip';
 
+//defines structure of activity object
 interface Activity {
   id: string;
   name: string;
@@ -42,7 +44,7 @@ interface Activity {
   itineraryId: string;
   creatorId?: string;
 }
-
+//type check(typescript) for props passed to Ativity component
 interface Props {
   itineraryId: string;
   itineraryCreatorId: number;
@@ -60,7 +62,11 @@ const Activity: React.FC<Props> = ({
   itineraryBegin,
   itineraryEnd
 }) => {
+
+  //list of activities
   const [activities, setActivities] = useState<Activity[]>([]);
+  
+  //input vlaues for the create/edit form
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -73,14 +79,20 @@ const Activity: React.FC<Props> = ({
     address: '',
     itineraryId: itineraryId
   });
-  const [open, setOpen] = useState(false); // Modal open state
+  //controls the ativity modal
+  const [open, setOpen] = useState(false); 
+  
+//stores error message
   const [error, setError] = useState<string | null>(null); // Error handling
   // const [message, setMessage] = useState<string>(''); // Success message
+  
+  //delete confirmation dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  //stores the activity of delete
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
     null
   );
-
+//copies activity and sortd ativity by time and date
   const sortedActivities = [...activities].sort((a, b) => {
     const dateTimeA = dayjs(
       `${a.date} ${a.time}`,
@@ -165,18 +177,6 @@ const Activity: React.FC<Props> = ({
     }
   };
 
-  // delete activities
-  // const deleteActivity = async (id: string) => {
-  //   try {
-  //     await axios.delete(`/api/activity/${id}`);
-  //     setActivities(activities.filter(activity => activity.id !== id));
-  //     setMessage('Activity deleted successfully!');
-  //   } catch (err) {
-  //     console.error('Error deleting activity:', err);
-  //     setError('Error deleting activity.');
-  //   }
-  // };
-
   //reset/clear form
   const resetForm = () => {
     setFormData({
@@ -227,16 +227,17 @@ const Activity: React.FC<Props> = ({
       postActivity(); // Otherwise, create a new activity
     }
   };
+  // caled when trash can is clicked
   const handleOpenDeleteDialog = (activity: Activity) => {
     setActivityToDelete(activity);
     setDeleteDialogOpen(true);
   };
-
+//closes and clears ativity
   const handleCloseDeleteDialog = () => {
     setDeleteDialogOpen(false);
     setActivityToDelete(null);
   };
-
+//removes deleted acitivty
   const handleConfirmDelete = async () => {
     if (!activityToDelete) return;
 
@@ -493,7 +494,8 @@ const Activity: React.FC<Props> = ({
                       color: 'black'
                     }}
                   >
-                    <EditIcon />
+                    <PiPencilLine />
+                    {/* <EditIcon /> */}
                   </IconButton>
 
                   {user.id === itineraryCreatorId && (
@@ -506,7 +508,9 @@ const Activity: React.FC<Props> = ({
                         color: 'black'
                       }}
                     >
-                      <DeleteIcon />
+                      <PiTrash />
+
+                      {/* <DeleteIcon /> */}
                     </IconButton>
                   )}
                 </Card>
@@ -516,6 +520,8 @@ const Activity: React.FC<Props> = ({
 
         
           <Box mt={4} display='flex' justifyContent='center'>
+          <Tooltip title="Add New Activity" arrow>
+
             <Fab
               color='primary'
               aria-label='add'
@@ -525,8 +531,10 @@ const Activity: React.FC<Props> = ({
                 '&:hover': { backgroundColor: '#8257E5' }
               }}
             >
-              <AddIcon />
+<PiPlusBold />
+
             </Fab>
+            </Tooltip>
           </Box>
         </Box>
         <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
