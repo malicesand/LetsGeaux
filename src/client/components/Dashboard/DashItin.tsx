@@ -13,9 +13,10 @@ import {
 import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
 import { user, itinerary } from '../../../../types/models.ts';
-import Activity from '../Itinerary/NEWActivties.tsx';
+// import Activity from '../Itinerary/NEWActivties.tsx';
+import Activity from './Activities.tsx';
 import AddItinerary from './AddItinerary.tsx';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 interface ItineraryProps {
@@ -25,6 +26,7 @@ interface ItineraryProps {
 }
 
 const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
+  const navigate = useNavigate()
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
@@ -36,6 +38,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
   const [error, setError] = useState<string>('');
   const location = useLocation();
 
+  //? Delete: Passed name code 
  /*  const {
     itineraryName: passeditineraryName,
     selectedDates: passedDates
@@ -65,11 +68,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
     }
   }, []); */
   
-  // Function to add activity to itinerary
-  const addActivityToItinerary = async (
-    itineraryId: string,
-    activityData: any
-  ) => {
+  //* Add Activity to Itinerary *//
+  const addActivityToItinerary = async ( itineraryId: string, activityData: any) => {
     try {
       const response = await axios.post(
         `/api/itinerary/${itineraryId}/activity`,
@@ -81,7 +81,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
     }
   };
 
-  // Update selectedDates based on the startDate and endDate
+  //? Delete: Update selectedDates based on the startDate and endDate
 /*   useEffect(() => {
     if (startDate && endDate) {
       const dates = eachDayOfInterval({ start: startDate, end: endDate });
@@ -124,8 +124,11 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
       console.error(`Error occurred fetching party itinerary for party ${partyId}`)
     }
   };
-  // TODO Handle edit button click 
+
+  // * Edit Itinerary * //
   const handleEditClick = (itinerary: itinerary) => {
+    console.log(itinerary)
+    navigate('/itinerary')
     setEditingItinerary(itinerary);
     setItineraryName(itinerary.name);
     setItineraryNotes(itinerary.notes);
@@ -137,9 +140,48 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
     setStartDate(start);
     setEndDate(end);
   };
+  //? Delete
+  //  //Handle save changes on editing an itinerary
+  // const handleEditSubmit = async () => {
+  //   if (!itineraryName || selectedDates.length === 0) {
+  //     setError('Please provide a name and select dates for the itinerary');
+  //     return;
+  //   }
+  //   //update itinerary
+  //   const updatedItineraryData = {
+  //     id: editingItinerary.id,
+  //     creator_id: editingItinerary.creator_id,
+  //     name: itineraryName,
+  //     notes: itineraryNotes,
+  //     begin: selectedDates[0].toISOString(),
+  //     end: selectedDates[selectedDates.length - 1].toISOString(),
+  //     upVotes: editingItinerary.upVotes,
+  //     downVotes: editingItinerary.downVotes
+  //   };
+  //   try {
+  //     const response = await axios.patch(
+  //       `/api/itinerary/${editingItinerary.id}`,   
+  //       updatedItineraryData
+  //     );
+  //     setItinerary(prev => (
+  //         itinerary.id === editingItinerary.id ? response.data : itinerary
+  //       )
+  //     );
+  //     setEditingItinerary(null);
+  //     setItineraryName('');
+  //     setItineraryNotes('');
+  //     setStartDate(null);
+  //     setEndDate(null);
+  //     setError('');
+  //   } catch (err) {
+  //     setError('Error updating itinerary');
+  //     console.error('Error updating itinerary:', err);
+  //   }
+  // };
 
-  // Handle delete of an itinerary, creator only
+  // * Handle delete of an itinerary, creator only *//
   const handleDelete = async (itineraryId: number, creatorId: number) => {
+    console.log('click')
     if (user.id !== creatorId) {
       alert('Only the creator can delete this itinerary.');
       return;
@@ -149,55 +191,13 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
       'Are you sure you want to delete this itinerary?'
     );
     if (!confirmDelete) return;
-
     try {
       const response = await axios.delete(`/api/itinerary/${itineraryId}`);
       console.log(`deleted ${itineraryId}`)
       // console.log(response.data)
       setItinerary(null)
-    
     } catch (err) {
       console.error('Error deleting itinerary:', err);
-    }
-  };
-
-  // Handle save changes on editing an itinerary
-  const handleEditSubmit = async () => {
-    if (!itineraryName || selectedDates.length === 0) {
-      setError('Please provide a name and select dates for the itinerary');
-      return;
-    }
-    //update itinerary
-    const updatedItineraryData = {
-      id: editingItinerary.id,
-      creator_id: editingItinerary.creator_id,
-      name: itineraryName,
-      notes: itineraryNotes,
-      begin: selectedDates[0].toISOString(),
-      end: selectedDates[selectedDates.length - 1].toISOString(),
-      upVotes: editingItinerary.upVotes,
-      downVotes: editingItinerary.downVotes
-    };
-
-    try {
-      const response = await axios.patch(
-        `/api/itinerary/${editingItinerary.id}`,   
-        updatedItineraryData
-      );
-      setItineraries(prev =>
-        prev.map(itinerary =>
-          itinerary.id === editingItinerary.id ? response.data : itinerary
-        )
-      );
-      setEditingItinerary(null);
-      setItineraryName('');
-      setItineraryNotes('');
-      setStartDate(null);
-      setEndDate(null);
-      setError('');
-    } catch (err) {
-      setError('Error updating itinerary');
-      console.error('Error updating itinerary:', err);
     }
   };
 
@@ -240,7 +240,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
               </CardActions>
               {user && (
                 <Activity
-                  itineraryId={itinerary.id.toString()}
+                  itineraryId={itinerary.id}
                   addActivity={addActivityToItinerary}
                   itineraryCreatorId={itinerary.creatorId}
                   user={user}
