@@ -42,34 +42,33 @@ type PartyMember = {
   id: user['id'];
 };
 
-// TODO conditional to on render so that only party members can access a dashboard
+// TODO conditional on render so that only party members can access a dashboard
+// TODO delete a party if all members have left
 const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const theme = useTheme();
-  const { partyId } = useParams();
-  const numericPartyId = parseInt(partyId || '', 10);
   const location = useLocation();
+  const { partyId } = useParams();
+  const navigate = useNavigate()
   const searchParams = new URLSearchParams(location.search);
-  const [newName, setNewName] = useState<party['name']>('');
+  const numericPartyId = parseInt(partyId || '', 10);
   const partyName = searchParams.get('name')
-  // const [partyMembers, setPartyMembers] = useState<string[]>([]);
-  const [partyMembers, setPartyMembers] = useState<PartyMember[]>([]);
   const userId = user.id;
+  //* Members and Emails *//
+  const [partyMembers, setPartyMembers] = useState<PartyMember[]>([]);
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = useState<string>('');
   const [emails, setEmails] = React.useState<string[]>([]);
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [emailLog, setEmailLog] = useState<string[]>([]);
   const [viewCode, setViewCode] = useState<string>('');
+  //* Manage Party *//
+  const [newName, setNewName] = useState<party['name']>('');
   const [membersToRemove, setMembersToRemove] = useState<user['id'][]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [leaveParty, setLeaveParty] = useState(false);
-  
   const [renameOpen, setRenameOpen] = React.useState(false);
-  const [isManageOpen, setIsManageOpen] = useState(false)
   const [deleteColor, setDeleteColor] = useState('')
-  const navigate = useNavigate()
-//  const userId = user.id
-// 
+  
   useEffect(() => {
     console.log(userId)
     fetchViewCode(numericPartyId);
@@ -78,171 +77,169 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     // fetchItinerary(partyId)
   }, [numericPartyId]);
 
-  //* Read Member List *//
-  const getUsersForParty = async (partyId: number) => {
-    try {
-      const response = await axios.get(`/api/party/usersInParty/${partyId}`);
-      const users = response.data;
-      // const avatars = users.map((user: user) => user.profilePic)
-      // const usernames = users.map((user: user) => user.username);
-      const userObjects = users.map((user: user) => ({
-        username: user.username,
-        avatar: user.profilePic,
-        id: user.id
-      }))
-      setPartyMembers(userObjects);
-    } catch (error) {
-      console.error('failed to find members for one or all parties');
-    }
-  };
-  // * Delete Members From A Party * //
-  // axios request
-  const deleteMembers = async (memberId: number, partyId: number) => {
-    console.log(`Deleting user${memberId} from party ${partyId}`);
-    try {
-      const response = await axios.delete(`/api/party/${memberId}/${partyId}`);
-      console.log(`user: ${memberId} removed from party: ${partyId}`);
-      if (memberId === userId){
-        navigate('/')
-      } else {
-        getUsersForParty(partyId);
+  //* Get Requests *//
+    // Read Member List //
+    const getUsersForParty = async (partyId: number) => {
+      try {
+        const response = await axios.get(`/api/party/usersInParty/${partyId}`);
+        const users = response.data;
+        // const avatars = users.map((user: user) => user.profilePic)
+        // const usernames = users.map((user: user) => user.username);
+        const userObjects = users.map((user: user) => ({
+          username: user.username,
+          avatar: user.profilePic,
+          id: user.id
+        }))
+        setPartyMembers(userObjects);
+      } catch (error) {
+        console.error('failed to find members for one or all parties');
       }
-    } catch (error) {
-      console.error(
-        `Failed to remove user ${memberId} from party ${partyId}:`,
-        error
+    };
+    // Fetch Itinerary //
+    const fetchItinerary = async (partyId: string) => {
+      console.log(`Fetching itinerary`);
+      try {
+        const response = await axios.get(`/api/itinerary/party/${partyId}`);//postman verified
+        console.log(response.data)
+        
+      } catch (error) {
+        console.error(`Error occurred fetching party itinerary for party ${partyId}`)
+      }
+    }
+    // Get Itinerary View Code //
+    const fetchViewCode = async (numericPartyId: number) => {
+      // console.log('fetching view code')
+      // console.log(`numeric partyId @ useEffect ${numericPartyId}`)
+      try {
+        const response = await axios.get(`/api/itinerary/party/${numericPartyId}`);
+        
+        
+        if (response.data?.viewCode) {
+          setViewCode(response.data.viewCode);
+        }
+          console.log(`view code at fetch ${response.data.viewCode}`)
+        
+      } catch (err) {
+        console.error('Failed to fetch viewCode:', err);
+      }
+    };
+
+  //* Email *//
+    const openModal = () => {
+      setOpen(true);
+    };
+    const closeModal = () => {
+      setOpen(false);
+    };
+    //* Fetch Invites *//
+    const getEmailLog = async (partyId: string) => {
+      //  log(`Sending email log request for Party:${partyId}`);
+      try {
+        const response = await axios.get(`/api/party/emails/${partyId}`);
+        const emailData = response.data;
+        const addresses = emailData.map((email: email) => email.address);
+        setEmailLog(addresses);
+        // console.log(`Fetched ${addresses.length} emails for party${partyId}`);
+      } catch (error) {
+        console.error(`Failure: emailLog request for party ${partyId}`, error);
+      }
+    };
+    //* Send E-Vite *//
+    const sendEmail = async (
+      emailList: string[],
+      partyName: string,
+      userId: number,
+      partyId: string,
+      viewCode: string,
+    ) => {
+      // console.log(`${partyName} @ send email party dash`)
+      console.log(`view code at evite ${viewCode}`)
+      try {
+        await axios.post('/api/party/sendInvite', {
+          emails: emailList,
+          partyName: partyName,
+          userId: userId,
+          partyId: partyId,
+          viewCode: viewCode
+        });
+        setInviteSuccess(true);
+        setInputValue('');
+        setEmails([]);
+        getEmailLog(partyId);
+        setTimeout(() => closeModal(), 3000);
+        setTimeout(() => setInviteSuccess(false), 4000);
+      } catch (error) {
+        console.error('could not send email', error);
+      }
+    };
+
+  //* Manage Party *//
+    const renameModal = () => {
+      console.log('click')
+      setRenameOpen(true);
+    }
+    const closeRename  = () => {
+      setRenameOpen(false);
+    }
+    // Toggle member removal //
+    const toggleMember = (id: number) => {
+      setDeleteColor('purple')
+      setMembersToRemove(prev =>
+        prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
       );
-    }
-  };
-
-  // Toggle member removal
-const toggleMember = (id: number) => {
-  setDeleteColor('purple')
-  setMembersToRemove(prev =>
-    prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
-  );
-};
-
-// Final confirm handler
-const handleConfirmActions = () => {
-  setRenameOpen(false);
-  setConfirmOpen(false);
-  if (newName) renameParty(numericPartyId, newName);
-  if (membersToRemove.length) {
-    membersToRemove.map((member) => {
-      deleteMembers(member, numericPartyId)
-    })};
-  if (leaveParty) deleteMembers(userId, numericPartyId);
-};
-
-  //* Get Itinerary View Code *//
-  const fetchViewCode = async (numericPartyId: number) => {
-    // console.log('fetching view code')
-    // console.log(`numeric partyId @ useEffect ${numericPartyId}`)
-    try {
-      const response = await axios.get(`/api/itinerary/party/${numericPartyId}`);
-      
-      
-      if (response.data?.viewCode) {
-        setViewCode(response.data.viewCode);
+    };
+    // Final confirm handler for deleting //
+    const handleConfirmActions = () => {
+      setRenameOpen(false);
+      setConfirmOpen(false);
+      if (newName) renameParty(numericPartyId, newName);
+      if (membersToRemove.length) {
+        membersToRemove.map((member) => {
+          deleteMembers(member, numericPartyId)
+        })};
+      if (leaveParty) deleteMembers(userId, numericPartyId);
+    };
+    //  Rename Party //
+    const renameParty = async (partyId: number, newName: string) => {
+      try {
+        await axios.patch(`/api/party/${partyId}`, {name: newName});
+        
+      } catch (error) {
+        console.error(`Failure: rename party${partyId} to ${newName} `)
       }
-        console.log(`view code at fetch ${response.data.viewCode}`)
-      
-    } catch (err) {
-      console.error('Failed to fetch viewCode:', err);
     }
-  };
-  //* Email Input Dialog
-  const openModal = () => {
-    setOpen(true);
-  };
-  const closeModal = () => {
-    setOpen(false);
-  };
-
-  //* Fetch Invites *//
-  const getEmailLog = async (partyId: string) => {
-    //  log(`Sending email log request for Party:${partyId}`);
-    try {
-      const response = await axios.get(`/api/party/emails/${partyId}`);
-      const emailData = response.data;
-      const addresses = emailData.map((email: email) => email.address);
-      setEmailLog(addresses);
-      // console.log(`Fetched ${addresses.length} emails for party${partyId}`);
-    } catch (error) {
-      console.error(`Failure: emailLog request for party ${partyId}`, error);
+    // Delete Members From A Party
+    const deleteMembers = async (memberId: number, partyId: number) => {
+      console.log(`Deleting user${memberId} from party ${partyId}`);
+      try {
+        const response = await axios.delete(`/api/party/${memberId}/${partyId}`);
+        console.log(`user: ${memberId} removed from party: ${partyId}`);
+        if (memberId === userId){
+          navigate('/')
+        } else {
+          getUsersForParty(partyId);
+        }
+      } catch (error) {
+        console.error(
+          `Failed to remove user ${memberId} from party ${partyId}:`,
+          error
+        );
+      }
+    };
+    // Delete Party  //
+    const deleteParty = async (userId: number, partyId: string) => {
+      console.log(`Deleting Party ${partyId}`);
+      try {
+        
+      } catch (error) {
+        console.error(`Error deleting party`, error)
+      }
     }
-  };
-  //* Send E-Vite *//
-  const sendEmail = async (
-    emailList: string[],
-    partyName: string,
-    userId: number,
-    partyId: string,
-    viewCode: string,
-  ) => {
-    // console.log(`${partyName} @ send email party dash`)
-    console.log(`view code at evite ${viewCode}`)
-    try {
-      await axios.post('/api/party/sendInvite', {
-        emails: emailList,
-        partyName: partyName,
-        userId: userId,
-        partyId: partyId,
-        viewCode: viewCode
-      });
-      setInviteSuccess(true);
-      setInputValue('');
-      setEmails([]);
-      getEmailLog(partyId);
-      setTimeout(() => closeModal(), 3000);
-      setTimeout(() => setInviteSuccess(false), 4000);
-    } catch (error) {
-      console.error('could not send email', error);
-    }
-  };
-  // * Rename Party *//
-  const renameParty = async (partyId: number, newName: string) => {
-    try {
-      await axios.patch(`/api/party/${partyId}`, {name: newName});
-      // setPartyName(newName);
-    } catch (error) {
-      console.error(`Failure: rename party${partyId} to ${newName} `)
-    }
-  }
-
-  const renameModal = () => {
-    console.log('click')
-    setRenameOpen(true);
-  }
-  const closeRename  = () => {
-    setRenameOpen(false);
-  }
-  // * Delete Party * //
-  const deleteParty = async (userId: number, partyId: string) => {
-    console.log(`Deleting Party ${partyId}`);
-    try {
-      
-    } catch (error) {
-      console.error(`Error deleting party`, error)
-    }
-  }
-
-  // * Fetch Itinerary *//
-  const fetchItinerary = async (partyId: string) => {
-    console.log(`Fetching itinerary`);
-    try {
-      const response = await axios.get(`/api/itinerary/party/${partyId}`);//postman verified
-      console.log(response.data)
-      
-    } catch (error) {
-      console.error(`Error occurred fetching party itinerary for party ${partyId}`)
-    }
-  }
 
   return (
     <React.Fragment>
       <Box>
+      {/* Title */}
         <Typography
           variant='h1'
           align='center'
@@ -250,121 +247,42 @@ const handleConfirmActions = () => {
           >
           {partyName}
         </Typography>
+      {/* Manage Party Icon */}
         <Tooltip title='Manage Party'>
           <IconButton onClick={renameModal}>
             <PiPencilLine/>
           </IconButton>
         </Tooltip>
-        
-
       </Box>
-      <Box>
-        <Stack spacing={4} direction="row">
-          <Box
-            sx={{
-              width: '100%',
-              maxWidth: '300px',
-              margin: '0',
-              border: '4px solid black',
-              borderRadius: 4,
-              padding: 3,
-              mt: 7,
-              pt: 4
-            }}
-          >
-            <Stack spacing={4} sx={{ width: '100%' }}>
-              <Box
-                display='flex'
-                flexDirection='column'
-                alignItems='flex-start'
-                gap={2}
-              >
-                <Container
+      {/* Content */}
+        <Box>
+          <Stack spacing={4} direction="row">
+            {/* Sidebar */}
+            <Box
+              sx={{
+                width: '100%',
+                maxWidth: '300px',
+                margin: '0',
+                border: '4px solid black',
+                borderRadius: 4,
+                padding: 3,
+                mt: 7,
+                pt: 4,
+                // boxShadow: 3,
+
+              }}
+            >
+              <Stack spacing={4} sx={{ width: '100%' }}>
+                <Box
+                  display='flex'
+                  flexDirection='column'
+                  alignItems='flex-start'
+                  gap={2}
                   sx={{
-                    maxWidth: 500,
-                    border: '4px solid black',
-                    borderRadius: 4,
-                    margin: '0 auto',
-                    p: 2
+
+                    bgColor: '#a684ff',
                   }}
                 >
-                  <Typography variant='h5' textAlign='center'>
-                    Party Members
-                  </Typography>
-                  <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
-                    {partyMembers.map(member => (
-                      <ListItem>
-                        <ListItemAvatar>
-                          <Avatar src={member.avatar}/>
-                        </ListItemAvatar>
-                      <Typography variant='body1' component='li' key={member.id}>
-                        {member.username}
-                      </Typography>
-                      </ListItem>
-                    ))}
-                  </Box>
-                </Container>
-                <AddMember
-                  user={user}
-                  partyId={numericPartyId}
-                  partyName={partyName}
-                  getMembers={getUsersForParty}
-                />
-                <Button
-                  size='medium'
-                  // color='secondary'
-                  variant='contained'
-                  onClick={openModal}
-                  sx={{ width: 'auto', m: 'auto', p: 'auto' }}
-                >
-                  Send an E-Vite
-                </Button>
-                <Dialog
-                  open={open}
-                  onClose={closeModal}
-                  slotProps={{
-                    paper: {
-                      sx: { width: 500, borderRadius: 12 },
-                      component: 'form'
-                    }
-                  }}
-                >
-                  <Typography variant='subtitle1' sx={{ mt: 2 }}>
-                    Invite your friends to join your travel party
-                  </Typography>
-                  <TextField
-                    id='email'
-                    placeholder='Enter Multiple Emails'
-                    type='text'
-                    fullWidth
-                    value={inputValue}
-                    onChange={event => {
-                      const raw = event.target.value;
-                      setInputValue(raw);
-                      const parsedEmails = raw
-                        .split(',')
-                        .map(email => email.trim())
-                        .filter(email => email.length > 0);
-                      setEmails(parsedEmails);
-                    }}
-                  />
-                  <Button
-                    sx={{ mt: 1 }}
-                    variant='contained'
-                    onClick={() =>
-                      sendEmail(emails, partyName, userId, partyId, viewCode)
-                    }
-                    disabled={emails.length === 0}
-                  >
-                    Invite
-                  </Button>
-                  {inviteSuccess && (
-                    <Typography sx={{ mt: 1, color: 'green' }}>
-                      Invite sent successfully!
-                    </Typography>
-                  )}
-                </Dialog>
-                {emailLog.length > 0 && (
                   <Container
                     sx={{
                       maxWidth: 500,
@@ -374,50 +292,139 @@ const handleConfirmActions = () => {
                       p: 2
                     }}
                   >
-                    <Typography variant='h5' gutterBottom>
-                      Sent Invitations
+                    <Typography variant='h5' textAlign='center'>
+                      Party Members
                     </Typography>
-                    <Box
-                      component='ul'
-                      sx={{ listStyle: 'none', padding: 0, m: 0 }}
-                    >
-                      {emailLog.map((mail, i) => (
-                        <Typography
-                          key={i}
-                          variant='body1'
-                          component='li'
-                          sx={{ mb: 0.5 }}
-                        >
-                          {mail}
+                    <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
+                      {partyMembers.map(member => (
+                        <ListItem>
+                          <ListItemAvatar>
+                            <Avatar src={member.avatar}/>
+                          </ListItemAvatar>
+                        <Typography variant='body1' component='li' key={member.id}>
+                          {member.username}
                         </Typography>
+                        </ListItem>
                       ))}
                     </Box>
                   </Container>
-                )}
-                <Box>
+                  <AddMember
+                    user={user}
+                    partyId={numericPartyId}
+                    partyName={partyName}
+                    getMembers={getUsersForParty}
+                  />
+                  <Button
+                    size='medium'
+                    // color='secondary'
+                    variant='contained'
+                    onClick={openModal}
+                    sx={{ width: 'auto', m: 'auto', p: 'auto' }}
+                  >
+                    Send an E-Vite
+                  </Button>
+                  <Dialog
+                    open={open}
+                    onClose={closeModal}
+                    slotProps={{
+                      paper: {
+                        sx: { width: 500, borderRadius: 12 },
+                        component: 'form'
+                      }
+                    }}
+                  >
+                    <Typography variant='subtitle1' sx={{ mt: 2 }}>
+                      Invite your friends to join your travel party
+                    </Typography>
+                    <TextField
+                      id='email'
+                      placeholder='Enter Multiple Emails'
+                      type='text'
+                      fullWidth
+                      value={inputValue}
+                      onChange={event => {
+                        const raw = event.target.value;
+                        setInputValue(raw);
+                        const parsedEmails = raw
+                          .split(',')
+                          .map(email => email.trim())
+                          .filter(email => email.length > 0);
+                        setEmails(parsedEmails);
+                      }}
+                    />
+                    <Button
+                      sx={{ mt: 1 }}
+                      variant='contained'
+                      onClick={() =>
+                        sendEmail(emails, partyName, userId, partyId, viewCode)
+                      }
+                      disabled={emails.length === 0}
+                    >
+                      Invite
+                    </Button>
+                    {inviteSuccess && (
+                      <Typography sx={{ mt: 1, color: 'green' }}>
+                        Invite sent successfully!
+                      </Typography>
+                    )}
+                  </Dialog>
+                  {emailLog.length > 0 && (
+                    <Container
+                      sx={{
+                        maxWidth: 500,
+                        border: '4px solid black',
+                        borderRadius: 4,
+                        margin: '0 auto',
+                        p: 2
+                      }}
+                    >
+                      <Typography variant='h5' gutterBottom>
+                        Sent Invitations
+                      </Typography>
+                      <Box
+                        component='ul'
+                        sx={{ listStyle: 'none', padding: 0, m: 0 }}
+                      >
+                        {emailLog.map((mail, i) => (
+                          <Typography
+                            key={i}
+                            variant='body1'
+                            component='li'
+                            sx={{ mb: 0.5 }}
+                          >
+                            {mail}
+                          </Typography>
+                        ))}
+                      </Box>
+                    </Container>
+                  )}
+                  <Box>
 
-                {/* Message Board */}
-                {/* <Box display="flex" justifyContent="center" alignItems="center">
-                <Box sx={{ width: '60%' }}>
-                <MessageBoard user={user} />
+                  {/* Message Board */}
+                  {/* <Box display="flex" justifyContent="center" alignItems="center">
+                  <Box sx={{ width: '60%' }}>
+                  <MessageBoard user={user} />
+                  </Box>
+                  </Box> */}
+                  {/* <Box display="flex" justifyContent="center"> */}
+                  {/* <Itinerary user={user}/> */}
+                  </Box>
                 </Box>
-                </Box> */}
-                {/* <Box display="flex" justifyContent="center"> */}
-                {/* <Itinerary user={user}/> */}
-                </Box>
-              </Box>
-            </Stack>
-          </Box>
-          <Box>
-            <Itinerary
-              user={user}
-              partyId={numericPartyId}
-              partyName={partyName}
-            />
-          </Box>
-        </Stack>
-      </Box>
-      <Dialog // ? Rename Party, Delete Members, Leave Party
+                
+              </Stack>
+            </Box>
+            {/* Itinerary */}
+            <Box>
+              <Itinerary
+                user={user}
+                partyId={numericPartyId}
+                partyName={partyName}
+              />
+            </Box>
+          </Stack>
+        </Box>
+      {/*  Manage Party Model */}
+      <Dialog
         id='manageParty' 
         open={renameOpen}
         onClose={closeRename}
@@ -482,26 +489,28 @@ const handleConfirmActions = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      {/* Manage Party Confirmation Modal */}
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-  <DialogTitle>Are you sure?</DialogTitle>
-  <DialogContent>
-    <Typography>You are about to:</Typography>
-    <ul>
-      {newName && <Typography>Rename the party to: {newName}</Typography>}
-      {membersToRemove.length > 0 && <Typography>Remove {membersToRemove.length} member(s)</Typography>}
-      {leaveParty && <Typography>Leave the party</Typography>}
-    </ul>
-  </DialogContent>
-  <DialogActions>
-    <Button variant='contained' onClick={() => setConfirmOpen(false)}>Cancel</Button>
-    <Button
-      variant='contained'
-      onClick={handleConfirmActions}
-    >
-      Confirm
-    </Button>
-  </DialogActions>
-</Dialog>
+        <Typography>Are you sure?</Typography>
+          <DialogContent>
+            <Typography>You are about to:</Typography>
+            <ul>
+              {newName && <Typography>Rename the party to: <strong>{newName}</strong>
+              <Typography></Typography>(navigate to main dash for new name to render)</Typography>}
+              {membersToRemove.length > 0 && <Typography>Remove {membersToRemove.length} member(s)</Typography>}
+              {leaveParty && <Typography>Leave the party</Typography>}
+            </ul>
+          </DialogContent>
+          <DialogActions>
+            <Button variant='contained' onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button
+              variant='contained'
+              onClick={handleConfirmActions}
+            >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
 
     </React.Fragment>
   );
