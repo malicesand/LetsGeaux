@@ -157,8 +157,14 @@ const Profile: React.FC = () => {
         <Typography variant="body1">{currentInterest || 'None'}</Typography>
 
         <Box mt={3}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend" sx={{ color: 'blue' }}>Change Interest</FormLabel>
+          <FormControl component="fieldset" >
+            <FormLabel component="legend" sx={{
+              color: 'black',
+              '&.Mui-focused': {
+                color: '#3200FA',
+
+              },
+            }}>Change Interest</FormLabel>
             <RadioGroup
               value={selectedInterest}
               onChange={(e) => setSelectedInterest(e.target.value)}
@@ -168,7 +174,9 @@ const Profile: React.FC = () => {
                   key={interest}
                   value={interest}
                   control={<Radio />}
+
                   label={interest}
+
 
                 />
               ))}
@@ -179,7 +187,7 @@ const Profile: React.FC = () => {
               sx={{ mt: 2 }}
               onClick={handleUpdateInterest}
             >
-              Update Interest
+              Update
             </Button>
           </FormControl>
         </Box>
