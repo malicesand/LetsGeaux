@@ -52,7 +52,7 @@ const Profile: React.FC = () => {
     };
 
     fetchInterests();
-  }, [contextUser?.id]);
+  }, []);
 
   const handleUpdateInterest = async () => {
     try {
@@ -100,7 +100,7 @@ const Profile: React.FC = () => {
 
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Typography variant="h2" gutterBottom align="center">Profile</Typography>
+      <Typography variant="h3" gutterBottom align="center">{user.username}</Typography>
 
       <Stack spacing={2} alignItems="center">
         {/* Wrapper box to position the edit icon */}
@@ -116,7 +116,7 @@ const Profile: React.FC = () => {
               transition: 'box-shadow 0.3s ease-in-out',
               '&:hover': {
                 boxShadow: 6,
-                bgcolor: '#fffff', // kept your original color
+                bgcolor: '#fffff',
               },
             }}
           />
@@ -140,7 +140,6 @@ const Profile: React.FC = () => {
           </Button>
         </Box>
 
-        <Typography variant="body1" textTransform="uppercase">{contextUser.username}</Typography>
         <Typography variant="body1">{contextUser.email}</Typography>
       </Stack>
 
@@ -154,12 +153,12 @@ const Profile: React.FC = () => {
           mx: 'auto',
         }}
       >
-        <Typography variant="h5" textTransform="uppercase" fontWeight='700' >Current Interest:</Typography>
+        <Typography variant="h5" textTransform="uppercase" fontWeight='700' > Interest:</Typography>
         <Typography variant="body1">{currentInterest || 'None'}</Typography>
 
         <Box mt={3}>
           <FormControl component="fieldset">
-            <FormLabel component="legend">Change Interest</FormLabel>
+            <FormLabel component="legend" sx={{ color: 'blue' }}>Change Interest</FormLabel>
             <RadioGroup
               value={selectedInterest}
               onChange={(e) => setSelectedInterest(e.target.value)}
@@ -170,12 +169,13 @@ const Profile: React.FC = () => {
                   value={interest}
                   control={<Radio />}
                   label={interest}
+
                 />
               ))}
             </RadioGroup>
             <Button
               variant="contained"
-              color="primary"
+
               sx={{ mt: 2 }}
               onClick={handleUpdateInterest}
             >
