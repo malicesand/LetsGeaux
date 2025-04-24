@@ -312,13 +312,14 @@ const Activity: React.FC<Props> = ({
                 />
                 <DialogActions>
                   <Button
+                    variant='contained'
                     onClick={handleClose}
                     color='primary'
                     sx={{ color: 'black' }}
                   >
                     Cancel
                   </Button>
-                  <Button type='submit' color='primary' sx={{ color: 'black' }}>
+                  <Button variant='contained' type='submit' color='primary' sx={{ color: 'black' }}>
                     {formData.id ? 'Update Activity' : 'Add Activity'}
                   </Button>
                 </DialogActions>
@@ -365,8 +366,8 @@ const Activity: React.FC<Props> = ({
                   <CardActions>
                     <Button
                       onClick={() => handleUpdateClick(activity)}
-                      variant='outlined'
-                      color='secondary'
+                      variant='contained'
+                      // color='secondary'
                       sx={{ color: 'black' }}
                     >
                       Edit
@@ -381,7 +382,7 @@ const Activity: React.FC<Props> = ({
                             deleteActivity(activity.id);
                           }
                         }}
-                        variant='outlined'
+                        variant='contained'
                         color='primary'
                         sx={{ color: 'black' }}
                       >

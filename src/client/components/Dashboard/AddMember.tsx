@@ -44,7 +44,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
   // * Fetch all Users with Let's Geaux Accounts * //
   const getUsers = async() => { // ? DELETED partyId: number
     try {
-      const response = await axios.get('/api/users'); // TODO conditional for existing user
+      const response = await axios.get('/api/users'); 
       setUsers(response.data);     
     } catch (error) {
       console.error('failed to get users for add Member search', error)
@@ -53,7 +53,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
   // * Modal Button Click Handler * //
   const addMemberToParty = async(userId:number, partyId:number) => {
     try {
-      await axios.post('/api/party/userParty', {userId, partyId}); // TODO: conditional for existing users
+      await axios.post('/api/party/userParty', {userId, partyId}); 
       getMembers(partyId);
     } catch (error) {
       console.error('Could not create new userParty model', error);
