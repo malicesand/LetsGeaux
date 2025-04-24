@@ -94,7 +94,7 @@ const NavDrawer: React.FC = () => {
             backgroundColor: '#fff085'
           }
         }}
-        variant='persistent'
+        variant='fixed'
         anchor='left'
         open={open}
       >
