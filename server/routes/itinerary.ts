@@ -212,7 +212,7 @@ itineraryRoute.get('/view/:viewCode', async (req: any, res: any) => {
 });
 
 
-// GET itinerary by partyId — used to fetch the viewCode for a party's itinerary
+//* Fetch the Party's Itinerary *//
 itineraryRoute.get('/party/:partyId', async (req: any, res: any) => {
   const { partyId } = req.params;
 
@@ -227,6 +227,7 @@ itineraryRoute.get('/party/:partyId', async (req: any, res: any) => {
         viewCode: true,
         begin: true,
         end: true,
+        creatorId: true,
       },
     });
 

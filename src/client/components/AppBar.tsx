@@ -25,7 +25,8 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
-
+import newLogo from '../theme/cropedLogo.png'
+import { Link as RouterLink } from 'react-router-dom';
 interface MainAppBarProps {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
   user: user;
@@ -88,122 +89,138 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
   const unreadCount = notifications.length - readItems.size;
 
   return (
-    <AppBar
-      position="static"
-      elevation={0}
-      sx={{
-        border: '4px solid black',
-        borderRadius: 4,
-      }}
-    >
-      <Container maxWidth='xl' sx={{ sm: 'block' }}>
-        <Toolbar disableGutters
-          sx={{
-            flexDirection: { xs: 'column', sm: 'row' },
-            alignItems: { xs: 'flex-start', sm: 'center' },
-            gap: { xs: 1, sm: 2 },
-            px: { xs: 1, sm: 2 },
-            py: { xs: 1, sm: 1.5 },
-          }}
-
-        >
+    <AppBar position='static' sx={{ border: '4px solid black', borderRadius: 4, mb: 2 }}>
+      <Container maxWidth='xl' sx={{ px: 0 }}>
+        <Toolbar disableGutters >
+          <NavDrawer />
           <Box
+            className="logo"
             sx={{
               display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              width: '100%',
-              justifyContent: { xs: 'space-between', sm: 'flex-start' },
+              mr: 1,
+              p: 0,
+              m: 0,
             }}
-          >
-            <NavDrawer />
-            <StreetcarIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: 'black' }} />
-
+          > <img src={newLogo} alt="Logo" style={{
+            height: '40px',
+            width: 'auto',
+            display: 'block',
+            margin: 0,
+            padding: 0,
+          }}
+            /></Box>
+          {/* <StreetcarIcon sx={{ color: 'black', display: { xs: 'none', md: 'flex', sm: 'block' }, mr: 1 }} /> */}
+          <RouterLink to='/' style={{ textDecoration: 'none' }}>
             <Typography
-              component='a'
-              variant='h5'
+              variant='h2'
               noWrap
-              href='/'
               sx={{
                 mr: 2,
                 display: { xs: 'none', md: 'flex', sm: 'block' },
-                fontFamily: 'Lexend Mega, sans-serif',
-                fontWeight: 900,
                 letterSpacing: '.3rem',
                 color: 'black',
-                textDecoration: 'none'
+                ml: 1
               }}
             >
-              LET'S GEAUX
+              Let's Geaux
             </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          </RouterLink>
 
-              <Tooltip title="Open Preferences">
-                <IconButton onClick={goToProfile} sx={{ p: 0 }}>
-                  <Avatar alt="Gata" src={`${localUser?.profilePic}`} />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                {/* {setting.map((setting) => (
+          <Box sx={{ flexGrow: 1 }} />
+
+          <IconButton
+            size="large"
+            aria-label="show notifications"
+            color="inherit"
+            onClick={handleOpenNotifications}
+            sx={{ ml: 2, animation: animateBell ? 'bounce 4s ease' : 'none' }}
+          >
+            <Badge badgeContent={unreadCount} color="error">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+
+          <style>{`
+            @keyframes bounce {
+              0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+              }
+              40% {
+                transform: translateY(-8px);
+              }
+              60% {
+                transform: translateY(-4px);
+              }
+            }
+          `}</style>
+
+          <Menu
+            id="notification-menu"
+            anchorEl={anchorElNotifications}
+            open={Boolean(anchorElNotifications)}
+            onClose={handleCloseNotifications}
+            PaperProps={{ sx: { width: 300, p: 1, border: '4px solid black' } }}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Typography variant="h6" sx={{ px: 2, pt: 1 }}>Notifications</Typography>
+            <Divider sx={{ mb: 1 }} />
+
+            {notifications.length === 0 || readItems.size === notifications.length ? (
+              <MenuItem disabled>No new notifications.</MenuItem>
+            ) : (
+              notifications.slice(0, 5).map((note, i) => (
+                !readItems.has(i) && (
+                  <MenuItem key={i} onClick={() => handleMarkAsRead(i)}>
+                    <ListItemIcon>
+                      <CheckCircleOutlineIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={note.message}
+                      secondary={new Date(note.timestamp).toLocaleString()}
+                    />
+                  </MenuItem>
+                )
+              ))
+            )}
+
+            {notifications.length > 0 && (
+              <Box px={2} mt={1}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  color="error"
+                  onClick={handleClearAll}
+                >
+                  Clear All
+                </Button>
+              </Box>
+            )}
+          </Menu>
+
+          <Tooltip title="Open Preferences">
+            <IconButton onClick={goToProfile} sx={{ p: 0, ml: 2 }}>
+              <Avatar alt="User Avatar" src={`${localUser?.profilePic}`} />
+            </IconButton>
+          </Tooltip>
+
+          <Menu
+            sx={{ mt: '45px' }}
+            id="menu-appbar"
+            anchorEl={anchorElUser}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            keepMounted
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            open={Boolean(anchorElUser)}
+            onClose={handleCloseUserMenu}
+          >
+            {/* {setting.map((setting) => (
               <MenuItem key={setting} component='a' href='/profile' onClick={handleCloseUserMenu}>
                 <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
               </MenuItem>
             ))} */}
-              </Menu>
-              {/* notification Bell Section */}
-              <IconButton
-                size="large"
-                aria-label="show notifications"
-                color="inherit"
-                onClick={handleOpenNotifications}
-                sx={{ ml: 2 }}
-              >
-                <Badge badgeContent={notifications.length} color="error">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-              <Menu
-                id="notification-menu"
-                anchorEl={anchorElNotifications}
-                open={Boolean(anchorElNotifications)}
-                onClose={handleCloseNotifications}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-              >
-                {notifications.length === 0 ? (
-                  <MenuItem onClick={handleCloseNotifications}>No notifications</MenuItem>
-                ) : (
-                  notifications.map((note, index) => (
-                    <MenuItem key={index} onClick={handleCloseNotifications}>
-                      {/* display dynamic notification message */}
-                      {note.message}
-                    </MenuItem>
-                  ))
-                )}
-              </Menu>
-            </Box>
-          </Box>
+            {/* future profile settings */}
+          </Menu>
         </Toolbar>
       </Container>
     </AppBar>
