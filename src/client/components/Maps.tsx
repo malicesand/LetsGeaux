@@ -206,10 +206,14 @@ const Maps = () => {
           label="Enter the start address or attraction"
           variant="outlined"
           value={origin}
+
           onChange={(e) => setOrigin(e.target.value)}
           InputLabelProps={{
             sx: {
-              top: -6,
+              top: -12,
+              '&.Mui-focused': {
+                color: '#3200FA',
+              },
             }
           }}
         />
@@ -220,7 +224,10 @@ const Maps = () => {
           onChange={(e) => setDestination(e.target.value)}
           InputLabelProps={{
             sx: {
-              top: -6,
+              top: -12,
+              '&.Mui-focused': {
+                color: '#3200FA',
+              },
             }
           }}
         />
