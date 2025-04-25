@@ -54,7 +54,7 @@ const AddItinerary: React.FC<AddItineraryProps> = ({ user, partyId, partyName })
 
   //when no itinerary exists, sen to calendar page
   const handleCreate = () => {
-    navigate('/calendar', { state: { partyId } });
+    navigate('/itinerary', { state: { partyId } });
   };
 
 //close modal
