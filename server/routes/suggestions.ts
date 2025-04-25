@@ -2,19 +2,30 @@ const express = require("express");
 import axios from "axios";
 import { PrismaClient } from "@prisma/client";
 import pThrottle from 'p-throttle';
-
+import {getSuggestionsFromFoursquare} from '../api/foursquare.ts';
 const suggestionRouter = express.Router();
 const prisma = new PrismaClient();
-// .env api authorization information
 const API_KEY = process.env.TRAVEL_ADVISOR_API_KEY;
-// Api url options
-// const options = {
-//   method: 'GET',
-//   url: `https://api.content.tripadvisor.com/api/v1/location/search?language=en&searchQuery=${query}&key=${API_KEY}`,
-//   descriptionUrl: `https://api.content.tripadvisor.com/api/v1/location/${locationId}/details?language=en&currency=USD&key=${API_KEY}`,
-//   imageUrl: `https://api.content.tripadvisor.com/api/v1/location/${locationId}/photos?language=en&key=${API_KEY}`,
-//   headers: {accept: 'application/json'}
-// };
+
+
+
+/**
+ *
+ *  NEW PLACE API FOURSQUARE FUNCTION
+ *    fsqDevelopers.placeSearch()
+   .then(({ data }) => console.log(data))
+   .catch(err => console.error(err));
+ *
+ *  NEW PICTURE API FOURSQUARE FUNCTION
+ *  fsqDevelopers.placePhotos({fsq_id: 'fsq_id'})
+   .then(({ data }) => console.log(data))
+   .catch(err => console.error(err));
+
+
+ */
+
+
+
 
 
 //This one queries tripadvisor to get the location ids needed for detailed information. these ids are returned in an array.
@@ -46,7 +57,6 @@ const throttled = pThrottle({
 });
 
 const throttledTripAdvisorDetailedEntries = throttled(async (location: number) => {
-  console.log('throttled location', location);
   const detailedEntry = await axios.get(
     `https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`
   );
@@ -70,16 +80,13 @@ const throttledTripAdvisorDetailedEntries = throttled(async (location: number) =
     longitude,
     address: address_obj.address_string,
     image: null,
-    // cost: price_level.length,
   };
-  console.log('detailed entry', locationQueryDetailedEntry)
   // let's try and add the picture now
   
   const tripAdvisorImage = await  axios.get(
     `https://api.content.tripadvisor.com/api/v1/location/${location}/photos?language=en&key=${API_KEY}`
   )
   .then((setOfImages) => {
-    // console.log('the set of images', setOfImages.data.data[0].images.thumbnail.url);
     if (setOfImages.data.data[0]) {
       locationQueryDetailedEntry.image = setOfImages.data.data[0].images.thumbnail.url
     } else {
@@ -87,18 +94,11 @@ const throttledTripAdvisorDetailedEntries = throttled(async (location: number) =
     }
     console.log('sending object:', locationQueryDetailedEntry)
   })
-  
-  
-  
-  
-  
   return locationQueryDetailedEntry;
-  
 })
 
 
 async function getAllEntries(locations) {
-  console.log('locations', locations)
   try {
     const detailedEntries = await Promise.all((locations.map((location) => throttledTripAdvisorDetailedEntries(location))))
     return detailedEntries;
@@ -106,21 +106,6 @@ async function getAllEntries(locations) {
     console.error(err);
   }
 }
-
-
-// and finally, this one grabs the image url
-// const getTripAdvisorImage = (locationId) => {
-//   axios
-//     .get(
-//       `https://api.content.tripadvisor.com/api/v1/location/${locationId}/photos?language=en&key=${API_KEY}`
-//     )
-//     .then((setOfImages) => {
-//       // check here to see what comes back from this query..
-//       // console.log('set of images', setOfImages);
-//       // const { thumbnail } = setOfImages.data[0].images;
-//       // return thumbnail;
-//     });
-// };
 
 // SEARCH flavored GET handling
 suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
@@ -131,21 +116,15 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
     // pull the interest name from this user
     const userInterest =
       await prisma.$queryRaw`SELECT name FROM interest WHERE id IN (SELECT interestId FROM userInterest WHERE userId = ${id})`;
-    // console.log('fingers crossed for an interest:', userInterest[0])
     let query;
     if (userInterest[0]) {
       const { name } = userInterest[0];
       query = name.toLowerCase();
     }
-    // console.log('parsed:', name);
     const locations: number[] = await getTripadvisorLocationIds(query)
       .then((locationArray) => {
-        //     console.log('locationArray', locationArray);
-
-        // const picture : string = await getTripAdvisorImage(locations)
         getAllEntries(locationArray).then((entries) => {
           Object.values(savedSuggestions).map((sugg) => {
-            // console.log("db", sugg)
           });
           let newEntries = [];
           entries.forEach((entry) => {
@@ -159,8 +138,6 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
               newEntries.push(entry);
             }
           });
-          //  const picture = getTripAdvisorImage(locationArray[0])
-          //  console.log('sending out...', newEntries);
           res.status(200).send(newEntries);
         });
       })
@@ -173,6 +150,27 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
     throw err;
   }
 });
+
+
+// function to test foursquare api in postman
+suggestionRouter.get('/test', (req: any, res: any) => {
+  getSuggestionsFromFoursquare('4bf58dd8d48988d16a941735').then((data) => {
+    if (data) {
+      console.log(data);
+      res.status(200).send(data);
+    } else {
+      res.status(404).send('failed the test, yo');
+    }
+  }).catch((err) => {
+    console.error('could not test', err);
+    res.sendStatus(500);
+  });
+
+    });
+
+
+
+
 // adds to the vote upvote/downvote count of a suggestion
 suggestionRouter.patch("/:id", async (req: any, res: any) => {
   const { id } = req.params;
