@@ -2,10 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import SendIcon from '@mui/icons-material/SendRounded'
 import Input from '@mui/material/Input'
 import TextField from '@mui/material/TextField'
 import FormGroup from '@mui/material/FormGroup'
 import Container from '@mui/material/Container'
+import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import ChatHistory from './ChatHistory'
 import { user } from '../../../../types/models.ts';
@@ -72,39 +75,63 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
           maxWidth: '800px', 
           mt: 5,
           margin: '0 auto', 
-          padding: '60px' }}
+          // padding: '60px'
+         }}
       >
-        <Typography variant='h1' >Gata Bot</Typography >
-        <Typography variant='h3'>Welcome {user.username}!</Typography>
-        <Container
-          className='chat-list'
-          ref={chatLogRef}
-          sx={{
-            border: '4px solid black',
-            borderRadius: 8,
-            padding: '10px',
-            height: '400px',
-            overflowY: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            mt: '20px'
-          }}
-        >
-          {chatLog.map((msg, index) => (
-            <Typography
-              key={index}
-              style={{
-                textAlign: msg.user ? 'right' : 'left',
-                color: msg.user ? 'black' : 'black',
-                margin: '10px',
-                padding: '5px'
-              }}
+        <Typography sx={{m: '40px', mt:'10px', p: 'auto'}} variant='h1' >Gata Bot</Typography >
+        <Typography sx={{m: '10px', pb: '20px'}} variant='h3'>Welcome {user.username}!</Typography>
+        <Stack spacing={4} sx={{ height: '100%' }}>
+                <Box
+                  display='flex'
+                  flexDirection='column'
+                  alignItems='flex-start'
+                  gap={2}
+                  sx={{
+
+                    bgColor: '#a684ff',
+                  
+                
+            
+            
+              border: '4px solid black',
+              borderRadius: 8,
+              padding: '10px',
+              height: '75%',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              mt: '20px'
+            }}
+          >
+            <Box
+            className='chat-list'
+            ref={chatLogRef}
+            sx={{height: '100%',
+              m: '20px',
+              p: '20px',
+              b: '20px',
+              
+            }}
             >
-              <strong>{msg.user ? 'You:' : 'Gata:'}</strong> {msg.text}
-            </Typography>
-          ))}
-        </Container>
-        <form  onSubmit={handleSubmit} style={{ marginTop: '10px', }}>
+              {chatLog.map((msg, index) => (
+                <Typography
+                  key={index}
+                  style={{
+                    textAlign: msg.user ? 'right' : 'left',
+                    color: msg.user ? 'black' : 'black',
+                    margin: '10px',
+                    padding: '5px'
+                  }}
+                >
+                  <strong>{msg.user ? 'You:' : 'Gata:'}</strong> {msg.text}
+                </Typography>
+              ))}
+            </Box>
+            
+             {/* Input */}
+            <Box sx={{width: '100%', display: 'inline'}}>
+
+        <form  onSubmit={handleSubmit} style={{  }}>
           <TextField
             type='text'
             value={userMessage}
@@ -112,7 +139,15 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
             placeholder='Type your message...'
             style={{ width: '70%', padding: '8px', marginRight: '10px' }}
           />
-          <Button variant='contained'
+        </form>
+          <IconButton type='submit'
+            style={{
+              // marginTop: '36px',
+              padding: '8px',
+              cursor: 'pointer',
+            }}
+          >
+          {/* <Button variant='contained'
             type='submit'
             size='medium'
             
@@ -123,13 +158,18 @@ const ChatBot: React.FC <ChatProps> = ({user}) => {
             }}
           >
             Send
-          </Button>
-        </form>
+          </Button> */}
+            <SendIcon/>
+          </IconButton>
+        
+          </Box>
+          </Box>
+          </Stack>
       </Box>
       {/**Chat History */}
-      <Box style={{  width: '100%', maxWidth:'500px', borderLeft: '4px solid', overflowY: 'auto'}}>
+      {/* <Box style={{  width: '100%', maxWidth:'500px', borderLeft: '4px solid', overflowY: 'auto'}}>
         <ChatHistory user={user} />
-      </Box>
+      </Box> */}
     </div>
         
   );
