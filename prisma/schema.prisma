@@ -15,6 +15,7 @@ model user {
   phoneNum     String?            @db.VarChar(10)
   isNotified   Boolean            @default(false)
   googleId     String             @unique
+  isNew Boolean @default(true)
   image        image[]
   profilePic   String?            @db.VarChar(150)
   // memberId...
