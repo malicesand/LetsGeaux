@@ -64,7 +64,8 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
 
   return ( 
     <React.Fragment>
-      <Box sx={{ width: '100%', maxWidth: 300 }}>
+      <Box 
+        sx={{ width: '100%', maxWidth: 300 }}>
         <Autocomplete
           id="user-search"
           freeSolo
@@ -105,17 +106,30 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
         }}
       >
         <Fade in={open}>
-          <Box sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            borderColor: 'secondary',
-            p: 4,
-            textAlign: 'center',
-          }}>
+          <Box 
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                if (userId && partyId) {
+                  addMemberToParty(userId, partyId);
+                  closeModal();
+                }
+              }
+              if (event.key === 'Escape') {
+                closeModal();
+              }
+            }}
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 400,
+              bgcolor: 'background.paper',
+              borderColor: 'secondary',
+              p: 4,
+              textAlign: 'center',
+            }}
+            >
             <Typography  variant="h6" component="h3">
               Would you like to add {member} to {partyName}?
             </Typography>
@@ -138,10 +152,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
           </Box>
         </Fade>
       </Modal>
-    
     </React.Fragment>
-
-
   ) 
 }
 

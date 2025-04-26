@@ -83,7 +83,7 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
 
 //* Create Email Record *//
 async function logEmailSent(address: string, senderId: string, partyId: string) {
-  console.log('Logging email for:', address, 'from userId:', senderId);
+  // console.log('Logging email for:', address, 'from userId:', senderId);
 
   try { 
     const existing = await prisma.email.findFirst({
@@ -93,7 +93,7 @@ async function logEmailSent(address: string, senderId: string, partyId: string) 
       },
     });
     if (existing) {
-      console.log(`Email to ${address} already logged for this party.`);
+      // console.log(`Email to ${address} already logged for this party.`);
       return; 
     }
     await prisma.email.create({
@@ -103,7 +103,7 @@ async function logEmailSent(address: string, senderId: string, partyId: string) 
         partyId: +partyId
       }
     });
-    console.log(`Logged email to ${address}`);
+    // console.log(`Logged email to ${address}`);
   } catch (error) {
     console.error(`Failed to log email:`, error);
   }
@@ -221,8 +221,8 @@ partyRoute.patch('/:partyId', async (req: any, res: any) => {
 //* Delete Party Member */
 partyRoute.delete('/:memberId/:partyId', async (req: any, res: any) => {
   const {memberId, partyId} = req.params;
-  console.log(req.params);
-  console.log(`Deleting user ${memberId} from party ${partyId}`);
+  // console.log(req.params);
+  // console.log(`Deleting user ${memberId} from party ${partyId}`);
   try {
     // delete userParty
     const deleted = await prisma.userParty.deleteMany({
@@ -238,8 +238,6 @@ partyRoute.delete('/:memberId/:partyId', async (req: any, res: any) => {
     const remaining = await prisma.userParty.count({
       where: { partyId: +partyId },
     });
-    console.log(remaining)
-    
     let partyDeleted = false;
     // delete party if no more users
     if (remaining === 0) {
@@ -249,7 +247,7 @@ partyRoute.delete('/:memberId/:partyId', async (req: any, res: any) => {
       console.log(`Deleted Party ${partyId}: no members remain`)
       partyDeleted = true;
     }
-    console.log(`Request Complete: Delete User ${memberId} @ Party${partyId}}`);
+    // console.log(`Request Complete: Delete User ${memberId} @ Party${partyId}}`);
     res.status(200).json({ removed: true, partyDeleted, });
 
   } catch (error: any) {
@@ -257,36 +255,5 @@ partyRoute.delete('/:memberId/:partyId', async (req: any, res: any) => {
     res.status(500).json({error:`Server error during member removal`})
   }
 }); 
-
-// Delete Party Member */
-/* partyRoute.delete('/:memberId/:partyId', async (req: any, res: any) => {
-  const {memberId, partyId} = req.params;
-  console.log(req.params);
-  console.log(`Deleting user${memberId} from party ${partyId}`);
-  try {
-    const userParty = await prisma.userParty.findFirst({
-      where: { 
-        userId: +memberId,
-        partyId: +partyId,
-
-       },
-    });
-    if (!userParty) {
-      return res.status(404).json({message: `User ${memberId} is not associated with party ${partyId}`});
-    }
-
-    await prisma.userParty.delete({
-      where: {
-        id: userParty.id, 
-      },
-    });
-
-    console.log(`Request Complete: Delete User ${memberId} @ Party${partyId}}`);
-    res.json(`Request Complete: Delete ${memberId} @ Party${partyId}}`)
-  } catch (error) {
-    console.error(`Failure: Delete`, error);
-    res.status(500).json({error:`Failure: Delete${memberId} @ Party${partyId}`})
-  }
-})   */
 
 export default partyRoute;
