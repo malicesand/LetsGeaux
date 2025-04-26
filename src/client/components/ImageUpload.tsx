@@ -84,7 +84,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
   };
 
   return (
-    <Box sx={{ maxWidth: '600px', margin: 'auto', py: 4 }}>
+    <Box sx={{ mx: 'auto', margin: 'auto', py: 4 }}>
       <Box align="center"
         sx={{
           border: '4px solid black',
@@ -93,7 +93,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
           maxWidth: 400,
           width: '100%',
           textAlign: 'center',
-          mx: 'auto'
+          mx: 'auto',
+
         }}
       >
         <Typography

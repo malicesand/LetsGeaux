@@ -6,8 +6,8 @@ export const typography: TypographyOptions = {
   htmlFontSize: 16,
   body1: {
     fontFamily: 'DM Sans',
-    fontSize: 16,
-    fontWeight: 500,
+    fontSize: 20,
+    fontWeight: 600,
     textTransform: 'none',
   },
   button: {
