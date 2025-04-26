@@ -131,7 +131,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
   }
 
   const handleAddToActivities = () => {
-    
+
     const details = {
       data: {
         address: currentSuggestion.address,
@@ -152,21 +152,18 @@ const Suggestion: React.FC<SuggestionProps> = ({
       console.error('unable to change suggestion', err);
     })
   }
-  
+
   const handleVoteClick = (polarity: string) => {
-  // if (!positiveForPastVotes) {
     const { id } = user;
     const userId = id
     const { id: suggestionId } = currentSuggestion;
     const pol = polarity === 'up' ? 1 : 0
     const vote = {
-      // details: {
         data: {
           user: { connect: { id: +user.id } },
           suggestion: { connect: { id: suggestionId } },
           polarity: pol,
         }
-        // }
       }
       let voteDirection;
       axios.post(`api/vote/${userId}/${suggestionId}/suggestion`, vote).then(() => {

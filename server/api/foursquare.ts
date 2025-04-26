@@ -31,8 +31,8 @@ console.log('ON THE STACK', queryStack)
           title: name,
           description,
           link,
-          latitude,
-          longitude,
+          latitude: String(latitude),
+          longitude: String(longitude),
           address: formatted_address,
           image: null,
         }
