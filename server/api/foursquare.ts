@@ -30,7 +30,7 @@ console.log('ON THE STACK', queryStack)
         const returnObj ={
           title: name,
           description,
-          phoneNum: link,
+          link,
           latitude,
           longitude,
           address: formatted_address,
