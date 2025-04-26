@@ -24,10 +24,12 @@ interface AddMemberProps {
 
 
 const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembers}) => { 
-  const [users, setUsers] =  useState<user[]>([])
-  const [member, setMember] = useState<user['username']>()
-  const[userId, setUserId] = useState<user['id']>()
+  const [users, setUsers] =  useState<user[]>([]);
+  const [member, setMember] = useState<user['username']>();
+  const [userId, setUserId] = useState<user['id']>();
   const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [selectedUser, setSelectedUser] = useState<user | null>(null);
 
   useEffect(() => {
     getUsers(); // ? DELETED partyId: number
@@ -68,11 +70,16 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
           freeSolo
           options={users}
           getOptionLabel={(user: user) => user.username}
-          onChange={(event, value: user) => {
+          inputValue={inputValue}
+          onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
+          value={selectedUser}
+          onChange={(event, value: user | null) => {
             if (value) {
-              setMember(value.username)
-              setUserId(value.id)
-              openModal()
+              setMember(value.username);
+              setUserId(value.id);
+              openModal();
+              setSelectedUser(null);
+              setInputValue('');
             }
           }}
           openOnFocus={false}
