@@ -7,10 +7,10 @@ const axios = require('axios').default;
 
 const getSuggestionsFromFoursquare = (queryStack) => {
 
-
+console.log('ON THE STACK', queryStack)
   const options = {
     method: 'GET',
-    url: `https://api.foursquare.com/v3/places/search?categories=${queryStack}`,
+    url: `https://api.foursquare.com/v3/places/search?ll=29.95465%2C-90.07507&categories=${queryStack}`,
     headers: {
       accept: 'application/json',
       Authorization: `fsq3D3XNN4a4DIU+mQ1CP0O9KxGNHYaE0ewrG+RC3Bq5cxY=`,
@@ -20,8 +20,26 @@ const getSuggestionsFromFoursquare = (queryStack) => {
   return axios(options)
   // .then(res => res.json())
   .then(res => {
-    console.log(res.data);
-    return res.data;
+    console.log('res data', res.data);
+    const entrySet = res.data.results.map((entry) => {
+      // still need the contact link to replace the phoneNum.
+      const { name, description, link } = entry;
+      const { formatted_address } = entry.location;
+      const { latitude, longitude } = entry.geocodes.main;
+
+        const returnObj ={
+          title: name,
+          description,
+          phoneNum: link,
+          latitude,
+          longitude,
+          address: formatted_address,
+          image: null,
+        }
+        return returnObj;
+    });
+
+    return entrySet;
   })
   .catch(err => {
     console.error(err)
