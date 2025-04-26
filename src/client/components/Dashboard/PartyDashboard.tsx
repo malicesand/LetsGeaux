@@ -211,15 +211,23 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   };
 
   //* Party Management Confirmation *//
-  const handleConfirmActions = () => {
+  const handleConfirmActions = async () => {
+    setLoading(true);
     setRenameOpen(false);
     setConfirmOpen(false);
-    if (newName) renameParty(numericPartyId, newName);
-    if (membersToRemove.length) {
-      membersToRemove.map((member) => {
-        deleteMembers(member, numericPartyId)
-      })};
-    if (leaveParty) deleteMembers(userId, numericPartyId);
+    try {
+      if (newName) { await renameParty(numericPartyId, newName)};
+      if (membersToRemove.length) {
+        await Promise.all(
+          membersToRemove.map((member) => deleteMembers(member, numericPartyId))
+        );
+      }
+      if (leaveParty) { await deleteMembers(userId, numericPartyId)};
+    } catch (error) {
+      console.error('Error during party management actions:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   //*  Rename Party *//
@@ -486,14 +494,19 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         Remove Members
       </Typography>
         <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
-          {partyMembers.map(member => (
+          {partyMembers
+          .filter(member => member.id !== user.id)
+          .map(member => (
             <ListItem
               key={member.id}
               secondaryAction={
                 <IconButton 
                   edge='end'
                   aria-label='delete'
-                  onClick={() => toggleMember(member.id)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    toggleMember(member.id)}
+                   } 
                 >
                   <PiTrashDuotone
                     style={{
@@ -562,10 +575,20 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
             <DialogContent>
               <Typography>You are about to:</Typography>
               <ul>
-                {newName && <Typography>Rename the party to: <strong>{newName}</strong>
-                <Typography></Typography>(navigate to main dash for new name to render)</Typography>}
-                {membersToRemove.length > 0 && <Typography>Remove {membersToRemove.length} member(s)</Typography>}
-                {leaveParty && <Typography>Leave the party</Typography>}
+                {/* Message for Name Change */}
+                {newName && (
+                <Typography>
+                  Rename the party to: <strong>{newName}</strong>
+                  <Typography>(navigate to main dash for new name to render)</Typography>
+                </Typography>)}
+                {/* Message for Deleting others */}
+                {membersToRemove.filter(id => id !== user.id).length > 0 && (
+                  <Typography>
+                    Remove {membersToRemove.length} member(s)
+                  </Typography>)}
+                {/* Message for Leaving */}
+                {leaveParty && (
+                  <Typography>Leave the party</Typography>)}
               </ul>
             </DialogContent>
             <DialogActions>
@@ -579,6 +602,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                 variant='contained'
                 type='submit'
                 onClick={handleConfirmActions}
+                disabled={loading}
               >
               Confirm
             </Button>
