@@ -1,8 +1,8 @@
 const axios = require('axios').default;
-// import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 
-// dotenv.config();
-// searchId: process.env.FOURSQUARE_API_KEY;
+dotenv.config();
+const searchId = process.env.FOURSQUARE_API_KEY;
 
 
 const getSuggestionsFromFoursquare = (queryStack) => {
@@ -13,7 +13,7 @@ console.log('ON THE STACK', queryStack)
     url: `https://api.foursquare.com/v3/places/search?ll=29.95465%2C-90.07507&categories=${queryStack}`,
     headers: {
       accept: 'application/json',
-      Authorization: `fsq3D3XNN4a4DIU+mQ1CP0O9KxGNHYaE0ewrG+RC3Bq5cxY=`,
+      Authorization: searchId,
     },
   };
 
