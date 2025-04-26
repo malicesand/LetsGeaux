@@ -177,7 +177,6 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
 
   //* MANAGE PARTY *//
   const renameModal = () => {
-    console.log('click')
     setRenameOpen(true);
   }
   const closeRename  = () => {
@@ -186,13 +185,13 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
 
   //* Toggle member removal *//
   const toggleMember = (id: number) => {
-    setDeleteColor('purple')
+    // setDeleteColor('purple')
     setMembersToRemove(prev =>
       prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
     );
   };
 
-  //* Final confirm handler for deleting *//
+  //* Party Management Confirmation *//
   const handleConfirmActions = () => {
     setRenameOpen(false);
     setConfirmOpen(false);
@@ -217,7 +216,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const deleteMembers = async (memberId: number, partyId: number) => {
     console.log(`Deleting user${memberId} from party ${partyId}`);
     try {
-      const response = await axios.delete(`/api/party/${memberId}/${partyId}`);
+      await axios.delete(`/api/party/${memberId}/${partyId}`);
       console.log(`user: ${memberId} removed from party: ${partyId}`);
       if (memberId === userId){
         navigate('/')
