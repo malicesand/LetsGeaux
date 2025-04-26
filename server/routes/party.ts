@@ -7,11 +7,11 @@ const prisma = new PrismaClient();
 
 // * Create Travel Party * //
 partyRoute.post('/', async (req: any, res: any) => {
-  // console.log(req.body)
   const {name} = req.body;
+  //console.log(`Server received request: create ${name}`)
   try {
     const newParty = await prisma.party.create({data: { name }});
-    // console.log(`Request complete: Create Party ${name}`)
+    //console.log(`Request complete: Create Party ${name}`)
     res.json(newParty)
   } catch(error) {
     console.error(`Failure: Create Party ${name}`, error);
@@ -29,12 +29,10 @@ partyRoute.post('/userParty', async (req: any, res: any) => {
         partyId: +partyId,
       },
     });
-
     if (existing) {
       console.log(`User ${userId} already in Party ${partyId}`);
       return;
     }
-
     const addUserToParty = await prisma.userParty.create({
       data: {
        userId,
@@ -53,6 +51,7 @@ partyRoute.post('/userParty', async (req: any, res: any) => {
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string)
 partyRoute.post('/sendInvite', async (req: any, res:any) => {
   const {emails, partyName, userId, partyId, viewCode} = req.body;
+  //console.log(`view code at server ${viewCode}`)
   if (!emails || !Array.isArray(emails) || emails.length === 0) {
     return res.status(400).json({ error: 'No valid emails provided' });
   }
@@ -61,10 +60,8 @@ partyRoute.post('/sendInvite', async (req: any, res:any) => {
       to: email, 
       from: 'invite@letsgeauxnola.com', 
       subject: 'Join me on Lets Geaux Nola!',
-      text: `Join my travel party ${partyName} on LetsGeauxNola.com!`,
-      html: `<strong>Join my travel party ${partyName} on LetsGeauxNola.com!</strong>
-    View itinerary at http://letsgeauxnola.com/view and enter this code: <strong>${viewCode}</strong>
-      `, // TODO fix html
+      text: `Join my travel party ${partyName} on LetsGeauxNola.com! View itinerary at http://letsgeauxnola.com/view and enter this code: ${viewCode}`,
+      html: `<strong>Join my travel party ${partyName} on LetsGeauxNola.com! View itinerary at http://letsgeauxnola.com/view and enter this code: ${viewCode}</strong>`, 
     };
 
     try {
@@ -222,19 +219,20 @@ partyRoute.patch('/:partyId', async (req: any, res: any) => {
 })
 
 //* Delete Party Member */
-partyRoute.delete('/:userId/:partyId', async (req: any, res: any) => {
-  const {userId, partyId} = req.params;
+partyRoute.delete('/:memberId/:partyId', async (req: any, res: any) => {
+  const {memberId, partyId} = req.params;
   console.log(req.params);
+  console.log(`Deleting user${memberId} from party ${partyId}`);
   try {
     const userParty = await prisma.userParty.findFirst({
       where: { 
-        userId: +userId,
+        userId: +memberId,
         partyId: +partyId,
 
        },
     });
     if (!userParty) {
-      return res.status(404).json({message: `User ${userId} is not associated with party ${partyId}`});
+      return res.status(404).json({message: `User ${memberId} is not associated with party ${partyId}`});
     }
 
     await prisma.userParty.delete({
@@ -243,11 +241,11 @@ partyRoute.delete('/:userId/:partyId', async (req: any, res: any) => {
       },
     });
 
-    console.log(`Request Complete: Delete User ${userId} @ Party${partyId}}`);
-    res.json(`Request Complete: Delete User ${userId} @ Party${partyId}}`)
+    console.log(`Request Complete: Delete User ${memberId} @ Party${partyId}}`);
+    res.json(`Request Complete: Delete ${memberId} @ Party${partyId}}`)
   } catch (error) {
     console.error(`Failure: Delete`, error);
-    res.status(500).json({error:`Failure: Delete ${userId} @ Party${partyId}`})
+    res.status(500).json({error:`Failure: Delete${memberId} @ Party${partyId}`})
   }
 }) 
 

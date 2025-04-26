@@ -1,13 +1,13 @@
 import { createTheme } from '@mui/material/styles';
-
+import { TypographyOptions } from '@mui/material/styles/createTypography'
 
 export const typography: TypographyOptions = {
   fontFamily: 'Lexend Mega',
   htmlFontSize: 16,
   body1: {
     fontFamily: 'DM Sans',
-    fontSize: 16,
-    fontWeight: 500,
+    fontSize: 20,
+    fontWeight: 600,
     textTransform: 'none',
   },
   button: {
@@ -32,7 +32,7 @@ export const typography: TypographyOptions = {
     fontFamily: 'Lexend Mega',
     fontWeight: 700,
     fontSize: 21,
-    textTransform: 'uppercase',
+    textTransform: 'none',
   },
   h4: {
     fontFamily: 'Lexend Mega',

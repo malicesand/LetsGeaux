@@ -25,7 +25,8 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
-
+import newLogo from '../theme/cropedLogo.png'
+import { Link as RouterLink } from 'react-router-dom';
 interface MainAppBarProps {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
   user: user;
@@ -50,11 +51,11 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
       return () => clearTimeout(timeout);
     }
   }, [notifications]);
- //handlers for opening/closing notifications menu
+  //handlers for opening/closing notifications menu
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
-// nav instructions to user preferences?
+  // nav instructions to user preferences?
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
@@ -88,28 +89,42 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
   const unreadCount = notifications.length - readItems.size;
 
   return (
-    <AppBar position='static' sx={{ border: '4px solid black', borderRadius: 4 }}>
-      <Container maxWidth='xl'>
-        <Toolbar disableGutters>
+    <AppBar position='static' sx={{ border: '4px solid black', borderRadius: 4, mb: 2 }}>
+      <Container maxWidth='xl' sx={{ px: 0 }}>
+        <Toolbar disableGutters >
           <NavDrawer />
-          <StreetcarIcon sx={{ color: 'black', display: { xs: 'none', md: 'flex', sm: 'block' }, mr: 1 }} />
-          <Typography
-            component='a'
-            variant='h5'
-            noWrap
-            href='/'
+          <Box
+            className="logo"
             sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex', sm: 'block' },
-              fontFamily: 'Lexend Mega, sans-serif',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'black',
-              textDecoration: 'none'
+              display: 'flex',
+              mr: 1,
+              p: 0,
+              m: 0,
             }}
-          >
-            Let's Geaux
-          </Typography>
+          > <img src={newLogo} alt="Logo" style={{
+            height: '40px',
+            width: 'auto',
+            display: 'block',
+            margin: 0,
+            padding: 0,
+          }}
+            /></Box>
+          {/* <StreetcarIcon sx={{ color: 'black', display: { xs: 'none', md: 'flex', sm: 'block' }, mr: 1 }} /> */}
+          <RouterLink to='/' style={{ textDecoration: 'none' }}>
+            <Typography
+              variant='h2'
+              noWrap
+              sx={{
+                mr: 2,
+                display: { xs: 'none', md: 'flex', sm: 'block' },
+                letterSpacing: '.3rem',
+                color: 'black',
+                ml: 1
+              }}
+            >
+              Let's Geaux
+            </Typography>
+          </RouterLink>
 
           <Box sx={{ flexGrow: 1 }} />
 

@@ -53,6 +53,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
       console.error('failed to create new party');
     };
   };
+
   //* Add Current User to Party *//
   const addUserToParty = async(userId:number, partyId:number, partyName: string) => {
     try {
@@ -62,6 +63,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
       console.error('Could not create new userParty model', error);
     }
   }; 
+
   // //* Send E-Vite *//
   const sendEmail = async(emailList: string[], partyName:string, userId: number, partyId: number) => {
     try {
@@ -122,9 +124,9 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
               Party Created!
             </Typography>
           )}
-          <Divider/>
-
-          <Typography variant='subtitle1' sx={{ mt: 2 }}>
+          {/* <Divider/> */}
+        {/* Evite */}
+          {/* <Typography variant='subtitle1' sx={{ mt: 2 }}>
             Invite your friends to join your travel party
           </Typography>
           <FilledInput
@@ -154,11 +156,11 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
           )}
           <Typography variant="h6" color="text.secondary" sx={{ mt: 1 }}>
             You can also invite friends later from your party dashboard.
-          </Typography>
+          </Typography> */}
         </DialogContent>
-        <DialogActions>
+        {/* <DialogActions>
           <Button variant='contained' onClick={closeModal}>Close</Button>
-        </DialogActions>
+        </DialogActions> */}
       </Dialog>
     </React.Fragment>
   )

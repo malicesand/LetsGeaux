@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import ImageUpload from './ImageUpload';
 import { useUser } from './UserContext';
+import { PiPencilBold } from "react-icons/pi";
 
 const ALL_INTERESTS = ['Restaurants', 'Hotels', 'Geos', 'Attractions'];
 
@@ -51,7 +52,7 @@ const Profile: React.FC = () => {
     };
 
     fetchInterests();
-  }, [contextUser?.id]);
+  }, []);
 
   const handleUpdateInterest = async () => {
     try {
@@ -99,20 +100,47 @@ const Profile: React.FC = () => {
 
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Typography variant="h2" gutterBottom align="center">Profile</Typography>
+      <Typography variant="h3" gutterBottom align="center">{user.username}</Typography>
+
       <Stack spacing={2} alignItems="center">
-        <Avatar
-          src={contextUser.profilePic}
-          alt="Profile Picture"
-          sx={{ width: 150, height: 150, border: '4px solid black' }}
-        />
+        {/* Wrapper box to position the edit icon */}
+        <Box sx={{ position: 'relative', width: 150, height: 150 }}>
+          <Avatar
+            src={contextUser.profilePic}
+            alt="Profile Picture"
+            sx={{
+              width: 150,
+              height: 150,
+              border: '4px solid black',
+              boxShadow: 1,
+              transition: 'box-shadow 0.3s ease-in-out',
+              '&:hover': {
+                boxShadow: 6,
+                bgcolor: '#fffff',
+              },
+            }}
+          />
 
+          <Button
+            variant="contained"
+            onClick={handleUploadWidget}
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              minWidth: 0,
+              width: 40,
+              height: 40,
+              borderRadius: '50%',
+              p: 0,
+              color: 'primary',
+            }}
+          >
+            <PiPencilBold />
+          </Button>
+        </Box>
 
-        <Button variant="contained" onClick={handleUploadWidget}
-          sx={{ mt: 2, color: 'primary' }}>
-
-          Change Profile Picture</Button>
-        <Typography variant="body1" textTransform="uppercase">{contextUser.username}</Typography><Typography variant="body1">{contextUser.email}</Typography>
+        <Typography variant="body1">{contextUser.email}</Typography>
       </Stack>
 
       <Box mt={4}
@@ -122,16 +150,21 @@ const Profile: React.FC = () => {
           padding: 4,
           maxWidth: 300,
           textAlign: 'center',
-
-          mx: 'auto'
+          mx: 'auto',
         }}
       >
-        <Typography variant="h5" textTransform="uppercase" fontWeight='700' >Current Interest:</Typography>
+        <Typography variant="h5" textTransform="uppercase" fontWeight='700' > Interest:</Typography>
         <Typography variant="body1">{currentInterest || 'None'}</Typography>
 
         <Box mt={3}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Change Interest</FormLabel>
+          <FormControl component="fieldset" >
+            <FormLabel component="legend" sx={{
+              color: 'black',
+              '&.Mui-focused': {
+                color: '#3200FA',
+
+              },
+            }}>Change Interest</FormLabel>
             <RadioGroup
               value={selectedInterest}
               onChange={(e) => setSelectedInterest(e.target.value)}
@@ -141,24 +174,27 @@ const Profile: React.FC = () => {
                   key={interest}
                   value={interest}
                   control={<Radio />}
+
                   label={interest}
+
+
                 />
               ))}
             </RadioGroup>
             <Button
               variant="contained"
-              color="primary"
+
               sx={{ mt: 2 }}
               onClick={handleUpdateInterest}
             >
-              Update Interest
+              Update
             </Button>
           </FormControl>
         </Box>
 
       </Box>
       <Box mt={4}>
-        {/* <ImageUpload userId={contextUser.id} /> */}
+
       </Box>
     </Container>
   );

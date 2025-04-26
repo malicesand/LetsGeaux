@@ -11,7 +11,7 @@ const root = createRoot(document.getElementById('root'));
 import geometry from './client/theme/inspiration-geometry.png'
 
 import { Box } from '@mui/material';
-document.body.style.backgroundColor = '#a684ff';
+document.body.style.backgroundColor = '#c4a1ff';
 //document.body.style.backgroundImage = geometry
 root.render(
   <Box className='geometry'

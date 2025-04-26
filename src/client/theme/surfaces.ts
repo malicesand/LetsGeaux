@@ -27,7 +27,7 @@ export const components: Components<Theme> = {
   MuiTextField: {
     defaultProps: {
       variant: 'outlined',
-      size: 'medium',
+      size: 'small',
       fullWidth: true,
       margin: 'normal',
     },
@@ -37,7 +37,8 @@ export const components: Components<Theme> = {
         '& .MuiOutlinedInput-root': {
           border: '4px solid black',
           borderRadius,
-          backgroundColor: '#A78BFA', 
+          width:'100%',
+          // backgroundColor: '#A78BFA', 
           padding: '16px',
           '& fieldset': {
             border: 'none',
@@ -85,7 +86,7 @@ export const components: Components<Theme> = {
         borderRadius,
         boxShadow: 'none',
         padding: 24,
-        backgroundColor: '#fff',
+        // backgroundColor: '#fff',
       },
     },
   },

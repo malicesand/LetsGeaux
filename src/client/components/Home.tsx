@@ -10,7 +10,7 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({ user }) => {
   return (
     <div>
-      <Typography variant='h2' align="center" color='black'>Hello, {user.username}!!!</Typography>
+      <Typography variant='h3' align="center" color='black'>Hello, {user.username}!!!</Typography>
       <Box height={32} />
       <Dashboard user={user} />
     </div>
