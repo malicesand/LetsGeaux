@@ -23,11 +23,11 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
 import IconButton from '@mui/material/IconButton';
-import { PiTrash } from "react-icons/pi";
-import { PiPencilLine } from "react-icons/pi";
+import { PiTrash } from 'react-icons/pi';
+import { PiPencilLine } from 'react-icons/pi';
 import Fab from '@mui/material/Fab';
 import { useSnackbar } from 'notistack';
-import { PiPlusBold } from "react-icons/pi";
+import { PiPlusBold } from 'react-icons/pi';
 import Tooltip from '@mui/material/Tooltip';
 
 //defines structure of activity object
@@ -62,10 +62,9 @@ const Activity: React.FC<Props> = ({
   itineraryBegin,
   itineraryEnd
 }) => {
-
   //list of activities
   const [activities, setActivities] = useState<Activity[]>([]);
-  
+
   //input vlaues for the create/edit form
   const [formData, setFormData] = useState({
     id: '',
@@ -80,19 +79,19 @@ const Activity: React.FC<Props> = ({
     itineraryId: itineraryId
   });
   //controls the ativity modal
-  const [open, setOpen] = useState(false); 
-  
-//stores error message
+  const [open, setOpen] = useState(false);
+
+  //stores error message
   const [error, setError] = useState<string | null>(null); // Error handling
   // const [message, setMessage] = useState<string>(''); // Success message
-  
+
   //delete confirmation dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   //stores the activity of delete
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
     null
   );
-//copies activity and sortd ativity by time and date
+  //copies activity and sortd ativity by time and date
   const sortedActivities = [...activities].sort((a, b) => {
     const dateTimeA = dayjs(
       `${a.date} ${a.time}`,
@@ -170,7 +169,6 @@ const Activity: React.FC<Props> = ({
       resetForm();
       setOpen(false); // Close modal after updating activity
       enqueueSnackbar('Activity updated successfully!', { variant: 'success' });
-
     } catch (err) {
       console.error('Error updating activity:', err);
       setError('Error updating activity.');
@@ -232,12 +230,12 @@ const Activity: React.FC<Props> = ({
     setActivityToDelete(activity);
     setDeleteDialogOpen(true);
   };
-//closes and clears ativity
+  //closes and clears ativity
   const handleCloseDeleteDialog = () => {
     setDeleteDialogOpen(false);
     setActivityToDelete(null);
   };
-//removes deleted acitivty
+  //removes deleted acitivty
   const handleConfirmDelete = async () => {
     if (!activityToDelete) return;
 
@@ -245,7 +243,6 @@ const Activity: React.FC<Props> = ({
       await axios.delete(`/api/activity/${activityToDelete.id}`);
       setActivities(prev => prev.filter(a => a.id !== activityToDelete.id));
       enqueueSnackbar('Activity deleted successfully!', { variant: 'success' });
-
     } catch (err) {
       console.error('Error deleting activity:', err);
       setError('Error deleting activity.');
@@ -258,17 +255,19 @@ const Activity: React.FC<Props> = ({
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Container>
         <Box mb={4}>
-          <Dialog open={open} onClose={handleClose}
-          PaperProps={{
-            sx: {
-              backgroundColor: '#A684FF', 
-            }
-          }}>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              sx: {
+                backgroundColor: '#C2A4F8'
+              }
+            }}
+          >
             <DialogTitle>
               {formData.id ? 'Update Activity' : 'Create Activity'}
             </DialogTitle>
             <DialogContent>
-              
               <form onSubmit={handleSubmit}>
                 <TextField
                   label='Activity Name'
@@ -280,10 +279,12 @@ const Activity: React.FC<Props> = ({
                   required
                   InputLabelProps={{
                     sx: {
-                      top: -6,
+                      '&.Mui-focused': {
+                        color: 'black'
+                      },
+                      top: -6
                     }
                   }}
-        
                 />
                 <TextField
                   label='Description'
@@ -294,11 +295,13 @@ const Activity: React.FC<Props> = ({
                   margin='normal'
                   required
                   InputLabelProps={{
-                    sx: {
-                      top: -6,
+                    sx: {'&.Mui-focused': {
+                        color: 'black'
+                      },
+
+                      top: -6
                     }
                   }}
-        
                 />
                 <DatePicker
                   label='Activity Date'
@@ -319,15 +322,24 @@ const Activity: React.FC<Props> = ({
                     actionBar: {
                       sx: {
                         '& .MuiButton-textPrimary': {
-                          color: 'black',
+                          color: 'black'
                         }
                       }
                     },
-                    textField: { fullWidth: true, margin: 'normal',required: true, InputLabelProps: {
-                      sx: { top: -6 }
-                    }}
+                    textField: {
+                      fullWidth: true,
+                      margin: 'normal',
+                      required: true,
+                      InputLabelProps: {
+                        sx: { 
+                          '&.Mui-focused': {
+                        color: 'black'
+                      },
+
+                          top: -6 }
+                      }
+                    }
                   }}
-                  
                 />
 
                 <TimePicker
@@ -353,15 +365,24 @@ const Activity: React.FC<Props> = ({
                     actionBar: {
                       sx: {
                         '& .MuiButton-textPrimary': {
-                          color: 'black',
+                          color: 'black'
                         }
                       }
                     },
-                    textField: { fullWidth: true, margin: 'normal', required:true, InputLabelProps: {
-                      sx: { top: -6 }
-                    } }
+                    textField: {
+                      fullWidth: true,
+                      margin: 'normal',
+                      required: true,
+                      InputLabelProps: {
+                        sx: { 
+                          '&.Mui-focused': {
+                        color: 'black'
+                      },
+
+                          top: -6 }
+                      }
+                    }
                   }}
-                  
                 />
 
                 <TextField
@@ -374,10 +395,13 @@ const Activity: React.FC<Props> = ({
                   required
                   InputLabelProps={{
                     sx: {
-                      top: -6,
+                      '&.Mui-focused': {
+                        color: 'black'
+                      },
+
+                      top: -6
                     }
                   }}
-        
                 />
                 <TextField
                   label='Image URL (optional)'
@@ -388,10 +412,13 @@ const Activity: React.FC<Props> = ({
                   margin='normal'
                   InputLabelProps={{
                     sx: {
-                      top: -6,
+                      '&.Mui-focused': {
+                        color: 'black'
+                      },
+
+                      top: -6
                     }
                   }}
-        
                 />
                 <TextField
                   label='Phone (optional)'
@@ -402,10 +429,13 @@ const Activity: React.FC<Props> = ({
                   margin='normal'
                   InputLabelProps={{
                     sx: {
-                      top: -6,
+                      '&.Mui-focused': {
+                        color: 'black'
+                      },
+
+                      top: -6
                     }
                   }}
-        
                 />
                 <TextField
                   label='Address (optional)'
@@ -416,10 +446,13 @@ const Activity: React.FC<Props> = ({
                   margin='normal'
                   InputLabelProps={{
                     sx: {
-                      top: -6,
+                      '&.Mui-focused': {
+                        color: 'black'
+                      },
+
+                      top: -6
                     }
                   }}
-        
                 />
                 <DialogActions>
                   <Button
@@ -468,13 +501,27 @@ const Activity: React.FC<Props> = ({
               >
                 <Card
                   sx={{
-                    backgroundColor: '#A684FF',
+                    backgroundColor: '#C2A4F8',
                     padding: '16px',
-                    borderRadius: '8px',
+                    borderRadius: '24px',
                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                     position: 'relative'
                   }}
                 >
+                   {activity.image && (
+    <Box
+      component="img"
+      src={activity.image}
+      alt={activity.name}
+      sx={{
+        width: '100%',
+        height: 200,
+        objectFit: 'cover',
+        borderRadius: '16px',
+        mb: 2,
+      }}
+    />
+  )}
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography variant='h6'>{activity.name}</Typography>
                     <Typography>{activity.description}</Typography>
@@ -495,7 +542,6 @@ const Activity: React.FC<Props> = ({
                     }}
                   >
                     <PiPencilLine />
-                    {/* <EditIcon /> */}
                   </IconButton>
 
                   {user.id === itineraryCreatorId && (
@@ -509,8 +555,6 @@ const Activity: React.FC<Props> = ({
                       }}
                     >
                       <PiTrash />
-
-                      {/* <DeleteIcon /> */}
                     </IconButton>
                   )}
                 </Card>
@@ -518,22 +562,19 @@ const Activity: React.FC<Props> = ({
             ))}
           </Box>
 
-        
           <Box mt={4} display='flex' justifyContent='center'>
-          <Tooltip title="Add New Activity" arrow>
-
-            <Fab
-              color='primary'
-              aria-label='add'
-              onClick={handleOpen}
-              sx={{
-                backgroundColor: '#A684FF',
-                '&:hover': { backgroundColor: '#8257E5' }
-              }}
-            >
-<PiPlusBold />
-
-            </Fab>
+            <Tooltip title='Add New Activity' arrow>
+              <Fab
+                color='primary'
+                aria-label='add'
+                onClick={handleOpen}
+                sx={{
+                  backgroundColor: '#C2A4F8',
+                  '&:hover': { backgroundColor: '#8257E5' }
+                }}
+              >
+                <PiPlusBold />
+              </Fab>
             </Tooltip>
           </Box>
         </Box>
@@ -549,10 +590,7 @@ const Activity: React.FC<Props> = ({
             <Button onClick={handleCloseDeleteDialog} sx={{ color: 'black' }}>
               Cancel
             </Button>
-            <Button
-              onClick={handleConfirmDelete} //color="error"
-              sx={{ color: 'black' }}
-            >
+            <Button onClick={handleConfirmDelete} sx={{ color: 'black' }}>
               Delete
             </Button>
           </DialogActions>
