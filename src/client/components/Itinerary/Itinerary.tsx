@@ -257,8 +257,7 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
         <IconButton
           onClick={() => setShowCreateForm(prev => !prev)}
           sx={{ mb: 2,
-          
-            backgroundColor: '#A684FF',
+            backgroundColor:'#C2A4F8',
              color:'black',
             '&:hover': { backgroundColor: '#8257E5' },
           
@@ -271,7 +270,7 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
       <Collapse in={showCreateForm}>
         <Box
           sx={{
-            backgroundColor: '#A684FF',
+            backgroundColor:'#C2A4F8',
             padding: 2,
             borderRadius: 2,
             mb: 4
@@ -295,7 +294,9 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
             fullWidth
             value={itineraryName}
             onChange={e => setItineraryName(e.target.value)}
-            sx={{ mb: 2 }}
+            sx={{ mb: 2
+              
+             }}
             required
             InputLabelProps={{
               sx: {
@@ -360,7 +361,7 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
       <Box
            my={2}
   sx={{
-    backgroundColor: '#A684FF',
+    backgroundColor: '#C2A4F8',
     padding: '16px',
     borderRadius: '8px',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
@@ -373,15 +374,22 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
           sx={{
             position: 'relative',
             mb: 2,
-            backgroundColor: '#A684FF',
-            borderRadius: '8px',
+            backgroundColor: '#C2A4F8',
+            borderRadius: '24px',
             padding: 2,
             boxShadow: 'none',
             border: '4px solid black',
+            fontWeight: 700,
           }}
           >
             <CardContent>
               <Typography variant='h6'>{itinerary.name}</Typography>
+              {itinerary.partyName && (
+  <Typography variant="body2" color="secondary">
+    Party: {itinerary.partyName}
+  </Typography>
+)}
+
               <Typography variant='body1'>{itinerary.notes}</Typography>
               <Typography variant='body2'>
   Begin: {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY h:mm A')}
@@ -390,7 +398,18 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
   End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY h:mm A')}
 </Typography>
 
-              <Typography variant='caption' color='secondary'>
+              <Typography variant='caption' color='secondary'  sx={{
+    display: 'inline-block',
+    backgroundColor: 'primary.main',
+    color: 'black',             
+    px: 2,                      
+    py: 1,                     
+    borderRadius: '9999px',      
+    fontWeight: 700,             
+    fontSize: '0.75rem',         
+    textAlign: 'center',         
+    boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+  }}>
                 View Code: {itinerary.viewCode}
               </Typography>
               {itinerary.message && (
@@ -403,7 +422,6 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
                 sx={{ position: 'absolute', top: 8, right: 8, color: 'black' }}
               >
                 <PiPencilLine />
-                {/* <EditIcon /> */}
               </IconButton>
               {user.id === itinerary.creatorId && (
   <IconButton
@@ -415,7 +433,6 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
   >
     <PiTrash />
 
-    {/* <DeleteIcon /> */}
   </IconButton>
 )}
 
