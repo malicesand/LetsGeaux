@@ -53,7 +53,7 @@ interface SuggestionProps {
     address: String
     description: String
     image: String
-    phoneNum: String
+    link: String
     userId: Number
     latitude: String
     longitude: String
@@ -90,9 +90,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
   const [expanded, toggleExpanded] = useState(false);
 
 
-  /* ---------Parts of the currentSuggestion
-  title, description, phoneNum, latitude, longitude, address
-  */
+
 
   /**
    * Activity Suggestion match points
@@ -112,7 +110,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
   // This is what occurs when the add to wishlist button is pressed. Calling a post request with wish markers to post the Suggestion
   const addToWishlist = () => {
     // gather the needed values and put them into an axios post request in a similar way to activities
-    const { address, description, latitude, longitude, phoneNum, title } = currentSuggestion;
+    const { address, description, latitude, longitude, link, title } = currentSuggestion;
 
     const details = {
       data: {
@@ -120,7 +118,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
         description,
         latitude,
         longitude,
-        phoneNum,
+        link,
         image,
         title,
         upVotes: 0,
@@ -138,7 +136,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
       data: {
         address: currentSuggestion.address,
         description: currentSuggestion.description,
-        phone: currentSuggestion.phoneNum,
+        phone: currentSuggestion.link,
         name: currentSuggestion.title,
       }
     }
@@ -223,7 +221,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
 
 
   }
-  const { title, description, phoneNum, upVotes, downVotes, latitude, longitude, address, hours, image } = currentSuggestion;
+  const { title, description, link, upVotes, downVotes, latitude, longitude, address, hours, image } = currentSuggestion;
   return (
     <Container>
       <Grid item size={6}>
@@ -256,7 +254,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
 // set typography to "body"
               )}
               <Typography>{description}</Typography>
-              <Typography><b>Contact number:</b> {phoneNum}</Typography>
+              <Typography><b>Contact website:</b> {link}</Typography>
               <Typography><b>address:</b> {address}</Typography>
               {hours
                 ? (

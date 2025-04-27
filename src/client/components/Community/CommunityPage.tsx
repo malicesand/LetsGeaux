@@ -27,8 +27,6 @@ useEffect(() => {
       <Typography variant='h1'>Welcome to the neighborhood!</Typography>
       <Grid>
         <Posts postSet={postSet} user={user} getAllPosts={getAllPosts} />
-        {/* Actually, I don't think the comments will be rendered directly from here.. */}
-        {/* <Comments /> */}
       </Grid>
     </Container>
   )

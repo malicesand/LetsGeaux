@@ -15,6 +15,7 @@ model user {
   phoneNum     String?            @db.VarChar(10)
   isNotified   Boolean            @default(false)
   googleId     String             @unique
+  isNew        Boolean            @default(true)
   image        image[]
   profilePic   String?            @db.VarChar(150)
   // memberId...
@@ -60,7 +61,7 @@ model suggestion {
   address       String?            @db.VarChar(100)
   description   String?            @db.Text
   image         String?            @db.Text
-  phoneNum      String?            @db.VarChar(50)
+  link          String?            @db.VarChar(50)
   userId        Int?
   latitude      String?
   longitude     String?
@@ -223,7 +224,7 @@ model budget {
   party     party?   @relation(fields: [partyId], references: [id])
   creatorId Int?
   creator   user?    @relation("UserBudgets", fields: [creatorId], references: [id])
-  partyId Int?
+  partyId   Int?
 }
 
 model chatHistory {
@@ -264,5 +265,5 @@ model email {
   sender    user     @relation(fields: [userId], references: [id])
   userId    Int
   partyId   Int
-  party     party    @relation(fields: [partyId], references: [id])
+  party     party    @relation(fields: [partyId], references: [id], onDelete: Cascade)
 }

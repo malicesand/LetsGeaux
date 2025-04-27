@@ -24,10 +24,12 @@ interface AddMemberProps {
 
 
 const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembers}) => { 
-  const [users, setUsers] =  useState<user[]>([])
-  const [member, setMember] = useState<user['username']>()
-  const[userId, setUserId] = useState<user['id']>()
+  const [users, setUsers] =  useState<user[]>([]);
+  const [member, setMember] = useState<user['username']>();
+  const [userId, setUserId] = useState<user['id']>();
   const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [selectedUser, setSelectedUser] = useState<user | null>(null);
 
   useEffect(() => {
     getUsers(); // ? DELETED partyId: number
@@ -44,7 +46,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
   // * Fetch all Users with Let's Geaux Accounts * //
   const getUsers = async() => { // ? DELETED partyId: number
     try {
-      const response = await axios.get('/api/users'); // TODO conditional for existing user
+      const response = await axios.get('/api/users'); 
       setUsers(response.data);     
     } catch (error) {
       console.error('failed to get users for add Member search', error)
@@ -53,7 +55,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
   // * Modal Button Click Handler * //
   const addMemberToParty = async(userId:number, partyId:number) => {
     try {
-      await axios.post('/api/party/userParty', {userId, partyId}); // TODO: conditional for existing users
+      await axios.post('/api/party/userParty', {userId, partyId}); 
       getMembers(partyId);
     } catch (error) {
       console.error('Could not create new userParty model', error);
@@ -62,17 +64,23 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
 
   return ( 
     <React.Fragment>
-      <Box sx={{ width: '100%', maxWidth: 300 }}>
+      <Box 
+        sx={{ width: '100%', maxWidth: 300 }}>
         <Autocomplete
           id="user-search"
           freeSolo
           options={users}
           getOptionLabel={(user: user) => user.username}
-          onChange={(event, value: user) => {
+          inputValue={inputValue}
+          onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
+          value={selectedUser}
+          onChange={(event, value: user | null) => {
             if (value) {
-              setMember(value.username)
-              setUserId(value.id)
-              openModal()
+              setMember(value.username);
+              setUserId(value.id);
+              openModal();
+              setSelectedUser(null);
+              setInputValue('');
             }
           }}
           openOnFocus={false}
@@ -98,17 +106,30 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
         }}
       >
         <Fade in={open}>
-          <Box sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            borderColor: 'secondary',
-            p: 4,
-            textAlign: 'center',
-          }}>
+          <Box 
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                if (userId && partyId) {
+                  addMemberToParty(userId, partyId);
+                  closeModal();
+                }
+              }
+              if (event.key === 'Escape') {
+                closeModal();
+              }
+            }}
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 400,
+              bgcolor: 'background.paper',
+              borderColor: 'secondary',
+              p: 4,
+              textAlign: 'center',
+            }}
+            >
             <Typography  variant="h6" component="h3">
               Would you like to add {member} to {partyName}?
             </Typography>
@@ -131,10 +152,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
           </Box>
         </Fade>
       </Modal>
-    
     </React.Fragment>
-
-
   ) 
 }
 
