@@ -3,7 +3,7 @@ A travel helper app for a short or long trip to New Orleans. Consolidates sugges
 
 # Features
 ## Itinerary
-Users can select the days they'll visit a city, then be redirected to an itinerary page. On that page, they can add activities, view suggestions, and add routes for each day of their trip.
+Users can select the start date and end dates of their trip using a calendar. They will be redirected to an itinerary page for planning. Users can add, edit, and delete activities with details like time, location, and contact information. Users can also view suggestions, and add routes for each day of their trip. The itinerary helps travelers to manage their plans day by day. Users without an account can view(only) the itinerary of the party that they are added to.
 
 ## Travel Parties
 Get your friends and family involved! Create a Travel Party with shared access to itineraries and budgets. Search for existing users or send an E-Vite to add your companions to the group. They'll be immediately directed to your Party page so they can jump right into planning.
