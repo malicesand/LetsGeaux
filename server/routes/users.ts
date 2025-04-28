@@ -1,8 +1,8 @@
+import { Request, Response } from 'express';
 import express from 'express';
 // import Users db model
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-
 const usersRoute = express.Router()
 
 // Example Requests
@@ -43,7 +43,26 @@ usersRoute.patch('/:userId/profile-pic', async (req, res) => {
   }
 });
 
+usersRoute.patch('/:userId', async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId, 10);
+    const { username } = req.body;
 
+    if (!username || typeof username !== 'string') {
+      return res.status(400).json({ message: 'Invalid username' });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { username },
+    });
+
+    res.status(200).json({ message: 'Username updated', user: updatedUser });
+  } catch (error) {
+    console.error('Error updating username:', error);
+    res.status(500).json({ message: 'Failed to update username' });
+  }
+});
 
 // export the route for use in server/index.ts
 export default  usersRoute;
