@@ -43,26 +43,37 @@ usersRoute.patch('/:userId/profile-pic', async (req, res) => {
   }
 });
 
-usersRoute.patch('/:userId', async (req: Request, res: Response) => {
+usersRoute.patch('/update-username', async (req: Request, res: Response) => {
   try {
-    const userId = parseInt(req.params.userId, 10);
-    const { username } = req.body;
+    const { contextUserId, username } = req.body;
 
-    if (!username || typeof username !== 'string') {
-      return res.status(400).json({ message: 'Invalid username' });
+    if (!contextUserId || !username) {
+      return res.status(400).json({ message: 'Missing user ID or username' });
+    }
+
+    const userId = Number(contextUserId);
+
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID format' });
     }
 
     const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: { username },
+      where: {
+        id: userId,
+      },
+      data: {
+        username: username,
+      },
     });
 
-    res.status(200).json({ message: 'Username updated', user: updatedUser });
+    res.status(200).json(updatedUser);
   } catch (error) {
     console.error('Error updating username:', error);
     res.status(500).json({ message: 'Failed to update username' });
   }
 });
+
+
 
 // export the route for use in server/index.ts
 export default  usersRoute;

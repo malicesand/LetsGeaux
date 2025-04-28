@@ -12,7 +12,8 @@ import {
   FormControlLabel,
   FormLabel,
   Box,
-  Stack
+  Stack,
+  TextField
 } from '@mui/material';
 import ImageUpload from './ImageUpload';
 import { useUser } from './UserContext';
@@ -27,6 +28,9 @@ const Profile: React.FC = () => {
 
   const [interests, setInterests] = useState([]);
   const [selectedInterest, setSelectedInterest] = useState('');
+  const [editedUsername, setEditedUsername] = useState(user.username);
+  const [isSavingUsername, setIsSavingUsername] = useState(false);
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
 
   useEffect(() => {
     if (!contextUser?.id) {
@@ -64,7 +68,21 @@ const Profile: React.FC = () => {
       console.error('Error updating interest:', error);
     }
   };
+  const handleUpdateUsername = async () => {
+    try {
+      await axios.patch('/api/users/update-username', {
+        contextUserId: contextUser.id,
+        username: editedUsername,
+      });
 
+
+      setLocalUser((prev: any) => ({ ...prev, username: editedUsername }));
+    } catch (error) {
+      console.error('Error updating username:', error);
+    } finally {
+      setIsSavingUsername(false);
+    }
+  };
   const handleUploadWidget = () => {
     // @ts-ignore
     const widget = window.cloudinary.createUploadWidget(
@@ -100,7 +118,50 @@ const Profile: React.FC = () => {
 
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Typography variant="h3" gutterBottom align="center">{user.username}</Typography>
+      {isEditingUsername ? (
+        <Stack direction="row" spacing={1} alignItems="center">
+          <TextField
+            variant="outlined"
+            value={editedUsername}
+            onChange={(e) => setEditedUsername(e.target.value)}
+            size="small"
+            sx={{ width: 200 }}
+            InputProps={{
+              sx: { fontSize: '1.5rem', fontWeight: 'bold', textAlign: 'center' }
+            }}
+          />
+          <Button
+            variant="contained"
+            size="small"
+            onClick={async () => {
+              await handleUpdateUsername();
+              setIsEditingUsername(false);
+            }}
+            disabled={isSavingUsername || editedUsername === contextUser.username}
+          >
+            {isSavingUsername ? 'Saving...' : 'Save'}
+          </Button>
+        </Stack>
+      ) : (
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Typography variant="h3" gutterBottom align="center">
+            {contextUser.username}
+          </Typography>
+          <Button
+            variant="text"
+            size="small"
+            onClick={() => setIsEditingUsername(true)}
+            sx={{
+              minWidth: 0,
+              padding: 0,
+              color: 'black',
+              '&:hover': { color: 'primary.main' },
+            }}
+          >
+            <PiPencilBold size={20} />
+          </Button>
+        </Stack>
+      )}
 
       <Stack spacing={2} alignItems="center">
         {/* Wrapper box to position the edit icon */}
