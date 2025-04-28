@@ -42,6 +42,8 @@ const Post: React.FC<PostProps> = ({user, currentPost, getAllPosts, setEditableP
   const [hasLiked, setHasLiked] = useState(false);
   const [commentEditMode, setCommentEditMode] = useState(false);
   const [editableComment, setEditableComment] = useState(null);
+  const [isCredentialed, setIsCredentialed] = useState(false);
+  const [canEdit, setCanEdit] =useState(false);
 
 const getAllComments = () => {
   axios.get(`/api/comments/${+id}`).then(({data}) => {
@@ -63,10 +65,18 @@ const checkVoteStatus = async () => {
   }
   }
 
-
+useEffect(() => {
+if (isCredentialed && !postEditMode) {
+  // not sure why, but I had to reverse the canEdits to have the correct effect...
+  setCanEdit(false);
+} else {
+  setCanEdit(true);
+}
+}, [isCredentialed, postEditMode])
 
 
 useEffect(() => {
+  postCredentialCheck();
   checkVoteStatus();
   getAllComments();
 }, []);
@@ -82,6 +92,20 @@ const handleEditClick = () => {
   setEditablePost(currentPost);
   setPostEditMode(true);
 }
+
+
+const postCredentialCheck = () => {
+  axios.get(`/api/posts/${currentPost.id}/${user.id}`).then(({data}) => {
+    if (data) {
+      setIsCredentialed(true);
+    } else {
+      setIsCredentialed(false);
+    }
+  }).catch((err) => {
+    console.error('unable to check Credentials', err);
+  });
+}
+
 
 
 
@@ -143,21 +167,17 @@ const deletePost = () => {
     // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!!
     <Container>
       <Box sx={{ border: "4px solid black", borderRadius: "4", p: 2, mb: "8px" }}>
-        <Button
-        title="delete post"
-        sx={{ borderWidth: 4, color: 'black', p: '6px' }}
-        onClick={deletePost}><PiBombFill /></Button>
         <Typography variant='h3'>{currentPost.title}</Typography>
       <Typography> {body}</Typography>
       <Typography>By: {postName}</Typography>
       <Typography>Likes: {currentPost.likes}</Typography>
       {!hasLiked
        ? (
-         <Button title="Like this post" sx={{ borderWidth: 4, color: 'black', p: '6px', marginRight: "4px"}} onClick={handleVoteClick} ><PiHandHeartFill /></Button>
-      ) : (
-        <Button title="remove like" sx={{ borderWidth: 4, color: 'black', p: '6px', marginRight: "4px"}}  onClick={handleVoteDeleteClick}><PiHandPalmFill /></Button>
-        // null
-      )}
+         <Button title="Like this post" sx={{ borderWidth: 4, color: 'black', p: '6px', marginRight: "4px"}} onClick={handleVoteClick} >{currentPost.likes}<PiHandHeartFill /></Button>
+        ) : (
+          <Button title="remove like" sx={{ borderWidth: 4, color: 'black', p: '6px', marginRight: "4px"}}  onClick={handleVoteDeleteClick}>{currentPost.likes}<PiHandPalmFill /></Button>
+          // null
+        )}
       <Button sx={{ borderWidth: 4, color: 'black' , p: '6px', marginRight: "4px"}}  onClick={startComments}>see comments</Button>
       {isCommenting ? (
         <>
@@ -168,6 +188,8 @@ const deletePost = () => {
           setCommentEditMode={setCommentEditMode}
           editableComment={editableComment}
           commentEditMode={commentEditMode}
+          postCredentialCheck={postCredentialCheck}
+
           />
           <Comments
           user={user}
@@ -180,16 +202,24 @@ const deletePost = () => {
           setCommentEditMode={setCommentEditMode}
           commentEditMode={commentEditMode}
           />
-          {/* <Button sx={{ borderWidth: 4, color: 'black' }}  onClick={endComments}>Close window</Button> */}
         </>
       )
       : (
         null
       )}
-      {postEditMode ? (
+      {canEdit ? (
         null
       ) : (
         <Button  title="Edit this post"sx={{ borderWidth: 4, color: 'black', p: '6px', marginRight: "4px"}}  onClick={handleEditClick}><PiNotePencilFill /></Button>
+      )}
+      {isCredentialed ? (
+
+        <Button
+        title="delete post"
+        sx={{ borderWidth: 4, color: 'black', p: '6px' }}
+        onClick={deletePost}><PiBombFill /></Button>
+      ) : (
+        null
       )}
       </Box>
     </Container>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -24,9 +23,9 @@ import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx';
 import { useParams, useLocation } from 'react-router-dom';
 import dayjs, { Dayjs } from 'dayjs';
-import { PiPencilLine } from "react-icons/pi";
-import { PiTrash } from "react-icons/pi";
-import { PiPlusBold } from "react-icons/pi";
+import { PiPencilLine } from 'react-icons/pi';
+import { PiTrash } from 'react-icons/pi';
+import { PiPlusBold } from 'react-icons/pi';
 import { useSnackbar } from 'notistack';
 
 import Calendar from './Calendar';
@@ -48,7 +47,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   const [error, setError] = useState<string>('');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
-const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const location = useLocation();
   const {
     partyId,
@@ -59,54 +58,55 @@ const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
-
   //delete confirmation state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedItineraryId, setSelectedItineraryId] = useState<number | null>(null);
-// Helper function to get range of Dayjs dates
-const getDateRange = (start: Dayjs, end: Dayjs): Date[] => {
-  const result: Date[] = [];
-  let current = start;
-  while (current.isSameOrBefore(end, 'day')) {
-    result.push(current.toDate()); // Keep selectedDates as Date[]
-    current = current.add(1, 'day');
-  }
-  return result;
-};
-
-// for loading and restoring date when going back to calendar page after previously pickking days
-useEffect(() => {
-  if (location.state) {
-    if (location.state.begin && location.state.end) {
-      const begin = dayjs(location.state.begin);
-      const end = dayjs(location.state.end);
-      setStartDate(begin);
-      setEndDate(end);
-      setSelectedDates(getDateRange(begin, end));
-    } else if (location.state.selectedDates?.length > 0) {
-      const converted = location.state.selectedDates.map((d: string) =>
-        dayjs(d).toDate()
-      );
-      setSelectedDates(converted);
-      setStartDate(dayjs(converted[0]));
-      setEndDate(dayjs(converted[converted.length - 1]));
+  const [selectedItineraryId, setSelectedItineraryId] = useState<number | null>(
+    null
+  );
+  // Helper function to get range of Dayjs dates
+  const getDateRange = (start: Dayjs, end: Dayjs): Date[] => {
+    const result: Date[] = [];
+    let current = start;
+    while (current.isSameOrBefore(end, 'day')) {
+      result.push(current.toDate()); // Keep selectedDates as Date[]
+      current = current.add(1, 'day');
     }
-  }
-}, []);
+    return result;
+  };
 
-useEffect(() => {
-  if (startDate && endDate) {
-    setSelectedDates(getDateRange(startDate, endDate));
-  }
-}, [startDate, endDate]);
-//used then dates are updated
-useEffect(() => {
-  if (passedName && !editingItinerary) {
-    setItineraryName(passedName);
-  }
-}, [passedName, editingItinerary]);
+  // for loading and restoring date when going back to calendar page after previously pickking days
+  useEffect(() => {
+    if (location.state) {
+      if (location.state.begin && location.state.end) {
+        const begin = dayjs(location.state.begin);
+        const end = dayjs(location.state.end);
+        setStartDate(begin);
+        setEndDate(end);
+        setSelectedDates(getDateRange(begin, end));
+      } else if (location.state.selectedDates?.length > 0) {
+        const converted = location.state.selectedDates.map((d: string) =>
+          dayjs(d).toDate()
+        );
+        setSelectedDates(converted);
+        setStartDate(dayjs(converted[0]));
+        setEndDate(dayjs(converted[converted.length - 1]));
+      }
+    }
+  }, []);
 
-//fetch all itineraries
+  useEffect(() => {
+    if (startDate && endDate) {
+      setSelectedDates(getDateRange(startDate, endDate));
+    }
+  }, [startDate, endDate]);
+  //used then dates are updated
+  useEffect(() => {
+    if (passedName && !editingItinerary) {
+      setItineraryName(passedName);
+    }
+  }, [passedName, editingItinerary]);
+
+  //fetch all itineraries
   useEffect(() => {
     const fetchItineraries = async () => {
       try {
@@ -119,33 +119,32 @@ useEffect(() => {
     fetchItineraries();
   }, []);
 
+  // when edit is clicked form will update with existing information
+  const handleEditClick = (itinerary: any) => {
+    setEditingItinerary(itinerary);
+    setItineraryName(itinerary.name);
+    setItineraryNotes(itinerary.notes);
 
-// when edit is clicked form will update with existing information
-const handleEditClick = (itinerary: any) => {
-  setEditingItinerary(itinerary);
-  setItineraryName(itinerary.name);
-  setItineraryNotes(itinerary.notes);
+    const begin: Dayjs = dayjs(itinerary.begin);
+    const end: Dayjs = dayjs(itinerary.end);
 
-  const begin: Dayjs = dayjs(itinerary.begin);
-  const end: Dayjs = dayjs(itinerary.end);
+    setStartDate(begin);
+    setEndDate(end);
 
-  setStartDate(begin);
-  setEndDate(end);
+    // Create a list of Date objects between start and end
+    const range: Date[] = [];
+    let current = begin;
+    while (current.isSameOrBefore(end, 'day')) {
+      range.push(current.toDate()); // convert Dayjs to Date for selectedDates
+      current = current.add(1, 'day');
+    }
+    setSelectedDates(range);
 
-  // Create a list of Date objects between start and end
-  const range: Date[] = [];
-  let current = begin;
-  while (current.isSameOrBefore(end, 'day')) {
-    range.push(current.toDate()); // convert Dayjs to Date for selectedDates
-    current = current.add(1, 'day');
-  }
-  setSelectedDates(range);
+    setShowCreateForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-  setShowCreateForm(true);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-// handle edits to itinerary
+  // handle edits to itinerary
   const handleEditSubmit = async () => {
     if (!itineraryName || selectedDates.length === 0) {
       setError('Please provide a name and select dates');
@@ -170,13 +169,13 @@ const handleEditClick = (itinerary: any) => {
         prev.map(it => (it.id === editingItinerary.id ? res.data : it))
       );
       resetForm();
-enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
-
+      enqueueSnackbar('Itinerary created successfully!', {
+        variant: 'success'
+      });
     } catch (err) {
       setError('Error updating itinerary');
     }
   };
-
 
   //create new itinerary
   const handleSubmit = async () => {
@@ -204,29 +203,32 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
         }
       ]);
       resetForm();
-enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
-
+      enqueueSnackbar('Itinerary created successfully!', {
+        variant: 'success'
+      });
     } catch (err) {
       setError('Error creating itinerary');
     }
   };
-//handles deleting itinerary
+  //handles deleting itinerary
   const handleDelete = async () => {
     if (selectedItineraryId === null) return;
-  
+
     try {
       await axios.delete(`/api/itinerary/${selectedItineraryId}`);
       setItineraries(prev => prev.filter(it => it.id !== selectedItineraryId));
       resetForm();
       setDeleteDialogOpen(false);
       setSelectedItineraryId(null);
-      enqueueSnackbar('Itinerary deleted successfully!', { variant: 'success' });
+      enqueueSnackbar('Itinerary deleted successfully!', {
+        variant: 'success'
+      });
     } catch (err) {
       console.error('Error deleting itinerary:', err);
     }
   };
-  
-// clears form and reset after info has been saved or updated
+
+  // clears form and reset after info has been saved or updated
   const resetForm = () => {
     setEditingItinerary(null);
     setItineraryName('');
@@ -236,7 +238,7 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
     setSelectedDates([]);
     setShowCreateForm(false);
   };
-//function to add activities
+  //function to add activities
   function addActivityToItinerary(
     itineraryId: string,
     activityData: any
@@ -256,12 +258,11 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
       <Tooltip title={showCreateForm ? 'Hide Form' : 'Add New Itinerary'}>
         <IconButton
           onClick={() => setShowCreateForm(prev => !prev)}
-          sx={{ mb: 2,
-          
-            backgroundColor: '#A684FF',
-             color:'black',
-            '&:hover': { backgroundColor: '#8257E5' },
-          
+          sx={{
+            mb: 2,
+            backgroundColor: '#C2A4F8',
+            color: 'black',
+            '&:hover': { backgroundColor: '#8257E5' }
           }}
         >
           <PiPlusBold />
@@ -271,55 +272,51 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
       <Collapse in={showCreateForm}>
         <Box
           sx={{
-            backgroundColor: '#A684FF',
+            backgroundColor: '#C2A4F8',
             padding: 2,
             borderRadius: 2,
             mb: 4
           }}
         >
           <Calendar
-  startDate={startDate}
-  endDate={endDate}
-  setStartDate={setStartDate}
-  setEndDate={setEndDate}
-  setSelectedDates={setSelectedDates}
-/>
-
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
+            setSelectedDates={setSelectedDates}
+          />
 
           <Typography variant='h6' mb={2} sx={{ textAlign: 'center' }}>
             {editingItinerary ? 'Edit Itinerary' : 'Create a New Itinerary'}
           </Typography>
           <Box sx={{ maxWidth: 400, margin: '0 auto' }}>
-          <TextField
-            label='Your Itinerary'
-            fullWidth
-            value={itineraryName}
-            onChange={e => setItineraryName(e.target.value)}
-            sx={{ mb: 2 }}
-            required
-            InputLabelProps={{
-              sx: {
-                top: -6,
-              }
-            }}
-
-  
-          />
-          <TextField
-            label='Itinerary Notes'
-            fullWidth
-            value={itineraryNotes}
-            onChange={e => setItineraryNotes(e.target.value)}
-            multiline
-            rows={4}
-            sx={{ mb: 2 }}
-            InputLabelProps={{
-              sx: {
-                top: -6,
-              }
-            }}
-  
-          />
+            <TextField
+              label='Your Itinerary'
+              fullWidth
+              value={itineraryName}
+              onChange={e => setItineraryName(e.target.value)}
+              sx={{ mb: 2 }}
+              required
+              InputLabelProps={{
+                sx: {
+                  top: -6
+                }
+              }}
+            />
+            <TextField
+              label='Itinerary Notes'
+              fullWidth
+              value={itineraryNotes}
+              onChange={e => setItineraryNotes(e.target.value)}
+              multiline
+              rows={4}
+              sx={{ mb: 2 }}
+              InputLabelProps={{
+                sx: {
+                  top: -6
+                }
+              }}
+            />
           </Box>
           <Box display='flex' justifyContent='center' mt={2}>
             <Button
@@ -330,7 +327,7 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
               {editingItinerary ? 'Save Changes' : 'Add Itinerary'}
             </Button>
             {editingItinerary && (
-              <Button onClick={resetForm} sx={{ ml: 2, color: 'black'}}>
+              <Button onClick={resetForm} sx={{ ml: 2, color: 'black' }}>
                 Cancel
               </Button>
             )}
@@ -338,59 +335,83 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
         </Box>
       </Collapse>
       {itineraries.length === 0 && !showCreateForm && (
-  <Box mt={4}>
-    <Typography variant="h6" align="center" color="primary">
-      Start planning your trip!
-    </Typography>
-    <Calendar
-      startDate={startDate}
-      endDate={endDate}
-      setStartDate={setStartDate}
-      setEndDate={setEndDate}
-      setSelectedDates={setSelectedDates}
-    />
-    <Box display="flex" justifyContent="center" mt={2}>
-      <Button variant="contained" onClick={() => setShowCreateForm(true)}>
-        Continue
-      </Button>
-    </Box>
-  </Box>
-)}
-<Typography variant='h5' sx={{ mt: 3, mb: 2, textAlign: 'center' }}>Itineraries</Typography>
+        <Box mt={4}>
+          <Typography variant='h6' align='center' color='primary'>
+            Start planning your trip!
+          </Typography>
+          <Calendar
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
+            setSelectedDates={setSelectedDates}
+          />
+          <Box display='flex' justifyContent='center' mt={2}>
+            <Button variant='contained' onClick={() => setShowCreateForm(true)}>
+              Continue
+            </Button>
+          </Box>
+        </Box>
+      )}
+      <Typography variant='h5' sx={{ mt: 3, mb: 2, textAlign: 'center' }}>
+        Itineraries
+      </Typography>
       <Box
-           my={2}
-  sx={{
-    backgroundColor: '#A684FF',
-    padding: '16px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-           }}
+        my={2}
+        sx={{
+          backgroundColor: '#C2A4F8',
+          padding: '16px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}
       >
-        
         {itineraries.map((itinerary, index) => (
           <Card
-          key={index}
-          sx={{
-            position: 'relative',
-            mb: 2,
-            backgroundColor: '#A684FF',
-            borderRadius: '8px',
-            padding: 2,
-            boxShadow: 'none',
-            border: '4px solid black',
-          }}
+            key={index}
+            sx={{
+              position: 'relative',
+              mb: 2,
+              backgroundColor: '#C2A4F8',
+              borderRadius: '24px',
+              padding: 2,
+              boxShadow: 'none',
+              border: '4px solid black',
+              fontWeight: 700
+            }}
           >
             <CardContent>
               <Typography variant='h6'>{itinerary.name}</Typography>
+              {itinerary.partyName && (
+                <Typography variant='body2' color='secondary'>
+                  Party: {itinerary.partyName}
+                </Typography>
+              )}
+
               <Typography variant='body1'>{itinerary.notes}</Typography>
               <Typography variant='body2'>
-  Begin: {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY h:mm A')}
-</Typography>
-<Typography variant='body2'>
-  End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY h:mm A')}
-</Typography>
+                Begin:{' '}
+                {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY h:mm A')}
+              </Typography>
+              <Typography variant='body2'>
+                End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY h:mm A')}
+              </Typography>
 
-              <Typography variant='caption' color='secondary'>
+              <Typography
+                variant='caption'
+                color='secondary'
+                sx={{
+                  display: 'inline-block',
+                  backgroundColor: 'primary.main',
+                  color: 'black',
+                  px: 2,
+                  py: 1,
+                  borderRadius: '9999px',
+                  fontWeight: 700,
+                  fontSize: '0.75rem',
+                  textAlign: 'center',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                }}
+              >
                 View Code: {itinerary.viewCode}
               </Typography>
               {itinerary.message && (
@@ -403,22 +424,23 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
                 sx={{ position: 'absolute', top: 8, right: 8, color: 'black' }}
               >
                 <PiPencilLine />
-                {/* <EditIcon /> */}
               </IconButton>
               {user.id === itinerary.creatorId && (
-  <IconButton
-    onClick={() => {
-      setSelectedItineraryId(itinerary.id);
-      setDeleteDialogOpen(true);
-    }}
-    sx={{ position: 'absolute', bottom: 8, right: 8, color: 'black' }}
-  >
-    <PiTrash />
-
-    {/* <DeleteIcon /> */}
-  </IconButton>
-)}
-
+                <IconButton
+                  onClick={() => {
+                    setSelectedItineraryId(itinerary.id);
+                    setDeleteDialogOpen(true);
+                  }}
+                  sx={{
+                    position: 'absolute',
+                    bottom: 8,
+                    right: 8,
+                    color: 'black'
+                  }}
+                >
+                  <PiTrash />
+                </IconButton>
+              )}
             </CardActions>
             {user && (
               <Activity
@@ -433,25 +455,28 @@ enqueueSnackbar('Itinerary created successfully!', { variant: 'success' });
           </Card>
         ))}
       </Box>
-      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-  <DialogTitle>Delete Itinerary?</DialogTitle>
-  <DialogContent>
-  <Typography>
-  Are you sure you want to delete this itinerary?
-</Typography>
-
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={() => setDeleteDialogOpen(false)} sx={{ color: 'black' }}>
-      Cancel
-    </Button>
-    <Button onClick={handleDelete} sx={{ color: 'black' }}>
-      Delete
-    </Button>
-  </DialogActions>
-</Dialog>
-
-
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Delete Itinerary?</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this itinerary?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            sx={{ color: 'black' }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} sx={{ color: 'black' }}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

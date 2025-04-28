@@ -15,7 +15,6 @@ import { PiHandHeartFill } from "react-icons/pi";
 import { PiHandPalmFill } from "react-icons/pi";
 import { PiBombFill } from "react-icons/pi";
 import { PiXFill } from "react-icons/pi";
-
 import { PiNotePencilFill } from "react-icons/pi";
 import { user } from '../../../../types/models.ts';
 
@@ -36,6 +35,8 @@ const Comment: React.FC<CommentProps> = ({user, getAllComments, currentComment, 
 
   const [hasLiked, setHasLiked] = useState(false);
   const [currentLikes,setCurrentLikes] = useState(currentComment.likes);
+  const [isCredentialed, setIsCredentialed] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
 
   const handleVoteDeleteClick = () => {
     const { id: userId } = user;
@@ -53,10 +54,22 @@ const Comment: React.FC<CommentProps> = ({user, getAllComments, currentComment, 
       setHasLiked(false);
       getAllComments();
     }).catch((err) => console.error('unable to delete', err))
-  
+
   }
-  
+
+
 useEffect(() => {
+  if (isCredentialed && !commentEditMode) {
+    setCanEdit(false);
+  } else {
+    setCanEdit(true);
+  }
+});
+
+
+
+  useEffect(() => {
+  commentCredentialCheck();
   checkVoteStatus();
   getAllComments();
 }, []);
@@ -64,7 +77,15 @@ useEffect(() => {
 const userId = user.id
 
 
-
+const commentCredentialCheck = () => {
+  axios.get(`/api/comments/${currentComment.id}/${user.id}`).then(({data}) => {
+    if (data) {
+      setIsCredentialed(true);
+    } else {
+      setIsCredentialed(false);
+    }
+  }).catch((err) => console.error('unable to check credentials', err));
+}
 
 
   const deleteComment = () => {
@@ -76,9 +97,9 @@ const userId = user.id
 
   const checkVoteStatus = async () => {
     try {
-   
+
       const ballotChecker = await axios.get(`/api/vote/${userId}/${currentComment.id}/comment`)
-      
+
         if (ballotChecker.data !== "no match") {
           setHasLiked(true);
          } else {
@@ -88,11 +109,10 @@ const userId = user.id
        console.error('failed to check votes', err)
      }
      }
-   
+
      const handleEditClick = () => {
-      console.log('handling edit')
-      setEditableComment(currentComment);
-      setCommentEditMode(true);
+        setEditableComment(currentComment);
+        setCommentEditMode(true);
     }
 
 
@@ -134,20 +154,20 @@ const userId = user.id
         <Typography>By: {postName}</Typography>
         <Typography>Likes: {currentComment.likes}</Typography>
         {hasLiked ? (
-          <Button title="Remove like" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={handleVoteDeleteClick}><PiHandPalmFill /></Button>
+          <Button title="Remove like" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={handleVoteDeleteClick}>{currentComment.likes}<PiHandPalmFill /></Button>
         ) : (
-          <Button title="Like comment" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={handleVoteClick} ><PiHandHeartFill /></Button>
+          <Button title="Like comment" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={handleVoteClick}>{currentComment.likes}<PiHandHeartFill /></Button>
 
         )}
-        <Button title="Delete comment" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={deleteComment} ><PiBombFill /></Button>
-       {commentEditMode ? (
-        // <Button title="Cancel edit" sx={{ borderWidth: 4, color: "black" }} onClick={() => {
-        //   setCommentEditMode(false);
-          
-        // }}><PiXFill /></Button>
-        null
-       ) : (
-         <Button title="Edit this comment" sx={{ borderWidth: 4, color: 'black' }}  onClick={handleEditClick}>< PiNotePencilFill/></Button>
+       {canEdit ? (
+         null
+        ) : (
+          <Button title="Edit this comment" sx={{ borderWidth: 4, color: 'black' }}  onClick={handleEditClick}>< PiNotePencilFill/></Button>
+        )}
+        {isCredentialed ? (
+          <Button title="Delete comment" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={deleteComment} ><PiBombFill /></Button>
+        ) : (
+          null
         )}
 
     </Box>

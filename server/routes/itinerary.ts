@@ -242,5 +242,41 @@ itineraryRoute.get('/party/:partyId', async (req: any, res: any) => {
   }
 });
 
+/*// GET all itineraries for the logged-in user (creator or party member)
+itineraryRoute.get('/', async (req: any, res: any) => {
+  const userId = req.user.id;
+
+  try {
+    // Find all party IDs the user is in
+    const userParties = await prisma.userParty.findMany({
+      where: { userId },
+      select: { partyId: true },
+    });
+
+    const partyIds = userParties.map(p => p.partyId);
+
+    // Fetch itineraries created by user OR attached to a party the user is in
+    const itineraries = await prisma.itinerary.findMany({
+      where: {
+        OR: [
+          { creatorId: userId },
+          { partyId: { in: partyIds } },
+        ],
+      },
+      include: {
+        party: {
+          select: { name: true },
+        },
+      },
+    });
+
+    res.status(200).json(itineraries);
+  } catch (error) {
+    console.error('Error fetching itineraries:', error);
+    res.status(500).json({ error: 'Error fetching itineraries' });
+  }
+});
+*/
+
 
 export default itineraryRoute;
