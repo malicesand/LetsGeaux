@@ -295,7 +295,8 @@ const Activity: React.FC<Props> = ({
                   margin='normal'
                   required
                   InputLabelProps={{
-                    sx: {'&.Mui-focused': {
+                    sx: {
+                      '&.Mui-focused': {
                         color: 'black'
                       },
 
@@ -331,12 +332,13 @@ const Activity: React.FC<Props> = ({
                       margin: 'normal',
                       required: true,
                       InputLabelProps: {
-                        sx: { 
+                        sx: {
                           '&.Mui-focused': {
-                        color: 'black'
-                      },
+                            color: 'black'
+                          },
 
-                          top: -6 }
+                          top: -6
+                        }
                       }
                     }
                   }}
@@ -374,12 +376,13 @@ const Activity: React.FC<Props> = ({
                       margin: 'normal',
                       required: true,
                       InputLabelProps: {
-                        sx: { 
+                        sx: {
                           '&.Mui-focused': {
-                        color: 'black'
-                      },
+                            color: 'black'
+                          },
 
-                          top: -6 }
+                          top: -6
+                        }
                       }
                     }
                   }}
@@ -508,20 +511,20 @@ const Activity: React.FC<Props> = ({
                     position: 'relative'
                   }}
                 >
-                   {activity.image && (
-    <Box
-      component="img"
-      src={activity.image}
-      alt={activity.name}
-      sx={{
-        width: '100%',
-        height: 200,
-        objectFit: 'cover',
-        borderRadius: '16px',
-        mb: 2,
-      }}
-    />
-  )}
+                  {activity.image && (
+                    <Box
+                      component='img'
+                      src={activity.image}
+                      alt={activity.name}
+                      sx={{
+                        width: '100%',
+                        height: 200,
+                        objectFit: 'cover',
+                        borderRadius: '16px',
+                        mb: 2
+                      }}
+                    />
+                  )}
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography variant='h6'>{activity.name}</Typography>
                     <Typography>{activity.description}</Typography>
