@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import api from './api';
 import { TextField, Button, Stack, Box } from '@mui/material';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-
-interface BudgetFormProps {
+ interface BudgetFormProps {
   selectedItineraryId: number | null;
 
  //callback that the parent can supply to refresh data after a budget is added
