@@ -8,7 +8,12 @@ import {
   CardContent,
   CardActions,
   IconButton,
-  Tooltip
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  Backdrop
 } from '@mui/material';
 import axios from 'axios';
 import { user, itinerary } from '../../../../types/models.ts';
@@ -17,7 +22,7 @@ import AddItinerary from './AddItinerary.tsx';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { PiPencil, PiTrashDuotone } from 'react-icons/pi';
-// import { useSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 
 interface ItineraryProps {
   user: user; 
@@ -33,11 +38,13 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
   const [itineraryName, setItineraryName] = useState('');
   const [itineraryNotes, setItineraryNotes] = useState('');
   const [itinerary, setItinerary] = useState<itinerary | null>(null);
-
+  const { enqueueSnackbar } = useSnackbar();
   const [editingItinerary, setEditingItinerary] = useState<any | null>(null);
-  // const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>('');
   // const location = useLocation();
-  
+   //delete confirmation state
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   //* Add Activity to Itinerary *//
   const addActivityToItinerary = async ( itineraryId: string, activityData: any) => {
     try {
@@ -83,18 +90,14 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
 
   // * Handle delete of an itinerary, creator only *//
   const handleDelete = async (itineraryId: number, creatorId: number) => {
-    if (user.id !== creatorId) {
-      alert('Only the creator can delete this itinerary.');
-      return;
-    }
-    const confirmDelete = window.confirm(
-      'Are you sure you want to delete this itinerary?'
-    );
-    if (!confirmDelete) return;
+    setDeleteDialogOpen(true);
     try {
       const response = await axios.delete(`/api/itinerary/${itineraryId}`);
       console.log(`deleted ${itineraryId}`)
-      setItinerary(null)
+      setDeleteDialogOpen(false);
+      setItinerary(null);
+      enqueueSnackbar('Itinerary deleted successfully!', {
+        variant: 'success'})
     } catch (err) {
       console.error('Error deleting itinerary:', err);
     }
@@ -129,6 +132,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
                   <IconButton
                     onClick={() =>
                       handleDelete(itinerary.id, itinerary.creatorId)
+                      
                     }
                   >
                     <PiTrashDuotone/>
@@ -162,6 +166,30 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
           </>
         )}
       </Box>
+      <>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Delete Itinerary?</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this itinerary?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            sx={{ color: 'black' }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={() => handleDelete(itinerary.id, user.id)} sx={{ color: 'black' }}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      </>
     </Container>
   );
 };
