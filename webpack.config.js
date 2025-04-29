@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackBar = require('webpackbar');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -51,6 +52,10 @@ module.exports = {
       path: path.resolve(__dirname, 'dist'),
       filename: 'index.html',
       template: 'index.ejs'
-    })
+    }),
+    new FaviconsWebpackPlugin({
+      logo: path.resolve(__dirname, 'src/client/theme/cropedLogo.png'),
+      inject: true, 
+    }),
   ]
 };
