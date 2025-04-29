@@ -247,7 +247,112 @@ const Activity: React.FC<Props> = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Container>
-        <Box mb={4}>
+       
+        {/* Conditional if Activities Exist */}
+        {activities.length ? (
+          <>
+            <Box>
+              <Typography variant='h5' gutterBottom>
+                Activities List
+              </Typography>
+              <Box>
+                {activities.map(activity => (
+                  <Box key={activity.id} mb={2}>
+                    <Card
+                      sx={{
+                        backgroundColor: '#A684FF',
+                        padding: '16px',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                        position: 'relative'
+                      }}
+                    >
+                      {activity.image && (
+                        <Box
+                          component='img'
+                          src={activity.image}
+                          alt={activity.name}
+                          sx={{
+                            width: '100%',
+                            height: 200,
+                            objectFit: 'cover',
+                            borderRadius: '16px',
+                            mb: 2
+                          }}
+                        />
+                      )}
+                      <CardContent sx={{ flexGrow: 1 }}>
+                        <Typography variant='h6'>{activity.name}</Typography>
+                        <Typography>{activity.description}</Typography>
+                        <Typography>{activity.time}</Typography>
+                        <Typography>{activity.date}</Typography>
+                        <Typography>{activity.location}</Typography>
+                        <Typography>{activity.phone}</Typography>
+                        <Typography>{activity.address}</Typography>
+                      </CardContent>
+                      <CardActions>
+                        <Tooltip title='Edit Activity'>
+                          <IconButton
+                            onClick={() => handleUpdateClick(activity)}
+                            // color='secondary'
+                            sx={{ 
+                              position: 'absolute',
+                              bottom: 8,
+                              right: 40,
+                              color: 'black' 
+                            }}
+                          >
+                            <PiPencil/>
+                          </IconButton>
+                        </Tooltip>
+                        {user.id === itineraryCreatorId && (
+                          <Tooltip title='Delete Activity'>
+                            <IconButton
+                            onClick={() => handleOpenDeleteDialog(activity)}
+                            sx={{
+                              position: 'absolute',
+                              bottom: 8,
+                              right: 8,
+                              color: 'black'
+                            }}
+                          >
+                            <PiTrash />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </CardActions>
+                    </Card>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+       
+          <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+              <DialogContent>
+                <Typography>
+                  Are you sure you want to delete{' '}
+                  <strong>{activityToDelete?.name}</strong>?
+                </Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseDeleteDialog} sx={{ color: 'black' }}>
+                  Cancel
+                </Button>
+                <Button onClick={handleConfirmDelete} sx={{ color: 'black' }}>
+                  Delete
+                </Button>
+            </DialogActions>
+          </Dialog>
+        </>
+         ) : (
+          <>
+            <Typography variant='body1' sx={{ mt: 2}}>
+              Click the + below to add activities to this itinerary.
+            </Typography>
+          </>
+        )}
+         <Box mb={4}>
           {/* Add Activity Button */}
           <Box mt={4} display='flex' justifyContent='center'>
             <Tooltip title='Add New Activity' arrow>
@@ -264,7 +369,7 @@ const Activity: React.FC<Props> = ({
               </Fab>
             </Tooltip>
           </Box>
-          {/* Modal for adding/editing activity */}
+          {/* Modal for adding activity */}
           <Dialog
            open={open} 
            onClose={handleClose}
@@ -509,114 +614,6 @@ const Activity: React.FC<Props> = ({
           <Snackbar open autoHideDuration={3000}>
             <Alert severity='error'>{error}</Alert>
           </Snackbar>
-        )}
-        {/* {message && (
-          <Snackbar open autoHideDuration={3000}>
-            <Alert severity='success'>{message}</Alert>
-          </Snackbar>
-        )} */}
-        {activities.length ? (
-<>
-          <Box>
-            <Typography variant='h5' gutterBottom>
-              Activities List
-            </Typography>
-            <Box>
-              {activities.map(activity => (
-                <Box key={activity.id} mb={2}>
-                  <Card
-                    sx={{
-                      backgroundColor: '#A684FF',
-                      padding: '16px',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                      position: 'relative'
-                    }}
-                  >
-                    {activity.image && (
-                      <Box
-                        component='img'
-                        src={activity.image}
-                        alt={activity.name}
-                        sx={{
-                          width: '100%',
-                          height: 200,
-                          objectFit: 'cover',
-                          borderRadius: '16px',
-                          mb: 2
-                        }}
-                      />
-                    )}
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography variant='h6'>{activity.name}</Typography>
-                      <Typography>{activity.description}</Typography>
-                      <Typography>{activity.time}</Typography>
-                      <Typography>{activity.date}</Typography>
-                      <Typography>{activity.location}</Typography>
-                      <Typography>{activity.phone}</Typography>
-                      <Typography>{activity.address}</Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Tooltip title='Edit Activity'>
-                        <IconButton
-                          onClick={() => handleUpdateClick(activity)}
-                          // color='secondary'
-                          sx={{ 
-                            position: 'absolute',
-                            bottom: 8,
-                            right: 40,
-                            color: 'black' 
-                          }}
-                        >
-                          <PiPencil/>
-                        </IconButton>
-                      </Tooltip>
-                      {user.id === itineraryCreatorId && (
-                        <Tooltip title='Delete Activity'>
-                          <IconButton
-                          onClick={() => handleOpenDeleteDialog(activity)}
-                          sx={{
-                            position: 'absolute',
-                            bottom: 8,
-                            right: 8,
-                            color: 'black'
-                          }}
-                        >
-                          <PiTrash />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </CardActions>
-                  </Card>
-                </Box>
-              ))}
-            </Box>
-          </Box>
-       
-        <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
-          <DialogTitle>Confirm Deletion</DialogTitle>
-            <DialogContent>
-              <Typography>
-                Are you sure you want to delete{' '}
-                <strong>{activityToDelete?.name}</strong>?
-              </Typography>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDeleteDialog} sx={{ color: 'black' }}>
-                Cancel
-              </Button>
-              <Button onClick={handleConfirmDelete} sx={{ color: 'black' }}>
-                Delete
-              </Button>
-          </DialogActions>
-        </Dialog>
-        </>
-         ) : (
-          <>
-            <Typography variant='body1' sx={{ mt: 2}}>
-              Click the + above to add activities to this itinerary.
-            </Typography>
-          </>
         )}
       </Container>
     </LocalizationProvider>
