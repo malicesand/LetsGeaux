@@ -25,8 +25,8 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
   const [emails, setEmails] = React.useState<string[]>([])
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [partySuccess, setPartySuccess] = useState(false);
-  const [partyName, setPartyName] = useState<string>(''); //? delete partyName const?
-  const [partyId, setPartyId] = useState<number>(null); //? delete partyId const?
+  const [partyName, setPartyName] = useState<string>(''); 
+  const [partyId, setPartyId] = useState<number>(null); 
 
   // * Input Modal: partyName and eVite * //
   const openModal = () => {
@@ -46,6 +46,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
       // onPartyCreated();
       setPartyId(id);
       setPartySuccess(true);
+      setTimeout(() => closeModal(), 2000)
       setTimeout(() => setPartySuccess(false), 10000)
       await addUserToParty(userId, id, partyName);
       onPartyCreated();

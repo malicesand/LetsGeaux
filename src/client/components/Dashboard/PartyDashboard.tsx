@@ -22,6 +22,7 @@ import ListItemText from '@mui/material/ListItemText';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import DialogActions from '@mui/material/DialogActions';
 import Checkbox from '@mui/material/Checkbox';
+import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
 import MessageBoard from './MessageBoard';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
@@ -43,7 +44,6 @@ type PartyMember = {
 };
 
 // TODO conditional on render so that only party members can access a dashboard
-// TODO delete a party if all members have left
 const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const theme = useTheme();
   const location = useLocation();
@@ -61,31 +61,47 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [emailLog, setEmailLog] = useState<string[]>([]);
   const [viewCode, setViewCode] = useState<string>('');
+  const [loading, setLoading] = useState(false);
   //* Manage Party Constants *//
   const [newName, setNewName] = useState<party['name']>('');
   const [membersToRemove, setMembersToRemove] = useState<user['id'][]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [leaveParty, setLeaveParty] = useState(false);
   const [renameOpen, setRenameOpen] = React.useState(false);
-  const [deleteColor, setDeleteColor] = useState('')
+  const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
+
   
   useEffect(() => {
-    console.log(userId)
     fetchViewCode(numericPartyId);
     getUsersForParty(numericPartyId);
     getEmailLog(partyId);
     // fetchItinerary(partyId)
   }, [numericPartyId]);
 
-  //* GET REQUESTS *//
+  // Key Down for Enter & Esc //
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLFormElement>,
+    confirmAction: () => void,
+    cancelAction: () => void
+  ) => {
+    console.log('pressed', e.key)
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      confirmAction();
+    }
+    console.log('pressed', e.key)
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      cancelAction();
+    }
+  };
 
+  // GET REQUESTS //
   //* Member List *//
   const getUsersForParty = async (partyId: number) => {
     try {
       const response = await axios.get(`/api/party/usersInParty/${partyId}`);
       const users = response.data;
-      // const avatars = users.map((user: user) => user.profilePic)
-      // const usernames = users.map((user: user) => user.username);
       const userObjects = users.map((user: user) => ({
         username: user.username,
         avatar: user.profilePic,
@@ -101,9 +117,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const fetchItinerary = async (partyId: string) => {
     console.log(`Fetching itinerary`);
     try {
-      const response = await axios.get(`/api/itinerary/party/${partyId}`);//postman verified
-      console.log(response.data)
-      
+      const response = await axios.get(`/api/itinerary/party/${partyId}`);
     } catch (error) {
       console.error(`Error occurred fetching party itinerary for party ${partyId}`)
     }
@@ -111,8 +125,6 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
 
   //* Get Itinerary View Code *//
   const fetchViewCode = async (numericPartyId: number) => {
-    // console.log('fetching view code')
-    // console.log(`numeric partyId @ useEffect ${numericPartyId}`)
     try {
       const response = await axios.get(`/api/itinerary/party/${numericPartyId}`);
       if (response.data?.viewCode) {
@@ -175,9 +187,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     }
   };
 
-  //* MANAGE PARTY *//
+  // MANAGE PARTY //
   const renameModal = () => {
-    console.log('click')
     setRenameOpen(true);
   }
   const closeRename  = () => {
@@ -186,22 +197,29 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
 
   //* Toggle member removal *//
   const toggleMember = (id: number) => {
-    setDeleteColor('purple')
     setMembersToRemove(prev =>
       prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
     );
   };
 
-  //* Final confirm handler for deleting *//
-  const handleConfirmActions = () => {
+  //* Party Management Confirmation *//
+  const handleConfirmActions = async () => {
+    setLoading(true);
     setRenameOpen(false);
     setConfirmOpen(false);
-    if (newName) renameParty(numericPartyId, newName);
-    if (membersToRemove.length) {
-      membersToRemove.map((member) => {
-        deleteMembers(member, numericPartyId)
-      })};
-    if (leaveParty) deleteMembers(userId, numericPartyId);
+    try {
+      if (newName) { await renameParty(numericPartyId, newName)};
+      if (membersToRemove.length) {
+        await Promise.all(
+          membersToRemove.map((member) => deleteMembers(member, numericPartyId))
+        );
+      }
+      if (leaveParty) { await deleteMembers(userId, numericPartyId)};
+    } catch (error) {
+      console.error('Error during party management actions:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   //*  Rename Party *//
@@ -217,7 +235,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const deleteMembers = async (memberId: number, partyId: number) => {
     console.log(`Deleting user${memberId} from party ${partyId}`);
     try {
-      const response = await axios.delete(`/api/party/${memberId}/${partyId}`);
+      await axios.delete(`/api/party/${memberId}/${partyId}`);
       console.log(`user: ${memberId} removed from party: ${partyId}`);
       if (memberId === userId){
         navigate('/')
@@ -240,7 +258,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     } catch (error) {
       console.error(`Error deleting party`, error)
     }
-  }
+  };
 
 
   return (
@@ -336,45 +354,54 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                     onClose={closeModal}
                     slotProps={{
                       paper: {
-                        sx: { width: 500, borderRadius: 12 },
-                        component: 'form'
+                        sx: { width: 500, borderRadius: 12 },  
                       }
                     }}
                   >
-                    <Typography variant='subtitle1' sx={{ mt: 2 }}>
-                      Invite your friends to join your travel party
-                    </Typography>
-                    <TextField
-                      id='email'
-                      placeholder='Enter Multiple Emails'
-                      type='text'
-                      fullWidth
-                      value={inputValue}
-                      onChange={event => {
-                        const raw = event.target.value;
-                        setInputValue(raw);
-                        const parsedEmails = raw
-                          .split(',')
-                          .map(email => email.trim())
-                          .filter(email => email.length > 0);
-                        setEmails(parsedEmails);
+                    <Box
+                      component="form"
+                      onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                        e.preventDefault();
+                        if (emails.length > 0) {
+                          setLoading(true);
+                          sendEmail(emails, partyName, userId, partyId, viewCode)
+                          .finally(() => setLoading(false));
+                        }
                       }}
-                    />
-                    <Button
-                      sx={{ mt: 1 }}
-                      variant='contained'
-                      onClick={() =>
-                        sendEmail(emails, partyName, userId, partyId, viewCode)
-                      }
-                      disabled={emails.length === 0}
                     >
-                      Invite
-                    </Button>
-                    {inviteSuccess && (
-                      <Typography sx={{ mt: 1, color: 'green' }}>
-                        Invite sent successfully!
+                      <Typography variant='subtitle1' sx={{ mt: 2 }}>
+                        Invite your friends to join your travel party
                       </Typography>
-                    )}
+                      <TextField
+                        id='email'
+                        placeholder='Enter Multiple Emails'
+                        type='text'
+                        fullWidth
+                        value={inputValue}
+                        onChange={event => {
+                          const raw = event.target.value;
+                          setInputValue(raw);
+                          const parsedEmails = raw
+                            .split(',')
+                            .map(email => email.trim())
+                            .filter(email => email.length > 0);
+                          setEmails(parsedEmails);
+                        }}
+                      />
+                      <Button
+                        sx={{ mt: 1 }}
+                        variant='contained'
+                        type='submit'
+                        disabled={emails.length === 0 || loading} 
+                      >
+                        {loading ? <CircularProgress size={24} color="inherit" /> : 'Invite'}
+                      </Button>
+                      {inviteSuccess && (
+                        <Typography sx={{ mt: 1, color: 'green' }}>
+                          Invite sent successfully!
+                        </Typography>
+                      )}
+                    </Box>
                   </Dialog>
                   {emailLog.length > 0 && (
                     <Container
@@ -439,7 +466,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         slotProps={{
           paper: {
             sx: { width: 500, borderRadius: 12 },
-            component: 'form'
+            component: 'form',
+            onKeyDown: (e: React.KeyboardEvent<HTMLFormElement>) => handleKeyDown(e, () => setConfirmOpen(true), closeRename),
           }
         }}
       >
@@ -458,16 +486,25 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         Remove Members
       </Typography>
         <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
-          {partyMembers.map(member => (
+          {partyMembers
+          .filter(member => member.id !== user.id)
+          .map(member => (
             <ListItem
               key={member.id}
               secondaryAction={
                 <IconButton 
                   edge='end'
                   aria-label='delete'
-                  onClick={() => toggleMember(member.id)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    toggleMember(member.id)}
+                   } 
                 >
-                  <PiTrashDuotone/>
+                  <PiTrashDuotone
+                    style={{
+                      color: membersToRemove.includes(member.id) ? 'FF6B6B' : 'C4A1FF', // Color change based on selected state
+                    }}
+                  />
                 </IconButton>
               }
             >
@@ -498,26 +535,71 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         </DialogActions>
       </Dialog>
       {/* Manage Party Confirmation Modal */}
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-        <Typography>Are you sure?</Typography>
-          <DialogContent>
-            <Typography>You are about to:</Typography>
-            <ul>
-              {newName && <Typography>Rename the party to: <strong>{newName}</strong>
-              <Typography></Typography>(navigate to main dash for new name to render)</Typography>}
-              {membersToRemove.length > 0 && <Typography>Remove {membersToRemove.length} member(s)</Typography>}
-              {leaveParty && <Typography>Leave the party</Typography>}
-            </ul>
-          </DialogContent>
-          <DialogActions>
-            <Button variant='contained' onClick={() => setConfirmOpen(false)}>Cancel</Button>
-            <Button
-              variant='contained'
-              onClick={handleConfirmActions}
-            >
-            Confirm
-          </Button>
-        </DialogActions>
+      <Dialog 
+        open={confirmOpen} 
+        onClose={() => setConfirmOpen(false)}
+        slotProps={{
+          paper: {
+            component: 'form',
+            onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
+              e.preventDefault();
+              handleConfirmActions();
+            },
+            onKeyDown: (e: React.KeyboardEvent<HTMLFormElement>) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleKeyDown(e, handleConfirmActions, () => setConfirmOpen(false));
+            },
+          },
+        }}
+      >
+         {/* <Box
+          component="form"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            handleConfirmActions();
+          }}
+          onKeyDown={(e: React.KeyboardEvent<HTMLFormElement>) =>
+            handleKeyDown(e, handleConfirmActions, () => setConfirmOpen(false))
+          }
+        > */}
+          <Typography>Are you sure?</Typography>
+            <DialogContent>
+              <Typography>You are about to:</Typography>
+              <ul>
+                {/* Message for Name Change */}
+                {newName && (
+                <Typography>
+                  Rename the party to: <strong>{newName}</strong>
+                  <Typography>(navigate to main dash for new name to render)</Typography>
+                </Typography>)}
+                {/* Message for Deleting others */}
+                {membersToRemove.filter(id => id !== user.id).length > 0 && (
+                  <Typography>
+                    Remove {membersToRemove.length} member(s)
+                  </Typography>)}
+                {/* Message for Leaving */}
+                {leaveParty && (
+                  <Typography>Leave the party</Typography>)}
+              </ul>
+            </DialogContent>
+            <DialogActions>
+              <Button 
+                variant='contained' 
+                onClick={() => setConfirmOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant='contained'
+                type='submit'
+                onClick={handleConfirmActions}
+                disabled={loading}
+              >
+              Confirm
+            </Button>
+          </DialogActions>
+        {/* </Box> */}
       </Dialog>
 
     </React.Fragment>
