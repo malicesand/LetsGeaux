@@ -130,7 +130,7 @@ model activity {
   image       String?
   location    String?
   itineraryId Int?
-  itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
+  itinerary   itinerary? @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
 
   @@index([itineraryId], map: "activity_itineraryId_fkey")
 }

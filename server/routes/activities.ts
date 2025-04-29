@@ -9,6 +9,7 @@ const prisma = new PrismaClient();
 
 // Helper: check if user is in party or is the itinerary creator
 const hasActivityPermission = async (userId: number, itineraryId: number) => {
+  // console.log(`userId @ has permission ${userId}`)
   const itinerary = await prisma.itinerary.findUnique({
     where: { id: itineraryId },
     include: {
@@ -21,22 +22,21 @@ const hasActivityPermission = async (userId: number, itineraryId: number) => {
       },
     },
   });
-
   if (!itinerary) return { allowed: false };
 
   const isCreator = itinerary.creatorId === userId;
   const isInParty = (itinerary.party?.userParty?.length ?? 0) > 0;
-
+  // console.log(`@ permission: is creator ${isCreator} is in party ${isInParty}`)
   return { allowed: isCreator || isInParty, isCreator };
 };
 
 // POST
 activityRouter.post('/', async (req: any, res: any) => {
+  // console.log(req.user.id)
   try {
-    // const userId = req.user.id;
-    // console.log('User ID:', userId); 
-
-    const { itineraryId, name, description, time, date, location, image, phone, address, userId } = req.body;
+    // console.log(req.user.id)
+    const userId = req.user.id;
+    const { itineraryId, name, description, time, date, location, image, phone, address } = req.body;
     
     // Check if required fields are present
     if (!itineraryId || !name || !description || !time || !date || !location) {
@@ -46,6 +46,7 @@ activityRouter.post('/', async (req: any, res: any) => {
     // Check permissions
     const { allowed } = await hasActivityPermission(userId, itineraryId);
     if (!allowed) {
+      
       console.log(`User ${userId} not authorized for itinerary ${itineraryId}`);
       return res.status(403).json({ error: 'Not authorized to add activity' });
     }
