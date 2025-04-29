@@ -150,7 +150,7 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
       // At this point, either chosenQueries has the values it needs, or returnString is populated instead
       // 4. concat the number sets into a string separated by '%2C'
       if (chosenQueries.length) {
-        console.log('QUERIES GOT LENGTH', chosenQueries)
+        // console.log('QUERIES GOT LENGTH', chosenQueries)
         chosenQueries.forEach((chosenQuery: string) => {
           // 5. This string will be the query.
           returnString += chosenQuery + ','
@@ -206,7 +206,7 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
                      // category codes as the argument
                      getSuggestionsFromFoursquare(returnString).then((data) => {
                       if (data) {
-                        console.log('we did it, dammit', data);
+                        // console.log('we did it, dammit', data);
                         res.status(200).send(data);
                       } else {
                         res.status(404).send('failed the test, yo');
@@ -229,22 +229,21 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
             });
 
 
-// function to test foursquare api in postman
-// suggestionRouter.get('/test', (req: any, res: any) => {
-//   getSuggestionsFromFoursquare('4bf58dd8d48988d16a941735').then((data) => {
-//     if (data) {
-//       console.log();
-//       res.status(200).send(data);
-//     } else {
-//       res.status(404).send('failed the test, yo');
-//     }
-//   }).catch((err) => {
-//     console.error('could not test', err);
-//     res.sendStatus(500);
-//   });
+// function to get all matching itineraryId's matching the given user id
+suggestionRouter.get('/check/:id', async (req: any, res: any) => {
+  const { id } = req.params;
+  try {
+    console.log('at the check endpoint')
+    const listOfItineraryIds = await prisma.$queryRaw`SELECT id FROM itinerary WHERE partyId IN (SELECT partyId FROM userParty WHERE userId = ${id})`;
+    console.log('this is my list of itinerary ids', listOfItineraryIds);
+    res.status(200).send(listOfItineraryIds);
+  } catch (err) {
+    console.error('could not search for list', err);
+    res.sendStatus(500);
+  }
 
-//     });
 
+})
 
 
 
@@ -291,7 +290,6 @@ suggestionRouter.get("/", async (req: any, res: any) => {
 // heavy lifting..
 suggestionRouter.post("/:userId", async (req: any, res: any) => {
   const { userId } = req.params;
-  console.log('trying to post suggestions', req.body);
   try {
     const newSuggestion = await prisma.suggestion.create(req.body);
     const { id } = newSuggestion;

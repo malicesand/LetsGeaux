@@ -35,6 +35,7 @@ import ThumbsUpDownRoundedIcon from '@mui/icons-material/ThumbsUpDown';
 import { PiThumbsDownFill } from "react-icons/pi";
 import { PiThumbsUpFill } from "react-icons/pi";
 import { user } from '../../../types/models.ts';
+import SuggestionToActivityForm from './SuggestionToActivityForm.tsx';
 
 interface SuggestionProps {
   user: user;
@@ -88,6 +89,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
   /*listSuggestion, setEditableSuggestion}*/
 }) => {
   const [expanded, toggleExpanded] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
 
 
 
@@ -131,6 +133,38 @@ const Suggestion: React.FC<SuggestionProps> = ({
   }
 
   const handleAddToActivities = () => {
+    /**
+     * What needs to be sent out in the body:
+     * [* = get from supplementary user form filling (possibly repurpose old activityForm.tsx)]
+     * PARTY ID NEEDED TO ADD ANY ACTIVITIES-- Must query for userParty where userId = our user.id
+     * 
+     * More specifically, for all itinerary ids where IN userParty, the partyId is connected with this userId
+     * 
+     * I believe I can create the form to hold the suggestion values as its dialog values and populate the form with those values, 
+     * giving the user the ability to edit before submission [repurpose ActivityForm.tsx]
+     * 
+     * 
+     * check email model for cascade rules
+     * 
+     * 
+     * 1. itineraryId *
+     * 2. name
+     * 3. description (?)
+     * 4. Activity Date *
+     * 5. Activity Time *
+     * 6. location (required: just address.)
+     * 7. image (coming soon. Add to sugg.ts function)
+     * 8. phone (use link, but get real link)
+     * 9. Address...
+     * 10. UserId (use this to get an itinerary id to enter into the form)
+     * 
+     * So making the suggestion an activity should trigger a get request for all itineraries that user has access to
+     * perhaps in a drop-down menu on the form.. The user Id is placed automatically and the itinerary comes in from the form choice
+     * The user will have to jot in date and time, and maaaybe should have the choice of changing the image?
+     * 
+     * Also search up: Snackbar, Dialogues, Modals, Toast notifications
+     * 
+     */
 
     const details = {
       data: {
@@ -152,6 +186,16 @@ const Suggestion: React.FC<SuggestionProps> = ({
       console.error('unable to change suggestion', err);
     })
   }
+
+
+const openTestForm = () => {
+  setIsTesting(true);
+}
+
+const closeTestForm = () => {
+  setIsTesting(false);
+}
+
 
   const handleVoteClick = (polarity: string) => {
     const { id } = user;
@@ -276,8 +320,17 @@ const Suggestion: React.FC<SuggestionProps> = ({
         {/* </Card> */}
 
       </Grid>
-
-
+      {isTesting ? (
+        <SuggestionToActivityForm currentSuggestion={currentSuggestion} user={user}/>
+      ) : (
+        null
+      )}
+      {isTesting ? (
+        <Button onClick={closeTestForm} >Close Form</Button>
+      ) : (
+        
+        <Button onClick={openTestForm} >Open Form</Button>
+      )}
     </Container >
 
   )
