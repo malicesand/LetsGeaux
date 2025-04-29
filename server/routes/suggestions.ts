@@ -150,7 +150,7 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
       // At this point, either chosenQueries has the values it needs, or returnString is populated instead
       // 4. concat the number sets into a string separated by '%2C'
       if (chosenQueries.length) {
-        // console.log('QUERIES GOT LENGTH', chosenQueries)
+        console.log('QUERIES GOT LENGTH', chosenQueries)
         chosenQueries.forEach((chosenQuery: string) => {
           // 5. This string will be the query.
           returnString += chosenQuery + ','
@@ -206,7 +206,7 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
                      // category codes as the argument
                      getSuggestionsFromFoursquare(returnString).then((data) => {
                       if (data) {
-                        // console.log('we did it, dammit', data);
+                        console.log('we did it, dammit', data);
                         res.status(200).send(data);
                       } else {
                         res.status(404).send('failed the test, yo');
@@ -234,7 +234,7 @@ suggestionRouter.get('/check/:id', async (req: any, res: any) => {
   const { id } = req.params;
   try {
     console.log('at the check endpoint')
-    const listOfItineraryIds = await prisma.$queryRaw`SELECT id FROM itinerary WHERE partyId IN (SELECT partyId FROM userParty WHERE userId = ${id})`;
+    const listOfItineraryIds = await prisma.$queryRaw`SELECT * FROM itinerary WHERE partyId IN (SELECT partyId FROM userParty WHERE userId = ${id})`;
     console.log('this is my list of itinerary ids', listOfItineraryIds);
     res.status(200).send(listOfItineraryIds);
   } catch (err) {

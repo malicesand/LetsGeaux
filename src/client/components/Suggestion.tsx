@@ -42,9 +42,12 @@ interface SuggestionProps {
   getAllSuggestions: Function;
   setSuggestionEditMode: Function;
   getAllWishlistSuggestions: Function;
+  setSuggestionSet: Function;
+  // setEditableSuggestion: Function
   wishMode: Boolean;
-  idDb: Boolean;
+  isDb: Boolean;
   currentSuggestion: {
+    fsq_id: string
     id: Number
     title: String
     upVotes: Number

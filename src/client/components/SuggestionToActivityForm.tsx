@@ -6,9 +6,14 @@ import {
   Grid,
   TextField,
   Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
 } from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { error } from 'console';
+import { useForm, Controller } from 'react-hook-form';
+// import { error } from 'console';
 import { user } from '../../../types/models.ts';
 
 type currentSuggestion = {
@@ -22,7 +27,7 @@ type currentSuggestion = {
 }
 
 type FormFields = {
-  itineraryId: number;
+  itinerary: any;
   title: string;
   description: string;
   time: string;
@@ -53,14 +58,14 @@ const [hasItineraries, setHasItineraries] = useState(false);
     link,
     /*latitude, longitude,*/
   } = currentSuggestion;
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormFields>({
+  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<FormFields>({
 defaultValues: {
-      itineraryId: null,
+      itinerary: null,
       title,
       description,
       time: '',
       date: '',
-      location,
+      location: address,
       image,
       phone: link,
       address,
@@ -81,7 +86,12 @@ const getItineraries = () => {
   const { id } = user;
   axios.get(`api/suggestions/check/${id}`).then(({data}) => {
     console.log(data);
-    setItineraryList(data);
+    if (data) {
+      setHasItineraries(true);
+      setItineraryList(data);
+    } else {
+      setHasItineraries(false);
+    }
   })
   .catch((err) => console.error('there was an issue with the itineraries', err));
 }// Now, I just need to get this form to render somewhere so I can see if this function works...
@@ -89,11 +99,11 @@ const getItineraries = () => {
 
   const postActivity: SubmitHandler<FormFields> = async (formValues: FormFields) => {
   
-        const { itineraryId, title, description, time, date, location, image, phone, address } = formValues;
+        const { itinerary, title, description, time, date, location, image, phone, address } = formValues;
         const { id } = user;
         // all of these qualities are pulled directly from req.body in the activity request handler
         const activityData = {
-          itineraryId,
+          itineraryId: itinerary.id,
           name: title,
           description,
           time,
@@ -122,16 +132,37 @@ const getItineraries = () => {
       <Grid container spacing={4}>
         <form className="activity-form" onSubmit={handleSubmit(postActivity)}>
           {/* itinerary Id */}
-          <TextField
-           name="itineraryId"
-           {...register('itineraryId', { required: 'Must select itinerary' })}
-           label="Itinerary"
-           variant="outlined"
-           error={!!errors.itineraryId}
-           helperText={errors.itineraryId?.message}
+          <FormControl
+          fullWidth
+          //  name="itineraryId"
+          //  {...register('itineraryId', { required: 'Must select itinerary' })}
+          //  label="Itinerary"
+          //  variant="outlined"
+          //  error={!!errors.itineraryId}
+           placeholder='Select an itinerary'
+          //  helperText={errors.itineraryId?.message}
           >
-
-          </TextField>
+            <InputLabel id="itinerary-dropdown-label">Select an itinerary</InputLabel>
+            <Select
+             name="itinerary"
+             {...register('itinerary', { required: 'Must select itinerary' })}
+             value="itinerary"
+             label="Itinerary"
+             variant="outlined"
+             onClick={(event) => setValue('itinerary', event.target)}
+            //  error={!!errors.itinerary}
+            //  placeholder='Select an itinerary'
+            //  helperText={errors.itinerary?.message}
+            // {/**Maybe the register stuff goes in here? */}
+            >
+              {itineraryList.map((itinerary: any) => (
+                <MenuItem value={itinerary.fsq_id} key={itinerary.fsq_id}>
+                  <Typography>{itinerary.name}</Typography>
+                  <Typography>{itinerary.begin} - {itinerary.end}</Typography>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
           {/* Title */}
           <TextField
