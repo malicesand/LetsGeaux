@@ -131,7 +131,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
                 <Tooltip title='Delete Itinerary'>
                   <IconButton
                     onClick={() =>
-                      handleDelete(itinerary.id, itinerary.creatorId)
+                      setDeleteDialogOpen(true)
                       
                     }
                   >
