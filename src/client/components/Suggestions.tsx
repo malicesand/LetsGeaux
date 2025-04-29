@@ -76,20 +76,36 @@ const getApiSuggestions = (query = "Restaurants") => {
       <h2>user picks</h2>
       <h2></h2>
       {dbSuggestionSet.map((currentSuggestion: any) => (
-        <Box sx={{ border: "4px solid black", borderRadius: "4", p: 4, mb: "8px" }} key={currentSuggestion.id}>
+        <Box
+        sx={{
+          border: "4px solid black",
+          borderRadius: "4",
+          p: 4, mb:
+          "8px"
+          }}
+          key={currentSuggestion.id}
+          >
           <Suggestion
           user={user}
           isDb={true}
           currentSuggestion={currentSuggestion}
           getAllSuggestions={getAllSuggestions}
           setSuggestionEditMode={setSuggestionEditMode}
-          setEditableSuggestion={setEditableSuggestion}
+          // setEditableSuggestion={setEditableSuggestion}
           />
         </Box>
       ))}
       <h2>You may enjoy:</h2>
       {suggestionSet.map((currentSuggestion) => (
-        <Box key={currentSuggestion.title}>
+        <Box
+        key={currentSuggestion.fsq_id}
+        sx={{
+          border: "4px solid black",
+          borderRadius: "4",
+          p: 4,
+          mb: "8px"
+          }}
+          >
           <Suggestion
           user={user}
           currentSuggestion={currentSuggestion}
@@ -97,17 +113,10 @@ const getApiSuggestions = (query = "Restaurants") => {
           getAllSuggestions={getAllSuggestions}
           setSuggestionEditMode={setSuggestionEditMode}
           setSuggestionSet={setSuggestionSet}
-          setEditableSuggestion={setEditableSuggestion}
+          // setEditableSuggestion={setEditableSuggestion}
           />
         </Box>
       ))}
-      {/* <SuggestionForm
-suggestionSet={suggestionSet}
-suggestionEditMode={suggestionEditMode}
-setSuggestionEditMode={setSuggestionEditMode}
-getAllSuggestions={getAllSuggestions}
-editableSuggestion={editableSuggestion}
-/> */}
     </Container>
   )
 }
