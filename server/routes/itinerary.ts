@@ -277,6 +277,27 @@ itineraryRoute.get('/', async (req: any, res: any) => {
   }
 });
 */
-
+//* Update Existing Itinerary to Party Itinerary *//
+itineraryRoute.patch('/party/:itineraryId', async (req:any, res: any) => {
+  const {itineraryId} = req.params;
+  const {partyId} = req.body;
+  const updateItin = prisma.itinerary.update({
+    where: { id: +itineraryId },
+    data: { partyId: +partyId },
+  });
+  const updateParty = prisma.party.update({
+    where: {id: +partyId},
+    data: {itineraryId: +itineraryId}
+  })
+  try {
+    const transaction = await prisma.$transaction([updateItin, updateParty])
+    console.log(`Transaction Complete: ${itineraryId} shared with Party ${partyId}`)
+    res.status(200).json({update: itineraryId, partyId: +partyId})
+  } catch (error) {
+    console.error(`Transaction Failed: ${itineraryId} to party ${partyId}`, error)
+    res.status(500).json({error: `Failed: ${itineraryId} with party ${partyId}`})
+  }
+  
+})
 
 export default itineraryRoute;
