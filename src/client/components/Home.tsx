@@ -13,13 +13,13 @@ const Home: React.FC<HomeProps> = ({ user }) => {
   const displayUsername = contextUser?.username || user?.username
 
   return (
-    <div>
-      <Typography variant='h3' align="center" color='black'>
+    <Box>
+      <Typography variant='h1' align="center" color='black'>
         Hello, {displayUsername}!!!
       </Typography>
       <Box height={32} />
       <Dashboard user={user} />
-    </div>
+    </Box>
   );
 };
 
