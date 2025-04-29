@@ -83,7 +83,6 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
 
   // * Handle delete of an itinerary, creator only *//
   const handleDelete = async (itineraryId: number, creatorId: number) => {
-    console.log('click')
     if (user.id !== creatorId) {
       alert('Only the creator can delete this itinerary.');
       return;
@@ -158,6 +157,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
               user={user}
               partyId={partyId}
               partyName={partyName}
+              fetchItinerary={fetchItinerary}
             />
           </>
         )}

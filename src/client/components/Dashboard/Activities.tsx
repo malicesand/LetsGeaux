@@ -63,7 +63,6 @@ const Activity: React.FC<Props> = ({
 }) => {
 
   const [activities, setActivities] = useState<Activity[]>([]);
-
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -76,7 +75,6 @@ const Activity: React.FC<Props> = ({
     address: '',
     itineraryId: itineraryId
   });
-  
   const [open, setOpen] = useState(false); // Modal open state
   const [error, setError] = useState<string | null>(null); //Error
   // const [message, setMessage] = useState<string>(''); // Success message
@@ -256,7 +254,7 @@ const Activity: React.FC<Props> = ({
                 Activities List
               </Typography>
               <Box>
-                {activities.map(activity => (
+                {sortedActivities.map(activity => (
                   <Box key={activity.id} mb={2}>
                     <Card
                       sx={{
