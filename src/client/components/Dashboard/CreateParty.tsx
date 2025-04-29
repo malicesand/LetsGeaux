@@ -101,9 +101,9 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
           }
         }}
       >
-        <DialogTitle>Name Your Party</DialogTitle>
+        <DialogTitle variant='body1' sx={{mt: 1, mb: 0, pb: 1}}>Name Your Party</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText variant='body2' sx={{mt: 0, pt: 0, mb:3}}>
             Choose a name for your travel party!
           </DialogContentText>
           <TextField
@@ -116,6 +116,22 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
             type='string'
             fullWidth
             variant='standard'
+            // sx={{color: 'black'}}
+            slotProps={{
+              root: {
+                sx: {
+                  // '& .MuiInputLabel-root': {
+                  //   color: '#8257E5'
+                  // },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    
+                    color: '#612BDE',
+                    size: 'large'
+                  },
+                },
+              },
+            }}
+          
           />
           <DialogActions>
             <Button variant='contained' type='submit'>Create</Button>
