@@ -81,7 +81,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         <Typography variant='h4'>Your Travel Parties</Typography>
         <Divider  sx={{ mt:2, mb:2, width: '100%', align:'center', borderRadius: 6, border: '3px solid #a684ff'}}/>
         {partyInfo.map((selectedParty) => (
-          <Box key={selectedParty.id} mb={1} sx={{padding: 4}}>
+          <Box key={selectedParty.id} mb={1} sx={{padding: .5}}>
             <Link to={`/${selectedParty.id}?name=${encodeURIComponent(selectedParty.name)}`}>
               <Typography variant='h4' color='black'>
                 {selectedParty.name}
