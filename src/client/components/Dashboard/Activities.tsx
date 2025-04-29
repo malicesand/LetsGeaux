@@ -196,7 +196,7 @@ const Activity: React.FC<Props> = ({
       image: activity.image,
       phone: activity.phone,
       address: activity.address,
-      itineraryId: activity.itineraryId
+      itineraryId: +activity.itineraryId
     });
     setOpen(true); // Open modal to edit activity
   };
