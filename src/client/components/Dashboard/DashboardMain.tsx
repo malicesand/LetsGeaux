@@ -68,28 +68,29 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     >
       {/* Travel Parties Box */}
       <Box
-        align="center"
         sx={{
+          align: 'center',
           border: '4px solid black',
           borderRadius: 4,
-          padding: 4,
+          padding: 2,
           maxWidth: 400,
           width: '100%',
           textAlign: 'center',
         }}
       >
-        <Typography variant='h4'>Your Travel Parties</Typography>
-        <Divider  sx={{ mt:2, mb:2, width: '100%', align:'center', borderRadius: 6, border: '3px solid #a684ff'}}/>
-        {partyInfo.map((selectedParty) => (
-          <Box key={selectedParty.id} mb={1} sx={{padding: .5}}>
-            <Link to={`/${selectedParty.id}?name=${encodeURIComponent(selectedParty.name)}`}>
-              <Typography variant='h4' color='black'>
-                {selectedParty.name}
-              </Typography>
-            </Link>
+        <Typography sx={{ mb: 1, padding: 1}} variant='h4'>Your Travel Parties</Typography>
+          {partyInfo.map((selectedParty) => (
+            <Box key={selectedParty.id}  sx={{ mt: 1, padding: .5}}>
+              <Link to={`/${selectedParty.id}?name=${encodeURIComponent(selectedParty.name)}`}>
+                <Typography variant='h4' color='black'>
+                  {selectedParty.name}
+                </Typography>
+              </Link>
+            </Box>
+          ))}
+          <Box sx={{ mt: 2, mb: 0 }} >
+          <CreateParty user={user} onPartyCreated={getUserParties} />
           </Box>
-        ))}
-        <CreateParty user={user} onPartyCreated={getUserParties} />
       </Box>
 
       {/* Image Upload Box */}
