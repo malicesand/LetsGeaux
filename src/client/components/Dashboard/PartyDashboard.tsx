@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useTheme } from '@mui/material/styles';
 import { 
   PiPencilBold, 
   PiTrashDuotone, 
@@ -11,9 +10,6 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Modal from '@mui/material/Modal';
 import Stack from '@mui/material/Stack';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
@@ -26,13 +22,22 @@ import DialogActions from '@mui/material/DialogActions';
 import Checkbox from '@mui/material/Checkbox';
 import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
+import { 
+  Box, 
+  Typography, 
+  Card,
+  CardContent,
+  useTheme, 
+  useMediaQuery, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent } from '@mui/material';
 import MessageBoard from './MessageBoard';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
-import { Box, Typography, Card, CardContent } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddItinerary from './AddItinerary';
-// import Itinerary from './PartyItinerary.tsx';
+import ResponsiveToolTip from './../ResponsiveToolTip.tsx';
 import Itinerary from './DashItin.tsx';
 import { user, email, party } from '../../../../types/models.ts';
 
@@ -72,8 +77,10 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const [leaveParty, setLeaveParty] = useState(false);
   const [renameOpen, setRenameOpen] = React.useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
-  //* Sidebar Toggle *//
+  //* Mobile Handling *//
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [showMobileHelp, setShowMobileHelp] = useState(false);
   
   useEffect(() => {
     fetchViewCode(numericPartyId);
@@ -99,6 +106,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
       cancelAction();
     }
   };
+  
 
   // GET REQUESTS //
   //* Member List *//
@@ -267,85 +275,109 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
 
   return (
     <React.Fragment>
-      <Box>
-      {/* Title */}
-        <Typography
-          variant='h1'
-          align='center'
-          sx={{ flexGrow: 1, textAlign: 'center', m: 5, p: '4px' }}
-          >
-          {partyName}
-        </Typography>
-      {/* Manage Party Icon */}
-        <Tooltip title='Manage Party'>
-          <IconButton onClick={renameModal}>
-            <PiPencilBold/>
-          </IconButton>
-        </Tooltip>
-      </Box>
-      {/* Content */}
-      <Box>
-      <Tooltip title={sidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}>
-        <IconButton onClick={() => setSidebarOpen(prev => !prev)}>
-          {sidebarOpen ? <PiSidebarBold /> : <PiSidebarThin />} {/* or Chevron */}
-        </IconButton>
-      </Tooltip>
-        <Stack spacing={4} direction="row">
+      <Box sx={{ p:2 }}>
+        {/* Title */}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4 }}>
+          <Typography variant='h1'sx={{ textAlign: 'center', mr: 2 }}
+            >
+            {partyName}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1.5,
+            position: 'relative', 
+            top: 0,
+            left: 0,
+            zIndex: 10,
+            
+            // borderRadius: 3,
+            p: 1,
+            // boxShadow: 3,
+          }}
+        >
+          <ResponsiveToolTip title="Manage Party">
+            <IconButton size="small" onClick={renameModal}>
+              <PiPencilBold />
+            </IconButton>
+          </ResponsiveToolTip>
+
+          <ResponsiveToolTip title="Send Invite">
+            <IconButton size="small" onClick={openModal}>
+              <PiPencilBold />
+            </IconButton>
+          </ResponsiveToolTip>
+
+          <ResponsiveToolTip title="Photo Gallery">
+            <IconButton size="small">
+              <PiPencilBold />
+            </IconButton>
+          </ResponsiveToolTip>
+
+          <ResponsiveToolTip title={sidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}>
+            <IconButton size="small" onClick={() => setSidebarOpen(prev => !prev)}>
+              {sidebarOpen ? <PiSidebarBold /> : <PiSidebarThin />}
+            </IconButton>
+          </ResponsiveToolTip>
+        </Box>
+        {/* Content */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 4,
+            overflowX: 'auto',
+          }}
+        >
           {/* Sidebar */}
           {sidebarOpen && (
             <Card
               sx={{
-                width: '100%',
-                maxWidth: { xs: '100%', sm: '100%', md: '300px' },
-                mt: { xs: 2, md: 7 },
-                p: { xs: 2, md: 3 },
+                minWidth: 300,
+                maxWidth: 350,
+                flexShrink: 0,
+                p: 2,
                 border: '4px solid black',
-                borderRadius: 4,
+                borderRadius: 4,      
                 backgroundColor: '#C2A4F8',
-                mx: 'auto',
-                height: 'fit-content',
-                alignSelf: 'flex-start',
+                alignSelf: 'flex-start'
               }}
             >
               <CardContent>
-                <Stack 
-                  spacing={4} 
-                  sx={{ width: '100%' }}
-                  direction={{ xs: 'column', md: 'row' }}
-                  alignItems="flex-start"
+                <Box
+                  sx={{
+                    border: '4px solid black',
+                    borderRadius: 4,
+                    p: 2,
+                    mb: 2,
+                  }}
                 >
-                  <Container
-                    sx={{
-                      maxWidth: 500,
-                      border: '4px solid black',
-                      borderRadius: 4,
-                      margin: '0 auto',
-                      p: 2
-                    }}
-                  >
-                    <Typography variant='h5' textAlign='center'>
-                      Party Members
-                    </Typography>
-                    <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
-                      {partyMembers.map(member => (
-                        <ListItem>
-                          <ListItemAvatar>
-                            <Avatar src={member.avatar}/>
-                          </ListItemAvatar>
-                        <Typography variant='body1' component='li' key={member.id}>
-                          {member.username}
-                        </Typography>
-                        </ListItem>
-                      ))}
-                    </Box>
-                  </Container>
-                  <AddMember
-                    user={user}
-                    partyId={numericPartyId}
-                    partyName={partyName}
-                    getMembers={getUsersForParty}
-                  />
-                  {/* Email Handling */}
+                  <Typography variant='h5' textAlign='center'>
+                    Party Members
+                  </Typography>
+                  <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
+                    {partyMembers.map(member => (
+                      <ListItem>
+                        <ListItemAvatar>
+                          <Avatar src={member.avatar}/>
+                        </ListItemAvatar>
+                      <Typography variant='body1' component='li' key={member.id}>
+                        {member.username}
+                      </Typography>
+                      </ListItem>
+                    ))}
+                  </Box>
+                </Box>
+                <AddMember
+                  user={user}
+                  partyId={numericPartyId}
+                  partyName={partyName}
+                  getMembers={getUsersForParty}
+                />
+                {/* Email Handling */}
+                <Box sx={{ textAlign: 'center', mt: 2 }}>
                   <Button
                     size='medium'
                     variant='contained'
@@ -356,51 +388,38 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                   >
                     Send an E-Vite
                   </Button>
-                  {/* Email Log */}
-                  {emailLog.length > 0 && (
-                    <Container
-                      sx={{
-                        maxWidth: 500,
-                        border: '4px solid black',
-                        borderRadius: 4,
-                        margin: '0 auto',
-                        p: 2
-                      }}
+                </Box>
+                {/* Email Log */}
+                {emailLog.length > 0 && (
+                  <Box
+                    sx={{
+                      maxWidth: 500,
+                      border: '4px solid black',
+                      borderRadius: 4,
+                      margin: '0 auto',
+                      p: 2
+                    }}
+                  >
+                    <Typography variant='h5' gutterBottom>
+                      Sent Invitations
+                    </Typography>
+                    <Box
+                      component='ul'
+                      sx={{ listStyle: 'none', padding: 0, m: 0 }}
                     >
-                      <Typography variant='h5' gutterBottom>
-                        Sent Invitations
-                      </Typography>
-                      <Box
-                        component='ul'
-                        sx={{ listStyle: 'none', padding: 0, m: 0 }}
-                      >
-                        {emailLog.map((mail, i) => (
-                          <Typography
-                            key={i}
-                            variant='body1'
-                            component='li'
-                            sx={{ mb: 0.5 }}
-                          >
-                            {mail}
-                          </Typography>
-                        ))}
-                      </Box>
-                    </Container>
-                    )}
-                    <Box>
-
-                    {/* Message Board */}
-                    {/* <Box display="flex" justifyContent="center" alignItems="center">
-                    <Box sx={{ width: '60%' }}>
-                    <MessageBoard user={user} />
+                      {emailLog.map((mail, i) => (
+                        <Typography
+                          key={i}
+                          variant='body1'
+                          component='li'
+                          sx={{ mb: 0.5 }}
+                        >
+                          {mail}
+                        </Typography>
+                      ))}
                     </Box>
-                    </Box> */}
-                    {/* <Box display="flex" justifyContent="center"> */}
-                    {/* <Itinerary user={user}/> */}
-                    </Box>
-                  
-                  
-                </Stack>
+                  </Box>
+                  )}
               </CardContent>
             </Card>    
           )}
@@ -411,9 +430,9 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
               partyId={numericPartyId}
               partyName={partyName}
             />
-          </Box>
-        </Stack>
+          </Box> 
       </Box>
+    </Box>
       {/*  Manage Party Model */}
       <Dialog
         id='manageParty' 
