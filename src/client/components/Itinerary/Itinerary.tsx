@@ -60,9 +60,18 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
 
   //delete confirmation state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedItineraryId, setSelectedItineraryId] = useState<number | null>(
-    null
-  );
+  const [selectedItineraryId, setSelectedItineraryId] = useState<number | null>(null);
+
+//send email state  
+const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+const [emailToInvite, setEmailToInvite] = useState('');
+const [selectedViewCode, setSelectedViewCode] = useState('');
+const [selectedItineraryName, setSelectedItineraryName] = useState('');
+
+
+
+
+
   // Helper function to get range of Dayjs dates
   const getDateRange = (start: Dayjs, end: Dayjs): Date[] => {
     const result: Date[] = [];
@@ -169,7 +178,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
         prev.map(it => (it.id === editingItinerary.id ? res.data : it))
       );
       resetForm();
-      enqueueSnackbar('Itinerary created successfully!', {
+      enqueueSnackbar('Itinerary updated successfully!', {
         variant: 'success'
       });
     } catch (err) {
@@ -245,6 +254,25 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   ): Promise<void> {
     throw new Error('Function not implemented.');
   }
+
+//emailviewcode
+const handleSendInvite = async () => {
+  try {
+    await axios.post('/api/itinerary/sendInvite', {
+      email: emailToInvite,
+      itineraryName: selectedItineraryName,
+      viewCode: selectedViewCode,
+    });
+    enqueueSnackbar('Invite sent successfully!', { variant: 'success' });
+    setInviteDialogOpen(false);
+    setEmailToInvite('');
+  } catch (error) {
+    console.error('Error sending invite:', error);
+    enqueueSnackbar('Failed to send invite.', { variant: 'error' });
+  }
+};
+
+
 
   return (
     <Container>
@@ -406,14 +434,39 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                   px: 2,
                   py: 1,
                   borderRadius: '9999px',
+                   border: '4px solid black',
                   fontWeight: 700,
                   fontSize: '0.75rem',
                   textAlign: 'center',
                   boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
                 }}
               >
-                View Code: {itinerary.viewCode}
+                View Code: {itinerary.viewCode}     
               </Typography>
+              <Button
+  variant="contained"
+  color="secondary"
+  size="small"
+  sx={{ display: 'inline-block',
+    backgroundColor: 'primary.main',
+    color: 'black',
+    px: 2,
+    py: 1,
+    borderRadius: '9999px',
+    fontWeight: 700,
+    fontSize: '0.75rem',
+    textAlign: 'center',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+  
+  }}
+  onClick={() => {
+    setSelectedViewCode(itinerary.viewCode);
+    setSelectedItineraryName(itinerary.name);
+    setInviteDialogOpen(true);
+  }}
+>
+  Share Itinerary
+</Button>
               {itinerary.message && (
                 <Alert severity='success'>{itinerary.message}</Alert>
               )}
@@ -477,6 +530,42 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={inviteDialogOpen} onClose={() => setInviteDialogOpen(false)}>
+  <DialogTitle>Send Itinerary Invite</DialogTitle>
+  <DialogContent>
+    <TextField
+      label="Recipient's Email"
+      value={emailToInvite}
+       InputLabelProps={{
+                sx: {
+                  top: -8,
+                  color: 'black',
+                  '&.Mui-focused': {
+                    color: 'black', 
+                  },
+                }
+                
+              }}
+      onChange={(e) => setEmailToInvite(e.target.value)}
+      fullWidth
+      margin="normal"
+    />
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setInviteDialogOpen(false)}  sx={{ color: 'black' }}>Cancel
+      
+    </Button>
+    <Button
+      onClick={handleSendInvite}
+      variant="contained"
+      color="primary"
+      disabled={!emailToInvite}
+    >
+      Send Invite
+    </Button>
+  </DialogActions>
+</Dialog>
+
     </Container>
   );
 };
