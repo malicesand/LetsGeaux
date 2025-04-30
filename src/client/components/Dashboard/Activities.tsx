@@ -253,16 +253,35 @@ const Activity: React.FC<Props> = ({
               <Typography variant='h5' gutterBottom>
                 Activities List
               </Typography>
-              <Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  overflowX: 'auto',
+                  gap: 2,
+                  py: 2,
+                  px: 1,
+                  scrollSnapType: 'x mandatory',
+                  scrollBehavior: 'smooth',
+                  '&::-webkit-scrollbar': { display: 'none' }, // optional: hide scrollbar
+                }}
+              >
                 {sortedActivities.map(activity => (
-                  <Box key={activity.id} mb={2}>
+                  <Box 
+                    key={activity.id} 
+                    sx={{
+                      flex: '0 0 auto',
+                      width: 280, // adjust based on your layout
+                      scrollSnapAlign: 'start',
+                    }}
+                  >
                     <Card
                       sx={{
                         backgroundColor: '#A684FF',
                         padding: '16px',
                         borderRadius: '8px',
                         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                        position: 'relative'
+                        position: 'relative',
+                        height: '100%'
                       }}
                     >
                       {activity.image && (
@@ -272,9 +291,9 @@ const Activity: React.FC<Props> = ({
                           alt={activity.name}
                           sx={{
                             width: '100%',
-                            height: 200,
+                            height: 140,
                             objectFit: 'cover',
-                            borderRadius: '16px',
+                            borderRadius: '12px',
                             mb: 2
                           }}
                         />
