@@ -12,7 +12,8 @@ import {
   FormControlLabel,
   FormLabel,
   Box,
-  Stack
+  Stack,
+  TextField
 } from '@mui/material';
 import ImageUpload from './ImageUpload';
 import { useUser } from './UserContext';
@@ -27,6 +28,9 @@ const Profile: React.FC = () => {
 
   const [interests, setInterests] = useState([]);
   const [selectedInterest, setSelectedInterest] = useState('');
+  const [editedUsername, setEditedUsername] = useState(user.username);
+  const [isSavingUsername, setIsSavingUsername] = useState(false);
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
 
   useEffect(() => {
     if (!contextUser?.id) {
@@ -64,7 +68,21 @@ const Profile: React.FC = () => {
       console.error('Error updating interest:', error);
     }
   };
+  const handleUpdateUsername = async () => {
+    try {
+      await axios.patch('/api/users/update-username', {
+        contextUserId: contextUser.id,
+        username: editedUsername,
+      });
 
+
+      setLocalUser((prev: any) => ({ ...prev, username: editedUsername }));
+    } catch (error) {
+      console.error('Error updating username:', error);
+    } finally {
+      setIsSavingUsername(false);
+    }
+  };
   const handleUploadWidget = () => {
     // @ts-ignore
     const widget = window.cloudinary.createUploadWidget(
@@ -99,11 +117,89 @@ const Profile: React.FC = () => {
   if (!contextUser) return <Typography>Loading...</Typography>;
 
   return (
-    <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Typography variant="h3" gutterBottom align="center">{user.username}</Typography>
+    <Container maxWidth="sm" sx={{ py: { xs: 2, sm: 4 } }}>
+      <Stack spacing={4} alignItems="center">
 
-      <Stack spacing={2} alignItems="center">
-        {/* Wrapper box to position the edit icon */}
+        {/* Username */}
+        <Box sx={{ width: '100%' }}>
+          {isEditingUsername ? (
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={2}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <TextField
+                variant="outlined"
+                value={editedUsername}
+                onChange={(e) => setEditedUsername(e.target.value)}
+                size="small"
+                sx={{ width: { xs: 200, sm: 250 } }}
+                InputProps={{
+                  sx: {
+                    fontSize: 'h2',
+                    textAlign: 'center',
+                  },
+                }}
+              />
+              <Stack direction="row" spacing={1}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={async () => {
+                    await handleUpdateUsername();
+                    setIsEditingUsername(false);
+                  }}
+                  disabled={isSavingUsername || editedUsername === contextUser.username}
+                >
+                  {isSavingUsername ? 'Saving...' : 'Save'}
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={() => {
+                    setEditedUsername(contextUser.username);
+                    setIsEditingUsername(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Stack>
+            </Stack>
+          ) : (
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Typography
+                variant="h1"
+                sx={{
+                  textTransform: 'none',
+                  textAlign: 'center',
+                }}
+              >
+                {contextUser.username}
+              </Typography>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setIsEditingUsername(true)}
+                sx={{
+                  minWidth: 0,
+                  padding: 0,
+                  color: 'black',
+                  '&:hover': { color: 'primary.main' },
+                }}
+              >
+                <PiPencilBold size={20} />
+              </Button>
+            </Stack>
+          )}
+        </Box>
+
+        {/* Avatar with Edit Button */}
         <Box sx={{ position: 'relative', width: 150, height: 150 }}>
           <Avatar
             src={contextUser.profilePic}
@@ -116,11 +212,9 @@ const Profile: React.FC = () => {
               transition: 'box-shadow 0.3s ease-in-out',
               '&:hover': {
                 boxShadow: 6,
-                bgcolor: '#fffff',
               },
             }}
           />
-
           <Button
             variant="contained"
             onClick={handleUploadWidget}
@@ -140,31 +234,42 @@ const Profile: React.FC = () => {
           </Button>
         </Box>
 
-        <Typography variant="body1">{contextUser.email}</Typography>
-      </Stack>
+        {/* Email */}
+        <Typography variant="body1" sx={{ textAlign: 'center' }}>
+          {contextUser.email}
+        </Typography>
 
-      <Box mt={4}
-        sx={{
-          border: '4px solid black',
-          borderRadius: 4,
-          padding: 4,
-          maxWidth: 300,
-          textAlign: 'center',
-          mx: 'auto',
-        }}
-      >
-        <Typography variant="h5" textTransform="uppercase" fontWeight='700' > Interest:</Typography>
-        <Typography variant="body1">{currentInterest || 'None'}</Typography>
+        {/* Interest Box */}
+        <Box
+          sx={{
+            border: '4px solid black',
+            borderRadius: 4,
+            p: { xs: 2, sm: 4 },
+            width: '100%',
+            maxWidth: 350,
+            mx: 'auto',
+            textAlign: 'center',
+          }}
+        >
+          <Typography variant="h3">
+            Interest:
+          </Typography>
+          <Typography variant="body1" mb={2}>
+            {currentInterest || 'None'}
+          </Typography>
 
-        <Box mt={3}>
-          <FormControl component="fieldset" >
-            <FormLabel component="legend" sx={{
-              color: 'black',
-              '&.Mui-focused': {
-                color: '#3200FA',
-
-              },
-            }}>Change Interest</FormLabel>
+          <FormControl component="fieldset" fullWidth>
+            <FormLabel
+              component="legend"
+              sx={{
+                color: 'black',
+                '&.Mui-focused': {
+                  color: 'primary.main',
+                },
+              }}
+            >
+              Change Interest
+            </FormLabel>
             <RadioGroup
               value={selectedInterest}
               onChange={(e) => setSelectedInterest(e.target.value)}
@@ -174,30 +279,18 @@ const Profile: React.FC = () => {
                   key={interest}
                   value={interest}
                   control={<Radio />}
-
                   label={interest}
-
-
                 />
               ))}
             </RadioGroup>
-            <Button
-              variant="contained"
-
-              sx={{ mt: 2 }}
-              onClick={handleUpdateInterest}
-            >
+            <Button variant="contained" sx={{ mt: 2 }} onClick={handleUpdateInterest}>
               Update
             </Button>
           </FormControl>
         </Box>
-
-      </Box>
-      <Box mt={4}>
-
-      </Box>
+      </Stack>
     </Container>
-  );
-};
+  )
+}
 
 export default Profile;
