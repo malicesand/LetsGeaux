@@ -71,7 +71,7 @@ const NavDrawer: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <ClickAwayListener onClickAway={handleDrawerClose}>
+      {/* <ClickAwayListener onClickAway={handleDrawerClose}> */}
       <IconButton
         color='inherit'
         aria-label='open drawer'
@@ -86,7 +86,7 @@ const NavDrawer: React.FC = () => {
       >
         <PiListBold />
       </IconButton>
-      </ClickAwayListener>
+      {/* </ClickAwayListener> */}
       <Drawer
         sx={{
           width: drawerWidth,

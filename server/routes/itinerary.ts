@@ -3,6 +3,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
+import sgMail from '@sendgrid/mail';
 
 const prisma = new PrismaClient();
 const itineraryRoute = express.Router();
@@ -242,6 +243,36 @@ itineraryRoute.get('/party/:partyId', async (req: any, res: any) => {
   }
 });
 
+//send gring for emailing viewCode
+sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
+
+itineraryRoute.post('/sendInvite', async (req: any, res: any) => {
+  const { email, itineraryName, viewCode } = req.body;
+  if (!email || !viewCode) {
+    return res.status(400).json({ error: 'Missing email or view code' });
+  }
+
+  const msg = {
+    to: email,
+    from: 'invite@letsgeauxnola.com', 
+    subject: 'View my trip on Lets Geaux!',
+    text: `Check out my trip "${itineraryName}" on LetsGeauxNola.com. View Code: ${viewCode}`,
+    html: `<strong>Check out my trip "${itineraryName}" on <a href="http://letsgeauxnola.com/view">LetsGeauxNola.com</a>!</strong><br/>
+           <p><b>View Code:</b> ${viewCode}</p>`,
+  };
+
+  try {
+    await sgMail.send(msg);
+    res.json({ message: 'Invite sent successfully!' });
+  } catch (error) {
+    console.error('Error sending invite:', error);
+    res.status(500).json({ error: 'Failed to send invite' });
+  }
+});
+
+
+
+
 /*// GET all itineraries for the logged-in user (creator or party member)
 itineraryRoute.get('/', async (req: any, res: any) => {
   const userId = req.user.id;
@@ -277,6 +308,27 @@ itineraryRoute.get('/', async (req: any, res: any) => {
   }
 });
 */
-
+//* Update Existing Itinerary to Party Itinerary *//
+itineraryRoute.patch('/party/:itineraryId', async (req:any, res: any) => {
+  const {itineraryId} = req.params;
+  const {partyId} = req.body;
+  const updateItin = prisma.itinerary.update({
+    where: { id: +itineraryId },
+    data: { partyId: +partyId },
+  });
+  const updateParty = prisma.party.update({
+    where: {id: +partyId},
+    data: {itineraryId: +itineraryId}
+  })
+  try {
+    const transaction = await prisma.$transaction([updateItin, updateParty])
+    console.log(`Transaction Complete: ${itineraryId} shared with Party ${partyId}`)
+    res.status(200).json({update: itineraryId, partyId: +partyId})
+  } catch (error) {
+    console.error(`Transaction Failed: ${itineraryId} to party ${partyId}`, error)
+    res.status(500).json({error: `Failed: ${itineraryId} with party ${partyId}`})
+  }
+  
+})
 
 export default itineraryRoute;

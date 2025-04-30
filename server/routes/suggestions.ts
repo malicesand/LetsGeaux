@@ -124,7 +124,7 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
       let returnString = '';
       // set an empty string that will eventually be what goes into the api search function
       // REFACTOR: query will now = a function that:
-      const name/*{ name }*/ = /*chosenUserInterest[0]*/'Adult';
+      const name/*{ name }*/ = /*chosenUserInterest[0]*/'Food';
       // 1. takes the name from userInterest. Use it to access the corresponding array
       const queryStack: string[] = interestCodes[name] //for testing, we can replace this line with hardcode.
       // 2. sets a math randomizer that runs up to the length of said array
@@ -229,22 +229,21 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
             });
 
 
-// function to test foursquare api in postman
-suggestionRouter.get('/test', (req: any, res: any) => {
-  getSuggestionsFromFoursquare('4bf58dd8d48988d16a941735').then((data) => {
-    if (data) {
-      console.log();
-      res.status(200).send(data);
-    } else {
-      res.status(404).send('failed the test, yo');
-    }
-  }).catch((err) => {
-    console.error('could not test', err);
+// function to get all matching itineraryId's matching the given user id
+suggestionRouter.get('/check/:id', async (req: any, res: any) => {
+  const { id } = req.params;
+  try {
+    console.log('at the check endpoint')
+    const listOfItineraryIds = await prisma.$queryRaw`SELECT * FROM itinerary WHERE partyId IN (SELECT partyId FROM userParty WHERE userId = ${id})`;
+    console.log('this is my list of itinerary ids', listOfItineraryIds);
+    res.status(200).send(listOfItineraryIds);
+  } catch (err) {
+    console.error('could not search for list', err);
     res.sendStatus(500);
-  });
+  }
 
-    });
 
+})
 
 
 

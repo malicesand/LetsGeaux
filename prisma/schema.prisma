@@ -127,10 +127,10 @@ model activity {
   phone       String?    @db.VarChar(150)
   time        String?
   date        String?
-  image       String?
+  image       String? @db.VarChar(1000)
   location    String?
   itineraryId Int?
-  itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
+  itinerary   itinerary? @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
 
   @@index([itineraryId], map: "activity_itineraryId_fkey")
 }
