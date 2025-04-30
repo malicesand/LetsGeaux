@@ -28,7 +28,10 @@ const EmailCode = () => {
 
   return (
     <Container>
-      <Box mt={6} p={4} boxShadow={3} borderRadius={2}>
+      <Box mt={6} p={4} boxShadow={3} borderRadius={2} 
+      maxWidth="400px" 
+      mx="auto"        
+      width="90%" >
         <Typography variant='h5' gutterBottom align='center'>
           {' '}
           View Itinerary
@@ -39,11 +42,22 @@ const EmailCode = () => {
         <form onSubmit={handleSubmit}>
           <TextField
             label='Itinerary View Code'
+            
             value={viewCode}
             onChange={e => setViewCode(e.target.value)}
             fullWidth
             margin='normal'
             autoFocus
+            
+            InputLabelProps={{
+              sx: {
+                top: -8,
+                color: 'black',
+                '&.Mui-focused': {
+                  color: 'black', 
+                },
+              }
+            }}
           />
           {error && (
             <Alert severity='error' sx={{ mt: 2 }}>

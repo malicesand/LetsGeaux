@@ -29,6 +29,9 @@ import Fab from '@mui/material/Fab';
 import { useSnackbar } from 'notistack';
 import { PiPlusBold } from 'react-icons/pi';
 import Tooltip from '@mui/material/Tooltip';
+import { Autocomplete} from '@mui/material';
+
+const API_KEY = 'TODO: ADD GOOGLE PLACES API KEY';
 
 //defines structure of activity object
 interface Activity {
@@ -91,6 +94,16 @@ const Activity: React.FC<Props> = ({
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
     null
   );
+
+//define place type
+  interface PlaceOption {
+    //
+    label: string;
+    place_id: string;
+  }
+  //state to store all autocomplete ooptions
+  const [placeOptions, setPlaceOptions] = useState<PlaceOption[]>([]);
+  
   //copies activity and sortd ativity by time and date
   const sortedActivities = [...activities].sort((a, b) => {
     const dateTimeA = dayjs(
@@ -251,6 +264,66 @@ const Activity: React.FC<Props> = ({
     }
   };
 
+ //fetch autocomplete places 
+const fetchPlaces = async (input: string) => {
+  if (!input) return;
+  // will show loading spinner
+
+  try {
+    const response = await fetch(
+      //encodeURIComponent->encodes a string so that it can be included in a URL without breaking it.
+      `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
+        input
+        //results near new orleansx`
+      )}&location=29.9511,-90.0715&radius=30000&strictbounds=true&key=${API_KEY}`
+    );
+    //reads data from api
+    //parse JSON google places int object(data)
+    const data = await response.json();
+    //if predictions exists, maps over eaxh predictions and return obect with label and place
+    const results = data.predictions?.map((p: any) => ({
+      label: p.description,
+      place_id: p.place_id
+    })) || [];
+    //updates state
+    setPlaceOptions(results);
+  } catch (err) {
+    console.error('Error fetching places:', err);
+  
+  }
+};
+
+
+const fetchPlaceDetails = async (placeId: string) => {
+  try {
+    //sends request for more more details( name, address, phone #, pics)
+    const res = await fetch(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_address,formatted_phone_number,photos&key=${API_KEY}`
+    );
+    //parses JSON res into obj
+    const data = await res.json();
+    //gets results obj out of response
+    const place = data.result;
+    //updates  activiity form data 
+    setFormData(prev => ({
+      ...prev,
+      //sets place name
+      location: place.name || prev.location,
+      //sets formated address
+      address: place.formatted_address || '',
+      //sets formatted phone number
+      phone: place.formatted_phone_number || '',
+      //if image exiists, will pull first image
+      image: place.photos?.length
+        ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photos[0].photo_reference}&key=${API_KEY}`
+        : ''
+    }));
+  } catch (err) {
+    console.error('Error fetching place details:', err);
+  }
+};
+
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Container>
@@ -387,7 +460,58 @@ const Activity: React.FC<Props> = ({
                     }
                   }}
                 />
+{/* auto complete for places */}
+<Autocomplete
+// allows any type of text
+  freeSolo
+  // list of google place returned from api call
+  options={placeOptions}
+  
+  //tells mui how to display options
+  getOptionLabel={(option) => typeof option === 'string' ? option : option.label}
+  //will display selected vaue
+  value={formData.location}
+  //updates types and runs whenuser types in input box
+  onInputChange={(event, newInputValue) => {
+    //updates form state
+    setFormData(prev => ({ ...prev, location: newInputValue }));
+    //when more than 2 characters is typed, fetch suggestion
+    if (newInputValue.length > 2) fetchPlaces(newInputValue);
+  }}
+  onChange={(event, newValue) => {
+    if (typeof newValue === 'string') {
+      //it saves the string into  formData
+      setFormData(prev => ({ ...prev, location: newValue }));
+      //uses the place_id to fetch  (name, address, phone, image) and auto-fills other form fields.
+    } else if (newValue?.place_id) {
+      fetchPlaceDetails(newValue.place_id);
+    }
+  }}
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      label="Location"
+      fullWidth
+      margin="normal"
+      required
+      InputProps={{
+        ...params.InputProps,
+          // drop down arrow and clear icons
+            endAdornment: params.InputProps.endAdornment
+      }}
+      InputLabelProps={{
+        sx: {
+          '&.Mui-focused': {
+            color: 'black'
+          },
+          top: -6
+        }
+      }}
+    />
+  )}
+/>
 
+{/* 
                 <TextField
                   label='Location '
                   name='location'
@@ -405,7 +529,7 @@ const Activity: React.FC<Props> = ({
                       top: -6
                     }
                   }}
-                />
+                /> */}
                 <TextField
                   label='Image URL (optional)'
                   name='image'
