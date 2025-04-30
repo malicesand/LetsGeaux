@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import { 
+  PiPencilBold, 
+  PiTrashDuotone, 
+  PiSidebarBold,
+  PiSidebarThin  } from "react-icons/pi";
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import { PiPencilBold, PiTrashDuotone } from "react-icons/pi";
 import Modal from '@mui/material/Modal';
 import Stack from '@mui/material/Stack';
 import Dialog from '@mui/material/Dialog';
@@ -27,7 +29,8 @@ import Paper from '@mui/material/Paper';
 import MessageBoard from './MessageBoard';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
-import ManagePartyModal from './ManagePartyModal';
+import { Box, Typography, Card, CardContent } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddItinerary from './AddItinerary';
 // import Itinerary from './PartyItinerary.tsx';
 import Itinerary from './DashItin.tsx';
@@ -69,7 +72,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const [leaveParty, setLeaveParty] = useState(false);
   const [renameOpen, setRenameOpen] = React.useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
-
+  //* Sidebar Toggle *//
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   
   useEffect(() => {
     fetchViewCode(numericPartyId);
@@ -280,33 +284,35 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         </Tooltip>
       </Box>
       {/* Content */}
-        <Box>
-          <Stack spacing={4} direction="row">
-            {/* Sidebar */}
-            <Box
+      <Box>
+      <Tooltip title={sidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}>
+        <IconButton onClick={() => setSidebarOpen(prev => !prev)}>
+          {sidebarOpen ? <PiSidebarBold /> : <PiSidebarThin />} {/* or Chevron */}
+        </IconButton>
+      </Tooltip>
+        <Stack spacing={4} direction="row">
+          {/* Sidebar */}
+          {sidebarOpen && (
+            <Card
               sx={{
                 width: '100%',
-                maxWidth: '300px',
-                margin: '0',
+                maxWidth: { xs: '100%', sm: '100%', md: '300px' },
+                mt: { xs: 2, md: 7 },
+                p: { xs: 2, md: 3 },
                 border: '4px solid black',
                 borderRadius: 4,
-                padding: 3,
-                mt: 7,
-                pt: 4,
-                // boxShadow: 3,
-
+                backgroundColor: '#C2A4F8',
+                mx: 'auto',
+                height: 'fit-content',
+                alignSelf: 'flex-start',
               }}
             >
-              <Stack spacing={4} sx={{ width: '100%' }}>
-                <Box
-                  display='flex'
-                  flexDirection='column'
-                  alignItems='flex-start'
-                  gap={2}
-                  sx={{
-
-                    bgColor: '#a684ff',
-                  }}
+              <CardContent>
+                <Stack 
+                  spacing={4} 
+                  sx={{ width: '100%' }}
+                  direction={{ xs: 'column', md: 'row' }}
+                  alignItems="flex-start"
                 >
                   <Container
                     sx={{
@@ -339,70 +345,18 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                     partyName={partyName}
                     getMembers={getUsersForParty}
                   />
-                {/* Email Handling */}
+                  {/* Email Handling */}
                   <Button
                     size='medium'
-                    // color='secondary'
                     variant='contained'
                     onClick={openModal}
-                    sx={{ width: 'auto', m: 'auto', p: 'auto' }}
+                    fullWidth
+                    // sx={{ width: 'auto', m: 'auto', p: 'auto' }}
+                    sx={{ mt: 1 }}
                   >
                     Send an E-Vite
                   </Button>
-                  <Dialog
-                    open={open}
-                    onClose={closeModal}
-                    slotProps={{
-                      paper: {
-                        sx: { width: 500, borderRadius: 12 },  
-                      }
-                    }}
-                  >
-                    <Box
-                      component="form"
-                      onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                        e.preventDefault();
-                        if (emails.length > 0) {
-                          setLoading(true);
-                          sendEmail(emails, partyName, userId, partyId, viewCode)
-                          .finally(() => setLoading(false));
-                        }
-                      }}
-                    >
-                      <Typography variant='subtitle1' sx={{ mt: 2 }}>
-                        Invite your friends to join your travel party
-                      </Typography>
-                      <TextField
-                        id='email'
-                        placeholder='Enter Multiple Emails'
-                        type='text'
-                        fullWidth
-                        value={inputValue}
-                        onChange={event => {
-                          const raw = event.target.value;
-                          setInputValue(raw);
-                          const parsedEmails = raw
-                            .split(',')
-                            .map(email => email.trim())
-                            .filter(email => email.length > 0);
-                          setEmails(parsedEmails);
-                        }}
-                      />
-                      <Button
-                        sx={{ mt: 1 }}
-                        variant='contained'
-                        type='submit'
-                        disabled={emails.length === 0 || loading} 
-                      >
-                        {loading ? <CircularProgress size={24} color="inherit" /> : 'Invite'}
-                      </Button>
-                      {inviteSuccess && (
-                        <Typography sx={{ mt: 1, color: 'green' }}>
-                          Invite sent successfully!
-                        </Typography>
-                      )}
-                    </Box>
-                  </Dialog>
+                  {/* Email Log */}
                   {emailLog.length > 0 && (
                     <Container
                       sx={{
@@ -432,32 +386,34 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                         ))}
                       </Box>
                     </Container>
-                  )}
-                  <Box>
+                    )}
+                    <Box>
 
-                  {/* Message Board */}
-                  {/* <Box display="flex" justifyContent="center" alignItems="center">
-                  <Box sx={{ width: '60%' }}>
-                  <MessageBoard user={user} />
-                  </Box>
-                  </Box> */}
-                  {/* <Box display="flex" justifyContent="center"> */}
-                  {/* <Itinerary user={user}/> */}
-                  </Box>
-                </Box>
-                
-              </Stack>
-            </Box>
-            {/* Itinerary */}
-            <Box>
-              <Itinerary
-                user={user}
-                partyId={numericPartyId}
-                partyName={partyName}
-              />
-            </Box>
-          </Stack>
-        </Box>
+                    {/* Message Board */}
+                    {/* <Box display="flex" justifyContent="center" alignItems="center">
+                    <Box sx={{ width: '60%' }}>
+                    <MessageBoard user={user} />
+                    </Box>
+                    </Box> */}
+                    {/* <Box display="flex" justifyContent="center"> */}
+                    {/* <Itinerary user={user}/> */}
+                    </Box>
+                  
+                  
+                </Stack>
+              </CardContent>
+            </Card>    
+          )}
+          {/* Itinerary */}
+          <Box>
+            <Itinerary
+              user={user}
+              partyId={numericPartyId}
+              partyName={partyName}
+            />
+          </Box>
+        </Stack>
+      </Box>
       {/*  Manage Party Model */}
       <Dialog
         id='manageParty' 
@@ -553,55 +509,98 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
           },
         }}
       >
-         {/* <Box
+        <Typography>Are you sure?</Typography>
+          <DialogContent>
+            <Typography>You are about to:</Typography>
+            <ul>
+              {/* Message for Name Change */}
+              {newName && (
+              <Typography>
+                Rename the party to: <strong>{newName}</strong>
+                <Typography>(navigate to main dash for new name to render)</Typography>
+              </Typography>)}
+              {/* Message for Deleting others */}
+              {membersToRemove.filter(id => id !== user.id).length > 0 && (
+                <Typography>
+                  Remove {membersToRemove.length} member(s)
+                </Typography>)}
+              {/* Message for Leaving */}
+              {leaveParty && (
+                <Typography>Leave the party</Typography>)}
+            </ul>
+          </DialogContent>
+          <DialogActions>
+            <Button 
+              variant='contained' 
+              onClick={() => setConfirmOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant='contained'
+              type='submit'
+              onClick={handleConfirmActions}
+              disabled={loading}
+            >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* Email Modal */}
+      <Dialog
+        open={open}
+        onClose={closeModal}
+        slotProps={{
+          paper: {
+            sx: { width: 500, borderRadius: 12 },  
+          }
+        }}
+      >
+        <Box
           component="form"
           onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            handleConfirmActions();
+            if (emails.length > 0) {
+              setLoading(true);
+              sendEmail(emails, partyName, userId, partyId, viewCode)
+              .finally(() => setLoading(false));
+            }
           }}
-          onKeyDown={(e: React.KeyboardEvent<HTMLFormElement>) =>
-            handleKeyDown(e, handleConfirmActions, () => setConfirmOpen(false))
-          }
-        > */}
-          <Typography>Are you sure?</Typography>
-            <DialogContent>
-              <Typography>You are about to:</Typography>
-              <ul>
-                {/* Message for Name Change */}
-                {newName && (
-                <Typography>
-                  Rename the party to: <strong>{newName}</strong>
-                  <Typography>(navigate to main dash for new name to render)</Typography>
-                </Typography>)}
-                {/* Message for Deleting others */}
-                {membersToRemove.filter(id => id !== user.id).length > 0 && (
-                  <Typography>
-                    Remove {membersToRemove.length} member(s)
-                  </Typography>)}
-                {/* Message for Leaving */}
-                {leaveParty && (
-                  <Typography>Leave the party</Typography>)}
-              </ul>
-            </DialogContent>
-            <DialogActions>
-              <Button 
-                variant='contained' 
-                onClick={() => setConfirmOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant='contained'
-                type='submit'
-                onClick={handleConfirmActions}
-                disabled={loading}
-              >
-              Confirm
-            </Button>
-          </DialogActions>
-        {/* </Box> */}
+        >
+          <Typography variant='subtitle1' sx={{ mt: 2 }}>
+            Invite your friends to join your travel party
+          </Typography>
+          <TextField
+            id='email'
+            placeholder='Enter Multiple Emails'
+            type='text'
+            fullWidth
+            value={inputValue}
+            onChange={event => {
+              const raw = event.target.value;
+              setInputValue(raw);
+              const parsedEmails = raw
+                .split(',')
+                .map(email => email.trim())
+                .filter(email => email.length > 0);
+              setEmails(parsedEmails);
+            }}
+          />
+          <Button
+            sx={{ mt: 1 }}
+            variant='contained'
+            type='submit'
+            disabled={emails.length === 0 || loading} 
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Invite'}
+          </Button>
+          {inviteSuccess && (
+            <Typography sx={{ mt: 1, color: 'green' }}>
+              Invite sent successfully!
+            </Typography>
+          )}
+        </Box>
       </Dialog>
-
     </React.Fragment>
   );
 };
