@@ -142,17 +142,29 @@ const Profile: React.FC = () => {
                   },
                 }}
               />
-              <Button
-                variant="contained"
-                size="small"
-                onClick={async () => {
-                  await handleUpdateUsername();
-                  setIsEditingUsername(false);
-                }}
-                disabled={isSavingUsername || editedUsername === contextUser.username}
-              >
-                {isSavingUsername ? 'Saving...' : 'Save'}
-              </Button>
+              <Stack direction="row" spacing={1}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={async () => {
+                    await handleUpdateUsername();
+                    setIsEditingUsername(false);
+                  }}
+                  disabled={isSavingUsername || editedUsername === contextUser.username}
+                >
+                  {isSavingUsername ? 'Saving...' : 'Save'}
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={() => {
+                    setEditedUsername(contextUser.username);
+                    setIsEditingUsername(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Stack>
             </Stack>
           ) : (
             <Stack
@@ -239,7 +251,7 @@ const Profile: React.FC = () => {
             textAlign: 'center',
           }}
         >
-          <Typography variant="h6" textTransform="uppercase" fontWeight={700}>
+          <Typography variant="h3">
             Interest:
           </Typography>
           <Typography variant="body1" mb={2}>
