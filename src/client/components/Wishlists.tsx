@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Container, Typography, Grid, Card, Button } from '@mui/material';
 import { user } from '../../../types/models.ts';
 import Suggestion from './Suggestion.tsx';
+import SuggestionToActivityForm from './SuggestionToActivityForm.tsx';
 
 interface WishlistProps {
   user: user;
