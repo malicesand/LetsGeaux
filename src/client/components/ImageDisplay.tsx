@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Typography, Box, Slider, Switch, FormControlLabel } from '@mui/material';
+import {
+  Button,
+  Typography,
+  Box,
+  Slider,
+  Switch,
+  FormControlLabel,
+} from '@mui/material';
 import { useImageContext } from './ImageContext';
-//import { useLocation } from 'react-router-dom';
 
-// interface Image {
-//   id: string;
-//   url: string;
-//   notes: string;
-// }
+interface Image {
+  id: number;
+  url: string;
+  notes: string;
+}
 
-// interface ImageDisplayProps {
-//   images: Image[];
-//   deleteImage: (id: string) => void;
-// }
-
-const chunkArray = (arr: Image[], size: number) => {
+interface ImageDisplayProps {
+  userId: number;
+}
+const chunkArray = (arr: Image[], size: number): Image[][] => {
   const chunks = [];
   for (let i = 0; i < arr.length; i += size) {
     chunks.push(arr.slice(i, i + size));
@@ -22,16 +26,15 @@ const chunkArray = (arr: Image[], size: number) => {
   return chunks;
 };
 
-const ImageDisplay: React.FC = () => {
+const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
+  const { images, deleteImage, getAllImages } = useImageContext();
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
   const [autoFlip, setAutoFlip] = useState(true);
-  const [flipInterval, setFlipInterval] = useState(3000); // ms
+  const [flipInterval, setFlipInterval] = useState(3000); // milliseconds
 
   const imageChunks = chunkArray(images, 2);
-  //const location = useLocation();
-  //const { images, deleteImage } = loca tion.state || { images: [], deleteImage: () => { } };
-  const { images, deleteImage } = useImageContext();
+
   useEffect(() => {
     if (!autoFlip || imageChunks.length <= 1) return;
 
@@ -41,13 +44,16 @@ const ImageDisplay: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [autoFlip, flipInterval, imageChunks.length]);
-
+  useEffect(() => {
+    getAllImages(userId)
+    console.log(userId)
+  }, [userId])
   const handleNext = () => {
     setIsFlipping(true);
     setTimeout(() => {
       setCurrentChunkIndex((prev) => (prev + 1) % imageChunks.length);
       setIsFlipping(false);
-    }, 300); // match flip duration
+    }, 300);
   };
 
   const handlePrev = () => {
