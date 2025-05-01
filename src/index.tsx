@@ -5,6 +5,7 @@ import App from './client/components/App';
 import { SnackbarProvider } from 'notistack';
 import { BudgetNotificationProvider } from './client/components/BudgetBuddy/BudgetNotificationContext';
 import { UserProvider } from './client/components/UserContext';
+import { MediaQueryProvider } from './client/components/MediaQueryProvider';
 import { ThemeProvider } from '@mui/material/styles';
 import theme1 from './client/theme/index'
 const root = createRoot(document.getElementById('root'));
@@ -20,19 +21,19 @@ root.render(
   //     backgroundSize: "repeat",
 
 
-  //   }}>
+    }}>
   <BrowserRouter>
-    <ImageProvider>
-      <SnackbarProvider maxSnack={3}>
-        <BudgetNotificationProvider>
-          <UserProvider>
-            <ThemeProvider theme={theme1}>
-              <App />
-            </ThemeProvider>
-          </UserProvider>
-        </BudgetNotificationProvider>
-      </SnackbarProvider>
-    </ImageProvider>
+
+    <SnackbarProvider maxSnack={3}>
+      <BudgetNotificationProvider>
+        <UserProvider>
+          <ThemeProvider theme={theme1}>
+            <App />
+          </ThemeProvider>
+        </UserProvider>
+      </BudgetNotificationProvider>
+    </SnackbarProvider>
+
   </BrowserRouter>
-  // </Box>
+  </Box >
 );
