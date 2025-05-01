@@ -16,7 +16,7 @@ import Home from './Home.tsx';
 import Login from './Login.tsx';
 import Maps from './Maps.tsx';
 import Suggestions from './Suggestions.tsx';
-import ChatBot from './Chat/ChatBot.tsx';
+// import ChatBot from './Chat/ChatBot.tsx';
 import FullScreenChat from './Chat/FullScreenChat.tsx';
 import Itinerary from './Itinerary/Itinerary.tsx'
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
