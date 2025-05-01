@@ -2,10 +2,9 @@ import React, { useState, useEffect, MouseEvent } from 'react';
 import axios from 'axios';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon'; 
-// import Typography from '@mui/material/Typography';
+import ListItemIcon from '@mui/material/ListItemIcon';  
+import { Typography, Box, Card, CardContent, CardActions, Divider } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
@@ -22,13 +21,14 @@ interface ChatMessage {
 
 interface ChatHistProps {
   user: user;
+  isMobile: boolean;
 }
 interface SessionWithMessages {
   session: chatHistory;
   messages: message[];
 }
 
-const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
+const ChatHistory: React.FC<ChatHistProps> = ({ user, isMobile }) => {
   // const [messages, setMessages] = useState<message[][]>([]); // if storing messages per session
   const [sessionsWithMessages, setSessionsWithMessages] = useState<SessionWithMessages[]>([]);
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
@@ -105,76 +105,93 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
   }
 
   return (
-    <List>
+    <List sx={{ p: 0 }}>
       {sessionsWithMessages.map(({ session, messages }) => (
-        <React.Fragment  key={session.sessionId}>
-          <ListItem sx={{cursor: 'pointer'}} id='session.sessionId' onClick={() =>
+        <Card 
+        key={session.sessionId}
+        variant="outlined"
+        sx={{
+          mb: 2,
+          p: 2,
+          px: isMobile ? 1 : 2,
+          py: isMobile ? 1 : 2,
+          backgroundColor: '#fff085',
+          boxShadow: '2px 2px 0px black',
+          border: '2px solid black',
+          borderRadius: isMobile ? '12px' : '16px',
+        }}
+      >
+          <CardContent sx={{cursor: 'pointer'}} id='session.sessionId' onClick={() =>
             setExpandedSessionId(prev =>
               prev === session.sessionId ? null : session.sessionId)
           }>
 
-          <ListItemIcon>
-            <MailIcon />
-          </ListItemIcon>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <MailIcon sx={{ mr: 1 }} />
             {editingSessionId === session.sessionId ? (
               <TextField
-                type='text'
-                size='small'
+                type="text"
+                size="small"
                 value={editedTitle}
                 onChange={(e) => setEditedTitle(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {saveEditedName(session.sessionId);}
+                  if (e.key === 'Enter') {
+                    saveEditedName(session.sessionId);
+                  }
                 }}
                 autoFocus
               />
             ) : (
-              <ListItemText
-                primary={session.conversationName || 'Untitled Conversation'}
-                slotProps={{ 
-                  primary: {
-                    variant: 'h4',
-                  },
-                  secondary: { variant: 'h5',}
-                }}
-                secondary={`Last active: ${new Date(session.lastActive).toLocaleString()}`}
-              />
+              <Box>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {session.conversationName || 'Untitled Conversation'}
+                </Typography>
+                <Typography variant="body2">
+                  Last active: {new Date(session.lastActive).toLocaleString()}
+                </Typography>
+              </Box>
             )}
-          </ListItem>
+          </Box>
+            
 
           {expandedSessionId === session.sessionId && (
             <List component='div' disablePadding sx={{ pl: 4, cursor: 'pointer' }}>
               {messages.map(msg => (
-                <ListItem key={msg.id}>
+                <ListItem key={msg.id} sx={{ pl: 0 }}>
                   <ListItemText 
                     primary={`You: ${msg.userMessage}`}
                     secondary={`Gata: ${msg.botResponse}`}
                     slotProps = {{
-                      primary: {variant: 'body1',},
-                      secondary: {variant: 'body1',},
+                      primary: {variant: 'body2',},
+                      secondary: {variant: 'body2',},
                     }}
-                  />
+                    />
                 </ListItem>
               ))}
             </List>
           )}
-           <ButtonGroup orientation='horizontal' sx={{ pl:2, cursor: 'pointer' }}> 
-            <Button 
-              // id='change-name'
-              variant='contained'
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                startEditing(session.sessionId, session.conversationName || '')}}
-            >
+          </CardContent>
+          <CardActions 
+            sx={{ 
+              pt: 0, 
+              justifyContent: 'space-between',
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: 1,
+              alignItems: isMobile ? 'stretch' : 'center', 
+            }}>
+            <Button variant='contained' onClick={() =>
+              startEditing(session.sessionId, session.conversationName || '')
+            }>
               Change Name 
             </Button>
             <Divider/>
-            <Button 
-            variant='contained'
-            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-              handleDelete(session.sessionId)}}
-            > Delete Session </Button>
-          </ButtonGroup>
-          <Divider />
-        </React.Fragment>
+            <Button variant='contained' onClick={() =>
+              handleDelete(session.sessionId)
+            }>
+              Delete Session 
+            </Button>
+          </CardActions>
+        </Card>
       ))}
     </List>
   );
