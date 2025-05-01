@@ -1,14 +1,30 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
+type User = { profilePic: string; username: string; email: string; id: number };
 
 type UserContextType = {
-  localUser: { profilePic: string } | null;
-  setLocalUser: React.Dispatch<React.SetStateAction<{ profilePic: string } | null>>;
+  localUser: User | null;
+  setLocalUser: React.Dispatch<React.SetStateAction<User | null>>;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [localUser, setLocalUser] = useState<{ profilePic: string } | null>(null);
+  const [localUser, setLocalUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setLocalUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  // Save localUser changes back to localStorage
+  useEffect(() => {
+    if (localUser) {
+      localStorage.setItem('user', JSON.stringify(localUser));
+    }
+  }, [localUser]);
 
   return (
     <UserContext.Provider value={{ localUser, setLocalUser }}>

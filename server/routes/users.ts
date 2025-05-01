@@ -1,8 +1,8 @@
+import { Request, Response } from 'express';
 import express from 'express';
 // import Users db model
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-
 const usersRoute = express.Router()
 
 // Example Requests
@@ -40,6 +40,36 @@ usersRoute.patch('/:userId/profile-pic', async (req, res) => {
   } catch (error) {
     console.error('Error saving profile pic:', error);
     res.status(500).json({ message: 'Failed to update profile pic' });
+  }
+});
+
+usersRoute.patch('/update-username', async (req: Request, res: Response) => {
+  try {
+    const { contextUserId, username } = req.body;
+
+    if (!contextUserId || !username) {
+      return res.status(400).json({ message: 'Missing user ID or username' });
+    }
+
+    const userId = Number(contextUserId);
+
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID format' });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        username: username,
+      },
+    });
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error('Error updating username:', error);
+    res.status(500).json({ message: 'Failed to update username' });
   }
 });
 

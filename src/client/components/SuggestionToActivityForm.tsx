@@ -47,6 +47,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({curr
 
 const [itineraryList, setItineraryList] = useState([]);
 const [hasItineraries, setHasItineraries] = useState(false);
+const [chosenItinerary, setChosenItinerary] = useState('');
 
 
   const {
@@ -58,9 +59,9 @@ const [hasItineraries, setHasItineraries] = useState(false);
     link,
     /*latitude, longitude,*/
   } = currentSuggestion;
-  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<FormFields>({
+  const { register, handleSubmit, setValue, control, formState: { errors, isSubmitting } } = useForm<FormFields>({
 defaultValues: {
-      itinerary: null,
+      itinerary: "",
       title,
       description,
       time: '',
@@ -98,7 +99,8 @@ const getItineraries = () => {
 
 
   const postActivity: SubmitHandler<FormFields> = async (formValues: FormFields) => {
-  
+    console.log('tryna Post...')
+
         const { itinerary, title, description, time, date, location, image, phone, address } = formValues;
         const { id } = user;
         // all of these qualities are pulled directly from req.body in the activity request handler
@@ -127,6 +129,15 @@ const getItineraries = () => {
     }
   };
 
+const handleOptionClick = (option: any) => {
+  // console.log('what is this', option)
+  console.log('here is what is chosen:', chosenItinerary)
+  setChosenItinerary(option);
+  setValue('itinerary', chosenItinerary);
+  console.log('here is what is chosen:', chosenItinerary)
+}
+
+
   return (
     <Container>
       <Grid container spacing={4}>
@@ -134,34 +145,49 @@ const getItineraries = () => {
           {/* itinerary Id */}
           <FormControl
           fullWidth
-          //  name="itineraryId"
-          //  {...register('itineraryId', { required: 'Must select itinerary' })}
-          //  label="Itinerary"
+          // name="itinerary"
+          //  {...register('itinerary', { required: 'Must select itinerary' })}
+          label="Itinerary"
+          defaultValue=""
           //  variant="outlined"
           //  error={!!errors.itineraryId}
-           placeholder='Select an itinerary'
+          // placeholder='Select an itinerary'
+          //  isMulti={true}
           //  helperText={errors.itineraryId?.message}
+            // value={chosenItinerary}
           >
             <InputLabel id="itinerary-dropdown-label">Select an itinerary</InputLabel>
-            <Select
-             name="itinerary"
-             {...register('itinerary', { required: 'Must select itinerary' })}
-             value="itinerary"
-             label="Itinerary"
-             variant="outlined"
-             onClick={(event) => setValue('itinerary', event.target)}
-            //  error={!!errors.itinerary}
-            //  placeholder='Select an itinerary'
-            //  helperText={errors.itinerary?.message}
-            // {/**Maybe the register stuff goes in here? */}
-            >
+            <Controller
+            name="itinerary"
+            rules={{ required: 'Must select itinerary' }}
+            // variant="outlined"
+            // onClick={(event) => setValue('itinerary', event.target)}
+            control={control}
+            defaultValue={''}
+            render={(field) => (
+              <Select
+              // onChange={onChange}
+              labelId="itinerary-label"
+              {...field}
+              // name="itinerary"
+              {...register('itinerary', { required: 'Must select itinerary' })}
+              defaultValue=""
+              // control={control}
+              // name={name}
+              //  error={!!errors.itinerary}
+              //  placeholder='Select an itinerary'
+              //  helperText={errors.itinerary?.message}
+              // {/**Maybe the register stuff goes in here? */}
+              >
               {itineraryList.map((itinerary: any) => (
-                <MenuItem value={itinerary.fsq_id} key={itinerary.fsq_id}>
+                <MenuItem value={itinerary} key={itinerary.fsq_id}>
                   <Typography>{itinerary.name}</Typography>
                   <Typography>{itinerary.begin} - {itinerary.end}</Typography>
                 </MenuItem>
               ))}
             </Select>
+            )}
+          />
           </FormControl>
 
           {/* Title */}
@@ -253,7 +279,7 @@ const getItineraries = () => {
 
           {/* Submit Button */}
           <Button
-          disabled={isSubmitting}
+          // disabled={isSubmitting}
           type="submit"
           variant="contained"
           color="primary"
