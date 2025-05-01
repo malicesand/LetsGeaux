@@ -12,6 +12,9 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import dayjs from 'dayjs';
 import { useForm, Controller } from 'react-hook-form';
 // import { error } from 'console';
 import { user } from '../../../types/models.ts';
@@ -41,13 +44,16 @@ type FormFields = {
 type SuggestionToActivityFormProps = {
   user: user
   currentSuggestion: currentSuggestion
+  handleCloseClick: Function
+  displaySuccessSnack: Function
 };
 
-const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({currentSuggestion, user}) => {
+const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ currentSuggestion, user, handleCloseClick, displaySuccessSnack }) => {
 
 const [itineraryList, setItineraryList] = useState([]);
 const [hasItineraries, setHasItineraries] = useState(false);
 const [chosenItinerary, setChosenItinerary] = useState('');
+const [isWarning, setIsWarning] = useState(false);
 
 
   const {
@@ -124,18 +130,13 @@ const getItineraries = () => {
       // suggAct = suggestion-activity
       const suggAct = await axios.post('/api/activity', activityData);
       console.log('Activity posted successfully:', suggAct); // Log successful response
+      handleCloseClick();
+      displaySuccessSnack('success');
     } catch (error) {
       console.error('Failed to post activity:', error); // Log any errors
     }
   };
 
-const handleOptionClick = (option: any) => {
-  // console.log('what is this', option)
-  console.log('here is what is chosen:', chosenItinerary)
-  setChosenItinerary(option);
-  setValue('itinerary', chosenItinerary);
-  console.log('here is what is chosen:', chosenItinerary)
-}
 
 
   return (

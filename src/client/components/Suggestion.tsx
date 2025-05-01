@@ -32,6 +32,7 @@ import { PiThumbsDownFill } from "react-icons/pi";
 import { PiThumbsUpFill } from "react-icons/pi";
 import { user } from '../../../types/models.ts';
 import SuggestionToActivityForm from './SuggestionToActivityForm.tsx';
+import { SnackBarProvider, VariantType, useSnackbar } from 'notistack';
 
 interface SuggestionProps {
   user: user;
@@ -74,6 +75,12 @@ const Suggestion: React.FC<SuggestionProps> = ({
   const [expanded, toggleExpanded] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const displaySuccessSnack = (variant: VariantType) => {
+    enqueueSnackbar('Activity added successfully!', { variant })
+  }
 
   const handleOpenClick = () => {
     setOpen(true);
@@ -201,12 +208,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
       .catch((err) => console.error('sorry, tex', err));
   }
 
-  const handleExpansion = () => {
-    toggleExpanded((prevExpanded) => !prevExpanded)
 
-
-
-  }
   const { title, description, link, upVotes, downVotes, latitude, longitude, address, image } = currentSuggestion;
   return (
     <Container>
@@ -275,7 +277,7 @@ const Suggestion: React.FC<SuggestionProps> = ({
               Make an Activity
               </Typography>
               </DialogTitle>
-              <DialogContent>
+              <DialogContent sx={{ width: "100%" }}>
               <DialogContentText>
                 Add to suggestion information and add it to an itinerary
               </DialogContentText>
@@ -283,18 +285,13 @@ const Suggestion: React.FC<SuggestionProps> = ({
           currentSuggestion={currentSuggestion}
           user={user}
           handleCloseClick={handleCloseClick}
+          displaySuccessSnack={displaySuccessSnack}
           />
           </DialogContent>
         </Dialog>
 
       ) : (
         null
-      )}
-      {isTesting ? (
-        <Button onClick={closeTestForm} >Close Form</Button>
-      ) : (
-
-        <Button onClick={openTestForm} >Open Form</Button>
       )}
     </Container >
 
