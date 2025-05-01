@@ -1,11 +1,182 @@
 
 
 
-import express from 'express';
+import express, { response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import axios from 'axios';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const activityRouter = express.Router();
 const prisma = new PrismaClient();
+
+// fetch google places 
+activityRouter.get('/google-place-autocomplete', async (req:any, res:any) => {
+  //destructure input 
+  const { input } = req.query;
+//check if there is an input
+  if (!input) {
+    return res.status(400).json({ error: 'Missing input' });
+  }
+
+  try {
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    //specifically for new orleans places with strict bounds
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
+      input as string
+    )}&location=29.9511,-90.0715&radius=30000&strictbounds=true&key=${apiKey}`;
+    //et request with axios
+    const response = await axios.get(url);
+    //checks for api errors
+    if (response.data.status !== 'OK') {
+      return res.status(400).json({ error: response.data.error_message || 'Google API error' });
+    }
+// ok status with response to be an array of description objects
+    res.status(200).json({ predictions: response.data.predictions });
+  } catch (error) {
+    console.error('Autocomplete error:', error);
+    res.status(500).json({ error: 'An error  fetching autocomplete suggestions.' });
+  }
+});
+
+//fetch google details 
+activityRouter.get('/google-place-details', async (req:any, res:any) => {
+  const { placeId } = req.query;
+
+  if (!placeId) {
+    return res.status(400).json({ error: 'Missing placeId query parameter.' });
+  }
+
+  try {
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId as string)}&fields=name,formatted_address,formatted_phone_number,photos&key=${apiKey}`;
+
+
+    const response = await axios.get(url);
+
+    if (response.data.status !== 'OK') {
+      return res.status(400).json({ error: response.data.error_message || 'Google API error' });
+    }
+
+    res.json(response.data.result);
+    if (!response.data.result) {
+      return res.status(500).json({ error: 'Invalid response from Google.' });
+    }
+    
+  } catch (error) {
+    console.error('Place details error:', error);
+    res.status(500).json({ error: 'An error occurred while fetching place details.' });
+  }
+});
+activityRouter.get('/google-place-photo', async (req: any, res: any) => {
+  const { photoRef } = req.query;
+
+  if (!photoRef) {
+    return res.status(400).json({ error: 'Missing photoRef query parameter.' });
+  }
+
+  try {
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${encodeURIComponent(photoRef)}&key=${apiKey}`;
+
+const imageResponse = await axios.get(url, { responseType: 'stream' });
+res.setHeader('Content-Type', imageResponse.headers['content-type']);
+imageResponse.data.pipe(res);
+  } catch (error) {
+    console.error('Photo fetch error:', error);
+    res.status(500).json({ error: 'An error occurred while fetching the photo.' });
+  }
+});
+
+//fetch descriptions
+activityRouter.get('/autocomplete-descriptions', async (req, res) => {
+  try {
+    const descSuggestions = [
+  'Enjoy local food and drinks',
+  'Listen to live music performances',
+  'Visit a historical museum',
+  'Go kayaking in scenic waters',
+  'Explore shops and boutiques',
+  'Experience the nightlife scene',
+  'Attend an art exhibit or gallery show',
+  'Relax and enjoy the spa',
+  'Join a local festival or event',
+  'Browse the farmer’s market',
+  'Savor a wine tasting experience',
+  'Discover local street performers',
+  'Have a picnic in the park',
+  'Watch a parade or celebration',
+  'Enjoy a sunset cruise',
+  "Sightseeing across the city and historic areas"
+    ];
+
+    const descriptions = await prisma.activity.findMany({
+      //only fetch description from activity 
+      select: { description: true },
+      // removes duplicates descriptions( only unique values)
+      distinct: ['description'],
+      // limits description to30 unique values 
+      take: 30
+    });
+
+    const list = descriptions.map(d => d.description).filter(Boolean);
+
+    // Combine and remove duplicates
+    const allSuggestions = Array.from(new Set([...descSuggestions, ...list]));
+
+    res.json(allSuggestions);
+  } catch (error) {
+    console.error('Error fetching descriptions:', error);
+    res.status(500).json({ error: 'Failed to fetch autocomplete descriptions' });
+  }
+});
+
+//fetch names 
+activityRouter.get('/autocomplete-names', async (req, res) => {
+  try {
+    const nameSuggestions = [
+      'City Tour',
+      'Jazz Club',
+      'Brunch',
+      'Biking',
+      'Wine Tasting',
+      'Beach Day',
+      'Parade',
+      'Local Market,',
+      'Dinner',
+      'Lunch', 
+      'Festival',
+      'Conference',
+      'Kayaking',
+      'Shopping',
+      'Bars',
+      'Live music',
+      'Museum visit',
+      'Nightlife',
+      'Art exhibit',
+      'Parks', 
+      'Spa Day'   
+    ];
+
+    const names = await prisma.activity.findMany({
+      select: { name: true },
+      distinct: ['name'],
+      take: 30
+    });
+
+    const list = names.map(d => d.name).filter(Boolean);
+    // new Set will remove duplicates in the two arrays
+    //Array.from will convert Set back into normal array
+    const allSuggestions = Array.from(new Set([...nameSuggestions, ...list]));
+
+    res.json(allSuggestions);
+  } catch (error) {
+    console.error('Error fetching names:', error);
+    res.status(500).json({ error: 'Failed to fetch autocomplete names' });
+  }
+});
+
+
 
 // Helper: check if user is in party or is the itinerary creator
 const hasActivityPermission = async (userId: number, itineraryId: number) => {
@@ -65,19 +236,7 @@ activityRouter.post('/', async (req: any, res: any) => {
 });
 
 
-// GET
-activityRouter.get('/:itineraryId', async (req: any, res: any) => {
-  try {
-    const { itineraryId } = req.params;
-    const activities = await prisma.activity.findMany({
-      where: { itineraryId: Number(itineraryId) },
-    });
-    res.json(activities);
-  } catch (error) {
-    console.error('Error fetching activities:', error);
-    res.sendStatus(500);
-  }
-});
+
 
 // DELETE
 activityRouter.delete('/:id', async (req: any, res: any) => {
@@ -135,5 +294,20 @@ activityRouter.patch('/:id', async (req: any, res: any) => {
     res.sendStatus(500);
   }
 });
+
+// GET
+activityRouter.get('/:itineraryId', async (req: any, res: any) => {
+  try {
+    const { itineraryId } = req.params;
+    const activities = await prisma.activity.findMany({
+      where: { itineraryId: Number(itineraryId) },
+    });
+    res.json(activities);
+  } catch (error) {
+    console.error('Error fetching activities:', error);
+    res.sendStatus(500);
+  }
+});
+
 
 export default activityRouter;
