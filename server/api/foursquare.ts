@@ -8,7 +8,6 @@ const searchId = process.env.FOURSQUARE_API_KEY;
 const getSuggestionsFromFoursquare = (queryStack) => {
 
 console.log('ON THE STACK', queryStack)
-console.log(searchId);
   const options = {
     method: 'GET',
     url: `https://api.foursquare.com/v3/places/search?ll=29.95465%2C-90.07507&categories=${queryStack}`,
