@@ -17,6 +17,7 @@ import Login from './Login.tsx';
 import Maps from './Maps.tsx';
 import Suggestions from './Suggestions.tsx';
 import ChatBot from './Chat/ChatBot.tsx';
+import FullScreenChat from './Chat/FullScreenChat.tsx';
 import Itinerary from './Itinerary/Itinerary.tsx'
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 import Activities from './Itinerary/NEWActivties.tsx';
@@ -122,7 +123,8 @@ const App: React.FC = () => {
         <Route
           path='/chatbot'
           element={
-            <ProtectedRoute>{user && <ChatBot user={user} />}</ProtectedRoute>
+            <ProtectedRoute>{user && <FullScreenChat user={user} />}</ProtectedRoute>
+            // <ProtectedRoute>{user && <ChatBot user={user} />}</ProtectedRoute>
           }
         />
         <Route
