@@ -30,6 +30,8 @@ import { useSnackbar } from 'notistack';
 import { PiPlusBold } from 'react-icons/pi';
 import Tooltip from '@mui/material/Tooltip';
 import { Autocomplete } from '@mui/material';
+import isBetween from 'dayjs/plugin/isBetween';
+dayjs.extend(isBetween);
 
 
 //defines structure of activity object
@@ -496,6 +498,17 @@ const Activity: React.FC<Props> = ({
                   }}
                   minDate={dayjs(itineraryBegin)}
                   maxDate={dayjs(itineraryEnd)}
+                  shouldDisableDate={(date) => {
+                    const begin = dayjs(itineraryBegin);
+                    const end = dayjs(itineraryEnd);
+                  
+                    // console.log('itineraryBegin:', itineraryBegin);
+                    // console.log('Parsed Begin is valid?', begin.isValid());
+                    // console.log('Parsed End is valid?', end.isValid());
+                  
+                    return !date.isBetween(begin, end, 'day', '[]'); // include date range
+                  }}
+                  
                   slotProps={{
                     actionBar: {
                       sx: {
