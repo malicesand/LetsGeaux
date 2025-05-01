@@ -23,16 +23,18 @@ console.log('ON THE STACK', queryStack)
     console.log('res data', res.data);
     const entrySet = res.data.results.map((entry) => {
       // still need the contact link to replace the phoneNum.
-      const { name, description, link } = entry;
+      const { fsq_id, name, description, link } = entry;
       const { formatted_address } = entry.location;
       const { latitude, longitude } = entry.geocodes.main;
-
+      // NOTE: ADD foursquare id to return object to use as the key for rendering. 
+      // Reflect this change client-side also
         const returnObj ={
+          fsq_id,
           title: name,
           description,
           link,
-          latitude,
-          longitude,
+          latitude: String(latitude),
+          longitude: String(longitude),
           address: formatted_address,
           image: null,
         }

@@ -2,22 +2,27 @@ import React, { useState, useEffect } from 'react';
 import {
   Container,
   Typography,
-  TextField,
   Button,
   Box,
   Card,
   CardContent,
   CardActions,
-  Alert
+  IconButton,
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  Backdrop
 } from '@mui/material';
-import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
 import { user, itinerary } from '../../../../types/models.ts';
-// import Activity from '../Itinerary/NEWActivties.tsx';
 import Activity from './Activities.tsx';
 import AddItinerary from './AddItinerary.tsx';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { PiPencil, PiTrashDuotone } from 'react-icons/pi';
+import { useSnackbar } from 'notistack';
 
 interface ItineraryProps {
   user: user; 
@@ -33,41 +38,13 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
   const [itineraryName, setItineraryName] = useState('');
   const [itineraryNotes, setItineraryNotes] = useState('');
   const [itinerary, setItinerary] = useState<itinerary | null>(null);
-
+  const { enqueueSnackbar } = useSnackbar();
   const [editingItinerary, setEditingItinerary] = useState<any | null>(null);
   const [error, setError] = useState<string>('');
-  const location = useLocation();
+  // const location = useLocation();
+   //delete confirmation state
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  //? Delete: Passed name code 
- /*  const {
-    itineraryName: passeditineraryName,
-    selectedDates: passedDates
-  } = location.state || {};
-
-  const { id } = useParams(); */
-
-  //when page laods, checks state of data when passed to another page
-  //checks if state has begin and end date, then save it 
-  //builds list of all dates 
-  //if state has selectedDates, conver to objects
-  /* useEffect(() => {
-    console.log('dashItin')
-    if (location.state) {
-      if (location.state.begin && location.state.end) {
-        const begin = new Date(location.state.begin);
-        const end = new Date(location.state.end);
-        setStartDate(begin);
-        setEndDate(end);
-        setSelectedDates(eachDayOfInterval({ start: begin, end: end }));
-      } else if (location.state.selectedDates?.length > 0) {
-        const convertedDates = location.state.selectedDates.map((d: string) => new Date(d));
-        setSelectedDates(convertedDates);
-        setStartDate(convertedDates[0]);
-        setEndDate(convertedDates[convertedDates.length - 1]);
-      }
-    }
-  }, []); */
-  
   //* Add Activity to Itinerary *//
   const addActivityToItinerary = async ( itineraryId: string, activityData: any) => {
     try {
@@ -81,34 +58,14 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
     }
   };
 
-  //? Delete: Update selectedDates based on the startDate and endDate
-/*   useEffect(() => {
-    if (startDate && endDate) {
-      const dates = eachDayOfInterval({ start: startDate, end: endDate });
-      setSelectedDates(dates);
-    }
-  }, [startDate, endDate]); */
-
- /*  //when components loads, prefill name of itinerary
-  useEffect(() => {
-
-    if (passeditineraryName && !editingItinerary) {
-      setItineraryName(passeditineraryName);
-    }
-  }, [passeditineraryName, editingItinerary]); */
-
   //* Get Itinerary *//
   useEffect(() => {
-    fetchItinerary(partyId)
-    // console.log(`user${user.id}`)
-    // console.log(`itn creator${itinerary.creatorId}`)
+    fetchItinerary(partyId);
   }, []);
 
   const fetchItinerary = async (partyId: number) => {
-    // console.log(`Fetching itinerary`);
     try {
-      const response = await axios.get(`/api/itinerary/party/${partyId}`);//postman verified
-      // console.log(response.data)
+      const response = await axios.get(`/api/itinerary/party/${partyId}`);
       setItineraryName(response.data.name);
       setStartDate(response.data.begin)
       setEndDate(response.data.end)
@@ -116,11 +73,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
         ...response.data,
         id: Number(response.data.id),
         creatorId: Number(response.data.creatorId)
-
-      })
-      // console.log(response.data.creatorId)
+      });
     } catch (error) {
-      
       console.error(`Error occurred fetching party itinerary for party ${partyId}`)
     }
   };
@@ -132,70 +86,18 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
     setEditingItinerary(itinerary);
     setItineraryName(itinerary.name);
     setItineraryNotes(itinerary.notes);
-    
-
-    // Set start and end dates based on itinerary's begin and end
-    const start = new Date(itinerary.begin);
-    const end = new Date(itinerary.end);
-    setStartDate(start);
-    setEndDate(end);
   };
-  //? Delete
-  //  //Handle save changes on editing an itinerary
-  // const handleEditSubmit = async () => {
-  //   if (!itineraryName || selectedDates.length === 0) {
-  //     setError('Please provide a name and select dates for the itinerary');
-  //     return;
-  //   }
-  //   //update itinerary
-  //   const updatedItineraryData = {
-  //     id: editingItinerary.id,
-  //     creator_id: editingItinerary.creator_id,
-  //     name: itineraryName,
-  //     notes: itineraryNotes,
-  //     begin: selectedDates[0].toISOString(),
-  //     end: selectedDates[selectedDates.length - 1].toISOString(),
-  //     upVotes: editingItinerary.upVotes,
-  //     downVotes: editingItinerary.downVotes
-  //   };
-  //   try {
-  //     const response = await axios.patch(
-  //       `/api/itinerary/${editingItinerary.id}`,   
-  //       updatedItineraryData
-  //     );
-  //     setItinerary(prev => (
-  //         itinerary.id === editingItinerary.id ? response.data : itinerary
-  //       )
-  //     );
-  //     setEditingItinerary(null);
-  //     setItineraryName('');
-  //     setItineraryNotes('');
-  //     setStartDate(null);
-  //     setEndDate(null);
-  //     setError('');
-  //   } catch (err) {
-  //     setError('Error updating itinerary');
-  //     console.error('Error updating itinerary:', err);
-  //   }
-  // };
 
   // * Handle delete of an itinerary, creator only *//
   const handleDelete = async (itineraryId: number, creatorId: number) => {
-    console.log('click')
-    if (user.id !== creatorId) {
-      alert('Only the creator can delete this itinerary.');
-      return;
-    }
-    // confirm deletion
-    const confirmDelete = window.confirm(
-      'Are you sure you want to delete this itinerary?'
-    );
-    if (!confirmDelete) return;
+    setDeleteDialogOpen(true);
     try {
       const response = await axios.delete(`/api/itinerary/${itineraryId}`);
       console.log(`deleted ${itineraryId}`)
-      // console.log(response.data)
-      setItinerary(null)
+      setDeleteDialogOpen(false);
+      setItinerary(null);
+      enqueueSnackbar('Itinerary deleted successfully!', {
+        variant: 'success'})
     } catch (err) {
       console.error('Error deleting itinerary:', err);
     }
@@ -204,65 +106,90 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
   return (  
     <Container>
       <Box mt={4}>
-        <Typography variant='h3'>Itinerary</Typography>
+        <Typography variant='h3'>Party Itinerary</Typography>
+        {/* Show Itinerary or Button to create */}
         {itinerary ? (
-            <Card sx={{ mb: 2 }}>
-              <CardContent>
-                <Typography variant='h3'>{itinerary.name}</Typography>
-                <Typography variant='body1'>{itinerary.notes}</Typography>
-                <Typography variant='body2'>
-                  Begin: {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY')}
-                </Typography>
-                <Typography variant='body2'>
-                  End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY')}
-                </Typography>
-
-                
-              </CardContent>
-              <CardActions>
-                <Button
-                  variant='contained'
-                  
-                  onClick={() => handleEditClick(itinerary)}
+          <Card sx={{ mb: 2 }}>
+            <CardContent>
+              <Typography variant='h3'>{itinerary.name}</Typography>
+              <Typography variant='body1'>{itinerary.notes}</Typography>
+              <Typography variant='body2'>
+                Begin: {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY')}
+              </Typography>
+              <Typography variant='body2'>
+                End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY')}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Tooltip title='Edit Itinerary'>
+                <IconButton onClick={() => handleEditClick(itinerary)}
                 >
-                  Edit
-                </Button>
-                {user.id === itinerary.creatorId && (
-                  <Button
-                    variant='contained'
+                  <PiPencil/>
+                </IconButton>
+              </Tooltip>
+              {user.id === itinerary.creatorId && (
+                <Tooltip title='Delete Itinerary'>
+                  <IconButton
                     onClick={() =>
-                      handleDelete(itinerary.id, itinerary.creatorId)
+                      setDeleteDialogOpen(true)
+                      
                     }
                   >
-                    Delete
-                  </Button>
-                )}
-              </CardActions>
-              {user && (
-                <Activity
-                  itineraryId={itinerary.id}
-                  addActivity={addActivityToItinerary}
-                  itineraryCreatorId={itinerary.creatorId}
-                  user={user}
-                  itineraryBegin={''}
-                  itineraryEnd={''}
-                />
+                    <PiTrashDuotone/>
+                  </IconButton>
+                </Tooltip>
               )}
-            </Card>
-          
+            </CardActions>
+            {user && (
+              <Activity
+                itineraryId={itinerary.id}
+                addActivity={addActivityToItinerary}
+                itineraryCreatorId={itinerary.creatorId}
+                user={user}
+                itineraryBegin={''}
+                itineraryEnd={''}
+              />
+            )}
+          </Card>
         ) : (
           <>
             <Typography variant='body1' sx={{ mt: 2}}>
               Your Party's Shared Itinerary will display here once it is created. 
             </Typography>
+            {/* Button -> Modal -> redirect /itinerary */}
             <AddItinerary
               user={user}
               partyId={partyId}
               partyName={partyName}
+              fetchItinerary={fetchItinerary}
             />
           </>
         )}
       </Box>
+      <>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Delete Itinerary?</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this itinerary?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            sx={{ color: 'black' }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={() => handleDelete(itinerary.id, user.id)} sx={{ color: 'black' }}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      </>
     </Container>
   );
 };

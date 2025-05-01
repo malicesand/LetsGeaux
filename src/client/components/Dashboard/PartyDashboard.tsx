@@ -44,7 +44,6 @@ type PartyMember = {
 };
 
 // TODO conditional on render so that only party members can access a dashboard
-// TODO delete a party if all members have left
 const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const theme = useTheme();
   const location = useLocation();
@@ -73,7 +72,6 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
 
   
   useEffect(() => {
-    console.log(userId)
     fetchViewCode(numericPartyId);
     getUsersForParty(numericPartyId);
     getEmailLog(partyId);
@@ -104,8 +102,6 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     try {
       const response = await axios.get(`/api/party/usersInParty/${partyId}`);
       const users = response.data;
-      // const avatars = users.map((user: user) => user.profilePic)
-      // const usernames = users.map((user: user) => user.username);
       const userObjects = users.map((user: user) => ({
         username: user.username,
         avatar: user.profilePic,
@@ -121,9 +117,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const fetchItinerary = async (partyId: string) => {
     console.log(`Fetching itinerary`);
     try {
-      const response = await axios.get(`/api/itinerary/party/${partyId}`);//postman verified
-      console.log(response.data)
-      
+      const response = await axios.get(`/api/itinerary/party/${partyId}`);
     } catch (error) {
       console.error(`Error occurred fetching party itinerary for party ${partyId}`)
     }
@@ -131,8 +125,6 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
 
   //* Get Itinerary View Code *//
   const fetchViewCode = async (numericPartyId: number) => {
-    // console.log('fetching view code')
-    // console.log(`numeric partyId @ useEffect ${numericPartyId}`)
     try {
       const response = await axios.get(`/api/itinerary/party/${numericPartyId}`);
       if (response.data?.viewCode) {
@@ -266,7 +258,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     } catch (error) {
       console.error(`Error deleting party`, error)
     }
-  }
+  };
 
 
   return (
