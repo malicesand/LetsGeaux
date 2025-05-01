@@ -6,14 +6,12 @@ import {
   TextField,
   Typography,
   Drawer,
-  useTheme,
   Slide
 } from '@mui/material';
-import { SendRounded } from '@mui/icons-material';
-
+import SendRounded from '@mui/icons-material/SendRounded';
 import ChatHistory from './ChatHistory.tsx';
 import { user } from '../../../../types/models.ts';
-import { useMedia } from '../MediaQueryProvider.tsx';
+import { useMedia } from '../MediaQueryProvider.tsx'; // ! import this for mobile context 
 
 interface ChatMessage {
   text: string;
@@ -30,15 +28,8 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [sessionId, setSessionId] = useState(null); // ? Local Storage 
 
-  const theme = useTheme();
-  // const isMobile = true;
-  const { isMobile } = useMedia();
-
-  // const handleSubmit = () => {
-  //   if (!userMessage.trim()) return;
-  //   setChatLog(prev => [...prev, { text: userMessage, user: true }]);
-  //   setUserMessage('');
-  // };
+  // const isMobile = true; //! toggle this on or off to test mobile in viewport
+  const { isMobile } = useMedia(); // ! can do mobile conditioning like this
 
   useEffect(() => {
       // check local storage for session ID
@@ -64,20 +55,18 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
   
     }, [chatLog]);
    
-    // const handleSubmit = async () => {
-    const handleSubmit = async () => {
-      // e.preventDefault();
-      if (!userMessage.trim()) return;
-      setChatLog([...chatLog, { text: userMessage, user: true }]);
-      setUserMessage('');
-      try {
-        const response = await axios.post('/api/chats', { userMessage, userId: user.id, sessionId });
-        setChatLog(prev => [...prev, { text: response.data, user: false }]);
-      } catch (error: any) { // ? Type the error
-          console.error("Error sending message:", error);
-          setChatLog(prev => [...prev, {text: "Error: Could not get response.", user: false }]);
-      };
+  const handleSubmit = async () => {
+    if (!userMessage.trim()) return;
+    setChatLog([...chatLog, { text: userMessage, user: true }]);
+    setUserMessage('');
+    try {
+      const response = await axios.post('/api/chats', { userMessage, userId: user.id, sessionId });
+      setChatLog(prev => [...prev, { text: response.data, user: false }]);
+    } catch (error: any) { // ? Type the error
+        console.error("Error sending message:", error);
+        setChatLog(prev => [...prev, {text: "Error: Could not get response.", user: false }]);
     };
+  };
   
   return (
     <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
@@ -125,7 +114,6 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
             </IconButton>
           )}
         </Box>
-    
         {/* Chat Content Wrapper */}
         <Box 
           sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
@@ -148,7 +136,7 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
                   px: 2,
                   py: 1,
                   borderRadius: 2,
-                  backgroundColor: msg.user ? '#fff' : '#e6e6e6', // TODO change
+                  backgroundColor: msg.user ? '#fff' : '#e6e6e6', // TODO change colors and maybe add labels
                   alignSelf: msg.user ? 'flex-end' : 'flex-start',
                   mb: 1,
                   fontSize: '1rem',
@@ -160,7 +148,6 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
               </Typography>
             ))}
           </Box>
-    
           {/* Input */}
           <Box
             sx={{
@@ -181,14 +168,14 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
               value={userMessage}
               onChange={e => setUserMessage(e.target.value)}
               placeholder='Type your message...'
-              InputProps={{
+              InputProps={{ // TODO refactor with non deprecated 
                 disableUnderline: true,
                 sx: {
                   backgroundColor: '#fff',
                   borderRadius: '24px',
                   px: 2,
                   py: 1,
-                  fontFamily: 'inherit', // TODO change text
+                  fontFamily: 'inherit', // TODO change font
                   fontSize: '1rem',
                   boxShadow: '2px 2px 0px black',
                   color: 'black'
@@ -216,8 +203,7 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
             slots={{ transition: Slide }}
             slotProps={{
               transition: {
-                direction: 'left',
-                // timeout: 500 // slow it down a bit to make it obvious
+                direction: 'left', // TODO make more fun?
               },
               paper: {
                 sx: {
@@ -247,7 +233,6 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
           </Drawer>
         )}
       </Box>
-    
       {/* Desktop Sidebar */}
       {!isMobile && (
         <Box

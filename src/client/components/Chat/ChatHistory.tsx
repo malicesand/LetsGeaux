@@ -1,18 +1,7 @@
-import React, { useState, useEffect, MouseEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';  
-import { Typography, Box, Card, CardContent, CardActions, Divider } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack'
-import MailIcon from '@mui/icons-material/MailOutlineOutlined';//! find a more fun icon
-
+import { Typography, Box, Card, CardContent, CardActions, Divider, ListItemText, ListItem, List, TextField, Button } from '@mui/material';
 import { user, chatHistory, message } from '../../../../types/models.ts';
-// import { response } from 'express';
 
 interface ChatMessage {
   botMessage: string;
@@ -127,7 +116,7 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user, isMobile }) => {
           }>
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <MailIcon sx={{ mr: 1 }} />
+            {/* <PiChatTextBold /> */}
             {editingSessionId === session.sessionId ? (
               <TextField
                 type="text"
@@ -180,13 +169,13 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user, isMobile }) => {
               alignItems: isMobile ? 'stretch' : 'center', 
             }}>
             <Button variant='contained' onClick={() =>
-              startEditing(session.sessionId, session.conversationName || '')
+              startEditing(session.sessionId, session.conversationName || '') // TODO change button
             }>
               Change Name 
             </Button>
             <Divider/>
             <Button variant='contained' onClick={() =>
-              handleDelete(session.sessionId)
+              handleDelete(session.sessionId) // TODO change button
             }>
               Delete Session 
             </Button>
