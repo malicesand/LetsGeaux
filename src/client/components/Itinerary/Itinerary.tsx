@@ -23,7 +23,7 @@ import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx';
 import { useParams, useLocation } from 'react-router-dom';
 import dayjs, { Dayjs } from 'dayjs';
-import { PiPencilLine } from 'react-icons/pi';
+import { PiPencil } from "react-icons/pi";
 import { PiTrash } from 'react-icons/pi';
 import { PiPlusBold } from 'react-icons/pi';
 import { useSnackbar } from 'notistack';
@@ -408,7 +408,7 @@ const handleSendInvite = async () => {
             }}
           >
             <CardContent>
-              <Typography variant='h6'>{itinerary.name}</Typography>
+              <Typography variant='h3'>{itinerary.name}</Typography>
               {itinerary.partyName && (
                 <Typography variant='body2' color='secondary'>
                   Party: {itinerary.partyName}
@@ -476,8 +476,8 @@ const handleSendInvite = async () => {
                 onClick={() => handleEditClick(itinerary)}
                 sx={{ position: 'absolute', top: 8, right: 8, color: 'black' }}
               >
-                <PiPencilLine />
-              </IconButton>
+<PiPencil />
+</IconButton>
               {user.id === itinerary.creatorId && (
                 <IconButton
                   onClick={() => {
