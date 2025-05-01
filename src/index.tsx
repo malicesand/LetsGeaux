@@ -21,19 +21,21 @@ root.render(
   //     backgroundSize: "repeat",
 
 
-    }}>
+  // }}>
   <BrowserRouter>
-
-    <SnackbarProvider maxSnack={3}>
-      <BudgetNotificationProvider>
-        <UserProvider>
-          <ThemeProvider theme={theme1}>
-            <App />
-          </ThemeProvider>
-        </UserProvider>
-      </BudgetNotificationProvider>
-    </SnackbarProvider>
-
-  </BrowserRouter>
-  </Box >
+    <ImageProvider>
+      <MediaQueryProvider>
+        <SnackbarProvider maxSnack={3}>
+          <BudgetNotificationProvider>
+            <UserProvider>
+              <ThemeProvider theme={theme1}>
+                <App />
+              </ThemeProvider>
+            </UserProvider>
+          </BudgetNotificationProvider>
+        </SnackbarProvider>
+      </MediaQueryProvider>
+    </ImageProvider>
+  </BrowserRouter >
+  // </Box >
 );
