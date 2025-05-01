@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { Button, TextField, Typography, Box, Stack } from '@mui/material';
-
+import ImageDisplay from './ImageDisplay';
+import { useImageContext } from './ImageContext';
 interface ImageUploadProps {
   userId: number;
 }
@@ -10,9 +11,9 @@ interface ImageUploadProps {
 const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
   const [url, setImageUrl] = useState('');
   const [notes, setNotes] = useState('');
-  const [images, setImages] = useState([]);
+  const [images, setPictures] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
-
+  const { setImages } = useImageContext();
 
 
   useEffect(() => {
@@ -58,7 +59,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
       enqueueSnackbar('Upload successful!', { variant: 'success' });
       setImageUrl('');
       setNotes('');
-      getAllImages(); // refresh images
+      // getAllImages(); // refresh images
     } catch (err) {
       console.error('Error submitting image & notes:', err);
     }
@@ -153,57 +154,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
               Submit
             </Button>
           </form>
+
         </Box>
       </Box>
-      <Typography
-        variant="h3"
-        align='center'
-      >
-        Uploaded Images
-      </Typography>
+      {/* <ImageDisplay images={images} deleteImage={deleteImage} /> */}
 
-      {images.length === 0 ? (
-        <Typography>No images uploaded yet.</Typography>
-      ) : (
-        <Box
-          sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 3,
-            justifyContent: 'center',
-            mt: 2,
-          }}
-        >
-          {images.map((image: any) => (
-            <Box
-              key={image.id}
-              sx={{
-                border: '2px solid black',
-                borderRadius: 4,
-                padding: 2,
-                maxWidth: 220,
-                textAlign: 'center',
-              }}
-            >
-              <img
-                src={image.url}
-                alt="Uploaded image"
-                style={{ width: '100%', borderRadius: '4px' }}
-              />
-              <Typography variant="body1" sx={{ fontWeight: 500, mt: 1 }}>
-                Notes: {image.notes}
-              </Typography>
-              <Button
-                onClick={() => deleteImage(image.id)}
-                variant="contained"
-                sx={{ mt: 1, color: 'primary' }}
-              >
-                Delete
-              </Button>
-            </Box>
-          ))}
-        </Box>
-      )}
     </Box>
 
   );
