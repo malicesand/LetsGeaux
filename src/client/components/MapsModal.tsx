@@ -51,7 +51,6 @@ const MapsModal: React.FC<MapsModalProps> = ({ open, onClose, onSelect }) => {
                 <Grid item xs={12} sm={6} md={4} key={itinerary.id}>
                   <Card onClick={() => setSelectedItineraryId(itinerary.id)} sx={{ cursor: 'pointer' }}>
                     <CardContent>
-                      {console.log(itinerary.name)}
                       <Typography variant="h5">{itinerary.name}</Typography>
                       <Typography variant="body1" color="black">{itinerary.description}</Typography>
                     </CardContent>
@@ -68,19 +67,19 @@ const MapsModal: React.FC<MapsModalProps> = ({ open, onClose, onSelect }) => {
                 <Grid item xs={12} sm={6} md={4} key={activity.id}>
                   <Card
                     onClick={() => {
-                      if (!startActivity) setStartActivity(activity.address);
-                      else if (!endActivity && activity.address !== startActivity) setEndActivity(activity.address);
+                      if (!startActivity) setStartActivity(activity.location);
+                      else if (!endActivity && activity.location !== startActivity) setEndActivity(activity.location);
                     }}
                     sx={{
                       cursor: 'pointer',
-                      border: startActivity === activity.address || endActivity === activity.address
+                      border: startActivity === activity.location || endActivity === activity.location
                         ? '2px solid #3200FA'
                         : '1px solid #ccc'
                     }}
                   >
                     <CardContent>
                       <Typography variant="h4">{activity.name}</Typography>
-                      <Typography variant="body1" color="textSecondary">{activity.address}</Typography>
+                      <Typography variant="body1" color="textSecondary">{activity.location}</Typography>
                     </CardContent>
                   </Card>
                 </Grid>
