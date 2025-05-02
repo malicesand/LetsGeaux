@@ -9,6 +9,7 @@ import CreateParty from './CreateParty';
 // import BudgetPieChart from './BudgetPieChart'
 import { user, userParty } from '../../../../types/models.ts';
 import ImageUpload from '../ImageUpload';
+import ImageDisplay from '../ImageDisplay';
 interface DashboardProps {
   user: user;
 }
@@ -78,19 +79,19 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           textAlign: 'center',
         }}
       >
-        <Typography sx={{ mb: 1, padding: 1}} variant='h4'>Your Travel Parties</Typography>
-          {partyInfo.map((selectedParty) => (
-            <Box key={selectedParty.id}  sx={{ mt: 1, padding: .5}}>
-              <Link to={`/${selectedParty.id}?name=${encodeURIComponent(selectedParty.name)}`}>
-                <Typography variant='h4' color='black'>
-                  {selectedParty.name}
-                </Typography>
-              </Link>
-            </Box>
-          ))}
-          <Box sx={{ mt: 2, mb: 0 }} >
-          <CreateParty user={user} onPartyCreated={getUserParties} />
+        <Typography sx={{ mb: 1, padding: 1 }} variant='h4'>Your Travel Parties</Typography>
+        {partyInfo.map((selectedParty) => (
+          <Box key={selectedParty.id} sx={{ mt: 1, padding: .5 }}>
+            <Link to={`/${selectedParty.id}?name=${encodeURIComponent(selectedParty.name)}`}>
+              <Typography variant='h4' color='black'>
+                {selectedParty.name}
+              </Typography>
+            </Link>
           </Box>
+        ))}
+        <Box sx={{ mt: 2, mb: 0 }} >
+          <CreateParty user={user} onPartyCreated={getUserParties} />
+        </Box>
       </Box>
 
       {/* Image Upload Box */}
@@ -104,7 +105,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
       //   textAlign: 'center',
       // }}
       >
-        <ImageUpload userId={user.id} />
+        {/* <ImageUpload userId={user.id} /> */}
+        <ImageDisplay userId={user.id} />
       </Box>
     </Box>
   )

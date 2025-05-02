@@ -15,12 +15,28 @@ export const sizing = {
 };
 
 export default sizing;
-//TODO Size Rules
-  //* Spacing
-  //* Z index 
-  //* Alignment
-  //* Text AREA autosize
-  //* App Bar flex 
-  //* Container sizing
-  //* Flex boxes
-  //* Layout (Grid, Stack, Containers etc.)
+
+/* Hybrid Shadow (still has border) what MA used on chatbot
+sx={{
+  border: '2px solid black',
+  boxShadow: '4px 4px 0px black',
+  borderRadius: '20px',
+  overflow: 'hidden',
+  backgroundColor: '#a684ff',
+}}
+** reduce offset for tighter look with 2px 2px 0
+*/
+
+/* Dramatic Shadow
+  boxShadow: '6px 6px 0px black',
+  borderRadius: '20px',
+  overflow: 'hidden',
+*/
+
+/* Dual Drop Shadow (adds even more depth)
+sx={{
+  boxShadow: `
+    2px 2px 0 black,
+    4px 4px 0 rgba(0, 0, 0, 0.2)`
+}}
+*/
