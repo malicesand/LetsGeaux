@@ -13,7 +13,7 @@ const {viewCode} = useParams();
 //redirect from viewForm when code is added
 
   useEffect (()=>{
-    const fetchItinerary = async() =>{
+    const fetchItinerary = async() =>{    
     try {
           const response = await axios.get(`/api/itinerary/view/${viewCode}`);
           console.log('Fetching itinerary with viewCode:', viewCode);
@@ -59,11 +59,15 @@ return (
       {itinerary.name}
     </Typography>
 
-    {itinerary.party?.name && (
-      <Typography variant="subtitle1" color="textSecondary" gutterBottom>
-        Party: {itinerary.party.name}
-      </Typography>
-    )}
+    {itinerary.party?.name ? (
+  <Typography variant="subtitle1" color="textSecondary" gutterBottom>
+    Party: {itinerary.party.name}
+  </Typography>
+) : (
+  <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+    No party associated with this itinerary.
+  </Typography>
+)}
 
     <Typography variant="body1" gutterBottom>
       Notes: {itinerary.notes}
