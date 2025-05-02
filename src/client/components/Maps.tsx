@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import axios from "axios";
 import { TextField, Button, Box, Typography, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-
+import MapsModal from './MapsModal';
 // Container style for the map 
 const containerStyle = {
   width: "100%",
@@ -59,7 +59,7 @@ const Maps = () => {
         if (response.status === 200) {
           console.log('Itinerary added successfully:', response);
           navigate('/routechoices', { state: { itineraryId } });
-          setOpenModal(false);
+          //setOpenModal(false);
         }
       })
       .catch((error: any) => {
@@ -118,6 +118,7 @@ const Maps = () => {
               const originLatLng = result.routes[0].legs[0].start_location;
               const destinationLatLng = result.routes[0].legs[0].end_location;
               placeMarkers(originLatLng, destinationLatLng);
+
             } else {
               setError("No route found.");
             }
@@ -151,7 +152,7 @@ const Maps = () => {
 
       if (response.status === 201) {
         console.log('Data saved successfully!');
-        setOpenModal(true); // Open the modal when the data is saved
+        //setOpenModal(true); // Open the modal when the data is saved
       }
     } catch (error) {
       console.error('Error saving travel data:', error);
@@ -193,9 +194,19 @@ const Maps = () => {
       });
     }
   };
-
+  useEffect(() => {
+    setOpenModal(true);
+  }, []);
   return (
     <div>
+      <MapsModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSelect={(start, end) => {
+          setOrigin(start);
+          setDestination(end);
+        }}
+      />
       <Typography variant="h2" gutterBottom align='center'>
         Directions
       </Typography>
@@ -258,7 +269,7 @@ const Maps = () => {
 
       {/* Google Map */}
       <LoadScript
-        googleMapsApiKey={"API KEY"}
+        googleMapsApiKey={"API KEY "}
         libraries={libraries}
       >
         <Box
@@ -282,41 +293,42 @@ const Maps = () => {
         </Box>
       </LoadScript>
 
-      {/* Modal for itinerary options */}
-      <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="md">
-        <DialogTitle>Itinerary Options</DialogTitle>
-        <DialogContent>
-          <Typography variant="h6">Itinerary Options</Typography>
-          <Box mt={2}>
-
-            {itinerary.length > 0 ? (
-
-              itinerary.map((trip, id) => (
-                <Card key={id} variant="outlined" sx={{ marginBottom: 2 }}>
-                  <CardContent>
-                    <Typography variant="h6">{trip.name}</Typography>
-                    <Typography>{trip.notes}</Typography>
-                  </CardContent>
-
-                  <Button onClick={() => handleSelectItinerary(trip.id, routeInfo)}>
-                    Select</Button>
-
-                </Card>
-              ))
-            ) : (
-              <Typography>No itinerary available.</Typography>
-            )}
-          </Box>
-
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenModal(false)} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div >
   );
 };
 
 export default Maps;
+
+{/* Modal for itinerary options */ }
+{/* <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="md">
+  <DialogTitle>Itinerary Options</DialogTitle>
+  <DialogContent>
+    <Typography variant="h6">Itinerary Options</Typography>
+    <Box mt={2}>
+
+      {itinerary.length > 0 ? (
+
+        itinerary.map((trip, id) => (
+          <Card key={id} variant="outlined" sx={{ marginBottom: 2 }}>
+            <CardContent>
+              <Typography variant="h6">{trip.name}</Typography>
+              <Typography>{trip.notes}</Typography>
+            </CardContent>
+
+            <Button onClick={() => handleSelectItinerary(trip.id, routeInfo)}>
+              Select</Button>
+
+          </Card>
+        ))
+      ) : (
+        <Typography>No itinerary available.</Typography>
+      )}
+    </Box>
+
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenModal(false)} color="primary">
+      Close
+    </Button>
+  </DialogActions>
+</Dialog> */}
