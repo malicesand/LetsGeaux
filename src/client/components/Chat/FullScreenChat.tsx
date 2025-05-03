@@ -11,8 +11,9 @@ import {
 import { useTheme } from '@mui/material/styles';
 import SendRounded from '@mui/icons-material/SendRounded';
 import ChatHistory from './ChatHistory.tsx';
-import { user } from '../../../../types/models.ts';
-import { useMedia } from '../MediaQueryProvider.tsx'; // ! import this for mobile context
+import ResumeSessionPrompt from './ResumeSessionPrompt.tsx';
+import { user, message } from '../../../../types/models.ts';
+import { useMedia } from '../MediaQueryProvider.tsx';
 
 interface ChatMessage {
   text: string;
@@ -21,42 +22,79 @@ interface ChatMessage {
 
 interface ChatProps {
   user: user;
+  sessionId: string;
+  setIsFirstTimeUser: (val: boolean) => void;
+  isFirstTimeUser: boolean | null;
 }
-const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
+
+const FullScreenChat: React.FC<ChatProps> = ({ 
+  user, 
+  sessionId, 
+  setIsFirstTimeUser, 
+  isFirstTimeUser  
+}) => {
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
-  const chatLogRef = useRef<HTMLDivElement>(null);
+  const chatLogRef = useRef<HTMLDivElement>(null); 
   const [userMessage, setUserMessage] = useState('');
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [sessionId, setSessionId] = useState(null); // ? Local Storage
-
-  // const isMobile = true; //! toggle this on or off to test mobile in viewport    
-  const { isMobile } = useMedia(); // ! can do mobile conditioning like this
-
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false); //history drawer
+  const [hasNamedSession, setHasNamedSession] = useState(false);
+  const [hasGreetedThisSession, setHasGreetedThisSession] = useState(false);
+  // const isMobile = true; //force mobile    
+  const { isMobile } = useMedia(); 
+  const [chatLogHydrated, setChatLogHydrated] = useState(false);
+  
+  //* On Component Mount *//
+  //Fill Out Chat History When Resuming
   useEffect(() => {
-    // check local storage for session ID
-    console.log(sessionId);
-    const storedSessionId = localStorage.getItem('sessionId');
-    if (storedSessionId) {
-      setSessionId(storedSessionId);
-    } else {
-      // Create new session ID
-      fetch('/api/chats/new-session', { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-          localStorage.setItem('sessionId', data.sessionId);
-          setSessionId(data.sessionId);
-        });
-      // TODO have chat greet user on mount
-    }
+    const fetchChatHistory = async () => {
+      try {
+        const res = await axios.get(`/api/chats/messages/${sessionId}`);
+        const messages = res.data as message[]
+        const formatted: ChatMessage[] = messages.flatMap(msg => [
+          { text: msg.userMessage, user: true },
+          { text: msg.botResponse, user: false }
+        ]);
+        // console.log('Setting chatLog from DB:', formatted);
+        setChatLog(formatted);
+        setChatLogHydrated(true);
+      } catch (err) { 
+        console.error('Failed to load chat history', err);
+      }
+    };
 
+    if (sessionId) {
+      fetchChatHistory();
+    } 
+  }, [sessionId]);
+
+  // Greeting 
+  useEffect(() => {
+    if (!sessionId || isFirstTimeUser === null || hasGreetedThisSession || !chatLogHydrated ) return;
+    // console.log(`is first time user? ${isFirstTimeUser}`)
+    // console.log(`has greeted this session ${hasGreetedThisSession}`)
+    // TODO set so does not greet if resuming
+    // Only greet if no messages yet
+    // if (chatLog.length === 0) {
+      const greeting = isFirstTimeUser
+        ? "Alright Cher! I'll be your local guide to the Big Easy. Here to help you find the best food, music, and spots to explore. Whether it’s your first visit or you’re just looking for hidden gems, I’ve got you. What kind of adventure are you in the mood for today?"
+        : "Welcome back baby! What kind of adventure are you in the mood for today?";
+
+      setChatLog(prev => [...prev, { text: greeting, user: false }]);
+      setHasGreetedThisSession(true);
+  }, [sessionId, isFirstTimeUser, hasGreetedThisSession, chatLogHydrated]);
+   
+  // Scroll Behavior
+  useEffect(() => {
     if (chatLogRef.current) {
       chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
     }
   }, [chatLog]);
 
+  //* Message Handling And Default Name*//
   const handleSubmit = async () => {
     if (!userMessage.trim()) return;
     setChatLog([...chatLog, { text: userMessage, user: true }]);
+
     setUserMessage('');
     try {
       const response = await axios.post('/api/chats', {
@@ -65,6 +103,18 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
         sessionId
       });
       setChatLog(prev => [...prev, { text: response.data, user: false }]);
+
+      if (!hasNamedSession) {
+        try {
+          // console.log(`message inside naming ${userMessage}`)
+          await axios.patch(`/api/chats/chat-history/${sessionId}`, {
+            conversationName: userMessage
+          });
+          setHasNamedSession(true);
+        } catch (err) {
+          console.error('Failed to auto-name session:', err);
+        }
+      };
     } catch (error: any) {
       // ? Type the error
       console.error('Error sending message:', error);
@@ -75,6 +125,7 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
     }
   };
 
+  // TODO Length on Mobile
   return (
     <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
       {/* Main Chat Column */}
@@ -245,7 +296,7 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
             >
               Chat History
             </Typography>
-            <ChatHistory user={user} isMobile={isMobile} />
+            <ChatHistory user={user} isMobile={isMobile} setIsFirstTimeUser={setIsFirstTimeUser}/>
           </Drawer>
         )}
       </Box>
@@ -274,7 +325,7 @@ const FullScreenChat: React.FC<ChatProps> = ({ user }) => {
           >
             Chat History
           </Typography>
-          <ChatHistory user={user} isMobile={isMobile} />
+          <ChatHistory user={user} isMobile={isMobile} setIsFirstTimeUser={setIsFirstTimeUser}/>
         </Box>
       )}
     </Box>
