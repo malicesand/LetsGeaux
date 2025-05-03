@@ -260,6 +260,17 @@ const FullScreenChat: React.FC<ChatProps> = ({
             </IconButton>
           </Box>
         </Box>
+        
+        {/* Immediate Logic for Mobile */}
+        {isMobile && (
+            <Box sx={{ display: 'none' }}>
+              <ChatHistory
+                user={user}
+                isMobile={isMobile}
+                setIsFirstTimeUser={setIsFirstTimeUser}
+              />
+            </Box>
+          )}
 
         {/* Drawer for Mobile */}
         {isMobile && (
@@ -270,7 +281,7 @@ const FullScreenChat: React.FC<ChatProps> = ({
             slots={{ transition: Slide }}
             slotProps={{
               transition: {
-                direction: 'left' // TODO make more fun?
+                direction: 'left' 
               },
               paper: {
                 sx: {
@@ -300,6 +311,7 @@ const FullScreenChat: React.FC<ChatProps> = ({
           </Drawer>
         )}
       </Box>
+
       {/* Desktop Sidebar */}
       {!isMobile && (
         <Box
