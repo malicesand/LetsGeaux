@@ -20,7 +20,10 @@ export const components: Components<Theme> = {
       root: {
         paddingLeft: 16,
         paddingRight: 16,
-        
+        '@media (max-width:600px)': {
+          paddingLeft: 8,
+          paddingRight: 8,
+        },
       },
     },
   },
@@ -34,12 +37,18 @@ export const components: Components<Theme> = {
     styleOverrides: {
       root: {
         marginBottom: 16,
+        '@media (max-width:600px)': {
+          marginBottom: 12,
+        },
         '& .MuiOutlinedInput-root': {
           border: '4px solid black',
           borderRadius,
           width:'100%',
           // backgroundColor: '#A78BFA', 
           padding: '16px',
+          '@media (max-width:600px)': {
+            padding: '12px',
+          },
           '& fieldset': {
             border: 'none',
           },
@@ -61,6 +70,10 @@ export const components: Components<Theme> = {
         border: '4px solid black',
         borderRadius: 8,
         fontWeight: 700,
+        '@media (max-width:600px)': {
+          fontSize: 16,
+          padding: 12,
+        },
       },
       icon: {
         color: 'black',
@@ -74,6 +87,9 @@ export const components: Components<Theme> = {
         borderRadius,
         boxShadow: 'none',
         padding: 16,
+        '@media (max-width:600px)': {
+          padding: 12,
+        },
         variant:"contained",
         
       },
@@ -86,6 +102,9 @@ export const components: Components<Theme> = {
         borderRadius,
         boxShadow: 'none',
         padding: 24,
+        '@media (max-width:600px)': {
+          padding: 16,
+        },
         // backgroundColor: '#fff',
       },
     },
@@ -102,7 +121,11 @@ export const components: Components<Theme> = {
         fontWeight: 700,
         backgroundColor: theme.palette.primary.main,
         transition: 'box-shadow 0.2s ease, background-color 0.2s ease',
-  
+        '@media (max-width:600px)': {
+          fontSize: 16,
+          padding: '12px 20px',
+        },
+        
         '&:hover': {
           backgroundColor: theme.palette.secondary.main,
           boxShadow: theme.shadows[2], 

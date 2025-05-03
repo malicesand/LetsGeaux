@@ -23,7 +23,7 @@ import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx';
 import { useParams, useLocation } from 'react-router-dom';
 import dayjs, { Dayjs } from 'dayjs';
-import { PiPencilLine } from 'react-icons/pi';
+import { PiPencil } from "react-icons/pi";
 import { PiTrash } from 'react-icons/pi';
 import { PiPlusBold } from 'react-icons/pi';
 import { useSnackbar } from 'notistack';
@@ -381,7 +381,7 @@ const handleSendInvite = async () => {
           </Box>
         </Box>
       )}
-      <Typography variant='h5' sx={{ mt: 3, mb: 2, textAlign: 'center' }}>
+      <Typography variant='h3' sx={{ mt: 3, mb: 2, textAlign: 'center' }}>
         Itineraries
       </Typography>
       <Box
@@ -408,19 +408,19 @@ const handleSendInvite = async () => {
             }}
           >
             <CardContent>
-              <Typography variant='h6'>{itinerary.name}</Typography>
+              <Typography variant='h3'>{itinerary.name}</Typography>
               {itinerary.partyName && (
-                <Typography variant='body2' color='secondary'>
+                <Typography variant='body1' color='secondary'>
                   Party: {itinerary.partyName}
                 </Typography>
               )}
 
               <Typography variant='body1'>{itinerary.notes}</Typography>
-              <Typography variant='body2'>
+              <Typography variant='body1'>
                 Begin:{' '}
                 {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY h:mm A')}
               </Typography>
-              <Typography variant='body2'>
+              <Typography variant='body1'>
                 End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY h:mm A')}
               </Typography>
 
@@ -476,8 +476,8 @@ const handleSendInvite = async () => {
                 onClick={() => handleEditClick(itinerary)}
                 sx={{ position: 'absolute', top: 8, right: 8, color: 'black' }}
               >
-                <PiPencilLine />
-              </IconButton>
+<PiPencil />
+</IconButton>
               {user.id === itinerary.creatorId && (
                 <IconButton
                   onClick={() => {
@@ -501,8 +501,10 @@ const handleSendInvite = async () => {
                 addActivity={addActivityToItinerary}
                 itineraryCreatorId={itinerary.creatorId}
                 user={user}
-                itineraryBegin={''}
-                itineraryEnd={''}
+                itineraryBegin={dayjs(itinerary.begin).format('YYYY-MM-DD')}
+                itineraryEnd={dayjs(itinerary.end).format('YYYY-MM-DD')}
+                // itineraryBegin={''}
+                // itineraryEnd={''}
               />
             )}
           </Card>
