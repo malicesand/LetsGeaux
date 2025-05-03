@@ -256,10 +256,27 @@ const Suggestion: React.FC<SuggestionProps> = ({
             {isDb ? (
               <Grid>
                 <Typography>Vote on this suggestion</Typography>
-                <Typography> {upVotes}</Typography>
-                <Button title="vote suggestion up" sx={{ borderWidth: 4, color: "black" }} onClick={() => handleVoteClick('up')}><PiThumbsUpFill /></Button>
-                <Typography> {downVotes}</Typography>
-                <Button title="vote suggestion down" sx={{ borderWidth: 4, color: "black" }} onClick={() => handleVoteClick('down')}><PiThumbsDownFill /></Button>
+                <Button
+                title="vote suggestion up"
+                sx={{
+                  borderWidth: 4,
+                  color: 'black',
+                p: '6px',
+                marginRight: "4px"
+                }}
+                onClick={() => handleVoteClick('up')}>
+                  {upVotes}<PiThumbsUpFill />
+                  </Button>
+                <Button
+                title="vote suggestion down"sx={{
+                  borderWidth: 4,
+                  color: 'black',
+                  p: '6px',
+                  marginRight: "4px"
+                  }}
+                  onClick={() => handleVoteClick('down')}>
+                    {downVotes}<PiThumbsDownFill />
+                    </Button>
               </Grid>
             ) : (null)}
           </ImageListItem>

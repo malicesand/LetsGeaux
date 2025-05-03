@@ -37,7 +37,7 @@ const handleListDelete = () => {
         <Card key={currentSuggestion.id}>
           <Suggestion
             user={user}
-            idDb={true}
+            isDb={true}
             wishMode={wishMode}
             currentSuggestion={currentSuggestion}
             getAllWishlistSuggestions={getAllWishlistSuggestions}
