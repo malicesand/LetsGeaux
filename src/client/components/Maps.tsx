@@ -33,7 +33,7 @@ const Maps = () => {
   const directionsService = useRef<google.maps.DirectionsService | null>(null);
   const originMarker = useRef<google.maps.Marker | null>(null);
   const destinationMarker = useRef<google.maps.Marker | null>(null);
-  const polylineRef = useRef<google.maps.Polyline | null>(null);
+  //const polylineRef = useRef<google.maps.Polyline | null>(null);
 
   useEffect(() => {
     const fetchItinerary = async () => {
@@ -49,23 +49,23 @@ const Maps = () => {
   }, []);
 
 
-  const handleSelectItinerary = (itineraryId: number, routeInfo: number) => {
-    console.log('handleSelectItinerary called with:', itineraryId, routeInfo); // Check if this is being logged
+  // const handleSelectItinerary = (itineraryId: number, routeInfo: number) => {
+  //   console.log('handleSelectItinerary called with:', itineraryId, routeInfo); // Check if this is being logged
 
-    axios.patch(`/api/maps/${routeInfo}`, { itineraryId })
-      .then((response: any) => {
-        console.log('Response from PATCH request:', response); // Check if this logs the response
+  //   axios.patch(`/api/maps/${routeInfo}`, { itineraryId })
+  //     .then((response: any) => {
+  //       console.log('Response from PATCH request:', response); // Check if this logs the response
 
-        if (response.status === 200) {
-          console.log('Itinerary added successfully:', response);
-          navigate('/routechoices', { state: { itineraryId } });
-          //setOpenModal(false);
-        }
-      })
-      .catch((error: any) => {
-        console.error('Error during PATCH request:', error); // Catch and log errors
-      });
-  };
+  //       if (response.status === 200) {
+  //         console.log('Itinerary added successfully:', response);
+  //         navigate('/routechoices', { state: { itineraryId } });
+  //         //setOpenModal(false);
+  //       }
+  //     })
+  //     .catch((error: any) => {
+  //       console.error('Error during PATCH request:', error); // Catch and log errors
+  //     });
+  // };
 
   // Function to fetch directions and calculate the travel time
   const fetchDirections = async () => {
@@ -75,57 +75,28 @@ const Maps = () => {
     }
 
     try {
-      const response = await axios.get("/api/maps/directions", {
-        params: { origin, destination },
-      });
+      const directionsRequest = {
+        origin,
+        destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+      };
 
-      const { polyline } = response.data;
+      if (directionsService.current && directionsRenderer.current) {
+        directionsService.current.route(directionsRequest, (result, status) => {
+          if (status === google.maps.DirectionsStatus.OK && result) {
+            directionsRenderer.current!.setDirections(result);
+            setError(null);
 
-      if (polyline) {
-        const path = google.maps.geometry.encoding.decodePath(polyline);
-
-        // Create a Polyline object
-        if (polylineRef.current) {
-          polylineRef.current.setPath(path);
-        } else {
-          polylineRef.current = new google.maps.Polyline({
-            path: path,
-            geodesic: true,
-            strokeColor: "#FF0000",
-            strokeOpacity: 1.0,
-            strokeWeight: 2,
-          });
-          polylineRef.current.setMap(mapRef.current);
-        }
-
-        // Show the route using DirectionsRenderer
-        const directionsRequest = {
-          origin,
-          destination,
-          travelMode: google.maps.TravelMode.DRIVING,
-        };
-
-        if (directionsService.current && directionsRenderer.current) {
-          directionsService.current.route(directionsRequest, (result, status) => {
-            if (status === google.maps.DirectionsStatus.OK) {
-              directionsRenderer.current.setDirections(result);
-              setError(null);
-
-              // Extract travel time from directions result
-              const time = result.routes[0].legs[0].duration.text;
-              setTravelTime(time); // Update the state with the travel time
-
-              const originLatLng = result.routes[0].legs[0].start_location;
-              const destinationLatLng = result.routes[0].legs[0].end_location;
-              placeMarkers(originLatLng, destinationLatLng);
-
-            } else {
-              setError("No route found.");
-            }
-          });
-        }
+            const leg = result.routes[0].legs[0];
+            setTravelTime(leg.duration.text);
+            placeMarkers(leg.start_location, leg.end_location);
+          } else {
+            setError("No route found.");
+          }
+        });
       }
     } catch (error) {
+      console.error("Fetch error:", error);
       setError("Error fetching directions. Please try again later.");
     }
   };
@@ -165,10 +136,12 @@ const Maps = () => {
     }
 
     return () => {
-      // Clean up markers and polyline on component unmount
+      // Clean up on unmount
       if (originMarker.current) originMarker.current.setMap(null);
       if (destinationMarker.current) destinationMarker.current.setMap(null);
-      if (polylineRef.current) polylineRef.current.setMap(null);
+      if (directionsRenderer.current) directionsRenderer.current.setMap(null);
+      // If you're using a custom polyline, clean it too:
+      // if (polylineRef.current) polylineRef.current.setMap(null);
     };
   }, []);
 
@@ -269,7 +242,7 @@ const Maps = () => {
 
       {/* Google Map */}
       <LoadScript
-        googleMapsApiKey={"API KEY "}
+        googleMapsApiKey={"AIzaSyDbe88-k6VGoCVYDfdhGS4Zi2w7YwXiCGA "}
         libraries={libraries}
       >
         <Box
