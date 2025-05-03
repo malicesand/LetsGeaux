@@ -4,6 +4,8 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import sgMail from '@sendgrid/mail';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const prisma = new PrismaClient();
 const itineraryRoute = express.Router();
@@ -200,7 +202,7 @@ itineraryRoute.get('/view/:viewCode', async (req: any, res: any) => {
         },
       },
     });
-
+    
     if (!itinerary) {
       return res.status(404).json({ error: 'Itinerary not found' });
     }
@@ -257,7 +259,7 @@ itineraryRoute.post('/sendInvite', async (req: any, res: any) => {
     from: 'invite@letsgeauxnola.com', 
     subject: 'View my trip on Lets Geaux!',
     text: `Check out my trip "${itineraryName}" on LetsGeauxNola.com. View Code: ${viewCode}`,
-    html: `<strong>Check out my trip "${itineraryName}" on <a href="http://letsgeauxnola.com/view">LetsGeauxNola.com</a>!</strong><br/>
+    html: `<strong>Check out my trip "${itineraryName}" on <a href="https://letsgeauxnola.com/view">LetsGeauxNola.com</a>!</strong><br/>
            <p><b>View Code:</b> ${viewCode}</p>`,
   };
 
@@ -270,44 +272,6 @@ itineraryRoute.post('/sendInvite', async (req: any, res: any) => {
   }
 });
 
-
-
-
-/*// GET all itineraries for the logged-in user (creator or party member)
-itineraryRoute.get('/', async (req: any, res: any) => {
-  const userId = req.user.id;
-
-  try {
-    // Find all party IDs the user is in
-    const userParties = await prisma.userParty.findMany({
-      where: { userId },
-      select: { partyId: true },
-    });
-
-    const partyIds = userParties.map(p => p.partyId);
-
-    // Fetch itineraries created by user OR attached to a party the user is in
-    const itineraries = await prisma.itinerary.findMany({
-      where: {
-        OR: [
-          { creatorId: userId },
-          { partyId: { in: partyIds } },
-        ],
-      },
-      include: {
-        party: {
-          select: { name: true },
-        },
-      },
-    });
-
-    res.status(200).json(itineraries);
-  } catch (error) {
-    console.error('Error fetching itineraries:', error);
-    res.status(500).json({ error: 'Error fetching itineraries' });
-  }
-});
-*/
 //* Update Existing Itinerary to Party Itinerary *//
 itineraryRoute.patch('/party/:itineraryId', async (req:any, res: any) => {
   const {itineraryId} = req.params;
