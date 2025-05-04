@@ -427,6 +427,7 @@
                             }}
                           />
                         )}
+                        
                         <CardContent sx={{ flexGrow: 1 }}>
                           <Typography variant='h6'>{activity.name}</Typography>
                           <Typography>{activity.description}</Typography>
