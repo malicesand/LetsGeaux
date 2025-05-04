@@ -7,7 +7,7 @@ const searchId = process.env.FOURSQUARE_API_KEY;
 
 const getSuggestionsFromFoursquare = (queryStack) => {
 
-console.log('ON THE STACK', queryStack)
+// console.log('ON THE STACK', queryStack)
   const options = {
     method: 'GET',
     url: `https://api.foursquare.com/v3/places/search?ll=29.95465%2C-90.07507&categories=${queryStack}&fields=fsq_id%2Cname%2Cdescription%2Cwebsite%2Clocation%2Chours%2Cphotos`,
@@ -18,11 +18,9 @@ console.log('ON THE STACK', queryStack)
   };
 
   return axios(options)
-  // .then(res => res.json())
   .then(res => {
-    // console.log('res data', res.data);
     const entrySet = res.data.results.map((entry) => {
-      console.log('ENTRY:', entry)
+      // console.log('ENTRY:', entry)
       // still need the contact link to replace the phoneNum.
       const { fsq_id, name, description, website } = entry;
       const { formatted_address } = entry.location;
@@ -39,7 +37,6 @@ console.log('ON THE STACK', queryStack)
           address: formatted_address,
           image: tempImage,
         }
-        console.log('tryna split the hours', returnObj.hours.split(';'))
         return returnObj;
     });
 

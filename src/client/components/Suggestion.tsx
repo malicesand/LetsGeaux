@@ -214,22 +214,25 @@ const Suggestion: React.FC<SuggestionProps> = ({
   // when I want to add a link to another page, just import Link, then<Link to="/wherever"> The word to link</Link>
   const { fsq_id, title, description, link, upVotes, downVotes, hours, address, image } = currentSuggestion;
   return (
-    <Container>
+    <Container sx={{ mb: 4 }}>
       <Grid item size={6}>
         {/* <Card> */}
         {/* <Typography variant="h3">Featured Foray:</Typography> */}
         {/* <Button variant="filled">Next attraction</Button> */}
+        <Box display="flex" alignItems="flex-start" gap={1}>
+
         <Button
           variant="filled"
           onClick={handleOpenClick}
           sx={{ marginRight: "4px" }}
-        >add to activities!</Button>
+          >add to activities!</Button>
         {wishMode
           ?
           <Button title="remove from wishlist" sx={{ borderWidth: 4, color: "black" }} onClick={handleRemoveFromWishlist}> <PiStarHalfThin /> </Button>
           :
           <Button title="add to wishlist" sx={{ borderWidth: 4, color: "black" }} onClick={addToWishlist} variant="filled"> <PiShootingStarFill /> </Button>
         }
+        </Box>
         <ImageList>
           <ImageListItem key="ItemText" cols={4}>
             <ListItemText >
@@ -245,14 +248,14 @@ const Suggestion: React.FC<SuggestionProps> = ({
               // set typography to "body"
             )}
             <Typography>{description}</Typography>
-            <Typography><b>Contact website:</b> <Link href={link}>Go to {title}</Link></Typography>
+            <Typography><b>Contact website:</b> <Link color='inherit' href={link}>Go to {title}</Link></Typography>
             <Typography><b>address:</b> {address}</Typography>
             {hours
               ? (
                 <Box>
                   <Typography><b>Hours of operation:</b></Typography>
                   {hours.split(';').map((day, i) => (
-                    <p key={`${fsq_id}${i}`}>{day}</p>
+                    <Typography key={`${fsq_id}${i}`}>{day}</Typography>
                   ))}
                 </Box>
 
