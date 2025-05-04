@@ -37,8 +37,8 @@ type FormFields = {
   itinerary: any;
   title: string;
   description: string;
-  time: string;
-  date: Dayjs | null; // Date is a string in YYYY-MM-DD format
+  time: Dayjs;
+  date: Dayjs | null;
   location: string;
   image: string;
   phone: string;
@@ -71,12 +71,12 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
     link,
     /*latitude, longitude,*/
   } = currentSuggestion;
-  const { register, handleSubmit, setValue, control, reset: resetField, formState: { errors, isSubmitting } } = useForm<FormFields>({
+  const { register, handleSubmit, setValue, control, formState: { errors, isSubmitting } } = useForm<FormFields>({
     defaultValues: {
       itinerary: "",
       title: "",
       description,
-      time: '',
+      time,
       date,
       location: title,
       image: image ? image : '',
@@ -123,16 +123,16 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
     const { itinerary, title, description, time, date, location, image, phone, address } = formValues;
     const { id } = user;
     // all of these qualities are pulled directly from req.body in the activity request handle
-    
+
     const parsedDate = dayjs(date, 'MMMM D, YYYY')
     console.log('an attempt to parse the date:', parsedDate)
     const activityData = {
       itineraryId: itinerary.id,
-      name: title,
+      name: '',
       description,
       time,
       date: parsedDate.toISOString(),
-      location: address,
+      location: title,
       image,
       phone,
       address,
@@ -142,11 +142,10 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
 
     // console.log('try to stringify:', dayjs(activityData.date).format('MMMM D, YYYY'))
     activityData.date = dayjs(activityData.date).format('MMMM D, YYYY')
-    console.log('Stefans activityData', activityData, 'looking at the date', activityData.date, typeof activityData.date); // Log the data to see if it's correct
     try {
       // suggAct = suggestion-activity
       const suggAct = await axios.post('/api/activity', activityData);
-      console.log('Activity posted successfully:', suggAct); // Log successful response
+      // console.log('Activity posted successfully:', suggAct); // Log successful response
       handleCloseClick();
       displaySuccessSnack('success');
     } catch (error) {
@@ -172,11 +171,6 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
               label="Itinerary"
               defaultValue=""
             //  variant="outlined"
-            //  error={!!errors.itineraryId}
-            // placeholder='Select an itinerary'
-            //  isMulti={true}
-            //  helperText={errors.itineraryId?.message}
-            // value={chosenItinerary}
             >
               <InputLabel id="itinerary-dropdown-label">Select an itinerary</InputLabel>
               <Controller
@@ -238,7 +232,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
             />
 
             {/* Time */}
-            <TextField
+            {/* <TextField
               {...register('time', { required: 'Must specify time' })}
               name="time"
               label="Time"
@@ -246,7 +240,29 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
               fullWidth
               error={!!errors.time}
               helperText={errors.time?.message}
+            /> */}
+            <Controller
+            name="time"
+            rules={{required: 'Must specify time'}}
+            control={control}
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <TimePicker
+              label="Choose a time"
+              value={value ?? null}
+              onChange={onChange}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  margin: 'normal',
+                  error: !!error,
+                  helperText: error?.message,
+                }
+              }}
+
+              />
+            )}
             />
+
 
             {/* Date */}
             {/* <TextField */}

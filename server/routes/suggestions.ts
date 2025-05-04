@@ -206,10 +206,10 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
                      // category codes as the argument
                      getSuggestionsFromFoursquare(returnString).then((data) => {
                       if (data) {
-                        console.log('we did it, dammit', data);
+                        // console.log('we did it, dammit', data);
                         res.status(200).send(data);
                       } else {
-                        res.status(404).send('failed the test, yo');
+                        res.status(404).send('No suggestions found');
                       }
                      })
 

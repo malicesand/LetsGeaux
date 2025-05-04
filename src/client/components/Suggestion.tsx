@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+// import { Link } from 'react-router-dom'
 import {
   Container,
   Box,
@@ -21,6 +22,7 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
+  Link,
   // Avatar,
   ImageList,
   ImageListItem,
@@ -46,6 +48,7 @@ interface SuggestionProps {
     fsq_id: string
     id: Number
     title: string
+    hours: string
     upVotes: Number
     downVotes: Number
     timeAvailable: string
@@ -115,38 +118,38 @@ const Suggestion: React.FC<SuggestionProps> = ({
       .catch(err => console.error('unable to save suggestion', err))
   }
 
-  const handleAddToActivities = () => {
-    setOpen(true);
+  // const handleAddToActivities = () => {
+  //   setOpen(true);
 
-    const details = {
-      data: {
-        address: currentSuggestion.address,
-        description: currentSuggestion.description,
-        phone: currentSuggestion.link,
-        name: currentSuggestion.title,
-      }
-    }
-    axios.post('/api/activity', details.data).then(() => {
-      if (wishMode) {
-        handleRemoveFromWishlist()
-      }
-    }).then(() => {
-      if (wishMode) {
-        getAllWishlistSuggestions();
-      }
-    }).catch((err) => {
-      console.error('unable to change suggestion', err);
-    })
-  }
+  // }
+  //   const details = {
+  //     data: {
+  //       address: currentSuggestion.address,
+  //       description: currentSuggestion.description,
+  //       phone: currentSuggestion.link,
+  //       name: currentSuggestion.title,
+  //     }
+  //   }
+  //   axios.post('/api/activity', details.data).then(() => {
+  //     if (wishMode) {
+  //       handleRemoveFromWishlist()
+  //     }
+  //   }).then(() => {
+  //     if (wishMode) {
+  //       getAllWishlistSuggestions();
+  //     }
+  //   }).catch((err) => {
+  //     console.error('unable to change suggestion', err);
+  //   })
 
 
-  const openTestForm = () => {
-    setIsTesting(true);
-  }
+  // const openTestForm = () => {
+  //   setIsTesting(true);
+  // }
 
-  const closeTestForm = () => {
-    setIsTesting(false);
-  }
+  // const closeTestForm = () => {
+  //   setIsTesting(false);
+  // }
 
 
   const handleVoteClick = (polarity: string) => {
@@ -208,8 +211,8 @@ const Suggestion: React.FC<SuggestionProps> = ({
       .catch((err) => console.error('sorry, tex', err));
   }
 
-
-  const { title, description, link, upVotes, downVotes, latitude, longitude, address, image } = currentSuggestion;
+  // when I want to add a link to another page, just import Link, then<Link to="/wherever"> The word to link</Link>
+  const { fsq_id, title, description, link, upVotes, downVotes, hours, address, image } = currentSuggestion;
   return (
     <Container>
       <Grid item size={6}>
@@ -235,24 +238,27 @@ const Suggestion: React.FC<SuggestionProps> = ({
               </Typography>
             </ListItemText>
             {image ? (
-              <img style={{ width: "100px", marginTop: "10px" }} src={`${image}`}></img>
+              <img style={{ width: "200px", marginTop: "10px" }} src={`${image}`}></img>
 
             ) : (
               <img style={{ width: "100px", marginTop: "10px" }} src="https://static.vecteezy.com/system/resources/previews/002/187/723/original/coming-soon-neon-signs-style-text-free-vector.jpg"></img>
               // set typography to "body"
             )}
             <Typography>{description}</Typography>
-            <Typography><b>Contact website:</b> {link}</Typography>
+            <Typography><b>Contact website:</b> <Link href={link}>Go to {title}</Link></Typography>
             <Typography><b>address:</b> {address}</Typography>
-            {/* {hours
+            {hours
               ? (
                 <Box>
                   <Typography><b>Hours of operation:</b></Typography>
+                  {hours.split(';').map((day, i) => (
+                    <p key={`${fsq_id}${i}`}>{day}</p>
+                  ))}
                 </Box>
 
               ) : (
                 <Typography><em>Operation hours unavailable</em></Typography>
-              )} */}
+              )}
             {isDb ? (
               <Grid>
                 <Typography>Vote on this suggestion</Typography>
