@@ -191,20 +191,28 @@ const ChatHistory: React.FC<ChatHistProps> = ({
             sx={{ 
               pt: 0, 
               justifyContent: 'space-between',
-              flexDirection: isMobile ? 'column' : 'row',
-              gap: 1,
+              flexDirection: 'row',
+              gap: 0,
               alignItems: isMobile ? 'stretch' : 'center', 
             }}>
-            <Button variant='contained' onClick={() =>
-              startEditing(session.sessionId, session.conversationName || '') // TODO change button
+            <Button 
+              variant='contained' 
+              size='small' 
+              style={{maxWidth: '110px', maxHeight: '110', minWidth: '110', minHeight: '110'}}
+              onClick={() =>
+                startEditing(session.sessionId, session.conversationName || '') 
             }>
-              Change Name 
+              Rename  
             </Button>
             <Divider/>
-            <Button variant='contained' onClick={() =>
-              handleDelete(session.sessionId) // TODO change button
+            <Button 
+              variant='contained' 
+              size='small' 
+              style={{maxWidth: '110px', maxHeight: '110', minWidth: '110', minHeight: '110'}}
+              onClick={() =>
+              handleDelete(session.sessionId) 
             }>
-              Delete Session 
+              Delete 
             </Button>
           </CardActions>
         </Card>
