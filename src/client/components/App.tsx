@@ -16,8 +16,7 @@ import Home from './Home.tsx';
 import Login from './Login.tsx';
 import Maps from './Maps.tsx';
 import Suggestions from './Suggestions.tsx';
-// import ChatBot from './Chat/ChatBot.tsx';
-import FullScreenChat from './Chat/FullScreenChat.tsx';
+import ChatBot from './Chat/ChatBot.tsx';
 import Itinerary from './Itinerary/Itinerary.tsx'
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 import Activities from './Itinerary/NEWActivties.tsx';
@@ -55,7 +54,6 @@ const App: React.FC = () => {
           const fetchedUser: user = response.data.user;
           setUser(fetchedUser);
           setLocalUser({ profilePic: fetchedUser.profilePic })
-          localStorage.removeItem('sessionId');
         }
       } catch (error) {
         setIsAuthenticated(false);
@@ -123,8 +121,7 @@ const App: React.FC = () => {
         <Route
           path='/chatbot'
           element={
-            <ProtectedRoute>{user && <FullScreenChat user={user} />}</ProtectedRoute>
-            // <ProtectedRoute>{user && <ChatBot user={user} />}</ProtectedRoute>
+            <ProtectedRoute>{user && <ChatBot user={user} />}</ProtectedRoute>
           }
         />
         <Route
