@@ -79,7 +79,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
       time: '',
       date,
       location: title,
-      image,
+      image: image ? image : '',
       phone: link,
       address,
     },
@@ -123,6 +123,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
     const { itinerary, title, description, time, date, location, image, phone, address } = formValues;
     const { id } = user;
     // all of these qualities are pulled directly from req.body in the activity request handle
+    console.log('trying format w/o day', date.format('MMMM D, YYYY'))
     const parsedDate = dayjs(date, 'MMMM D, YYYY')
     console.log('an attempt to parse the date:', parsedDate)
     const activityData = {
@@ -130,7 +131,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
       name: title,
       description,
       time,
-      date: parsedDate.toISOString(),
+      date: date.format('MMMM D, YYYY'),
       location: address,
       image,
       phone,
@@ -138,9 +139,10 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
       userId: +id,
     };
 
-    
-    console.log('True anatomy of the activity object:', activityData); // Log the data to see if it's correct
 
+    // console.log('try to stringify:', dayjs(activityData.date).format('MMMM D, YYYY'))
+    activityData.date = dayjs(activityData.date).format('MMMM D, YYYY')
+    console.log('Stefans activityData', activityData, 'looking at the date', activityData.date, typeof activityData.date); // Log the data to see if it's correct
     try {
       // suggAct = suggestion-activity
       const suggAct = await axios.post('/api/activity', activityData);
