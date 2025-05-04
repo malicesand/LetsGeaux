@@ -333,7 +333,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
             overflowX: 'auto',
           }}
         >
-          {/* Sidebar */}
+          {/* Party Info Sidebar */}
           {sidebarOpen && (
             <Card
               sx={{
@@ -472,17 +472,11 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                     </Box>
                   </Container>
                 )}
-                <Box>
-
-                  {/* Message Board */}
-                  {/* <Box display="flex" justifyContent="center" alignItems="center">
-                  <Box sx={{ width: '60%' }}>
-                  <MessageBoard user={user} />
-                  </Box>
-                  )}
-              </CardContent>
-            </Card>    
-          )}
+                
+                  </CardContent>
+            </Card>       
+          )} 
+          
           {/* Itinerary */}
           <Box>
             <Itinerary
@@ -491,8 +485,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
               partyName={partyName}
             />
           </Box> 
-      </Box>
-    </Box>
+      // </Box>
+    // </Box>
       {/*  Manage Party Model */}
       <Dialog
         id='manageParty'
@@ -682,6 +676,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         </Box>
       </Dialog>
     </React.Fragment>
+          
   );
 };
 export default PartyDashboard;
