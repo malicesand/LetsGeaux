@@ -556,8 +556,11 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                 </IconButton>
               )}
               {console.log('routes', routes)}
+              {console.log('itinID', itineraryId)}
+              {console.log('itin.id', itinerary.id)}
               {/* rendering Routes  */}
-              {(
+
+              {itinerary.id === itineraryId && (
                 routes.map((route, index) => (
                   <Box key={index}>
                     <Typography variant="body1">Origin: {route.origin}</Typography>
