@@ -765,9 +765,16 @@ for (const activity of sortedActivities) {
     // loops over each group of activities for each date
 Object.entries(groupedByDate).map(([date, activities]) => (
   <Box key={date} mb={4}>
-    <Typography variant="h6" gutterBottom>
+     <Typography variant="h6" gutterBottom>
+                    {new Date(date).toLocaleDateString(undefined, {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}                </Typography>
+    {/* <Typography variant="h6" gutterBottom>
       {date}
-    </Typography>
+    </Typography> */}
     <Box display="flex" flexWrap="wrap" gap={2}>
       {/* loops over each group of activities for each date */}
       {activities.map(activity => (
