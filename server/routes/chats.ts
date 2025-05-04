@@ -115,7 +115,7 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
 chatsRoute.patch('/chat-history/:sessionId', async (req: Request, res: Response) => {
   // Name a session/ change it's name
   const {sessionId} = req.params;
-  console.log(sessionId, 'patch')
+  // console.log(sessionId, 'patch')
   // console.log(req.body)
   const {conversationName} = req.body
   try {
@@ -149,16 +149,9 @@ chatsRoute.delete('/:sessionId', async (req: Request, res: Response) => {
       sessionId: sessionId
     }
   })
-  // delete a session
   try {
-     // delete conversation //
-    // const deleteSession =  await prisma.chatHistory.delete({
-    //   where: {
-    //     sessionId: sessionId
-    //   }
-    // })
     const transaction = await prisma.$transaction([deleteMessages, deleteSession]);
-    console.log('Session deleted');
+    // console.log('Session deleted');
     res.status(200).json('deleted');
 
   } catch (error) {
