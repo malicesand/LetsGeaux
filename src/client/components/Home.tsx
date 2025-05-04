@@ -14,7 +14,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
 
   return (
     <Box>
-      <Typography variant='h1' align="center" color='black'>
+      <Typography variant='h2' textTransform='none' align="center" color='black'>
         Hello, {displayUsername}!!!
       </Typography>
       <Box height={32} />

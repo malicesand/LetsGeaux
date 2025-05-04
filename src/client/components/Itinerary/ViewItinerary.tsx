@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {useParams} from 'react-router-dom';
 import {Alert, Box, Container, Typography} from '@mui/material'
-
+import dayjs from 'dayjs';
 const ViewItinerary = () => {
 const [itinerary, setItinerary] = useState<any>(null);
   const [error, setError] = useState<string>('');
@@ -49,7 +49,19 @@ if (!itinerary) {
   );
 }
 
+const sortedActivities = [...itinerary.activity].sort((a, b) => {
+  const dateA = dayjs(`${a.date} ${a.time}`, 'YYYY-MM-DD h:mm A');
+  const dateB = dayjs(`${b.date} ${b.time}`, 'YYYY-MM-DD h:mm A');
+  return dateA.valueOf() - dateB.valueOf();
+});
 
+const groupedByDate: Record<string, any[]> = {};
+for (const activity of sortedActivities) {
+  if (!groupedByDate[activity.date]) {
+    groupedByDate[activity.date] = [];
+  }
+  groupedByDate[activity.date].push(activity);
+}
 
 
 
@@ -73,26 +85,42 @@ return (
       Notes: {itinerary.notes}
     </Typography>
 
-    <Typography variant="body2" gutterBottom>
+    <Typography variant="body1" gutterBottom>
       Start: {new Date(itinerary.begin).toLocaleString()}
     </Typography>
-    <Typography variant="body2" gutterBottom>
+    <Typography variant="body1" gutterBottom>
       End: {new Date(itinerary.end).toLocaleString()}
     </Typography>
 
     <Box mt={4}>
-      <Typography variant="h6">Activities</Typography>
-      {itinerary.activity && itinerary.activity.length > 0 ? (
-        itinerary.activity.map((activity: any) => (
+      <Typography variant="h5">Activities</Typography>
+      {/* {itinerary.activity && itinerary.activity.length > 0 ? ( */}
+      {sortedActivities.length > 0 ? (
+
+        // itinerary.activity.map((activity: any) => (
+          // sortedActivities.map((activity: any) => (
+            Object.entries(groupedByDate).map(([date, activities]) => (
+              <Box key={date} mb={4}>
+                <Typography variant="h6" gutterBottom>
+                {new Date(date).toLocaleDateString(undefined, {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+          })}                </Typography>
+                {activities.map((activity) => (
           <Box key={activity.id} mb={2} p={2} border="1px solid #ccc" borderRadius={2}>
-            <Typography variant="subtitle1">{activity.name}</Typography>
+            <Typography variant="body1">{activity.name}</Typography>
             <Typography>{activity.description}</Typography>
             <Typography>{activity.date} at {activity.time}</Typography>
+            
             <Typography>{activity.location}</Typography>
             <Typography>{activity.phone}</Typography>
             <Typography>{activity.address}</Typography>
           </Box>
-        ))
+        ))}
+        </Box>
+            ))
       ) : (
         <Typography>No activities added yet.</Typography>
       )}
