@@ -15,3 +15,24 @@ export const contextKeywords: Record<PromptKey, string[]> ={
   sightSeeing: ['attractions', 'sightSeeing']
 };
 
+export const detectContext = (input: string): PromptKey => {
+  let lowerCaseMessage = input.toLowerCase();
+  const detectedContext = (Object.keys(contextKeywords) as PromptKey[]).find((key) =>
+    contextKeywords[key].some((keyword) => lowerCaseMessage.includes(keyword))
+  );
+  return detectedContext || "default";
+};
+
+export const generateGeminiPrompt = (userMessage: string, sessionMessages: { userMessage: string; botResponse: string }[], contextKey: PromptKey): string => {
+  const basePrompt = prompts[contextKey];
+  const recentHistory = sessionMessages.slice(-3).map(msg => `User: ${msg.userMessage}\nGeauxBot: ${msg.botResponse}`).join('\n');
+
+  return `
+${basePrompt}
+
+Conversation so far:
+${recentHistory}
+
+User just asked: "${userMessage}"
+Respond appropriately.`.trim();
+};
