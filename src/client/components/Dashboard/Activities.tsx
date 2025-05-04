@@ -14,6 +14,7 @@ import {
   Card,
   CardActions,
   CardContent,
+  Autocomplete,
 } from '@mui/material';
 import axios from 'axios';
 import { user } from '../../../../types/models';
@@ -81,6 +82,24 @@ const Activity: React.FC<Props> = ({
   //delete confirmation dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(null); // stores the activity to delete
+
+  //state to hold description autocomplete 
+    const [descriptionOptions, setDescriptionOptions] = useState<string[]>([]);
+    //state to hold activity name autocomplete 
+  
+    const [nameOptions, setNameOptions] = useState<string[]>([]);
+  
+    //define place type
+    interface PlaceOption {
+      //
+      label: string;
+      place_id: string;
+    }
+    //state to store all autocomplete options
+    const [placeOptions, setPlaceOptions] = useState<PlaceOption[]>([]);
+
+
+
 
   //copies activity and sorted activity by time and date
   const sortedActivities = [...activities].sort((a, b) => {
@@ -242,6 +261,115 @@ const Activity: React.FC<Props> = ({
     }
   };
  
+
+  //fetch autocomplete places
+  const fetchPlaces = async (input: string) => {
+    //stops function if input is empty
+    if (!input) return;
+    //console.log('Fetching autocomplete for:', input);
+    try {
+      //fetch request from back end
+      const response = await axios.get('/api/activity/google-place-autocomplete', {
+        //passes inut query param
+        params: { input }
+      });
+  //extracts response body from response object 
+      const data = response.data;
+  //will make sure data.predictions is an array 
+      if (!Array.isArray(data.predictions)) {
+        return;
+      }
+  // map through data.predictions 
+      const results = data.predictions.map((p: any) => ({
+        label: p.description, // each description
+        place_id: p.place_id // and uniqu indentifier for more details
+      }));
+  //upadates component state
+      setPlaceOptions(results);
+    } catch (err) {
+      console.error('Error fetching places:', err);
+    }
+  };
+  
+  
+  //fetch autocomplete for details
+
+  const fetchPlaceDetails = async (placeId: string) => {
+    try {
+      const res = await axios.get('/api/activity/google-place-details', {
+                //passes placeId query param
+
+        params: { placeId }
+      });
+      
+      // holds the detailed data like name, address, phone, and photos
+      const place = res.data;
+      //upates  acivity form
+      setFormData(prev => ({
+        ...prev,
+        location: place.name || prev.location,
+        address: place.formatted_address || '',
+        phone: place.formatted_phone_number || '',
+        //create image url if photo is available 
+        image: place.photos?.length
+          ? `/api/activity/google-place-photo?photoRef=${place.photos[0].photo_reference}`
+          : ''
+      }));
+    } catch (err) {
+      console.error('Error fetching place details:', err);
+    }
+  };
+  // used useEffect for one specific thing(descriptions)
+  //ran once and mounted  
+
+  useEffect(() => {
+    const fetchDescriptions = async () => {
+      try {
+        // calls back end for list of descriptions
+        const res = await axios.get('/api/activity/autocomplete-descriptions');
+        //updates description options
+        setDescriptionOptions(res.data);
+      } catch (error) {
+        console.error('Error fetching description options:', error);
+      }
+    };
+    fetchDescriptions();
+  }, []);
+
+  // used useEffect for one specific thing(names)
+  //ran once and mounted  
+  useEffect(() => {
+    const fetchNames = async () => {
+      try {
+        // call back end for list of names
+        const res = await axios.get('/api/activity/autocomplete-names');
+                //updates names options
+
+        setNameOptions(res.data); 
+      } catch (error) {
+        console.error('Error fetching name options:', error);
+      }
+    };
+    fetchNames();
+  }, []);
+  //empty obect to store to store activities  grouped by date 
+  //Record <- typescript type 
+  //Activity <- array of activity for that date 
+  const groupedByDate: Record<string, Activity[]> = {};
+//loop through sortedActivities
+for (const activity of sortedActivities) {
+  //date = key of that object
+  const date = activity.date;
+  // if no date, empty array 
+  if (!groupedByDate[date]) {
+    groupedByDate[date] = [];
+  }
+  //if key, push activity into array for that date
+  groupedByDate[date].push(activity);
+}
+
+  
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Container>
@@ -276,9 +404,9 @@ const Activity: React.FC<Props> = ({
                   >
                     <Card
                       sx={{
-                        backgroundColor: '#A684FF',
+                        backgroundColor: '#C2A4F8',
                         padding: '16px',
-                        borderRadius: '8px',
+                        borderRadius: 'px',
                         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                         position: 'relative',
                         height: '100%'
@@ -403,7 +531,44 @@ const Activity: React.FC<Props> = ({
             </DialogTitle>
             <DialogContent>
               <form onSubmit={handleSubmit}>
-                <TextField
+
+                <Autocomplete
+                              //can type anythings
+                  freeSolo
+                  //list of suggestions 
+                  options={nameOptions}
+                  //binds current inut value
+                  value={formData.name}
+                  //updates formData.name
+                  onInputChange={(event, newInputValue) => {
+                    setFormData(prev => ({ ...prev, name: newInputValue }));
+                  }}
+                  //handles whenn suggestion is selected from dropdown
+                  onChange={(event, newValue) => {
+                    if (typeof newValue === 'string') {
+                      setFormData(prev => ({ ...prev, name: newValue }));
+                    }
+                  }}
+                  //will render textfiend inside autocomplete
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Activity Name"
+                      margin="normal"
+                      fullWidth
+                      required
+                      InputLabelProps={{
+                        sx: {
+                          '&.Mui-focused': {
+                            color: 'black'
+                          },
+                          top: -6
+                        }
+                      }}
+                    />
+                  )}
+                />
+                {/* <TextField
                   label='Activity Name'
                   name='name'
                   value={formData.name}
@@ -423,8 +588,42 @@ const Activity: React.FC<Props> = ({
                       },
                     },
                   }}
+                /> */}
+
+
+
+                  <Autocomplete
+                  freeSolo
+                  options={descriptionOptions}
+                  value={formData.description}
+                  onInputChange={(event, newInputValue) => {
+                    setFormData(prev => ({ ...prev, description: newInputValue }));
+                  }}
+                  onChange={(event, newValue) => {
+                    if (typeof newValue === 'string') {
+                      setFormData(prev => ({ ...prev, description: newValue }));
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Description"
+                      margin="normal"
+                      fullWidth
+                      required
+                      InputLabelProps={{
+                        sx: {
+                          '&.Mui-focused': {
+                            color: 'black'
+                          },
+                          top: -6
+                        }
+                      }}
+                    />
+                  )}
                 />
-                <TextField
+                
+                {/* <TextField
                   label='Description'
                   name='description'
                   value={formData.description}
@@ -444,7 +643,7 @@ const Activity: React.FC<Props> = ({
                       },
                     },
                   }}
-                />
+                /> */}
                 <DatePicker
                   label='Activity Date'
                   value={
@@ -460,7 +659,12 @@ const Activity: React.FC<Props> = ({
                   }}
                   minDate={dayjs(itineraryBegin)}
                   maxDate={dayjs(itineraryEnd)}
-                  
+                  shouldDisableDate={(date) => {
+                                      const begin = dayjs(itineraryBegin);
+                                      const end = dayjs(itineraryEnd);
+                                    
+                                      return !date.isBetween(begin, end, 'day', '[]'); // include date range
+                                    }}
                   slotProps={{
                     actionBar: {
                       sx: {
@@ -527,8 +731,65 @@ const Activity: React.FC<Props> = ({
                      }
                   }}
                 />
-
-                <TextField
+ {/* auto complete for places */}
+                <Autocomplete
+                  // allows any type of text
+                  freeSolo
+                  // list of google place returned from api call
+                  options={placeOptions}
+                  //tells mui how to display options
+                  getOptionLabel={(option) => {
+                    if (typeof option === 'string') return option;
+                    return option?.label ?? '';
+                  }}
+                  
+                  //will display selected value
+                  value={
+                    placeOptions.find(opt => opt.label === formData.location) || formData.location
+                  }
+                  
+                                    //updates types and runs whenuser types in input box
+                  onInputChange={(event, newInputValue) => {
+                    
+                    //updates form state
+                    setFormData(prev => ({ ...prev, location: newInputValue }));
+                    //when more than 2 characters is typed, fetch suggestion
+                    if (newInputValue.length > 2) fetchPlaces(newInputValue);
+                  }}
+                  onChange={(event, newValue) => {
+                    //console.log('Selected autocomplete value:', newValue);
+                    if (typeof newValue === 'string') {
+                      setFormData(prev => ({ ...prev, location: newValue }));
+                    } else if (newValue?.place_id) {
+                      setFormData(prev => ({ ...prev, location: newValue.label })); 
+                      fetchPlaceDetails(newValue.place_id); 
+                    }
+                  }}
+                  
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      label='Location'
+                      fullWidth
+                      margin='normal'
+                      required
+                      InputProps={{
+                        ...params.InputProps,
+                        // drop down arrow and clear icons
+                        endAdornment: params.InputProps.endAdornment
+                      }}
+                      InputLabelProps={{
+                        sx: {
+                          '&.Mui-focused': {
+                            color: 'black'
+                          },
+                          top: -9
+                        }
+                      }}
+                    />
+                  )}
+                />
+                {/* <TextField
                   label='Location'
                   name='location'
                   value={formData.location}
@@ -548,7 +809,7 @@ const Activity: React.FC<Props> = ({
                       },
                     },
                   }}
-                />
+                /> */}
                 <TextField
                   label='Image URL (optional)'
                   name='image'

@@ -93,22 +93,26 @@ const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => 
       <Container maxWidth='xl' sx={{ px: 0 }}>
         <Toolbar disableGutters >
           <NavDrawer />
-          <Box
-            className="logo"
-            sx={{
-              display: 'flex',
-              mr: 1,
-              p: 0,
-              m: 0,
+          <RouterLink to='/' style={{ textDecoration: 'none' }}>
+
+            <Box
+              className="logo"
+              sx={{
+                display: 'flex',
+                mr: 1,
+                p: 0,
+                m: 0,
+              }}
+
+            > <img src={newLogo} alt="Logo" style={{
+              height: '40px',
+              width: 'auto',
+              display: 'block',
+              margin: 0,
+              padding: 0,
             }}
-          > <img src={newLogo} alt="Logo" style={{
-            height: '40px',
-            width: 'auto',
-            display: 'block',
-            margin: 0,
-            padding: 0,
-          }}
-            /></Box>
+              /></Box>
+          </RouterLink>
           {/* <StreetcarIcon sx={{ color: 'black', display: { xs: 'none', md: 'flex', sm: 'block' }, mr: 1 }} /> */}
           <RouterLink to='/' style={{ textDecoration: 'none' }}>
             <Typography

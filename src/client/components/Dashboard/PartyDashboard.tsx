@@ -40,7 +40,7 @@ import AddItinerary from './AddItinerary';
 import ResponsiveToolTip from './../ResponsiveToolTip.tsx';
 import Itinerary from './DashItin.tsx';
 import { user, email, party } from '../../../../types/models.ts';
-
+import ImageUpload from '../ImageUpload';
 interface PartyDashboardProps {
   user: user;
 }
@@ -81,7 +81,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [showMobileHelp, setShowMobileHelp] = useState(false);
-  
+
   useEffect(() => {
     fetchViewCode(numericPartyId);
     getUsersForParty(numericPartyId);
@@ -142,7 +142,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
       if (response.data?.viewCode) {
         setViewCode(response.data.viewCode);
       }
-        console.log(`view code at fetch ${response.data.viewCode}`)
+      console.log(`view code at fetch ${response.data.viewCode}`)
     } catch (err) {
       console.error('Failed to fetch viewCode:', err);
     }
@@ -177,7 +177,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     userId: number,
     partyId: string,
     viewCode: string,
-   ) => {
+  ) => {
     // console.log(`${partyName} @ send email party dash`)
     console.log(`view code at evite ${viewCode}`)
     try {
@@ -203,7 +203,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const renameModal = () => {
     setRenameOpen(true);
   }
-  const closeRename  = () => {
+  const closeRename = () => {
     setRenameOpen(false);
   }
 
@@ -220,13 +220,13 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     setRenameOpen(false);
     setConfirmOpen(false);
     try {
-      if (newName) { await renameParty(numericPartyId, newName)};
+      if (newName) { await renameParty(numericPartyId, newName) };
       if (membersToRemove.length) {
         await Promise.all(
           membersToRemove.map((member) => deleteMembers(member, numericPartyId))
         );
       }
-      if (leaveParty) { await deleteMembers(userId, numericPartyId)};
+      if (leaveParty) { await deleteMembers(userId, numericPartyId) };
     } catch (error) {
       console.error('Error during party management actions:', error);
     } finally {
@@ -237,7 +237,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   //*  Rename Party *//
   const renameParty = async (partyId: number, newName: string) => {
     try {
-      await axios.patch(`/api/party/${partyId}`, {name: newName});
+      await axios.patch(`/api/party/${partyId}`, { name: newName });
     } catch (error) {
       console.error(`Failure: rename party${partyId} to ${newName} `)
     }
@@ -249,7 +249,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     try {
       await axios.delete(`/api/party/${memberId}/${partyId}`);
       console.log(`user: ${memberId} removed from party: ${partyId}`);
-      if (memberId === userId){
+      if (memberId === userId) {
         navigate('/')
       } else {
         getUsersForParty(partyId);
@@ -266,7 +266,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const deleteParty = async (userId: number, partyId: string) => {
     console.log(`Deleting Party ${partyId}`);
     try {
-      
+
     } catch (error) {
       console.error(`Error deleting party`, error)
     }
@@ -275,6 +275,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
 
   return (
     <React.Fragment>
+
+<ImageUpload userId={user.id} />
       <Box sx={{ p:2 }}>
         {/* Title */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4 }}>
@@ -377,21 +379,71 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                   getMembers={getUsersForParty}
                 />
                 {/* Email Handling */}
-                <Box sx={{ textAlign: 'center', mt: 2 }}>
-                  <Button
-                    size='medium'
-                    variant='contained'
-                    onClick={openModal}
-                    fullWidth
-                    // sx={{ width: 'auto', m: 'auto', p: 'auto' }}
-                    sx={{ mt: 1 }}
-                  >
-                    Send an E-Vite
-                  </Button>
-                </Box>
-                {/* Email Log */}
-                {emailLog.length > 0 && (
+                <Button
+                  size='medium'
+                  // color='secondary'
+                  variant='contained'
+                  onClick={openModal}
+                  sx={{ width: 'auto', m: 'auto', p: 'auto' }}
+                >
+                  Send an E-Vite
+                </Button>
+                <Dialog
+                  open={open}
+                  onClose={closeModal}
+                  slotProps={{
+                    paper: {
+                      sx: { width: 500, borderRadius: 12 },
+                    }
+                  }}
+                >
                   <Box
+                    component="form"
+                    onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                      e.preventDefault();
+                      if (emails.length > 0) {
+                        setLoading(true);
+                        sendEmail(emails, partyName, userId, partyId, viewCode)
+                          .finally(() => setLoading(false));
+                      }
+                    }}
+                  >
+                    <Typography variant='subtitle1' sx={{ mt: 2 }}>
+                      Invite your friends to join your travel party
+                    </Typography>
+                    <TextField
+                      id='email'
+                      placeholder='Enter Multiple Emails'
+                      type='text'
+                      fullWidth
+                      value={inputValue}
+                      onChange={event => {
+                        const raw = event.target.value;
+                        setInputValue(raw);
+                        const parsedEmails = raw
+                          .split(',')
+                          .map(email => email.trim())
+                          .filter(email => email.length > 0);
+                        setEmails(parsedEmails);
+                      }}
+                    />
+                    <Button
+                      sx={{ mt: 1 }}
+                      variant='contained'
+                      type='submit'
+                      disabled={emails.length === 0 || loading}
+                    >
+                      {loading ? <CircularProgress size={24} color="inherit" /> : 'Invite'}
+                    </Button>
+                    {inviteSuccess && (
+                      <Typography sx={{ mt: 1, color: 'green' }}>
+                        Invite sent successfully!
+                      </Typography>
+                    )}
+                  </Box>
+                </Dialog>
+                {emailLog.length > 0 && (
+                  <Container
                     sx={{
                       maxWidth: 500,
                       border: '4px solid black',
@@ -418,6 +470,14 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                         </Typography>
                       ))}
                     </Box>
+                  </Container>
+                )}
+                <Box>
+
+                  {/* Message Board */}
+                  {/* <Box display="flex" justifyContent="center" alignItems="center">
+                  <Box sx={{ width: '60%' }}>
+                  <MessageBoard user={user} />
                   </Box>
                   )}
               </CardContent>
@@ -435,7 +495,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     </Box>
       {/*  Manage Party Model */}
       <Dialog
-        id='manageParty' 
+        id='manageParty'
         open={renameOpen}
         onClose={closeRename}
         slotProps={{
@@ -446,49 +506,50 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
           }
         }}
       >
-      <Typography variant='subtitle1' sx={{ mt: 2 }}>
-        Change Party Name
-      </Typography>
-       <TextField
-        id='partyName'
-        type='text'
-        fullWidth
-        value={newName}
-        onChange={e => setNewName(e.target.value)}
-        placeholder='New Party Name'
-       />
-       <Typography variant='subtitle1' sx={{ mt: 2 }}>
-        Remove Members
-      </Typography>
+        <Typography variant='subtitle1' sx={{ mt: 2 }}>
+          Change Party Name
+        </Typography>
+        <TextField
+          id='partyName'
+          type='text'
+          fullWidth
+          value={newName}
+          onChange={e => setNewName(e.target.value)}
+          placeholder='New Party Name'
+        />
+        <Typography variant='subtitle1' sx={{ mt: 2 }}>
+          Remove Members
+        </Typography>
         <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
           {partyMembers
-          .filter(member => member.id !== user.id)
-          .map(member => (
-            <ListItem
-              key={member.id}
-              secondaryAction={
-                <IconButton 
-                  edge='end'
-                  aria-label='delete'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    toggleMember(member.id)}
-                   } 
-                >
-                  <PiTrashDuotone
-                    style={{
-                      color: membersToRemove.includes(member.id) ? 'FF6B6B' : 'C4A1FF', // Color change based on selected state
-                    }}
-                  />
-                </IconButton>
-              }
-            >
-              <ListItemAvatar>
-                <Avatar src={member.avatar}/>
-              </ListItemAvatar>
-              <ListItemText primary={member.username}/>
-            </ListItem>
-          ))}  
+            .filter(member => member.id !== user.id)
+            .map(member => (
+              <ListItem
+                key={member.id}
+                secondaryAction={
+                  <IconButton
+                    edge='end'
+                    aria-label='delete'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      toggleMember(member.id)
+                    }
+                    }
+                  >
+                    <PiTrashDuotone
+                      style={{
+                        color: membersToRemove.includes(member.id) ? 'FF6B6B' : 'C4A1FF', // Color change based on selected state
+                      }}
+                    />
+                  </IconButton>
+                }
+              >
+                <ListItemAvatar>
+                  <Avatar src={member.avatar} />
+                </ListItemAvatar>
+                <ListItemText primary={member.username} />
+              </ListItem>
+            ))}
         </Box>
         <Typography variant='subtitle1' sx={{ mt: 2 }}>
           Leave Party
@@ -510,8 +571,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         </DialogActions>
       </Dialog>
       {/* Manage Party Confirmation Modal */}
-      <Dialog 
-        open={confirmOpen} 
+      <Dialog
+        open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         slotProps={{
           paper: {
