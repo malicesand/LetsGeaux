@@ -56,7 +56,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
 
   const [itineraryList, setItineraryList] = useState([]);
   const [hasItineraries, setHasItineraries] = useState(false);
-  const [chosenItinerary, setChosenItinerary] = useState('');
+  const [chosenItinerary, setChosenItinerary] = useState({});
   const [isWarning, setIsWarning] = useState(false);
 
 
@@ -123,7 +123,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
     const { itinerary, title, description, time, date, location, image, phone, address } = formValues;
     const { id } = user;
     // all of these qualities are pulled directly from req.body in the activity request handle
-    console.log('trying format w/o day', date.format('MMMM D, YYYY'))
+    
     const parsedDate = dayjs(date, 'MMMM D, YYYY')
     console.log('an attempt to parse the date:', parsedDate)
     const activityData = {
@@ -131,7 +131,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
       name: title,
       description,
       time,
-      date: date.format('MMMM D, YYYY'),
+      date: parsedDate.toISOString(),
       location: address,
       image,
       phone,
@@ -153,7 +153,9 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
       console.error('Failed to post activity:', error); // Log any errors
     }
   };
-
+  const touchItinerary = (itinerary: object) => {
+    setChosenItinerary(itinerary);
+  }
 
 
   return (
@@ -199,7 +201,11 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
                   // {/**Maybe the register stuff goes in here? */}
                   >
                     {itineraryList.map((itinerary: any) => (
-                      <MenuItem value={itinerary} key={itinerary.fsq_id}>
+                      <MenuItem
+                      value={itinerary}
+                      key={itinerary.fsq_id}
+                      onClick={() => touchItinerary(itinerary)}
+                      >
                         <Typography>{itinerary.name}</Typography>
                         <Typography>{itinerary.begin} - {itinerary.end}</Typography>
                       </MenuItem>
@@ -255,6 +261,8 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
                   label="Choose a date"
                   value={value ?? null}
                   onChange={onChange}
+                  minDate={dayjs(chosenItinerary.begin)}
+                  maxDate={dayjs(chosenItinerary.end)}
                   slotProps={{
                    textField: {
                     fullWidth: true,
