@@ -105,11 +105,22 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
 
   return (  
     <Container>
-      <Box mt={4}>
+      <Box mt={4}
+      
+      >
         <Typography variant='h3'>Party Itinerary</Typography>
         {/* Show Itinerary or Button to create */}
         {itinerary ? (
-          <Card sx={{ mb: 2 }}>
+          <Card sx={{ 
+            position: 'relative',
+            mb: 2,
+            backgroundColor: '#C2A4F8',
+            borderRadius: '24px',
+            padding: 2,
+            boxShadow: 'none',
+            border: '4px solid black',
+            fontWeight: 700
+          }}>
             <CardContent>
               <Typography variant='h3'>{itinerary.name}</Typography>
               <Typography variant='body1'>{itinerary.notes}</Typography>
@@ -146,8 +157,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
                 addActivity={addActivityToItinerary}
                 itineraryCreatorId={itinerary.creatorId}
                 user={user}
-                itineraryBegin={''}
-                itineraryEnd={''}
+                itineraryBegin={dayjs(itinerary.begin).format('YYYY-MM-DD')}
+                                itineraryEnd={dayjs(itinerary.end).format('YYYY-MM-DD')}
               />
             )}
           </Card>
