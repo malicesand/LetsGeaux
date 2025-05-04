@@ -7,17 +7,7 @@ const apiKey = process.env.GOOGLE_API_KEY;
 const genAI = new GoogleGenAI({apiKey}); 
 import { PromptKey, prompts, contextKeywords, detectContext, generateGeminiPrompt} from '../../types/prompt.ts';
 
-const chatsRoute = express.Router()
-
-//* Chat Context *//
-/* const detectContext = (input: string): PromptKey => {
-  let lowerCaseMessage = input.toLowerCase();
-  // find match based of keywords   
-  const detectedContext = (Object.keys(contextKeywords) as PromptKey[]).find((key) =>
-  contextKeywords[key].some((keyword) => lowerCaseMessage.includes(keyword)) );
-  return detectedContext || "default";
-}; */
-
+const chatsRoute = express.Router();
 
 //* Create a New Session Id *//
 chatsRoute.post('/new-session', (req: Request, res: Response) => {
@@ -36,7 +26,6 @@ chatsRoute.get('/chat-history/:userId', async (req: Request, res: Response) => {
 
   try {
     const chatHistories = await prisma.chatHistory.findMany({
-      // request handling manipulates type => convert to number
       where: {userId: Number(userId)}
     })
     // console.log(chatHistories[0].sessionId);
@@ -88,8 +77,13 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
   try {
     const response = await genAI.models.generateContent({
       model: 'gemini-2.0-flash',
-      contents: [{ role: 'user', parts: [{ text: prompt }] }]
-    });
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      config: {
+        temperature: 1.2, 
+        topK: 40,        
+        topP: 0.95       
+      }
+    }) as any;
     const responseParts = response.candidates[0].content.parts[0] 
     const aIReply: string  = responseParts?.text || 'no response from Gata';
 
@@ -103,7 +97,7 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
     })
     // console.log('successful convo')
     res.json(aIReply);
-  } catch (error) { // TODO make type
+  } catch (error) { 
       console.error(error);
       res.status(500).json({ error: 'Server Error returning prompt.'});
   }
@@ -127,9 +121,6 @@ chatsRoute.patch('/chat-history/:sessionId', async (req: Request, res: Response)
     console.error('could not save/change conversation name', error);
     res.status(500).json({error: 'failed  to change/save conversation name'});
   }
-
-
-
 });
 
 //* Delete a Conversation *//
