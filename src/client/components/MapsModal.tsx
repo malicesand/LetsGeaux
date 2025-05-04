@@ -4,6 +4,7 @@ import {
   Card, CardContent, Typography, Grid, Divider
 } from '@mui/material';
 import axios from 'axios';
+import { useItinerary } from './ItineraryContext';
 
 interface MapsModalProps {
   open: boolean;
@@ -17,6 +18,7 @@ const MapsModal: React.FC<MapsModalProps> = ({ open, onClose, onSelect }) => {
   const [activities, setActivities] = useState<any[]>([]);
   const [startActivity, setStartActivity] = useState<string | null>(null);
   const [endActivity, setEndActivity] = useState<string | null>(null);
+  const { setItineraryId } = useItinerary();
 
   useEffect(() => {
     axios.get('/api/itinerary')
@@ -67,7 +69,13 @@ const MapsModal: React.FC<MapsModalProps> = ({ open, onClose, onSelect }) => {
             <Grid container spacing={2}>
               {itineraries.map((itinerary) => (
                 <Grid item xs={12} sm={6} md={4} key={itinerary.id}>
-                  <Card onClick={() => setSelectedItineraryId(itinerary.id)} sx={{ cursor: 'pointer' }}>
+                  <Card
+                    onClick={() => {
+                      setSelectedItineraryId(itinerary.id);
+                      setItineraryId(itinerary.id);
+                    }}
+                    sx={{ cursor: 'pointer' }}
+                  >
                     <CardContent>
                       <Typography variant="h5">{itinerary.name}</Typography>
                       <Typography variant="body1" color="black">{itinerary.description}</Typography>
