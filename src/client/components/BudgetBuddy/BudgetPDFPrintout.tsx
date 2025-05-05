@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
 import { Button, Typography, Box } from '@mui/material';
 import jsPDF from 'jspdf';
+//import your team logo
+import logo from '../../../../dist/images/cropedLogo.b76a2a6588ff3c85caf6472b9b9b2477.png';
 
-//define types for a budget category and the components props
 interface BudgetCategory {
   name: string;
   spent: number;
@@ -10,30 +11,21 @@ interface BudgetCategory {
 }
 
 interface BudgetPDFPrintoutProps {
-  // itinerary with a name field
   itinerary: { name: string };
-  //array of budget categories with details
   budgetBreakdown: BudgetCategory[];
-  // overall current budget value
   currentBudget: number;
 }
 
 const BudgetPDFPrintout: React.FC<BudgetPDFPrintoutProps> = ({ itinerary, budgetBreakdown, currentBudget }) => {
-  //create a ref to the element to capture as PDF
   const printRef = useRef<HTMLDivElement>(null);
 
-  //handler that uses jsPDFs built in html() method
   const handleGeneratePDF = async () => {
     if (printRef.current) {
-      //create a new jsPDF document (portrait, A4)
       const pdf = new jsPDF('p', 'pt', 'a4');
-      // use the html() method provided by jsPDF to convert element into PDF content
       await pdf.html(printRef.current, {
         callback: function (doc) {
-          // save the PDF with a filename that includes the itinerary name
           doc.save(`${itinerary.name} Budget.pdf`);
         },
-        //specify coordinates and width to adjust positioning
         x: 10,
         y: 10,
         width: pdf.internal.pageSize.getWidth() - 20,
@@ -49,19 +41,26 @@ const BudgetPDFPrintout: React.FC<BudgetPDFPrintoutProps> = ({ itinerary, budget
       </Button>
       {/* this box is the area captured for the PDF */}
       <Box
-        ref={printRef} /* element to capture for PDF */
+        ref={printRef}
         sx={{
           padding: 2,
-          width: '100%',
+          maxWidth: 600,          // constrain width
+          margin: '0 auto',       // center on page
           backgroundColor: 'white',
           color: 'black',
           border: '1px solid #ccc'
         }}
       >
+        {/* render team logo */}
+        <Box sx={{ textAlign: 'center', mb: 2 }}>
+          <img src={logo} alt="Team Logo" style={{ maxWidth: 100 }} />
+        </Box>
+
         {/* itinerary title (printed at top of PDF) */}
         <Typography variant="h4" sx={{ mb: 2, textAlign: 'center' }}>
           {itinerary.name}
         </Typography>
+
         {/* budget Breakdown by Category */}
         <Typography variant="h6" sx={{ mb: 1 }}>
           Budget Breakdown:
@@ -74,12 +73,14 @@ const BudgetPDFPrintout: React.FC<BudgetPDFPrintoutProps> = ({ itinerary, budget
             </Typography>
           </Box>
         ))}
+
         {/* current Budget Summary */}
         <Box sx={{ mt: 2 }}>
           <Typography variant="h6">
             Current Budget in Total: ${currentBudget.toFixed(2)}
           </Typography>
         </Box>
+
         {/* timestamp printed at the bottom */}
         <Typography variant="caption" sx={{ mt: 4, display: 'block', textAlign: 'center' }}>
           Generated on: {new Date().toLocaleString()}
