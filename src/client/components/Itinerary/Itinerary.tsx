@@ -36,7 +36,7 @@ import { useSnackbar } from 'notistack';
 import Calendar from './Calendar';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 dayjs.extend(isSameOrBefore);
-import { useItinerary } from '../ItineraryContext';
+//import { useItinerary } from '../ItineraryContext';
 
 interface ItineraryProps {
   user: user;
@@ -71,15 +71,15 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     travelTime: string;
     itineraryId: number
   }
-  const { setItineraryId, itineraryId } = useItinerary();
+  //const { setItineraryId, itineraryId } = useItinerary();
 
-  useEffect(() => {
-    if (itineraryId === null) {
-      console.log('ItineraryId is not loaded yet.');
-    } else {
-      console.log('ItineraryId loaded:', itineraryId);
-    }
-  }, [itineraryId]);
+  // useEffect(() => {
+  //   if (itineraryId === null) {
+  //     console.log('ItineraryId is not loaded yet.');
+  //   } else {
+  //     console.log('ItineraryId loaded:', itineraryId);
+  //   }
+  // }, [itineraryId]);
 
 
   //delete confirmation state
