@@ -31,7 +31,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
   const [autoFlip, setAutoFlip] = useState(true);
-  const [flipInterval, setFlipInterval] = useState(3000); // milliseconds
+  const [flipInterval, setFlipInterval] = useState(7000); // milliseconds
 
   const imageChunks = chunkArray(images, 2);
 
@@ -112,7 +112,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
           <Slider
             value={flipInterval}
             onChange={(_, value) => setFlipInterval(value as number)}
-            step={500}
+            step={800}
             min={1000}
             max={10000}
             disabled={!autoFlip}
@@ -140,9 +140,9 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
             <Box
               key={image.id}
               sx={{
-                border: '2px solid black',
+                border: '4px solid black',
                 borderRadius: 2,
-                p: 2,
+                p: 1,
                 maxWidth: 200,
                 width: '100%',
                 textAlign: 'center',
