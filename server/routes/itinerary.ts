@@ -12,7 +12,17 @@ const itineraryRoute = express.Router();
 
 //GET all itineraries for the logged-in user (creator)
 itineraryRoute.get('/', async (req: any, res: any) => {
-  const userId = req.user.id;
+  //TODO:
+  //destructure from the user object
+  const { user } = req;
+  //id user exit or do not exist
+  if (!user?.id) {
+    // not authenicated status
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  //userId  is assigned to the authenicated user id
+  const userId = user.id;
+  console.log(`Authenticated user ID: ${userId}`);
 
   try {
     // Find partyIds the user is in
@@ -31,8 +41,19 @@ itineraryRoute.get('/', async (req: any, res: any) => {
           { party: { id: { in: partyIds } } },
         ],
       },
+      include: {
+        party: {
+          select: { name: true }, 
+        },
+      }
     });
-    res.status(200).json(itineraries);
+    const itinerariesWithPartyName = itineraries.map(itin => ({
+      ...itin,
+      partyName: itin.party?.name || null,
+    }));
+
+    res.status(200).json(itinerariesWithPartyName);
+    //res.status(200).json(itineraries);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching itineraries' });
   }
@@ -104,85 +125,7 @@ if (partyId) {
   }
 });
 
-// PATCH update itinerary (creator or party member)
-itineraryRoute.patch('/:id', async (req: any, res: any) => {
-  const { id } = req.params;
-  const { name, notes, begin, end, upVotes, downVotes } = req.body;
 
-  try {
-    const itinerary = await prisma.itinerary.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!itinerary) return res.status(404).json({ error: 'Itinerary not found' });
-
-    const userId = req.user.id;
-
-
-   let isInParty = false;
-    if (itinerary.partyId) {
-      const userParty = await prisma.userParty.findFirst({
-        where: {
-          userId,
-          partyId: itinerary.partyId,
-        },
-      });
-      isInParty = !!userParty;
-    }
-
-    const isCreator = itinerary.creatorId === userId;
-
-    if (!isCreator && !isInParty) {
-      return res.status(403).json({ error: 'You are not authorized to update this itinerary' });
-    }
-
-    const updatedItinerary = await prisma.itinerary.update({
-      where: { id: Number(id) },
-      data: {
-        name,
-        notes,
-        begin: new Date(begin),
-        end: new Date(end),
-        upVotes,
-        downVotes,
-      },
-    });
-
-    res.status(200).json(updatedItinerary);
-  } catch (error) {
-    console.error('Error updating itinerary:', error);
-    res.status(500).json({ error: 'Error updating itinerary' });
-  }
-});
-
-// DELETE itinerary (only by creator)
-itineraryRoute.delete('/:id', async (req: any, res: any) => {
-  const { id } = req.params;
-
-  try {
-    const itinerary = await prisma.itinerary.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!itinerary) return res.status(404).json({ error: 'Itinerary not found' });
-
-    if (itinerary.creatorId !== req.user.id) {
-      return res.status(403).json({ error: 'You are not authorized to delete this itinerary' });
-    }
-
-    const deletedItinerary = await prisma.itinerary.delete({
-      where: { id: Number(id) },
-    });
-
-    res.status(200).json({
-      message: `Itinerary ${id} has been successfully deleted`,
-      deletedItinerary,
-    });
-  } catch (error) {
-    console.error('Error deleting itinerary:', error);
-    res.status(500).json({ error: 'Error deleting itinerary' });
-  }
-});
 
 // GET itinerary by view code (public view)
 itineraryRoute.get('/view/:viewCode', async (req: any, res: any) => {
@@ -294,5 +237,95 @@ itineraryRoute.patch('/party/:itineraryId', async (req:any, res: any) => {
   }
   
 })
+// PATCH update itinerary (creator or party member)
+itineraryRoute.patch('/:id', async (req: any, res: any) => {
+  const { id } = req.params;
+  const { name, notes, begin, end, upVotes, downVotes } = req.body;
+
+  try {
+    const itinerary = await prisma.itinerary.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!itinerary) return res.status(404).json({ error: 'Itinerary not found' });
+
+    const { user } = req;
+if (!user?.id) {
+  return res.status(401).json({ error: 'Not authenticated' });
+}
+const userId = user.id;
+console.log(`Authenticated user ID: ${userId}`);
+
+
+   let isInParty = false;
+    if (itinerary.partyId) {
+      const userParty = await prisma.userParty.findFirst({
+        where: {
+          userId,
+          partyId: itinerary.partyId,
+        },
+      });
+      isInParty = !!userParty;
+    }
+
+    const isCreator = itinerary.creatorId === userId;
+
+    if (!isCreator && !isInParty) {
+      return res.status(403).json({ error: 'You are not authorized to update this itinerary' });
+    }
+
+    const updatedItinerary = await prisma.itinerary.update({
+      where: { id: Number(id) },
+      data: {
+        name,
+        notes,
+        begin: new Date(begin),
+        end: new Date(end),
+        upVotes,
+        downVotes,
+      },
+    });
+
+    res.status(200).json(updatedItinerary);
+  } catch (error) {
+    console.error('Error updating itinerary:', error);
+    res.status(500).json({ error: 'Error updating itinerary' });
+  }
+});
+
+// DELETE itinerary (only by creator)
+itineraryRoute.delete('/:id', async (req: any, res: any) => {
+  const { id } = req.params;
+
+  try {
+    const itinerary = await prisma.itinerary.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!itinerary) return res.status(404).json({ error: 'Itinerary not found' });
+
+    const { user } = req;
+    if (!user?.id) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+    if (itinerary.creatorId !== user.id) {
+          return res.status(403).json({ error: 'You are not authorized to delete this itinerary' });
+    }
+
+    const deletedItinerary = await prisma.itinerary.delete({
+      where: { id: Number(id) },
+    });
+
+    res.status(200).json({
+      message: `Itinerary ${id} has been successfully deleted`,
+      deletedItinerary,
+    });
+  } catch (error) {
+    console.error('Error deleting itinerary:', error);
+    res.status(500).json({ error: 'Error deleting itinerary' });
+  }
+});
+
+
 
 export default itineraryRoute;

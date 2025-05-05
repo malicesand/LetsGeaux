@@ -111,7 +111,13 @@ const Calendar: React.FC<CalendarProps> = ({
                 slotProps={{
                   textField: {
                     InputLabelProps: {
-                      sx: { top: -6 }
+                      sx: { top: -9,
+                        color: 'black', 
+      '&.Mui-focused': {
+        color: 'black' 
+      }, 
+
+                      }
                     }
                   },
                   actionBar: {
@@ -140,7 +146,12 @@ const Calendar: React.FC<CalendarProps> = ({
                 slotProps={{
                   textField: {
                     InputLabelProps: {
-                      sx: { top: -6 }
+                      sx: { top: -9,
+                        color: 'black', 
+      '&.Mui-focused': {
+        color: 'black' 
+      },
+                       }
                     }
                   },
                   actionBar: {

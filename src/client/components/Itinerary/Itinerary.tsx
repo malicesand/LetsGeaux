@@ -21,6 +21,9 @@ import {
 } from '@mui/material';
 
 import axios from 'axios';
+//tells Axios tO send cookies and HTTP authentication headers (like tokens or session cookies) with every request(cors)
+axios.defaults.withCredentials = true;
+
 import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx';
 import { useParams, useLocation } from 'react-router-dom';
@@ -370,7 +373,11 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               required
               InputLabelProps={{
                 sx: {
-                  top: -6
+                  top: -9,
+                  color: 'black', 
+      '&.Mui-focused': {
+        color: 'black' 
+      },
                 }
               }}
             />
@@ -384,7 +391,10 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               sx={{ mb: 2 }}
               InputLabelProps={{
                 sx: {
-                  top: -6
+                  top: -9,  color: 'black',
+                  '&.Mui-focused': {
+                    color: 'black' 
+                  },
                 }
               }}
             />
@@ -555,11 +565,11 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                   <PiTrash />
                 </IconButton>
               )}
-              {console.log('routes', routes)}
+              {/* {console.log('routes', routes)}
               {console.log('itinID', itineraryId)}
-              {console.log('itin.id', itinerary.id)}
+              {console.log('itin.id', itinerary.id)} */}
               {/* rendering Routes  */}
-              <Typography h3> Routes Between Activities:</Typography>
+              <Typography variant='h3'> Routes Between Activities:</Typography>
               {itinerary.id === itineraryId && (
                 routes.map((route, index) => (
                   <Card
@@ -575,12 +585,13 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                       fontWeight: 700
                     }}
                   >
-                    <Box alignment='center' key={index}>
+                    <Box textAlign='center' key={index}>
+                      
                       <Typography variant="body1">Origin: {route.origin}</Typography>
                       <Typography variant="body1">Destination: {route.destination}</Typography>
                       <Typography variant="body1">Travel Time: {route.travelTime}</Typography>
                       <Button
-                        color='black'
+                         sx={{ color: 'black' }}
                         onClick={() => deleteRoute(route.id)}
                       >
                         <PiTrash />
