@@ -164,18 +164,17 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
                             color='secondary'
                             sx={{
                               display: 'inline-block',
-                              backgroundColor: 'primary.main',
+                               backgroundColor: '#fff085',
                               color: 'black',
                               px: 2,
                               py: 1,
-                              borderRadius: '9999px',
-                               border: '4px solid black',
+                              // borderRadius: '8px',
+                              // border: '4px solid black',
                               fontWeight: 700,
                               fontSize: '0.75rem',
                               textAlign: 'center',
-                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
-                            }}
-                          >
+                               boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                            }}>
                             View Code: {itinerary.viewCode}     
                           </Typography>
                           <Button
