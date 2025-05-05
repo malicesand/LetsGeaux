@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Dialog, DialogTitle, DialogContent, DialogActions, Button,
-  Card, CardContent, Typography, Grid, Divider
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Card, CardContent, Typography, Divider } from '@mui/material';
 import axios from 'axios';
 import { useItinerary } from './ItineraryContext';
 
@@ -21,12 +18,14 @@ const MapsModal: React.FC<MapsModalProps> = ({ open, onClose, onSelect }) => {
   const { setItineraryId } = useItinerary();
 
   useEffect(() => {
+    // Fetch itineraries from the server
     axios.get('/api/itinerary')
       .then(res => setItineraries(res.data))
       .catch(err => console.error('Error fetching itineraries:', err));
   }, []);
 
   useEffect(() => {
+    // Fetch activities when an itinerary is selected
     if (selectedItineraryId !== null) {
       axios.get(`/api/activity/${selectedItineraryId}`)
         .then(res => setActivities(res.data))
@@ -53,6 +52,7 @@ const MapsModal: React.FC<MapsModalProps> = ({ open, onClose, onSelect }) => {
   const handleConfirm = () => {
     if (startActivity && endActivity) {
       onSelect(startActivity, endActivity);
+      setItineraryId(selectedItineraryId);  // Save selected itineraryId to context and localStorage
       onClose();
     }
   };
@@ -72,7 +72,7 @@ const MapsModal: React.FC<MapsModalProps> = ({ open, onClose, onSelect }) => {
                   <Card
                     onClick={() => {
                       setSelectedItineraryId(itinerary.id);
-                      setItineraryId(itinerary.id);
+                      setItineraryId(itinerary.id);  // Update context when itinerary is selected
                     }}
                     sx={{ cursor: 'pointer' }}
                   >
@@ -123,9 +123,9 @@ const MapsModal: React.FC<MapsModalProps> = ({ open, onClose, onSelect }) => {
       </DialogContent>
       <DialogActions>
         {selectedItineraryId && (
-          <Button color='black' onClick={() => setSelectedItineraryId(null)}>Back to Itineraries</Button>
+          <Button color="black" onClick={() => setSelectedItineraryId(null)}>Back to Itineraries</Button>
         )}
-        <Button color='black' onClick={onClose}>Cancel</Button>
+        <Button color="black" onClick={onClose}>Cancel</Button>
         <Button
           onClick={handleConfirm}
           disabled={!startActivity || !endActivity}

@@ -532,7 +532,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                 <Alert severity='success'>{itinerary.message}</Alert>
               )}
             </CardContent>
-            <CardActions>
+            <CardActions sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
               <IconButton
                 onClick={() => handleEditClick(itinerary)}
                 sx={{ position: 'absolute', top: 8, right: 8, color: 'black' }}
@@ -559,21 +559,34 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               {console.log('itinID', itineraryId)}
               {console.log('itin.id', itinerary.id)}
               {/* rendering Routes  */}
-
+              <Typography h3> Routes Between Activities:</Typography>
               {itinerary.id === itineraryId && (
                 routes.map((route, index) => (
-                  <Box key={index}>
-                    <Typography variant="body1">Origin: {route.origin}</Typography>
-                    <Typography variant="body1">Destination: {route.destination}</Typography>
-                    <Typography variant="body1">Travel Time: {route.travelTime}</Typography>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => deleteRoute(route.id)}
-                    >
-                      Delete
-                    </Button>
-                  </Box>
+                  <Card
+                    key={index}
+                    sx={{
+                      position: 'relative',
+                      mb: 2,
+                      backgroundColor: '#C2A4F8',
+                      borderRadius: '24px',
+                      padding: 2,
+                      boxShadow: 'none',
+                      border: '4px solid black',
+                      fontWeight: 700
+                    }}
+                  >
+                    <Box alignment='center' key={index}>
+                      <Typography variant="body1">Origin: {route.origin}</Typography>
+                      <Typography variant="body1">Destination: {route.destination}</Typography>
+                      <Typography variant="body1">Travel Time: {route.travelTime}</Typography>
+                      <Button
+                        color='black'
+                        onClick={() => deleteRoute(route.id)}
+                      >
+                        <PiTrash />
+                      </Button>
+                    </Box>
+                  </Card>
                 ))
               )}
 
