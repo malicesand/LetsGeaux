@@ -9,6 +9,7 @@ import {
 import CreateParty from './CreateParty';
 // import BudgetPieChart from './BudgetPieChart'
 import { user, userParty } from '../../../../types/models.ts';
+import { useMedia } from '../MediaQueryProvider.tsx';
 // import ImageUpload from '../ImageUpload';
 import ImageDisplay from '../ImageDisplay';
 interface DashboardProps {
@@ -21,6 +22,7 @@ interface party {
 const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [partyInfo, setPartyInfo] = useState<{ id: number, name: string }[]>([])
   const userId = user.id
+  const { isMobile } = useMedia(); 
 
   useEffect(() => {
     getUserParties();
@@ -69,6 +71,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
       }}
     >
       {/* Travel Parties Box */}
+      
       <Box
         sx={{
           align: 'center',
@@ -94,7 +97,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           <CreateParty user={user} onPartyCreated={getUserParties} />
         </Box>
       </Box>
-
+  
       {/* Image Upload Box */}
       <Box
       // sx={{

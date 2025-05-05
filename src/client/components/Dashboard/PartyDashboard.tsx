@@ -5,9 +5,13 @@ import {
   PiPencilBold, 
   PiTrashDuotone, 
   PiSidebarBold,
-  PiSidebarThin  } from "react-icons/pi";
+  PiSidebarThin,
+  PiImageSquareBold
+} from "react-icons/pi";
+  // import { PiImageSquareBold } from "react-icons/pi";
 import { 
   Button,
+  ButtonGroup,
   IconButton,
   Container,
   TextField,
@@ -35,12 +39,13 @@ import {
 } from '@mui/material';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AddItinerary from './AddItinerary';
+// import AddItinerary from './AddItinerary';
 import AddMember from './AddMember';
 import ResponsiveToolTip from './../ResponsiveToolTip.tsx';
 import Itinerary from './DashItin.tsx';
 import { user, email, party } from '../../../../types/models.ts';
 import ImageUpload from '../ImageUpload';
+import { useMedia } from '../MediaQueryProvider.tsx';
 
 interface PartyDashboardProps {
   user: user;
@@ -54,7 +59,7 @@ type PartyMember = {
 
 // TODO conditional on render so that only party members can access a dashboard
 const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const location = useLocation();
   const { partyId } = useParams();
   const navigate = useNavigate()
@@ -80,8 +85,9 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   // const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
   //* Mobile Handling *//
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { isMobile } = useMedia(); 
   const [showMobileHelp, setShowMobileHelp] = useState(false);
+  const [imageOpen, setImageOpen] = useState(false);
 
   useEffect(() => {
     fetchViewCode(numericPartyId);
@@ -200,13 +206,20 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     }
   };
 
+  //* Image Upload Modal *//
+  const openUpload = () => {
+    setImageOpen(true);
+  }; 
+  const closeUpload = () => {
+    setImageOpen(false);
+  }
   // MANAGE PARTY //
   const renameModal = () => {
     setRenameOpen(true);
-  }
+  };
   const closeRename = () => {
     setRenameOpen(false);
-  }
+  };
 
   //* Toggle member removal *//
   const toggleMember = (id: number) => {
@@ -277,7 +290,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   return (
     <React.Fragment>
 
-      <ImageUpload userId={user.id} />
+      
       <Box sx={{ p:2 }}>
         {/* Title */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4 }}>
@@ -286,26 +299,27 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
             {partyName}
           </Typography>
         </Box>
-        <Box
+        {/* Content */}
+        <ButtonGroup
           sx={{
-            display: 'flex',
+            // display: 'flex',
             flexDirection: 'column',
             gap: 1.5,
-            position: 'relative', 
-            top: 0,
-            left: 0,
-            zIndex: 10,
+        /*   //   // position: 'relative', 
+          //   top: 0,
+          //   left: 0,
+          //   zIndex: 10,
             
-            // borderRadius: 3,
-            p: 1,
-            // boxShadow: 3,
+          //   // borderRadius: 3,
+          //   p: 1,
+          //   // boxShadow: 3, */
           }}
         >
-          <ResponsiveToolTip title="Manage Party">
+          {/* <ResponsiveToolTip title="Manage Party" >
             <IconButton size="small" onClick={renameModal}>
               <PiPencilBold />
             </IconButton>
-          </ResponsiveToolTip>
+          </ResponsiveToolTip> */}
 
           <ResponsiveToolTip title="Send Invite">
             <IconButton size="small" onClick={openModal}>
@@ -315,23 +329,24 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
 
           <ResponsiveToolTip title="Photo Gallery">
             <IconButton size="small">
-              <PiPencilBold />
+              <PiImageSquareBold />
             </IconButton>
           </ResponsiveToolTip>
 
           <ResponsiveToolTip title={sidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}>
-            <IconButton size="small" onClick={() => setSidebarOpen(prev => !prev)}>
+            <IconButton size="small"
+             onClick={() => setSidebarOpen(prev => !prev)}>
               {sidebarOpen ? <PiSidebarBold /> : <PiSidebarThin />}
             </IconButton>
           </ResponsiveToolTip>
-        </Box>
-        {/* Content */}
+        </ButtonGroup>
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'row',
             gap: 4,
             overflowX: 'auto',
+            
           }}
         >
           {/* Party Info Sidebar */}
@@ -345,7 +360,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                 border: '4px solid black',
                 borderRadius: 4,      
                 backgroundColor: '#C2A4F8',
-                alignSelf: 'flex-start'
+                alignSelf: 'flex-start',
+                
               }}
             >
               <CardContent>
@@ -355,11 +371,19 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                     borderRadius: 4,
                     p: 2,
                     mb: 2,
+                    boxShadow: '4px 4px 0px black',
                   }}
                 >
-                  <Typography variant='h5' textAlign='center'>
-                    Party Members
-                  </Typography>
+                  <Stack direction='row' justifyContent='center'>
+                    <Typography variant='h5' textAlign='center'>
+                      Party Members
+                    </Typography>
+                    <ResponsiveToolTip title="Manage Party" >
+                      <IconButton size="small" onClick={renameModal}>
+                        <PiPencilBold />
+                      </IconButton>
+                    </ResponsiveToolTip>
+                  </Stack>
                   <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
                     {partyMembers.map(member => (
                       <ListItem>
@@ -394,7 +418,10 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                   onClose={closeModal}
                   slotProps={{
                     paper: {
-                      sx: { width: 500, borderRadius: 12 },
+                      sx: { border: '2px solid black',
+                        borderRadius: 4,
+                        boxShadow: '4px 4px 0px black',
+                        },
                     }
                   }}
                 >
@@ -448,9 +475,10 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                     sx={{
                       maxWidth: 500,
                       border: '4px solid black',
-                      borderRadius: 4,
+                      borderRadius: 2,
                       margin: '0 auto',
-                      p: 2
+                      p: 2,
+                      boxShadow: '4px 4px 0px black',
                     }}
                   >
                     <Typography variant='h5' gutterBottom>
@@ -472,8 +500,9 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                       ))}
                     </Box>
                   </Container>
+                  
                 )}
-                
+                <ImageUpload userId={user.id} />
                   </CardContent>
             </Card>       
           )} 
@@ -486,8 +515,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
               partyName={partyName}
             />
           </Box> 
-      // </Box>
-    // </Box>
+       </Box>
+      </Box>
       {/*  Manage Party Model */}
       <Dialog
         id='manageParty'
@@ -495,7 +524,12 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         onClose={closeRename}
         slotProps={{
           paper: {
-            sx: { width: 500, borderRadius: 12 },
+            sx: { width: 500, borderRadius: 12, 
+              boxShadow: "4px 4px 0px #A78BFA ",
+              m: 0,
+              // boxShadow: 'none', 
+              border: "4px solid black "
+            },
             component: 'form',
             onKeyDown: (e: React.KeyboardEvent<HTMLFormElement>) => handleKeyDown(e, () => setConfirmOpen(true), closeRename),
           }
@@ -627,7 +661,14 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         onClose={closeModal}
         slotProps={{
           paper: {
-            sx: { width: 500, borderRadius: 12 },  
+            sx: { 
+              width: 500, 
+              borderRadius: 4, 
+              boxShadow: "4px 4px 0px #bbf451 ",
+              m: 0,
+              // boxShadow: 'none', 
+              border: "4px solid #A78BFA "
+            },
           }
         }}
       >
@@ -676,6 +717,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
           )}
         </Box>
       </Dialog>
+      {/* Image Modal */}
     </React.Fragment>
           
   );

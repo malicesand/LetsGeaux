@@ -1,5 +1,6 @@
 import React from 'react';
-import { Tooltip, Typography, Box, IconButton, useMediaQuery, useTheme } from '@mui/material';
+import { Tooltip, Typography, Box, useMediaQuery, useTheme } from '@mui/material';
+import { useMedia } from './MediaQueryProvider.tsx';
 
 interface ResponsiveTooltipProps {
   title: string;
@@ -9,7 +10,7 @@ interface ResponsiveTooltipProps {
 
 const ResponsiveTooltip: React.FC<ResponsiveTooltipProps> = ({ title, children}) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { isMobile } = useMedia(); 
 
   return isMobile ? (
     <Box display="flex" alignItems="center" gap={1}>
@@ -28,7 +29,7 @@ const ResponsiveTooltip: React.FC<ResponsiveTooltipProps> = ({ title, children})
       </Typography>
     </Box>
   ) : (
-    <Tooltip title={title}>
+    <Tooltip title={title} placement='right'>
       <Box>{children}</Box>
     </Tooltip>
   );
