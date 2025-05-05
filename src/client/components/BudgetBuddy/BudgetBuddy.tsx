@@ -8,7 +8,7 @@ import {
   Select,
   FormControl
 } from '@mui/material';
-import { useMedia } from '../MediaQueryProvider'; // for responsive px/py
+import { useMedia } from '../MediaQueryProvider'; // used for responsive px/py
 
 import BudgetOverview from './BudgetOverview';
 import BudgetForm from './BudgetForm';
