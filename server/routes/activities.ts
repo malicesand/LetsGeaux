@@ -140,7 +140,7 @@ activityRouter.get('/autocomplete-names', async (req, res) => {
       'Brunch',
       'Biking',
       'Wine Tasting',
-      'Beach Day',
+      'Breakast',
       'Parade',
       'Local Market,',
       'Dinner',

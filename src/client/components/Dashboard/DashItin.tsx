@@ -13,7 +13,8 @@ import {
   DialogTitle,
   DialogActions,
   DialogContent,
-  Backdrop
+  Backdrop,
+  TextField
 } from '@mui/material';
 import axios from 'axios';
 import { user, itinerary } from '../../../../types/models.ts';
@@ -44,6 +45,11 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
   // const location = useLocation();
    //delete confirmation state
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    //state for email itinerary
+    const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+    const [emailToInvite, setEmailToInvite] = useState('');
+    
+
 
   //* Add Activity to Itinerary *//
   const addActivityToItinerary = async ( itineraryId: string, activityData: any) => {
@@ -103,6 +109,27 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
     }
   };
 
+
+
+  //email itinerary axios request
+  const handleSendInvite = async () => {
+    try {
+      await axios.post('/api/itinerary/sendInvite', {
+        email: emailToInvite,
+        itineraryName: itinerary?.name,
+        viewCode: itinerary?.viewCode,
+      });
+      enqueueSnackbar('Invite sent!', { variant: 'success' });
+      setInviteDialogOpen(false);
+      setEmailToInvite('');
+    } catch (err) {
+      console.error('Error sending invite:', err);
+      enqueueSnackbar('Failed to send invite.', { variant: 'error' });
+    }
+  };
+  
+  
+
   return (  
     <Container>
       <Box mt={4}
@@ -151,7 +178,25 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
                           >
                             View Code: {itinerary.viewCode}     
                           </Typography>
-                          
+                          <Button
+  variant="outlined"
+  sx={{
+    display: 'inline-block',
+    backgroundColor: 'primary.main',
+    color: 'black',
+    px: 2,
+    py: 1,
+    borderRadius: '9999px',
+     border: '4px solid black',
+    fontWeight: 700,
+    fontSize: '0.75rem',
+    textAlign: 'center',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+  }}
+  onClick={() => setInviteDialogOpen(true)}
+>
+Share Itinerary
+</Button>
                               
 
 
@@ -224,6 +269,42 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={inviteDialogOpen} onClose={() => setInviteDialogOpen(false)}>
+  <DialogTitle>Send Itinerary Invite</DialogTitle>
+  <DialogContent>
+    <TextField
+      label="Recipient's Email"
+      value={emailToInvite}
+      InputLabelProps={{
+        sx: {
+          top: -8,
+          color: 'black',
+          '&.Mui-focused': {
+            color: 'black',
+          },
+        },
+      }}
+      onChange={(e) => setEmailToInvite(e.target.value)}
+      fullWidth
+      margin="normal"
+    />
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setInviteDialogOpen(false)} sx={{ color: 'black' }}>
+      Cancel
+    </Button>
+    <Button
+      onClick={handleSendInvite}
+      variant="contained"
+      color="primary"
+      disabled={!emailToInvite}
+    >
+      Send Invite
+    </Button>
+  </DialogActions>
+</Dialog>
+
+
       </>
     </Container>
   );
