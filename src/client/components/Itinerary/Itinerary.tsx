@@ -19,6 +19,9 @@ import {
 } from '@mui/material';
 
 import axios from 'axios';
+//tells Axios tO send cookies and HTTP authentication headers (like tokens or session cookies) with every request(cors)
+axios.defaults.withCredentials = true;
+
 import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx';
 import { useParams, useLocation } from 'react-router-dom';
@@ -327,7 +330,11 @@ const handleSendInvite = async () => {
               required
               InputLabelProps={{
                 sx: {
-                  top: -6
+                  top: -9,
+                  color: 'black', 
+      '&.Mui-focused': {
+        color: 'black' 
+      },
                 }
               }}
             />
@@ -341,7 +348,10 @@ const handleSendInvite = async () => {
               sx={{ mb: 2 }}
               InputLabelProps={{
                 sx: {
-                  top: -6
+                  top: -9,  color: 'black',
+                  '&.Mui-focused': {
+                    color: 'black' 
+                  },
                 }
               }}
             />
@@ -479,7 +489,7 @@ const handleSendInvite = async () => {
     setInviteDialogOpen(true);
   }}
 >
-  Share Itinerary
+  Email Itinerary
 </Button>
               {itinerary.message && (
                 <Alert severity='success'>{itinerary.message}</Alert>
@@ -554,7 +564,7 @@ const handleSendInvite = async () => {
       value={emailToInvite}
        InputLabelProps={{
                 sx: {
-                  top: -8,
+                  top: -9,
                   color: 'black',
                   '&.Mui-focused': {
                     color: 'black', 
