@@ -15,8 +15,8 @@ import {
 import Comments from './Comments.tsx';
 import { PiHandHeartFill } from "react-icons/pi";
 import { PiHandPalmFill } from "react-icons/pi";
-import { PiBombFill } from "react-icons/pi";
 import { PiNotePencilFill } from "react-icons/pi";
+import { PiTrash } from 'react-icons/pi';
 
 import CommentForm from './CommentForm.tsx';
 import { user } from '../../../../types/models.ts';
@@ -166,7 +166,14 @@ const deletePost = () => {
   return (
     // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!!
     <Container>
-      <Box sx={{ border: "4px solid black", borderRadius: "4", p: 2, mb: "8px" }}>
+      <Box sx={{
+        position: 'relative',
+        border: "4px solid black",
+        borderRadius: "4",
+        p: 2,
+        mb: "8px",
+        }}
+        >
         <Typography variant='h3'>{currentPost.title}</Typography>
       <Typography> {body}</Typography>
       <Typography>By: {postName}</Typography>
@@ -216,8 +223,15 @@ const deletePost = () => {
 
         <Button
         title="delete post"
-        sx={{ borderWidth: 4, color: 'black', p: '6px' }}
-        onClick={deletePost}><PiBombFill /></Button>
+        sx={{
+          borderWidth: 4,
+          color: 'black',
+          p: '6px',
+          position: 'absolute',
+          bottom: 8,
+          right: 8,
+        }}
+        onClick={deletePost}><PiTrash /></Button>
       ) : (
         null
       )}

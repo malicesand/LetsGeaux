@@ -11,6 +11,7 @@ import {
   Box,
   Button,
 } from '@mui/material';
+import { PiTrash } from 'react-icons/pi';
 import { PiHandHeartFill } from "react-icons/pi";
 import { PiHandPalmFill } from "react-icons/pi";
 import { PiBombFill } from "react-icons/pi";
