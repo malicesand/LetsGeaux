@@ -18,7 +18,7 @@ import api from './api';
 import BudgetPDFPrintout from './BudgetPDFPrintout';
 
 const BudgetBuddy: React.FC = () => {
-  const { isMobile } = useMedia(); // STEP: detect mobile for spacing
+  const { isMobile } = useMedia(); //detect mobile for spacing
   const [itineraries, setItineraries] = useState<any[]>([]);
   const [selectedItineraryId, setSelectedItineraryId] = useState<number | null>(null);
 
@@ -71,7 +71,7 @@ const BudgetBuddy: React.FC = () => {
   }));
 
   return (
-    // STEP: Outer wrapper to give full-screen chat-style look
+    // outer wrapper to give full screen
     <Box
       sx={{
         minHeight: '100vh',
