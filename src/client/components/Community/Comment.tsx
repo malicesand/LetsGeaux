@@ -14,7 +14,6 @@ import {
 import { PiTrash } from 'react-icons/pi';
 import { PiHandHeartFill } from "react-icons/pi";
 import { PiHandPalmFill } from "react-icons/pi";
-import { PiBombFill } from "react-icons/pi";
 import { PiXFill } from "react-icons/pi";
 import { PiNotePencilFill } from "react-icons/pi";
 import { user } from '../../../../types/models.ts';
@@ -150,14 +149,37 @@ const commentCredentialCheck = () => {
 
   return (
     // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!
-    <Box sx={{border: "4px solid black", borderRadius: "4", p: 4, mb: "8px"}}>
+    <Box sx={{
+      position: 'relative',
+      border: "4px solid black",
+      borderRadius: "4",
+      p: 4,
+      mb: "8px"
+      }}
+      >
         <Typography>{body}</Typography>
         <Typography>By: {postName}</Typography>
         <Typography>Likes: {currentComment.likes}</Typography>
         {hasLiked ? (
-          <Button title="Remove like" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={handleVoteDeleteClick}>{currentComment.likes}<PiHandPalmFill /></Button>
+          <Button title="Remove like" sx={{
+            borderWidth: 4,
+            color: 'black',
+            marginRight: "4px"
+          }}
+          onClick={handleVoteDeleteClick}
+          >
+            {currentComment.likes}<PiHandPalmFill />
+            </Button>
         ) : (
-          <Button title="Like comment" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={handleVoteClick}>{currentComment.likes}<PiHandHeartFill /></Button>
+          <Button title="Like comment" sx={{
+            borderWidth: 4,
+            color: 'black',
+            marginRight: "4px"
+          }}
+          onClick={handleVoteClick}
+          >
+            {currentComment.likes}<PiHandHeartFill />
+            </Button>
 
         )}
        {canEdit ? (
@@ -166,7 +188,14 @@ const commentCredentialCheck = () => {
           <Button title="Edit this comment" sx={{ borderWidth: 4, color: 'black' }}  onClick={handleEditClick}>< PiNotePencilFill/></Button>
         )}
         {isCredentialed ? (
-          <Button title="Delete comment" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={deleteComment} ><PiBombFill /></Button>
+          <Button title="Delete comment" sx={{
+            borderWidth: 4,
+            color: 'black',
+            p: '6px',
+            position: 'absolute',
+            bottom: 8,
+            right: 8,
+          }}  onClick={deleteComment} ><PiTrash /></Button>
         ) : (
           null
         )}
