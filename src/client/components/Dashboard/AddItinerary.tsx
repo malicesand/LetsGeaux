@@ -137,6 +137,11 @@ const AddItinerary: React.FC<AddItineraryProps> = ({ user, partyId, partyName, f
           {selectedItinerary && (
             <Box mt={2}>
               <Typography variant="body1">Itinerary: {selectedItinerary.name}</Typography>
+              {selectedItinerary.viewCode && (
+      <Typography variant="body2" sx={{ mt: 1 }}>
+        View Code: <strong>{selectedItinerary.viewCode}</strong>
+      </Typography>
+    )}
             </Box>
           )}
         </DialogContent>

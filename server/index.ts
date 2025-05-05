@@ -52,7 +52,7 @@ app.use(express.json());
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:8000/auth/google/callback' || 'https://f14c-2600-1700-6840-8df0-3438-e993-625-ba14.ngrok-free.app/auth/google/callback',
+    callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:8000/auth/google/callback'
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         let user = await prisma.user.findUnique({

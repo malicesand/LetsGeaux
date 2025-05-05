@@ -30,6 +30,8 @@ import { useSnackbar } from 'notistack';
 import { PiPlusBold } from 'react-icons/pi';
 import Tooltip from '@mui/material/Tooltip';
 import { Autocomplete } from '@mui/material';
+import isBetween from 'dayjs/plugin/isBetween';
+dayjs.extend(isBetween);
 
 
 //defines structure of activity object
@@ -358,6 +360,22 @@ const Activity: React.FC<Props> = ({
     };
     fetchNames();
   }, []);
+  //empty obect to store to store activities  grouped by date 
+  //Record <- typescript type 
+  //Activity <- array of activity for that date 
+  const groupedByDate: Record<string, Activity[]> = {};
+//loop through sortedActivities
+for (const activity of sortedActivities) {
+  //date = key of that object
+  const date = activity.date;
+  // if no date, empty array 
+  if (!groupedByDate[date]) {
+    groupedByDate[date] = [];
+  }
+  //if key, push activity into array for that date
+  groupedByDate[date].push(activity);
+}
+
   
   
   return (
@@ -408,7 +426,7 @@ const Activity: React.FC<Props> = ({
           '&.Mui-focused': {
             color: 'black'
           },
-          top: -6
+          top: -9
         }
       }}
     />
@@ -456,7 +474,7 @@ const Activity: React.FC<Props> = ({
           '&.Mui-focused': {
             color: 'black'
           },
-          top: -6
+          top: -9
         }
       }}
     />
@@ -496,6 +514,13 @@ const Activity: React.FC<Props> = ({
                   }}
                   minDate={dayjs(itineraryBegin)}
                   maxDate={dayjs(itineraryEnd)}
+                  shouldDisableDate={(date) => {
+                    const begin = dayjs(itineraryBegin);
+                    const end = dayjs(itineraryEnd);
+                  
+                    return !date.isBetween(begin, end, 'day', '[]'); // include date range
+                  }}
+                  
                   slotProps={{
                     actionBar: {
                       sx: {
@@ -514,7 +539,7 @@ const Activity: React.FC<Props> = ({
                             color: 'black'
                           },
 
-                          top: -6
+                          top: -9
                         }
                       }
                     }
@@ -558,7 +583,7 @@ const Activity: React.FC<Props> = ({
                             color: 'black'
                           },
 
-                          top: -6
+                          top: -9
                         }
                       }
                     }
@@ -616,7 +641,7 @@ const Activity: React.FC<Props> = ({
                           '&.Mui-focused': {
                             color: 'black'
                           },
-                          top: -6
+                          top: -9
                         }
                       }}
                     />
@@ -655,7 +680,7 @@ const Activity: React.FC<Props> = ({
                         color: 'black'
                       },
 
-                      top: -6
+                      top: -9
                     }
                   }}
                 />
@@ -672,7 +697,7 @@ const Activity: React.FC<Props> = ({
                         color: 'black'
                       },
 
-                      top: -6
+                      top: -9
                     }
                   }}
                 />
@@ -689,7 +714,7 @@ const Activity: React.FC<Props> = ({
                         color: 'black'
                       },
 
-                      top: -6
+                      top: -9
                     }
                   }}
                 />
@@ -725,8 +750,35 @@ const Activity: React.FC<Props> = ({
           <Typography variant='h5' gutterBottom>
             Activities List
           </Typography>
-          <Box display='flex' flexWrap='wrap' gap={2}>
-            {sortedActivities.map(activity => (
+          <Box>
+            {/* {sortedActivities.map(activity => ( */}
+
+            {/* plain object,not array
+            so keys are checked */}
+            {/* will render no activities yet if length is 0 */}
+            {Object.keys(groupedByDate).length === 0 ? (
+    <Typography variant="body1" color="textSecondary">
+      No activities yet.
+    </Typography>
+  ) : (
+    // turns the object into an array of [key, value] pairs
+    // loops over each group of activities for each date
+Object.entries(groupedByDate).map(([date, activities]) => (
+  <Box key={date} mb={4}>
+     <Typography variant="h6" gutterBottom>
+                    {new Date(date).toLocaleDateString(undefined, {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}                </Typography>
+    {/* <Typography variant="h6" gutterBottom>
+      {date}
+    </Typography> */}
+    <Box display="flex" flexWrap="wrap" gap={2}>
+      {/* loops over each group of activities for each date */}
+      {activities.map(activity => (
+              
               <Box
                 key={activity.id}
                 sx={{
@@ -799,8 +851,11 @@ const Activity: React.FC<Props> = ({
                 </Card>
               </Box>
             ))}
+            </Box>
           </Box>
-
+))
+)}
+</Box>
           <Box mt={4} display='flex' justifyContent='center'>
             <Tooltip title='Add New Activity' arrow>
               <Fab

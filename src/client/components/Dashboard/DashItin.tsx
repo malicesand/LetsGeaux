@@ -105,11 +105,22 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
 
   return (  
     <Container>
-      <Box mt={4}>
+      <Box mt={4}
+      
+      >
         <Typography variant='h3'>Party Itinerary</Typography>
         {/* Show Itinerary or Button to create */}
         {itinerary ? (
-          <Card sx={{ mb: 2 }}>
+          <Card sx={{ 
+            position: 'relative',
+            mb: 2,
+            backgroundColor: '#C2A4F8',
+            borderRadius: '24px',
+            padding: 2,
+            boxShadow: 'none',
+            border: '4px solid black',
+            fontWeight: 700
+          }}>
             <CardContent>
               <Typography variant='h3'>{itinerary.name}</Typography>
               <Typography variant='body1'>{itinerary.notes}</Typography>
@@ -120,6 +131,30 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
                 End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY')}
               </Typography>
             </CardContent>
+
+            <Typography
+                            variant='caption'
+                            color='secondary'
+                            sx={{
+                              display: 'inline-block',
+                              backgroundColor: 'primary.main',
+                              color: 'black',
+                              px: 2,
+                              py: 1,
+                              borderRadius: '9999px',
+                               border: '4px solid black',
+                              fontWeight: 700,
+                              fontSize: '0.75rem',
+                              textAlign: 'center',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                            }}
+                          >
+                            View Code: {itinerary.viewCode}     
+                          </Typography>
+                          
+                              
+
+
             <CardActions>
               <Tooltip title='Edit Itinerary'>
                 <IconButton onClick={() => handleEditClick(itinerary)}
@@ -146,8 +181,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
                 addActivity={addActivityToItinerary}
                 itineraryCreatorId={itinerary.creatorId}
                 user={user}
-                itineraryBegin={''}
-                itineraryEnd={''}
+                itineraryBegin={dayjs(itinerary.begin).format('YYYY-MM-DD')}
+                                itineraryEnd={dayjs(itinerary.end).format('YYYY-MM-DD')}
               />
             )}
           </Card>

@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Typography, Box, Card, CardContent, CardActions, Divider, ListItemText, ListItem, List, TextField, Button } from '@mui/material';
+import { 
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  CardActions,
+  Divider,
+  ListItemText,
+  ListItem,
+  List,
+  TextField,
+  Button 
+} from '@mui/material';
 import { user, chatHistory, message } from '../../../../types/models.ts';
 
 interface ChatMessage {
@@ -11,28 +23,34 @@ interface ChatMessage {
 interface ChatHistProps {
   user: user;
   isMobile: boolean;
+  setIsFirstTimeUser: (val: boolean) => void;
 }
 interface SessionWithMessages {
   session: chatHistory;
   messages: message[];
 }
 
-const ChatHistory: React.FC<ChatHistProps> = ({ user, isMobile }) => {
-  // const [messages, setMessages] = useState<message[][]>([]); // if storing messages per session
+const ChatHistory: React.FC<ChatHistProps> = ({ 
+  user,
+  isMobile,
+  setIsFirstTimeUser 
+}) => {
   const [sessionsWithMessages, setSessionsWithMessages] = useState<SessionWithMessages[]>([]);
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null)
   const [editedTitle, setEditedTitle] = useState<string>('');
   const userId = user.id;
+  
 
-  //* Fetch Conversations *//
+  //* Fetch Conversations When Page Loads *//
   const getUserSessions = async () => {
     try {
       const response = await axios.get<chatHistory[]>(
         `/api/chats/chat-history/${userId}`
       );
       const sessions = response.data;
-      // console.log(sessions)
+      // console.log(`Setting isFirstTimeUser: ${sessions.length === 0}`)
+      setIsFirstTimeUser(sessions.length ===  0);
       const sessionMessages: SessionWithMessages[] = [];
 
       for (const session of sessions) {
@@ -40,7 +58,6 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user, isMobile }) => {
         const msgRes = await axios.get<message[]>(
           `/api/chats/messages/${session.sessionId}`
         );
-        // console.log(msgRes);
         if (msgRes.data.length >= 1) {
           sessionMessages.push({
             session: session,
@@ -53,18 +70,19 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user, isMobile }) => {
       console.error('failed to generate user convos', error);
     }
   };
-  //* When Page Loads *//
   useEffect(() => {
     getUserSessions();
+    // console.log('ChatHistory mounted')
   }, []);
 
-  //* Change Name *//
+  //* Change Session Name *//
+  //Event Handler 
   const startEditing = (sessionId: string, currentTitle: string) => {
     
     setEditingSessionId(sessionId);
     setEditedTitle(currentTitle || '');
   };
-  // * Save New Name * //
+  // Request Handler
   const saveEditedName = async (sessionId: string) => {
     try {
       
@@ -77,107 +95,159 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user, isMobile }) => {
     } catch (error) {
       console.error('Failed to change name on client', error);
     }
-  }
-   // * Delete Session * //
+  };
+
+  // TODO - user should be able to resume any session in their current history
+
+  //* Delete Session *//
   const handleDelete = async(sessionId: string) => {
-    // console.log(sessionId)
     try {
       const response = await axios.delete(`/api/chats/${sessionId}`);
       console.log('deleted session and messages');
       getUserSessions();
-      
     } catch (error) {
-      console.error('failed to delete session')
-      
-    }
+      console.error('failed to delete session');      
+    };
+  };
 
-  }
-
+  // TODO - Polish unexpanded history view
+  
+  // TODO - Spruce things up with an Icon?
+  // TODO - Visual Indicator for Editing
   return (
     <List sx={{ p: 0 }}>
+      {/* Chat History List */}
       {sessionsWithMessages.map(({ session, messages }) => (
         <Card 
-        key={session.sessionId}
-        variant="outlined"
-        sx={{
-          mb: 2,
-          p: 2,
-          px: isMobile ? 1 : 2,
-          py: isMobile ? 1 : 2,
-          backgroundColor: '#fff085',
-          boxShadow: '2px 2px 0px black',
-          border: '2px solid black',
-          borderRadius: isMobile ? '12px' : '16px',
-        }}
-      >
-          <CardContent sx={{cursor: 'pointer'}} id='session.sessionId' onClick={() =>
-            setExpandedSessionId(prev =>
-              prev === session.sessionId ? null : session.sessionId)
-          }>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            {/* <PiChatTextBold /> */}
-            {editingSessionId === session.sessionId ? (
-              <TextField
-                type="text"
-                size="small"
-                value={editedTitle}
-                onChange={(e) => setEditedTitle(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    saveEditedName(session.sessionId);
-                  }
-                }}
-                autoFocus
-              />
-            ) : (
-              <Box>
-                <Typography variant="subtitle1" fontWeight="bold">
-                  {session.conversationName || 'Untitled Conversation'}
-                </Typography>
-                <Typography variant="body2">
-                  Last active: {new Date(session.lastActive).toLocaleString()}
-                </Typography>
-              </Box>
-            )}
-          </Box>
+          key={session.sessionId}
+          variant="outlined"
+          sx={{
+            mb: 2,
+            p: 2,
             
-
-          {expandedSessionId === session.sessionId && (
-            <List component='div' disablePadding sx={{ pl: 4, cursor: 'pointer' }}>
-              {messages.map(msg => (
-                <ListItem key={msg.id} sx={{ pl: 0 }}>
-                  <ListItemText 
-                    primary={`You: ${msg.userMessage}`}
-                    secondary={`Gata: ${msg.botResponse}`}
-                    slotProps = {{
-                      primary: {variant: 'body2',},
-                      secondary: {variant: 'body2',},
+            px: isMobile ? 1 : 2,
+            py: isMobile ? 1 : 2,
+            backgroundColor: '#fff085',
+            boxShadow: '2px 2px 0px black',
+            border: '2px solid black',
+            borderRadius: isMobile ? '12px' : '16px',
+          }}
+        >
+          {/* Session Name and Message Log */}
+          <CardContent
+            sx={{cursor: 'pointer'}} 
+            id='session.sessionId' 
+            onClick={() => setExpandedSessionId(prev =>
+              prev === session.sessionId ? null : session.sessionId)
+            }
+          >
+            {/* Session Name: Editing and Fixed State */}
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              {/* <PiChatTextBold /> */}
+              {editingSessionId === session.sessionId ? (
+                <TextField
+                  type="text"
+                  size="medium"
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      saveEditedName(session.sessionId);
+                    }
+                  }}
+                  onBlur = {() => {
+                    if (editedTitle.trim() && editedTitle !== session.conversationName){
+                      saveEditedName(session.sessionId);
+                    } else {
+                      setEditingSessionId(null);
+                    }
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <Box>
+                  <Typography variant='h4' fontWeight='bold'>
+                    {session.conversationName || messages[0].userMessage}
+                  </Typography>
+                  <Typography variant='body2' sx={{ pt: 1 }}>
+                    Last active: {new Date(session.lastActive).toLocaleString()}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+            <Divider
+              sx={{ border: '2px solid black', borderRadius: 8 }}
+            />
+            {/* Message List */}
+            {expandedSessionId === session.sessionId && (
+              <List component='div' disablePadding sx={{ pt: 2, pl: 2, cursor: 'pointer' }}>
+                {messages.map(msg => (
+                  <ListItem 
+                    key={msg.id} 
+                    alignItems="flex-start"
+                    sx={{ 
+                      pl: 0,
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      mb: 2,
+                      // p: 1,
+                      // border: '1px solid #ddd',
+                      // borderRadius: 2,
+                      // backgroundColor: '#f9f9f9',
                     }}
-                    />
-                </ListItem>
-              ))}
-            </List>
-          )}
+                  >
+                    {/* <ListItemText 
+                      primary={`You: ${msg.userMessage}`}
+                      secondary={`Gata: ${msg.botResponse}`}
+                      slotProps = {{
+                        primary: {variant: 'body1', color: 'gray'},
+                        secondary: {variant: 'body1', color: 'black'},
+                      }}
+                      /> */}
+                    <Typography variant='subtitle2' color='text.secondary' gutterBottom>
+                      You:
+                    </Typography>
+                    <Typography variant='body1' sx={{ mb: 1 }}>
+                      {msg.userMessage}
+                    </Typography>
+                    <Typography variant='subtitle2' color='text.secondary' gutterBottom>
+                      Gata:
+                    </Typography>
+                    <Typography variant='body1'>
+                      {msg.botResponse}
+                    </Typography>
+                  </ListItem>
+                ))}
+              </List>
+            )}
           </CardContent>
+          {/* Buttons */}
           <CardActions 
             sx={{ 
               pt: 0, 
               justifyContent: 'space-between',
-              flexDirection: isMobile ? 'column' : 'row',
-              gap: 1,
+              flexDirection: 'row',
+              gap: 0,
               alignItems: isMobile ? 'stretch' : 'center', 
             }}>
-            <Button variant='contained' onClick={() =>
-              startEditing(session.sessionId, session.conversationName || '') // TODO change button
+            <Button 
+              variant='contained' 
+              size='small' 
+              style={{maxWidth: '110px', maxHeight: '110', minWidth: '110', minHeight: '110'}}
+              onClick={() =>
+                startEditing(session.sessionId, session.conversationName || '') 
             }>
-              Change Name 
+              Rename  
             </Button>
             <Divider/>
-            <Button variant='contained' onClick={() =>
-              handleDelete(session.sessionId) // TODO change button
+            <Button 
+              variant='contained' 
+              size='small' 
+              style={{maxWidth: '110px', maxHeight: '110', minWidth: '110', minHeight: '110'}}
+              onClick={() =>
+              handleDelete(session.sessionId) 
             }>
-              Delete Session 
+              Delete 
             </Button>
           </CardActions>
         </Card>

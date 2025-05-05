@@ -5,18 +5,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const apiKey = process.env.GOOGLE_API_KEY;
 const genAI = new GoogleGenAI({apiKey}); 
-import { PromptKey, prompts, contextKeywords} from '../../types/prompt.ts';
+import { PromptKey, prompts, contextKeywords, detectContext, generateGeminiPrompt} from '../../types/prompt.ts';
 
-const chatsRoute = express.Router()
-
-//* Chat Context *//
-const detectContext = (input: string): PromptKey => {
-  let lowerCaseMessage = input.toLowerCase();
-  // find match based of keywords   
-  const detectedContext = (Object.keys(contextKeywords) as PromptKey[]).find((key) =>
-  contextKeywords[key].some((keyword) => lowerCaseMessage.includes(keyword)) );
-  return detectedContext || "default";
-};
+const chatsRoute = express.Router();
 
 //* Create a New Session Id *//
 chatsRoute.post('/new-session', (req: Request, res: Response) => {
@@ -35,7 +26,6 @@ chatsRoute.get('/chat-history/:userId', async (req: Request, res: Response) => {
 
   try {
     const chatHistories = await prisma.chatHistory.findMany({
-      // request handling manipulates type => convert to number
       where: {userId: Number(userId)}
     })
     // console.log(chatHistories[0].sessionId);
@@ -67,9 +57,8 @@ chatsRoute.get('/messages/:sessionId', async (req: Request, res, Response) => {
 //* Gemini API Handling *//
 chatsRoute.post('/', async (req: Request, res: Response ) => {
   const { userMessage, userId, sessionId} = req.body;
-  // console.log(sessionId)
-  // TODO fetch context
-  const convoHistory = await prisma.chatHistory.upsert({
+  
+  await prisma.chatHistory.upsert({
     where: { sessionId },
     update: { lastActive: new Date()},
     create: {
@@ -77,35 +66,38 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
       userId
     }
   })
-  let messages = await prisma.message.findMany({
+  const messages = await prisma.message.findMany({
     where: { sessionId : sessionId },
     orderBy: { timeStamp: 'asc'},
   });
-  // console.log(messages.length);
-  // TODO context handling for replies and history
-  // if (messages.length > )
+  
   const context = detectContext(userMessage);
-  const prompt = prompts[context] 
+  const prompt = generateGeminiPrompt(userMessage, messages, context);
   
   try {
-    const response = await genAI.models.generateContent({ // TODO type
+    const response = await genAI.models.generateContent({
       model: 'gemini-2.0-flash',
-      contents: prompt, 
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      config: {
+        temperature: 1.2, 
+        topK: 40,        
+        topP: 0.95       
+      }
+    }) as any;
+    const responseParts = response.candidates[0].content.parts[0] 
+    const aIReply: string  = responseParts?.text || 'no response from Gata';
 
-    });
-  const responseParts = response.candidates[0].content.parts[0] // TODO type
-  const aIReply: string  = responseParts?.text || 'no response from Gata';
-  await prisma.message.create({ // ? idk how this is actively adding w/o a declaration
-    data: {
-      userId: userId,
-      userMessage: userMessage,
-      botResponse: aIReply,
-      sessionId: sessionId
-    }
-  })
-  // console.log('successful convo')
-  res.json(aIReply);
-  } catch (error) { // TODO make type
+    await prisma.message.create({ 
+      data: {
+        userId: userId,
+        userMessage: userMessage,
+        botResponse: aIReply,
+        sessionId: sessionId
+      }
+    })
+    // console.log('successful convo')
+    res.json(aIReply);
+  } catch (error) { 
       console.error(error);
       res.status(500).json({ error: 'Server Error returning prompt.'});
   }
@@ -115,7 +107,7 @@ chatsRoute.post('/', async (req: Request, res: Response ) => {
 chatsRoute.patch('/chat-history/:sessionId', async (req: Request, res: Response) => {
   // Name a session/ change it's name
   const {sessionId} = req.params;
-  console.log(sessionId, 'patch')
+  // console.log(sessionId, 'patch')
   // console.log(req.body)
   const {conversationName} = req.body
   try {
@@ -129,9 +121,6 @@ chatsRoute.patch('/chat-history/:sessionId', async (req: Request, res: Response)
     console.error('could not save/change conversation name', error);
     res.status(500).json({error: 'failed  to change/save conversation name'});
   }
-
-
-
 });
 
 //* Delete a Conversation *//
@@ -149,16 +138,9 @@ chatsRoute.delete('/:sessionId', async (req: Request, res: Response) => {
       sessionId: sessionId
     }
   })
-  // delete a session
   try {
-     // delete conversation //
-    // const deleteSession =  await prisma.chatHistory.delete({
-    //   where: {
-    //     sessionId: sessionId
-    //   }
-    // })
     const transaction = await prisma.$transaction([deleteMessages, deleteSession]);
-    console.log('Session deleted');
+    // console.log('Session deleted');
     res.status(200).json('deleted');
 
   } catch (error) {

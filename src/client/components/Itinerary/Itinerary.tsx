@@ -15,10 +15,15 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle
+  DialogTitle,
+  List,
+  ListItem
 } from '@mui/material';
 
 import axios from 'axios';
+//tells Axios tO send cookies and HTTP authentication headers (like tokens or session cookies) with every request(cors)
+axios.defaults.withCredentials = true;
+
 import { user } from '../../../../types/models.ts';
 import Activity from './NEWActivties.tsx';
 import { useParams, useLocation } from 'react-router-dom';
@@ -31,6 +36,7 @@ import { useSnackbar } from 'notistack';
 import Calendar from './Calendar';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 dayjs.extend(isSameOrBefore);
+//import { useItinerary } from '../ItineraryContext';
 
 interface ItineraryProps {
   user: user;
@@ -58,18 +64,36 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
+  interface RouteData {
+    id: number;
+    origin: string;
+    destination: string;
+    travelTime: string;
+    itineraryId: number
+  }
+  //const { setItineraryId, itineraryId } = useItinerary();
+
+  // useEffect(() => {
+  //   if (itineraryId === null) {
+  //     console.log('ItineraryId is not loaded yet.');
+  //   } else {
+  //     console.log('ItineraryId loaded:', itineraryId);
+  //   }
+  // }, [itineraryId]);
+
+
   //delete confirmation state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedItineraryId, setSelectedItineraryId] = useState<number | null>(null);
 
-//send email state  
-const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
-const [emailToInvite, setEmailToInvite] = useState('');
-const [selectedViewCode, setSelectedViewCode] = useState('');
-const [selectedItineraryName, setSelectedItineraryName] = useState('');
+  //send email state  
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const [emailToInvite, setEmailToInvite] = useState('');
+  const [selectedViewCode, setSelectedViewCode] = useState('');
+  const [selectedItineraryName, setSelectedItineraryName] = useState('');
 
 
-
+  const [routes, setRoutes] = useState<RouteData[]>([]);
 
 
   // Helper function to get range of Dayjs dates
@@ -128,6 +152,30 @@ const [selectedItineraryName, setSelectedItineraryName] = useState('');
     fetchItineraries();
   }, []);
 
+
+  useEffect(() => {
+
+    axios.get(`/api/maps`)
+      .then(response => {
+        setRoutes(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching routes:", error);
+      });
+
+  }, []);
+
+  // Handle delete route request
+  const deleteRoute = async (id: number) => {
+    try {
+      await axios.delete(`/api/maps/${id}`);
+      // Remove the route from the state after successful deletion
+      setRoutes(routes.filter(route => route.id !== id));
+    } catch (err) {
+      setError('Error deleting route. Please try again later.');
+      console.error('Error deleting route:', err);
+    }
+  };
   // when edit is clicked form will update with existing information
   const handleEditClick = (itinerary: any) => {
     setEditingItinerary(itinerary);
@@ -255,22 +303,22 @@ const [selectedItineraryName, setSelectedItineraryName] = useState('');
     throw new Error('Function not implemented.');
   }
 
-//emailviewcode
-const handleSendInvite = async () => {
-  try {
-    await axios.post('/api/itinerary/sendInvite', {
-      email: emailToInvite,
-      itineraryName: selectedItineraryName,
-      viewCode: selectedViewCode,
-    });
-    enqueueSnackbar('Invite sent successfully!', { variant: 'success' });
-    setInviteDialogOpen(false);
-    setEmailToInvite('');
-  } catch (error) {
-    console.error('Error sending invite:', error);
-    enqueueSnackbar('Failed to send invite.', { variant: 'error' });
-  }
-};
+  //emailviewcode
+  const handleSendInvite = async () => {
+    try {
+      await axios.post('/api/itinerary/sendInvite', {
+        email: emailToInvite,
+        itineraryName: selectedItineraryName,
+        viewCode: selectedViewCode,
+      });
+      enqueueSnackbar('Invite sent successfully!', { variant: 'success' });
+      setInviteDialogOpen(false);
+      setEmailToInvite('');
+    } catch (error) {
+      console.error('Error sending invite:', error);
+      enqueueSnackbar('Failed to send invite.', { variant: 'error' });
+    }
+  };
 
 
 
@@ -327,7 +375,11 @@ const handleSendInvite = async () => {
               required
               InputLabelProps={{
                 sx: {
-                  top: -6
+                  top: -9,
+                  color: 'black',
+                  '&.Mui-focused': {
+                    color: 'black'
+                  },
                 }
               }}
             />
@@ -341,7 +393,10 @@ const handleSendInvite = async () => {
               sx={{ mb: 2 }}
               InputLabelProps={{
                 sx: {
-                  top: -6
+                  top: -9, color: 'black',
+                  '&.Mui-focused': {
+                    color: 'black'
+                  },
                 }
               }}
             />
@@ -381,7 +436,7 @@ const handleSendInvite = async () => {
           </Box>
         </Box>
       )}
-      <Typography variant='h5' sx={{ mt: 3, mb: 2, textAlign: 'center' }}>
+      <Typography variant='h3' sx={{ mt: 3, mb: 2, textAlign: 'center' }}>
         Itineraries
       </Typography>
       <Box
@@ -407,20 +462,35 @@ const handleSendInvite = async () => {
               fontWeight: 700
             }}
           >
+
             <CardContent>
               <Typography variant='h3'>{itinerary.name}</Typography>
               {itinerary.partyName && (
-                <Typography variant='body2' color='secondary'>
+                <Typography variant='caption'
+                  color='secondary'
+                  sx={{
+                    display: 'inline-block',
+                    backgroundColor: 'primary.main',
+                    color: 'black',
+                    px: 2,
+                    py: 1,
+                    borderRadius: '9999px',
+                    border: '4px solid black',
+                    fontWeight: 700,
+                    fontSize: '0.75rem',
+                    textAlign: 'center',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                  }}>
                   Party: {itinerary.partyName}
                 </Typography>
               )}
 
               <Typography variant='body1'>{itinerary.notes}</Typography>
-              <Typography variant='body2'>
+              <Typography variant='body1'>
                 Begin:{' '}
                 {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY h:mm A')}
               </Typography>
-              <Typography variant='body2'>
+              <Typography variant='body1'>
                 End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY h:mm A')}
               </Typography>
 
@@ -434,50 +504,53 @@ const handleSendInvite = async () => {
                   px: 2,
                   py: 1,
                   borderRadius: '9999px',
-                   border: '4px solid black',
+                  border: '4px solid black',
                   fontWeight: 700,
                   fontSize: '0.75rem',
                   textAlign: 'center',
                   boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
                 }}
               >
-                View Code: {itinerary.viewCode}     
+                View Code: {itinerary.viewCode}
               </Typography>
               <Button
-  variant="contained"
-  color="secondary"
-  size="small"
-  sx={{ display: 'inline-block',
-    backgroundColor: 'primary.main',
-    color: 'black',
-    px: 2,
-    py: 1,
-    borderRadius: '9999px',
-    fontWeight: 700,
-    fontSize: '0.75rem',
-    textAlign: 'center',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
-  
-  }}
-  onClick={() => {
-    setSelectedViewCode(itinerary.viewCode);
-    setSelectedItineraryName(itinerary.name);
-    setInviteDialogOpen(true);
-  }}
->
-  Share Itinerary
-</Button>
+                variant="contained"
+                color="secondary"
+                size="small"
+                sx={{
+                  display: 'inline-block',
+                  backgroundColor: 'primary.main',
+                  color: 'black',
+                  px: 2,
+                  py: 1,
+                  borderRadius: '9999px',
+                  fontWeight: 700,
+                  fontSize: '0.75rem',
+                  textAlign: 'center',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+
+                }}
+                onClick={() => {
+                  setSelectedViewCode(itinerary.viewCode);
+                  setSelectedItineraryName(itinerary.name);
+                  setInviteDialogOpen(true);
+                }}
+              >
+
+
+                Share Itinerary
+              </Button>
               {itinerary.message && (
                 <Alert severity='success'>{itinerary.message}</Alert>
               )}
             </CardContent>
-            <CardActions>
+            <CardActions sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
               <IconButton
                 onClick={() => handleEditClick(itinerary)}
                 sx={{ position: 'absolute', top: 8, right: 8, color: 'black' }}
               >
-<PiPencil />
-</IconButton>
+                <PiPencil />
+              </IconButton>
               {user.id === itinerary.creatorId && (
                 <IconButton
                   onClick={() => {
@@ -494,24 +567,63 @@ const handleSendInvite = async () => {
                   <PiTrash />
                 </IconButton>
               )}
+              {/* {console.log('routes', routes)}
+              {console.log('itinID', itineraryId)}
+              {console.log('itin.id', itinerary.id)} */}
+              {/* rendering Routes  */}
+              <Typography variant='h3'> Routes Between Activities:</Typography>
+
+              {routes
+                .filter((route) => route.itineraryId === itinerary.id)
+                .map((route, index) => (
+                  <Card
+                    key={index}
+                    sx={{
+                      position: 'relative',
+                      mb: 2,
+                      backgroundColor: '#C2A4F8',
+                      borderRadius: '24px',
+                      padding: 2,
+                      boxShadow: 'none',
+                      border: '4px solid black',
+                      fontWeight: 700
+                    }}
+                  >
+                    <Box textAlign='center'>
+                      <Typography variant="body1">Origin: {route.origin}</Typography>
+                      <Typography variant="body1">Destination: {route.destination}</Typography>
+                      <Typography variant="body1">Travel Time: {route.travelTime}</Typography>
+                      <Button sx={{ color: 'black' }} onClick={() => deleteRoute(route.id)}>
+                        <PiTrash />
+                      </Button>
+                    </Box>
+                  </Card>
+                ))}
+
+              {user && (
+                <Activity
+                  itineraryId={itinerary.id}
+                  addActivity={addActivityToItinerary}
+                  itineraryCreatorId={itinerary.creatorId}
+                  user={user}
+                  itineraryBegin={dayjs(itinerary.begin).format('YYYY-MM-DD')}
+                  itineraryEnd={dayjs(itinerary.end).format('YYYY-MM-DD')}
+                // itineraryBegin={''}
+                // itineraryEnd={''}
+                />
+              )}
             </CardActions>
-            {user && (
-              <Activity
-                itineraryId={itinerary.id}
-                addActivity={addActivityToItinerary}
-                itineraryCreatorId={itinerary.creatorId}
-                user={user}
-                itineraryBegin={''}
-                itineraryEnd={''}
-              />
-            )}
           </Card>
         ))}
+
       </Box>
+
+
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
       >
+
         <DialogTitle>Delete Itinerary?</DialogTitle>
         <DialogContent>
           <Typography>
@@ -531,40 +643,41 @@ const handleSendInvite = async () => {
         </DialogActions>
       </Dialog>
       <Dialog open={inviteDialogOpen} onClose={() => setInviteDialogOpen(false)}>
-  <DialogTitle>Send Itinerary Invite</DialogTitle>
-  <DialogContent>
-    <TextField
-      label="Recipient's Email"
-      value={emailToInvite}
-       InputLabelProps={{
-                sx: {
-                  top: -8,
+        <DialogTitle>Send Itinerary Invite</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Recipient's Email"
+            value={emailToInvite}
+            InputLabelProps={{
+              sx: {
+                top: -8,
+                color: 'black',
+                '&.Mui-focused': {
                   color: 'black',
-                  '&.Mui-focused': {
-                    color: 'black', 
-                  },
-                }
-                
-              }}
-      onChange={(e) => setEmailToInvite(e.target.value)}
-      fullWidth
-      margin="normal"
-    />
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={() => setInviteDialogOpen(false)}  sx={{ color: 'black' }}>Cancel
-      
-    </Button>
-    <Button
-      onClick={handleSendInvite}
-      variant="contained"
-      color="primary"
-      disabled={!emailToInvite}
-    >
-      Send Invite
-    </Button>
-  </DialogActions>
-</Dialog>
+                },
+              }
+
+            }}
+            onChange={(e) => setEmailToInvite(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setInviteDialogOpen(false)} sx={{ color: 'black' }}>Cancel
+
+          </Button>
+          <Button
+            onClick={handleSendInvite}
+            variant="contained"
+            color="primary"
+            disabled={!emailToInvite}
+          >
+            Send Invite
+          </Button>
+        </DialogActions>
+      </Dialog>
 
     </Container>
   );
