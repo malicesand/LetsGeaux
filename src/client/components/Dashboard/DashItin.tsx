@@ -13,13 +13,13 @@ import {
   DialogTitle,
   DialogActions,
   DialogContent,
-  Backdrop
+  // Backdrop
 } from '@mui/material';
 import axios from 'axios';
 import { user, itinerary } from '../../../../types/models.ts';
 import Activity from './Activities.tsx';
 import AddItinerary from './AddItinerary.tsx';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { PiPencil, PiTrashDuotone } from 'react-icons/pi';
 import { useSnackbar } from 'notistack';
@@ -43,7 +43,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
   const [error, setError] = useState<string>('');
   // const location = useLocation();
    //delete confirmation state
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   //* Add Activity to Itinerary *//
   const addActivityToItinerary = async ( itineraryId: string, activityData: any) => {
@@ -105,9 +105,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
 
   return (  
     <Container>
-      <Box mt={4}
-      
-      >
+      <Box mt={4}>
         <Typography variant='h3'>Party Itinerary</Typography>
         {/* Show Itinerary or Button to create */}
         {itinerary ? (
@@ -133,28 +131,25 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
             </CardContent>
 
             <Typography
-                            variant='caption'
-                            color='secondary'
-                            sx={{
-                              display: 'inline-block',
-                              backgroundColor: 'primary.main',
-                              color: 'black',
-                              px: 2,
-                              py: 1,
-                              borderRadius: '9999px',
-                               border: '4px solid black',
-                              fontWeight: 700,
-                              fontSize: '0.75rem',
-                              textAlign: 'center',
-                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
-                            }}
-                          >
-                            View Code: {itinerary.viewCode}     
-                          </Typography>
-                          
-                              
-
-
+              variant='caption'
+              color='secondary'
+              sx={{
+                display: 'inline-block',
+                backgroundColor: 'primary.main',
+                color: 'black',
+                px: 2,
+                py: 1,
+                borderRadius: '9999px',
+                  border: '4px solid black',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+                textAlign: 'center',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+              }}
+            >
+              View Code: {itinerary.viewCode}     
+            </Typography>
+      
             <CardActions>
               <Tooltip title='Edit Itinerary'>
                 <IconButton onClick={() => handleEditClick(itinerary)}

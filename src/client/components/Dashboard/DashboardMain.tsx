@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import { createTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import {
+  Box,
+  Typography
+} from '@mui/material';
+// import Divider from '@mui/material/Divider';
 import CreateParty from './CreateParty';
 // import BudgetPieChart from './BudgetPieChart'
 import { user, userParty } from '../../../../types/models.ts';
-import ImageUpload from '../ImageUpload';
+// import ImageUpload from '../ImageUpload';
 import ImageDisplay from '../ImageDisplay';
 interface DashboardProps {
   user: user;

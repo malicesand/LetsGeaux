@@ -6,23 +6,19 @@ import {
   PiTrashDuotone, 
   PiSidebarBold,
   PiSidebarThin  } from "react-icons/pi";
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Modal from '@mui/material/Modal';
-import Stack from '@mui/material/Stack';
-import Container from '@mui/material/Container';
-import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import DialogActions from '@mui/material/DialogActions';
-import Checkbox from '@mui/material/Checkbox';
-import CircularProgress from '@mui/material/CircularProgress';
-import Paper from '@mui/material/Paper';
 import { 
+  Button,
+  IconButton,
+  Container,
+  TextField,
+  ListItemAvatar,
+  Avatar,  
+  ListItem, 
+  ListItemText,  
+  FormControlLabel,
+  DialogActions,
+  Checkbox, 
+  CircularProgress, 
   Box, 
   Typography, 
   Card,
@@ -30,17 +26,22 @@ import {
   useTheme, 
   useMediaQuery, 
   Dialog, 
+  DialogContent,
   DialogTitle, 
-  DialogContent } from '@mui/material';
-import MessageBoard from './MessageBoard';
+  Tooltip,
+  Modal,
+  Stack,
+  Paper
+} from '@mui/material';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
-import AddMember from './AddMember';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddItinerary from './AddItinerary';
+import AddMember from './AddMember';
 import ResponsiveToolTip from './../ResponsiveToolTip.tsx';
 import Itinerary from './DashItin.tsx';
 import { user, email, party } from '../../../../types/models.ts';
 import ImageUpload from '../ImageUpload';
+
 interface PartyDashboardProps {
   user: user;
 }
@@ -76,7 +77,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [leaveParty, setLeaveParty] = useState(false);
   const [renameOpen, setRenameOpen] = React.useState(false);
-  const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
+  // const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
   //* Mobile Handling *//
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -126,14 +127,14 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   };
 
   //* Fetch Itinerary *//
-  const fetchItinerary = async (partyId: string) => {
+  /* const fetchItinerary = async (partyId: string) => {
     console.log(`Fetching itinerary`);
     try {
       const response = await axios.get(`/api/itinerary/party/${partyId}`);
     } catch (error) {
       console.error(`Error occurred fetching party itinerary for party ${partyId}`)
     }
-  };
+  }; */
 
   //* Get Itinerary View Code *//
   const fetchViewCode = async (numericPartyId: number) => {
@@ -276,7 +277,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   return (
     <React.Fragment>
 
-<ImageUpload userId={user.id} />
+      <ImageUpload userId={user.id} />
       <Box sx={{ p:2 }}>
         {/* Title */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4 }}>
