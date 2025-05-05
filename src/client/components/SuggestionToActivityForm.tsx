@@ -107,7 +107,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
     const { id } = user;
     axios.get(`api/suggestions/check/${id}`).then(({ data }) => {
       console.log(data);
-      if (data) {
+      if (data.length) {
         setHasItineraries(true);
         setItineraryList(data);
       } else {
@@ -155,8 +155,8 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
   const touchItinerary = (itinerary: object) => {
     setChosenItinerary(itinerary);
   }
-
-
+  
+  
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
 
@@ -170,8 +170,8 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
               //  {...register('itinerary', { required: 'Must select itinerary' })}
               label="Itinerary"
               defaultValue=""
-            //  variant="outlined"
-            >
+              //  variant="outlined"
+              >
               <InputLabel id="itinerary-dropdown-label">Select an itinerary</InputLabel>
               <Controller
                 name="itinerary"
@@ -181,12 +181,12 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
                 defaultValue={''}
                 render={(field) => (
                   <Select
-                    // onChange={onChange}
-                    labelId="itinerary-label"
-                    {...field}
-                    // name="itinerary"
-                    {...register('itinerary', { required: 'Must select itinerary' })}
-                    defaultValue=""
+                  // onChange={onChange}
+                  labelId="itinerary-label"
+                  {...field}
+                  // name="itinerary"
+                  {...register('itinerary', { required: 'Must select itinerary' })}
+                  defaultValue=""
                   // control={control}
                   // name={name}
                   //  error={!!errors.itinerary}
@@ -200,8 +200,8 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
                       key={itinerary.fsq_id}
                       onClick={() => touchItinerary(itinerary)}
                       >
-                        <Typography>{itinerary.name}</Typography>
-                        <Typography>{itinerary.begin} - {itinerary.end}</Typography>
+                        {/* <Typography>{itinerary.name}: </Typography> */}
+                        <Typography><b>{itinerary.name}</b>: {dayjs(itinerary.begin).format('MMMM D, YYYY')} - {dayjs(itinerary.end).format('MMMM D, YYYY')}</Typography>
                       </MenuItem>
                     ))}
                   </Select>
