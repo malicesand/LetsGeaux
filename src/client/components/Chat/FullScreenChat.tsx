@@ -41,7 +41,8 @@ const FullScreenChat: React.FC<ChatProps> = ({
   const [hasGreetedThisSession, setHasGreetedThisSession] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [chatHeight, setChatHeight] = useState<number>(0);
   const { isMobile } = useMedia(); 
   const [chatLogHydrated, setChatLogHydrated] = useState(false);
   
@@ -102,8 +103,19 @@ const FullScreenChat: React.FC<ChatProps> = ({
       setHasGreetedThisSession(true);
   }, [sessionId, isFirstTimeUser, hasGreetedThisSession, chatLogHydrated]);
    
+  // Chat Container Height
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      setChatHeight(chatContainerRef.current.offsetHeight);
+    }
+  }, []);
+  // Mobile Scroll
+  useEffect(() => {
+    if (isMobile && chatContainerRef.current) {
+      chatContainerRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
   
-
   //* Message Handling And Default Name*//
   const handleSubmit = async () => {
     if (!userMessage.trim()) return;
@@ -151,21 +163,23 @@ const FullScreenChat: React.FC<ChatProps> = ({
         // mx: 4,
       }}
     >
-      <Box sx={{ display: 'flex', width: '100%', height: '100%', gap: 2 }}>
+      <Box sx={{ display: 'flex', width: '100%', height: '100%', gap: isMobile ? 0 : 2 }}>
         {/* Main Chat Column */}
         <Box
+          ref={chatContainerRef}
           sx={{
             width: '100%',
             maxWidth: isMobile ? '100%' : '55%',
-            height: isMobile ? 'calc(100vh - 64px)' : '85vh',
+            height: isMobile ? '100%' : '85vh',
+            // height: isMobile ? 'calc(100vh - 64px)' : '85vh',
             //height: isMobile ? '97dvh' : '85vh',
-            margin: 1,
+            margin: isMobile ? 0 : 1,
             // mx: 2,
             padding: 0,
             display: 'flex',
             flexDirection: 'column',
-            border: '2px solid black',
-            boxShadow: '4px 4px 0px black',
+            border: isMobile ? 'none': '2px solid black',
+            boxShadow: isMobile ? 'none' : '4px 4px 0px black',
             borderRadius: '20px',
             overflow: 'hidden',
             backgroundColor: '#a684ff',
@@ -312,18 +326,21 @@ const FullScreenChat: React.FC<ChatProps> = ({
               anchor='right'
               open={isHistoryOpen}
               onClose={() => setIsHistoryOpen(false)}
+              variant='temporary'
               slots={{ transition: Slide }}
               slotProps={{
-                transition: {
-                  direction: 'left' 
-                },
+                transition: { direction: 'left' },
                 paper: {
                   sx: {
                     width: '85%',
                     // height: '77%',
-                    height: 'calc(100vh - 64px)',
+                    // height: '100%',
+                    // height: 'calc(100vh - 64px)',
+                    height: `${chatHeight}px`,
                     // top: '64px',
-                    mt: '10.5vh',
+                    top: 0,
+                    right: 0,
+                    // mt: '10.5vh',
                     border: '4px solid black',
                     boxShadow: '4px 4px 0px black',
                     p: 2,
@@ -332,11 +349,36 @@ const FullScreenChat: React.FC<ChatProps> = ({
                     borderTopLeftRadius: 16,
                     borderBottomLeftRadius: 16,
                     overflowY: 'auto',
-                    position: 'absolute'
+                    position: 'absolute',
+                    zIndex: 10
+
+                    /* position: 'absolute',
+                    right: 0,
+                    top: 0,
+                    height: '100%',
+                    width: '85%',
+                    border: '2px solid black',
+                    borderTopLeftRadius: 16,
+                    borderBottomLeftRadius: 16,
+                    backgroundColor: '#fff085',
+                    boxShadow: '4px 4px 0px black',
+                    zIndex: 10, // ensure it's above chat content
+                    overflowY: 'auto', */
                   }
                 }
               }}
+              ModalProps={{
+                container: chatContainerRef.current,
+                disablePortal: true,
+                keepMounted: true
+              }}
             >
+              <IconButton
+                onClick={() => setIsHistoryOpen(false)}
+                sx={{ position: 'absolute', top: 8, right: 8, color: 'black' }}
+              >
+                ✕
+              </IconButton>
               <Typography
                 variant='h6'
                 gutterBottom
