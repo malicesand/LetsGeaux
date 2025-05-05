@@ -34,10 +34,10 @@ const handleListDelete = () => {
   return (
     <Container>
       {wishlistSuggs.map((currentSuggestion) => (
-        <Card key={currentSuggestion.id}>
+        <Card sx={{ mb: 4 }} key={currentSuggestion.id}>
           <Suggestion
             user={user}
-            idDb={true}
+            isDb={true}
             wishMode={wishMode}
             currentSuggestion={currentSuggestion}
             getAllWishlistSuggestions={getAllWishlistSuggestions}
@@ -47,7 +47,7 @@ const handleListDelete = () => {
       ))}
       {wishlistSuggs.length
       ? (
-        <Button onClick={handleListDelete}>Delete entire wishlist</Button>
+        <Button sx={{ borderWidth: 4, color: "black" }} onClick={handleListDelete}>Delete entire wishlist</Button>
 
       ) : (
         <Typography>Add new excursions to your wishlist on the Suggestions Page!</Typography>

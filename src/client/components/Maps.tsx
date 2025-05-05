@@ -21,7 +21,6 @@ const center = {
 const libraries: any = ['geometry', 'marker'];
 
 const Maps = () => {
-  const navigate = useNavigate();
   const [origin, setOrigin] = useState<string>("");
   const [destination, setDestination] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +34,8 @@ const Maps = () => {
   const directionsService = useRef<google.maps.DirectionsService | null>(null);
   const originMarker = useRef<google.maps.Marker | null>(null);
   const destinationMarker = useRef<google.maps.Marker | null>(null);
+  const navigate = useNavigate();
+
   //const polylineRef = useRef<google.maps.Polyline | null>(null);
   const { itineraryId } = useItinerary();
   useEffect(() => {
@@ -122,15 +123,16 @@ const Maps = () => {
         travelTime,
         itineraryId,
       });
-      setRouteinfo(response.data.routeInfo.id)
+      setRouteinfo(response.data.routeInfo.id);
 
       if (response.status === 201) {
         console.log('Data saved successfully!');
-        //setOpenModal(true); // Open the modal when the data is saved
+        return true;
       }
     } catch (error) {
       console.error('Error saving travel data:', error);
     }
+    return false;
   };
 
   useEffect(() => {
@@ -199,7 +201,7 @@ const Maps = () => {
             sx: {
               top: -12,
               '&.Mui-focused': {
-                color: '#3200FA',
+                color: 'black',
               },
             }
           }}
@@ -213,7 +215,7 @@ const Maps = () => {
             sx: {
               top: -12,
               '&.Mui-focused': {
-                color: '#3200FA',
+                color: 'black',
               },
             }
           }}
@@ -237,7 +239,12 @@ const Maps = () => {
         <Button
           variant="contained"
           color="secondary"
-          onClick={() => saveTravel(origin, destination, travelTime || "")}
+          onClick={async () => {
+            const success = await saveTravel(origin, destination, travelTime || "");
+            if (success) {
+              navigate('/itinerary');
+            }
+          }}
         >
           Save Travel Time
         </Button>
@@ -245,7 +252,7 @@ const Maps = () => {
 
       {/* Google Map */}
       <LoadScript
-        googleMapsApiKey={"AIzaSyDbe88-k6VGoCVYDfdhGS4Zi2w7YwXiCGA "}
+        googleMapsApiKey={"API KEY "}
         libraries={libraries}
       >
         <Box
@@ -275,36 +282,3 @@ const Maps = () => {
 
 export default Maps;
 
-{/* Modal for itinerary options */ }
-{/* <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="md">
-  <DialogTitle>Itinerary Options</DialogTitle>
-  <DialogContent>
-    <Typography variant="h6">Itinerary Options</Typography>
-    <Box mt={2}>
-
-      {itinerary.length > 0 ? (
-
-        itinerary.map((trip, id) => (
-          <Card key={id} variant="outlined" sx={{ marginBottom: 2 }}>
-            <CardContent>
-              <Typography variant="h6">{trip.name}</Typography>
-              <Typography>{trip.notes}</Typography>
-            </CardContent>
-
-            <Button onClick={() => handleSelectItinerary(trip.id, routeInfo)}>
-              Select</Button>
-
-          </Card>
-        ))
-      ) : (
-        <Typography>No itinerary available.</Typography>
-      )}
-    </Box>
-
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={() => setOpenModal(false)} color="primary">
-      Close
-    </Button>
-  </DialogActions>
-</Dialog> */}

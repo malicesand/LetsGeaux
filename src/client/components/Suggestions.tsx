@@ -10,7 +10,7 @@ import {
   // Avatar,
   // Input,
   // InputLabel,
-  // Button,
+  Button,
   // SpeedDial,
   // CircularProgress
   Box,
@@ -23,7 +23,7 @@ interface SuggestionsProps {
 }
 const Suggestions: React.FC<SuggestionsProps>= ({ user }) => {
 
-  const [editableSuggestion, setEditableSuggestion] = useState({});
+  const [showingDb, setShowingDb] = useState(false);
   const [suggestionSet, setSuggestionSet] = useState([]);
   const [suggestionEditMode, setSuggestionEditMode] = useState(false);
   const [dbSuggestionSet, setDbSuggestionSet] = useState([]);
@@ -57,6 +57,14 @@ const sortSuggestionSet = (array: []) => {
 
 }
 
+const showDbSuggestions = () => {
+  setShowingDb(true);
+}
+
+const showInterestSuggestions = () => {
+  setShowingDb(false);
+}
+
 const getApiSuggestions = (query = "Restaurants") => {
   axios.get(`/api/suggestions/search/${user.id}`).then(({data: searchData}) => {
     setSuggestionSet(searchData);
@@ -73,8 +81,10 @@ const getApiSuggestions = (query = "Restaurants") => {
   return (
     <Container>
       <h1>Suggested Excursions</h1>
-      <h2>user picks</h2>
-      <h2></h2>
+      {showingDb ? (
+        <>
+        <h2>user picks</h2>
+      <Button sx={{ borderWidth: 4, color: "black" }} onClick={showInterestSuggestions}>Just for you</Button>
       {dbSuggestionSet.map((currentSuggestion: any) => (
         <Box
         sx={{
@@ -82,9 +92,9 @@ const getApiSuggestions = (query = "Restaurants") => {
           borderRadius: "4",
           p: 4, mb:
           "8px"
-          }}
-          key={currentSuggestion.id}
-          >
+        }}
+        key={currentSuggestion.id}
+        >
           <Suggestion
           user={user}
           isDb={true}
@@ -95,7 +105,11 @@ const getApiSuggestions = (query = "Restaurants") => {
           />
         </Box>
       ))}
+      </>
+    ) : (
+      <>
       <h2>You may enjoy:</h2>
+      <Button sx={{ borderWidth: 4, color: "black" }} onClick={showDbSuggestions}>user picks</Button>
       {suggestionSet.map((currentSuggestion) => (
         <Box
         key={currentSuggestion.fsq_id}
@@ -104,19 +118,21 @@ const getApiSuggestions = (query = "Restaurants") => {
           borderRadius: "4",
           p: 4,
           mb: "8px"
-          }}
-          >
-          <Suggestion
-          user={user}
-          currentSuggestion={currentSuggestion}
-          isDb={false}
-          getAllSuggestions={getAllSuggestions}
-          setSuggestionEditMode={setSuggestionEditMode}
-          setSuggestionSet={setSuggestionSet}
-          // setEditableSuggestion={setEditableSuggestion}
-          />
+        }}
+        >
+        <Suggestion
+        user={user}
+        currentSuggestion={currentSuggestion}
+        isDb={false}
+        getAllSuggestions={getAllSuggestions}
+        setSuggestionEditMode={setSuggestionEditMode}
+        setSuggestionSet={setSuggestionSet}
+        // setEditableSuggestion={setEditableSuggestion}
+        />
         </Box>
       ))}
+    </>
+    )}
     </Container>
   )
 }
