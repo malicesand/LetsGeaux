@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useBudgetNotifications } from './BudgetNotificationContext';
-// Import PiTrash icon from react-icons
+// Import PiTrash icon from react icons
 import { PiTrash } from 'react-icons/pi';
 
 interface BudgetEntry {
@@ -48,7 +48,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
   // Threshold percentages for notifications
   const thresholds = [40, 50, 75, 90, 95];
 
-  // PSEUDO: fetch budgets when selectedItineraryId changes
+  //fetch budgets when selectedItineraryId changes
   const fetchBudgets = async () => {
     if (!selectedItineraryId) return;
     setLoading(true);
@@ -67,7 +67,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
     fetchBudgets();
   }, [selectedItineraryId]);
 
-  // PSEUDO: check for threshold crossings and notify
+  //check for threshold crossings and notify
   useEffect(() => {
     budgets.forEach(budget => {
       if (budget.limit > 0) {
@@ -86,7 +86,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
     });
   }, [budgets, enqueueSnackbar, addNotification, notified]);
 
-  // PSEUDO: open edit dialog
+  //open edit dialog
   const openEditModal = (budget: BudgetEntry) => {
     setSelectedBudget(budget);
     setEditForm({
@@ -98,13 +98,32 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
     setEditOpen(true);
   };
 
-  // PSEUDO: open delete confirmation
+  //open delete confirmation
   const openDeleteModal = (budget: BudgetEntry) => {
     setSelectedBudget(budget);
     setDeleteOpen(true);
   };
 
-  // STEP: handle delete confirmation
+  //handle save after editing
+  const handleEditSave = async () => {
+    if (!selectedBudget) return;
+    try {
+      await api.put(`/budget/${selectedBudget.id}`, {
+        ...editForm,
+        limit: parseFloat(editForm.limit),
+        spent: parseFloat(editForm.spent),
+      });
+      setUpdatedEntryId(selectedBudget.id);
+      fetchBudgets();
+    } catch (err) {
+      console.error('Update failed:', err);
+    } finally {
+      setEditOpen(false);
+      setTimeout(() => setUpdatedEntryId(null), 2000);
+    }
+  };
+
+  //handle delete confirmation
   const handleDeleteConfirm = async () => {
     if (!selectedBudget) return;
     try {
@@ -117,7 +136,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
     }
   };
 
-  // Early returns for states
+  //early returns for states
   if (!selectedItineraryId) {
     return <Typography sx={{ m: 4 }}>Select an itinerary to view budget entries.</Typography>;
   }
@@ -142,7 +161,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
               backgroundColor: '#f9f9f9'
             }}
           >
-            {/* STEP: red trash icon in bottom-right */}
+            {/* red trash icon in bottom-right */}
             <IconButton
               aria-label="delete entry"
               onClick={() => openDeleteModal(budget)}
@@ -166,8 +185,8 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
             <Stack direction="row" spacing={1} mt={2}>
               <Button
                 size="small"
-                variant="outlined"
-                sx={{ color: 'black' }} // STEP: make Edit button text black
+                variant="text" // Changed variant from outlined to text
+                sx={{ color: 'black' }} //make Edit button text black
                 onClick={() => openEditModal(budget)}
               >
                 Edit
@@ -178,7 +197,56 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
         );
       })}
 
-      {/* STEP: Confirmation modal */}
+      {/* Edit Modal */}
+      <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
+        <DialogTitle sx={{ color: 'black' }}>Edit Budget Entry</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Category"
+            fullWidth
+            margin="dense"
+            value={editForm.category}
+            disabled
+          />
+          <TextField
+            label="Limit"
+            type="number"
+            fullWidth
+            margin="dense"
+            value={editForm.limit}
+            onChange={(e) => setEditForm({ ...editForm, limit: e.target.value })}
+          />
+          <TextField
+            label="Spent"
+            type="number"
+            fullWidth
+            margin="dense"
+            value={editForm.spent}
+            onChange={(e) => setEditForm({ ...editForm, spent: e.target.value })}
+          />
+          <TextField
+            label="Notes"
+            fullWidth
+            margin="dense"
+            multiline
+            value={editForm.notes}
+            onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setEditOpen(false)}
+            sx={{ color: 'black' }} //make Cancel button text black
+          >
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={handleEditSave}>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* confirmation modal */}
       <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <DialogTitle sx={{ color: 'black' }}>Confirm Delete</DialogTitle>
         <DialogContent>
@@ -189,11 +257,11 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
         <DialogActions>
           <Button
             onClick={() => setDeleteOpen(false)}
-            sx={{ color: 'black' }} // STEP: make Cancel button text black
+            sx={{ color: 'black' }} //make Cancel button text black
           >
             Cancel
           </Button>
-          <Button variant="outlined" color="red" onClick={handleDeleteConfirm}>
+          <Button variant="outlined" color="error">
             Delete
           </Button>
         </DialogActions>
