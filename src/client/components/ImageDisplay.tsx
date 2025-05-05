@@ -31,7 +31,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
   const [autoFlip, setAutoFlip] = useState(true);
-  const [flipInterval, setFlipInterval] = useState(3000); // milliseconds
+  const [flipInterval, setFlipInterval] = useState(7000); // milliseconds
 
   const imageChunks = chunkArray(images, 2);
 
@@ -67,16 +67,34 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
   };
 
   return (
-    <Box>
-      <Typography variant="h3" align="center">
+    <Box p={2}>
+      <Typography variant="h4" align="center" gutterBottom>
         Uploaded Images
       </Typography>
 
-      <Box display="flex" justifyContent="center" alignItems="center" gap={2} mt={2}>
-        <Button variant="contained" onClick={handlePrev} disabled={imageChunks.length <= 1}>
+      <Box
+        display="flex"
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        justifyContent="center"
+        alignItems="center"
+        gap={2}
+        flexWrap="wrap"
+        mt={2}
+      >
+        <Button
+          variant="contained"
+          onClick={handlePrev}
+          disabled={imageChunks.length <= 1}
+          fullWidth={true}
+        >
           Previous
         </Button>
-        <Button variant="contained" onClick={handleNext} disabled={imageChunks.length <= 1}>
+        <Button
+          variant="contained"
+          onClick={handleNext}
+          disabled={imageChunks.length <= 1}
+          fullWidth={true}
+        >
           Next
         </Button>
         <FormControlLabel
@@ -87,13 +105,14 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
             />
           }
           label="Auto Flip"
+          sx={{ whiteSpace: 'nowrap' }}
         />
-        <Box width={200}>
+        <Box width={{ xs: '100%', sm: 200 }}>
           <Typography variant="caption">Speed (ms)</Typography>
           <Slider
             value={flipInterval}
             onChange={(_, value) => setFlipInterval(value as number)}
-            step={500}
+            step={800}
             min={1000}
             max={10000}
             disabled={!autoFlip}
@@ -111,21 +130,21 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
           sx={{
             display: 'flex',
             flexWrap: 'wrap',
-            gap: 3,
+            gap: 2,
             justifyContent: 'center',
-            mt: 2,
+            mt: 3,
             transition: 'transform 0.3s',
-            transformStyle: 'preserve-3d',
           }}
         >
           {imageChunks[currentChunkIndex]?.map((image) => (
             <Box
               key={image.id}
               sx={{
-                border: '2px solid black',
-                borderRadius: 4,
-                padding: 2,
-                maxWidth: 220,
+                border: '4px solid black',
+                borderRadius: 2,
+                p: 1,
+                maxWidth: 200,
+                width: '100%',
                 textAlign: 'center',
                 backgroundColor: 'white',
               }}
@@ -133,16 +152,21 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
               <img
                 src={image.url}
                 alt="Uploaded"
-                style={{ width: '100%', borderRadius: '4px' }}
+                style={{
+                  width: '100%',
+                  borderRadius: '4px',
+                  objectFit: 'cover',
+                }}
               />
-              <Typography variant="body1" sx={{ fontWeight: 500, mt: 1 }}>
+              <Typography variant="body2" sx={{ fontWeight: 500, mt: 1 }}>
                 Notes: {image.notes}
               </Typography>
               <Button
                 onClick={() => deleteImage(image.id)}
                 variant="contained"
-                color="primary"
+                color="black"
                 sx={{ mt: 1 }}
+                fullWidth
               >
                 Delete
               </Button>
@@ -152,6 +176,6 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
       )}
     </Box>
   );
-};
+}
 
 export default ImageDisplay;

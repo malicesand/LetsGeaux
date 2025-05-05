@@ -276,7 +276,7 @@ Fashion: [
 
 ]
 
-Activities: [
+Outdoor Activities: [
   52e81612bcbc57f1066b79ea	-- Go Kart Track	-- Arts and Entertainment > Go Kart Track
   4bf58dd8d48988d193941735	-- Water Park	-- Arts and Entertainment > Water Park
   5744ccdfe4b0c0459246b4d9	-- Observatory	-- Community and Government > Observatory

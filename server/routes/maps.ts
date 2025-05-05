@@ -134,4 +134,18 @@ mapsRoute.patch('/:routeInfo', async (req: any, res: any) => {
   }
 });
 
+mapsRoute.get('/', async (req, res) => {
+  try {
+    const routes = await prisma.route.findMany({
+      include: {
+        itinerary: true,
+      },
+    });
+    res.json(routes);
+  } catch (error) {
+    console.error('Error fetching routes:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 export default mapsRoute;
