@@ -12,6 +12,7 @@ const root = createRoot(document.getElementById('root'));
 //import geometry from './client/theme/inspiration-geometry.png'
 import { ImageProvider } from './client/components/ImageContext';
 //import { Box } from '@mui/material';
+import { ItineraryProvider } from './client/components/ItineraryContext';
 document.body.style.backgroundColor = '#c4a1ff';
 //document.body.style.backgroundImage = geometry
 root.render(
@@ -23,19 +24,21 @@ root.render(
 
   // }}>
   <BrowserRouter>
-    <ImageProvider>
-      <MediaQueryProvider>
-        <SnackbarProvider maxSnack={3}>
-          <BudgetNotificationProvider>
-            <UserProvider>
-              <ThemeProvider theme={theme1}>
-                <App />
-              </ThemeProvider>
-            </UserProvider>
-          </BudgetNotificationProvider>
-        </SnackbarProvider>
-      </MediaQueryProvider>
-    </ImageProvider>
+    <ItineraryProvider>
+      <ImageProvider>
+        <MediaQueryProvider>
+          <SnackbarProvider maxSnack={3}>
+            <BudgetNotificationProvider>
+              <UserProvider>
+                <ThemeProvider theme={theme1}>
+                  <App />
+                </ThemeProvider>
+              </UserProvider>
+            </BudgetNotificationProvider>
+          </SnackbarProvider>
+        </MediaQueryProvider>
+      </ImageProvider>
+    </ItineraryProvider>
   </BrowserRouter >
   // </Box >
 );
