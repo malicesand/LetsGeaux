@@ -85,7 +85,9 @@ const Suggestion: React.FC<SuggestionProps> = ({
   const displaySuccessSnack = (variant: VariantType) => {
     enqueueSnackbar('Activity added successfully!', { variant })
   }
-
+const displayWishlistSnack = (variant: VariantType) => {
+  enqueueSnackbar('Suggestion added to Wishlist!', { variant })
+}
   const handleOpenClick = () => {
     setOpen(true);
   }
@@ -123,7 +125,9 @@ const handleLeaveSite = () => {
       }
     }
     axios.post(`/api/suggestions/${user.id}`, details)
-      .then(() => { })
+      .then(() => {
+        displaySuccessSnack('success')
+      })
       .catch(err => console.error('unable to save suggestion', err))
   }
 
