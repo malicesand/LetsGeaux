@@ -169,29 +169,34 @@ const handleLeaveSite = () => {
               <img style={{ width: "200px", marginTop: "10px" }} src={`${image}`}></img>
 
             ) : (
-              <img style={{ width: "100px", marginTop: "10px" }} src="https://static.vecteezy.com/system/resources/previews/002/187/723/original/coming-soon-neon-signs-style-text-free-vector.jpg"></img>
+              <img style={{ width: "150px", marginTop: "10px" }} src="https://media.gettyimages.com/id/1134912623/photo/new-orleans-streetcar-usa.jpg?s=612x612&w=0&k=20&c=AAWjR6YySyXUhPjW_1s8O84RQuHjEVLAD13usoRYtuk="></img>
               // set typography to "body"
             )}
             <Typography>{description}</Typography>
-            <Typography><b>Contact website:</b> <Link color='inherit' href={link} style={{ cursor: 'pointer' }}>
+            {link ? (
+
+              <Typography><b>Contact website:</b> <Link color='inherit' href={link} style={{ cursor: 'pointer' }}>
             Go to {title}
             {children}
             </Link>
             </Typography>
 
-            {/* <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+            /* <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
               <DialogTitle>Before you Geaux</DialogTitle>
               <DialogContent>
-                <Typography>
-                You're leaving the site. Would you like to add this suggestion to your wishlist before you leave?
-                </Typography>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-                  <Button onClick={addToWishlist}>Add to Wishlist and geaux</Button>
-                  <Button onClick={handleLeaveSite}>Just geaux</Button>
-                </DialogActions>
-            </Dialog> */}
+              <Typography>
+              You're leaving the site. Would you like to add this suggestion to your wishlist before you leave?
+              </Typography>
+              </DialogContent>
+              <DialogActions>
+              <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+              <Button onClick={addToWishlist}>Add to Wishlist and geaux</Button>
+              <Button onClick={handleLeaveSite}>Just geaux</Button>
+              </DialogActions>
+              </Dialog> */
+            ) : (
+              <Typography> No website provided </Typography>
+            )}
 
 
             <Typography><b>address:</b> {address}</Typography>

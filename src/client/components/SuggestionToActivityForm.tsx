@@ -75,7 +75,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
       time: null,
       date: null,
       location: title,
-      image: image ? image : '',
+      image,
       phone: link,
       address,
     },

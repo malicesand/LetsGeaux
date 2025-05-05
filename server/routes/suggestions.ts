@@ -124,7 +124,7 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
       let returnString = '';
       // set an empty string that will eventually be what goes into the api search function
       // REFACTOR: query will now = a function that:
-      const name/*{ name }*/ = /*chosenUserInterest[0]*/'Food';
+      const { name } = chosenUserInterest[0];
       // 1. takes the name from userInterest. Use it to access the corresponding array
       const queryStack: string[] = interestCodes[name] //for testing, we can replace this line with hardcode.
       // 2. sets a math randomizer that runs up to the length of said array
