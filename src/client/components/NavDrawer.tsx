@@ -172,7 +172,7 @@ const NavDrawer: React.FC = () => {
               <ListItemIcon>
                 <PiChatsBold size={30} style={{ color: 'black' }} />
               </ListItemIcon>
-              <ListItemText primary={`Gata AI Chat`} />
+              <ListItemText primary={`Geaux Bot`} />
             </ListItemButton>
           </ListItem>
           {/* Budget Buddy */}

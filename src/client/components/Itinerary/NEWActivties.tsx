@@ -426,7 +426,7 @@ for (const activity of sortedActivities) {
           '&.Mui-focused': {
             color: 'black'
           },
-          top: -6
+          top: -9
         }
       }}
     />
@@ -474,7 +474,7 @@ for (const activity of sortedActivities) {
           '&.Mui-focused': {
             color: 'black'
           },
-          top: -6
+          top: -9
         }
       }}
     />
@@ -539,7 +539,7 @@ for (const activity of sortedActivities) {
                             color: 'black'
                           },
 
-                          top: -6
+                          top: -9
                         }
                       }
                     }
@@ -583,7 +583,7 @@ for (const activity of sortedActivities) {
                             color: 'black'
                           },
 
-                          top: -6
+                          top: -9
                         }
                       }
                     }
@@ -641,7 +641,7 @@ for (const activity of sortedActivities) {
                           '&.Mui-focused': {
                             color: 'black'
                           },
-                          top: -6
+                          top: -9
                         }
                       }}
                     />
@@ -680,7 +680,7 @@ for (const activity of sortedActivities) {
                         color: 'black'
                       },
 
-                      top: -6
+                      top: -9
                     }
                   }}
                 />
@@ -697,7 +697,7 @@ for (const activity of sortedActivities) {
                         color: 'black'
                       },
 
-                      top: -6
+                      top: -9
                     }
                   }}
                 />
@@ -714,7 +714,7 @@ for (const activity of sortedActivities) {
                         color: 'black'
                       },
 
-                      top: -6
+                      top: -9
                     }
                   }}
                 />

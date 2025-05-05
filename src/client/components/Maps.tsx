@@ -4,6 +4,8 @@ import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import axios from "axios";
 import { TextField, Button, Box, Typography, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import MapsModal from './MapsModal';
+import { useItinerary } from "./ItineraryContext";
+
 // Container style for the map 
 const containerStyle = {
   width: "100%",
@@ -34,7 +36,7 @@ const Maps = () => {
   const originMarker = useRef<google.maps.Marker | null>(null);
   const destinationMarker = useRef<google.maps.Marker | null>(null);
   //const polylineRef = useRef<google.maps.Polyline | null>(null);
-
+  const { itineraryId } = useItinerary();
   useEffect(() => {
     const fetchItinerary = async () => {
       try {
@@ -118,6 +120,7 @@ const Maps = () => {
         origin,
         destination,
         travelTime,
+        itineraryId,
       });
       setRouteinfo(response.data.routeInfo.id)
 

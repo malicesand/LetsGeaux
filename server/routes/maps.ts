@@ -9,8 +9,8 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 const mapsRoute = express.Router()
 
- 
-mapsRoute.get('/directions', async (req:any, res:any) => {
+
+mapsRoute.get('/directions', async (req: any, res: any) => {
   const { origin, destination } = req.query;
 
   // Validate parameters
@@ -46,17 +46,18 @@ mapsRoute.get('/directions', async (req:any, res:any) => {
   }
 });
 
-mapsRoute.post('/', async(req:any, res:any)=>{
- 
-  const { origin, destination, travelTime} = req.body;
+mapsRoute.post('/', async (req: any, res: any) => {
+
+  const { origin, destination, travelTime, itineraryId } = req.body;
 
   try {
-    
+
     const routeInfo = await prisma.route.create({
       data: {
         origin,
         destination,
         travelTime,
+        itineraryId
       },
     });
 
@@ -72,30 +73,30 @@ mapsRoute.post('/', async(req:any, res:any)=>{
     });
   }
 })
-mapsRoute.get('/:itineraryId',async (req:any, res:any)=>{
-  const {itineraryId} = req.params
-  try{
-const routeGet = await prisma.route.findMany(
- {where:{itineraryId:+itineraryId}}
-  
-)
-console.log('Travel info ')
-res.status(200).send(routeGet)
+mapsRoute.get('/:itineraryId', async (req: any, res: any) => {
+  const { itineraryId } = req.params
+  try {
+    const routeGet = await prisma.route.findMany(
+      { where: { itineraryId: +itineraryId } }
+
+    )
+
+    res.status(200).send(routeGet)
   }
-  catch(error){
-console.error('error geting information about your route', error)
+  catch (error) {
+    console.error('error geting information about your route', error)
   }
 })
-mapsRoute.delete('/:id', async (req:any, res:any)=>{
-const {id} = req.params
+mapsRoute.delete('/:id', async (req: any, res: any) => {
+  const { id } = req.params
 
-try {
-  const deleteRoute = await prisma.route.delete({
-    where:{
-      id: parseInt(id)
-    }
-  })
-  res.status(200).json({ message: 'Route deleted successfully', deleteRoute });
+  try {
+    const deleteRoute = await prisma.route.delete({
+      where: {
+        id: parseInt(id)
+      }
+    })
+    res.status(200).json({ message: 'Route deleted successfully', deleteRoute });
   } catch (error) {
     console.error('Error deleting route:', error);
     res.status(500).json({ message: 'Error deleting route. Please try again later.' });
@@ -103,7 +104,7 @@ try {
 })
 mapsRoute.patch('/:routeInfo', async (req: any, res: any) => {
   const { itineraryId } = req.body;
-  
+
 
   if (!itineraryId) {
     return res.status(400).json({ error: "Itinerary ID is required" });
@@ -113,23 +114,23 @@ mapsRoute.patch('/:routeInfo', async (req: any, res: any) => {
     // Update the map with the provided itineraryId
     const updateMap = await prisma.route.update({
       where: {
-        id: +req.params.routeInfo, 
+        id: +req.params.routeInfo,
       },
       data: {
-        itineraryId, 
+        itineraryId,
       },
     });
 
     if (!updateMap) {
-      
+
       return res.status(404).json({ error: "No map entry found to update" });
     }
 
-    
+
     res.status(200).json(updateMap);
   } catch (error) {
     console.error('Error updating map:', error);
-    res.status(500).json({ error: 'Internal server error' }); 
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
