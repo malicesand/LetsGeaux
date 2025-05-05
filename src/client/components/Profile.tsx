@@ -19,7 +19,22 @@ import ImageUpload from './ImageUpload';
 import { useUser } from './UserContext';
 import { PiPencilBold } from "react-icons/pi";
 
-const ALL_INTERESTS = ['Restaurants', 'Hotels', 'Geos', 'Attractions'];
+const ALL_INTERESTS = ['Music/Dancing',
+  'Bars',
+  'Shows',
+  'Sports',
+  'Games',
+  'Gambling',
+  'Adult',
+  'Food',
+  'History',
+  'Animals/Wildlife',
+  'Museums',
+  'Parks',
+  'Major Events',
+  'Fashion',
+  'Outdoor Activities',
+  'Self-care'];
 
 const Profile: React.FC = () => {
   const location = useLocation();
