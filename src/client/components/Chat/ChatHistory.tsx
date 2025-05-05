@@ -111,7 +111,6 @@ const ChatHistory: React.FC<ChatHistProps> = ({
   };
 
   // TODO - Polish unexpanded history view
-  // TODO - Button Update
   // ! - Match Fonts 
   // TODO - Spruce things up with an Icon?
   // TODO - Visual Indicator for Editing
@@ -125,6 +124,7 @@ const ChatHistory: React.FC<ChatHistProps> = ({
           sx={{
             mb: 2,
             p: 2,
+            
             px: isMobile ? 1 : 2,
             py: isMobile ? 1 : 2,
             backgroundColor: '#fff085',
@@ -153,6 +153,13 @@ const ChatHistory: React.FC<ChatHistProps> = ({
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       saveEditedName(session.sessionId);
+                    }
+                  }}
+                  onBlur = {() => {
+                    if (editedTitle.trim() && editedTitle !== session.conversationName){
+                      saveEditedName(session.sessionId);
+                    } else {
+                      setEditingSessionId(null);
                     }
                   }}
                   autoFocus
