@@ -212,16 +212,10 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
                         res.status(404).send('No suggestions found');
                       }
                      })
-
-                    // });
-                    // res.status(200).send(newEntries);
-                  // });
-                // })
                 .catch((err) => {
                   console.error("had a hard time", err);
                   res.sendStatus(500);
                 });
-                // }
               }
               } catch (err) {
                 throw err;
@@ -233,10 +227,27 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
 suggestionRouter.get('/check/:id', async (req: any, res: any) => {
   const { id } = req.params;
   try {
-    console.log('at the check endpoint')
-    const listOfItineraryIds = await prisma.$queryRaw`SELECT * FROM itinerary WHERE partyId IN (SELECT partyId FROM userParty WHERE userId = ${id})`;
-    console.log('this is my list of itinerary ids', listOfItineraryIds);
-    res.status(200).send(listOfItineraryIds);
+
+    const listOfPartyItineraries = await prisma.$queryRaw`SELECT * FROM itinerary WHERE partyId IN (SELECT partyId FROM userParty WHERE userId = ${id})`;
+
+    const listOfCreatorItineraries = await prisma.itinerary.findMany({
+      where: {
+        creatorId: +id,
+      }
+    });
+    const fullListOfItineraries = [];
+
+// make a function that feeds non-duplicate itineraries into the above array
+const siftItineraries = (itinArray) => {
+  itinArray.forEach((itin: object) => {
+    if (fullListOfItineraries.every((listedItinerary: object) => listedItinerary.id != itin.id)) 
+      fullListOfItineraries.push(itin);
+  })
+}
+siftItineraries(listOfCreatorItineraries);
+siftItineraries(listOfPartyItineraries);
+
+    res.status(200).send(fullListOfItineraries);
   } catch (err) {
     console.error('could not search for list', err);
     res.sendStatus(500);
