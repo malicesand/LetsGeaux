@@ -36,7 +36,7 @@ import { useSnackbar } from 'notistack';
 import Calendar from './Calendar';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 dayjs.extend(isSameOrBefore);
-import { useItinerary } from '../ItineraryContext';
+//import { useItinerary } from '../ItineraryContext';
 
 interface ItineraryProps {
   user: user;
@@ -71,15 +71,15 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     travelTime: string;
     itineraryId: number
   }
-  const { setItineraryId, itineraryId } = useItinerary();
+  //const { setItineraryId, itineraryId } = useItinerary();
 
-  useEffect(() => {
-    if (itineraryId === null) {
-      console.log('ItineraryId is not loaded yet.');
-    } else {
-      console.log('ItineraryId loaded:', itineraryId);
-    }
-  }, [itineraryId]);
+  // useEffect(() => {
+  //   if (itineraryId === null) {
+  //     console.log('ItineraryId is not loaded yet.');
+  //   } else {
+  //     console.log('ItineraryId loaded:', itineraryId);
+  //   }
+  // }, [itineraryId]);
 
 
   //delete confirmation state
@@ -151,17 +151,19 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     };
     fetchItineraries();
   }, []);
+
+
   useEffect(() => {
-    if (itineraryId !== null) {
-      axios.get(`/api/maps/${itineraryId}`)
-        .then(response => {
-          setRoutes(response.data);
-        })
-        .catch(error => {
-          console.error("Error fetching routes:", error);
-        });
-    }
-  }, [itineraryId]);
+
+    axios.get(`/api/maps`)
+      .then(response => {
+        setRoutes(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching routes:", error);
+      });
+
+  }, []);
 
   // Handle delete route request
   const deleteRoute = async (id: number) => {
@@ -374,10 +376,10 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               InputLabelProps={{
                 sx: {
                   top: -9,
-                  color: 'black', 
-      '&.Mui-focused': {
-        color: 'black' 
-      },
+                  color: 'black',
+                  '&.Mui-focused': {
+                    color: 'black'
+                  },
                 }
               }}
             />
@@ -391,9 +393,9 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               sx={{ mb: 2 }}
               InputLabelProps={{
                 sx: {
-                  top: -9,  color: 'black',
+                  top: -9, color: 'black',
                   '&.Mui-focused': {
-                    color: 'black' 
+                    color: 'black'
                   },
                 }
               }}
@@ -570,8 +572,10 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               {console.log('itin.id', itinerary.id)} */}
               {/* rendering Routes  */}
               <Typography variant='h3'> Routes Between Activities:</Typography>
-              {itinerary.id === itineraryId && (
-                routes.map((route, index) => (
+
+              {routes
+                .filter((route) => route.itineraryId === itinerary.id)
+                .map((route, index) => (
                   <Card
                     key={index}
                     sx={{
@@ -585,21 +589,16 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                       fontWeight: 700
                     }}
                   >
-                    <Box textAlign='center' key={index}>
-                      
+                    <Box textAlign='center'>
                       <Typography variant="body1">Origin: {route.origin}</Typography>
                       <Typography variant="body1">Destination: {route.destination}</Typography>
                       <Typography variant="body1">Travel Time: {route.travelTime}</Typography>
-                      <Button
-                         sx={{ color: 'black' }}
-                        onClick={() => deleteRoute(route.id)}
-                      >
+                      <Button sx={{ color: 'black' }} onClick={() => deleteRoute(route.id)}>
                         <PiTrash />
                       </Button>
                     </Box>
                   </Card>
-                ))
-              )}
+                ))}
 
               {user && (
                 <Activity

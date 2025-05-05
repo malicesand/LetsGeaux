@@ -24,21 +24,21 @@ root.render(
 
   // }}>
   <BrowserRouter>
-    <ItineraryProvider>
-      <ImageProvider>
-        <MediaQueryProvider>
-          <SnackbarProvider maxSnack={3}>
-            <BudgetNotificationProvider>
-              <UserProvider>
-                <ThemeProvider theme={theme1}>
-                  <App />
-                </ThemeProvider>
-              </UserProvider>
-            </BudgetNotificationProvider>
-          </SnackbarProvider>
-        </MediaQueryProvider>
-      </ImageProvider>
-    </ItineraryProvider>
+    {/* <ItineraryProvider> */}
+    <ImageProvider>
+      <MediaQueryProvider>
+        <SnackbarProvider maxSnack={3}>
+          <BudgetNotificationProvider>
+            <UserProvider>
+              <ThemeProvider theme={theme1}>
+                <App />
+              </ThemeProvider>
+            </UserProvider>
+          </BudgetNotificationProvider>
+        </SnackbarProvider>
+      </MediaQueryProvider>
+    </ImageProvider>
+    {/* </ItineraryProvider> */}
   </BrowserRouter >
   // </Box >
 );
