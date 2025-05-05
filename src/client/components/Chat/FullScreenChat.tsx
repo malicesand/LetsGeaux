@@ -115,7 +115,7 @@ const FullScreenChat: React.FC<ChatProps> = ({
       chatContainerRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
-  
+
   //* Message Handling And Default Name*//
   const handleSubmit = async () => {
     if (!userMessage.trim()) return;
@@ -130,17 +130,17 @@ const FullScreenChat: React.FC<ChatProps> = ({
       });
       setChatLog(prev => [...prev, { text: response.data, user: false }]);
 
-      if (!hasNamedSession) {
-        try {
-          // console.log(`message inside naming ${userMessage}`)
-          await axios.patch(`/api/chats/chat-history/${sessionId}`, {
-            conversationName: userMessage
-          });
-          setHasNamedSession(true);
-        } catch (err) {
-          console.error('Failed to auto-name session:', err);
-        }
-      };
+      // if (!hasNamedSession) {
+      //   try {
+      //     // console.log(`message inside naming ${userMessage}`)
+      //     await axios.patch(`/api/chats/chat-history/${sessionId}`, {
+      //       conversationName: userMessage
+      //     });
+      //     setHasNamedSession(true);
+      //   } catch (err) {
+      //     console.error('Failed to auto-name session:', err);
+      //   }
+      // };
     } catch (error: any) {
       // ? Type the error
       console.error('Error sending message:', error);
@@ -199,15 +199,15 @@ const FullScreenChat: React.FC<ChatProps> = ({
             }}
           >
             <Typography
-              variant='h4'
+              variant='h3'
               sx={{ fontFamily: 'Lexend Mega', color: 'black' }}
             >
-              Gata Bot
+              Geaux Bot
             </Typography>
             {isMobile && (
               <IconButton
                 onClick={() => setIsHistoryOpen(true)}
-                sx={{ color: 'black' }}
+                sx={{ color: 'black', fontSize: '2rem' }}
               >
                 ☰
               </IconButton>
@@ -246,10 +246,10 @@ const FullScreenChat: React.FC<ChatProps> = ({
                     px: 2,
                     py: 1,
                     borderRadius: 2,
-                    backgroundColor: msg.user ? '#fff' : '#e6e6e6', // TODO change colors and maybe add labels
+                    backgroundColor: msg.user ? '#fff' : '#e6e6e6', 
                     alignSelf: msg.user ? 'flex-end' : 'flex-start',
                     mb: 1,
-                    fontSize: '1rem',
+                    variant: 'body1',
                     color: 'black',
                     boxShadow: '2px 2px 0px black'
                   }}
@@ -288,8 +288,8 @@ const FullScreenChat: React.FC<ChatProps> = ({
                     borderRadius: '24px',
                     px: 2,
                     py: 1,
-                    fontFamily: 'inherit', // TODO change font
-                    fontSize: '1rem',
+                    fontFamily: 'DM Sans', 
+                    variant: 'body1',
                     boxShadow: '2px 2px 0px black',
                     color: 'black'
                   }
@@ -351,19 +351,6 @@ const FullScreenChat: React.FC<ChatProps> = ({
                     overflowY: 'auto',
                     position: 'absolute',
                     zIndex: 10
-
-                    /* position: 'absolute',
-                    right: 0,
-                    top: 0,
-                    height: '100%',
-                    width: '85%',
-                    border: '2px solid black',
-                    borderTopLeftRadius: 16,
-                    borderBottomLeftRadius: 16,
-                    backgroundColor: '#fff085',
-                    boxShadow: '4px 4px 0px black',
-                    zIndex: 10, // ensure it's above chat content
-                    overflowY: 'auto', */
                   }
                 }
               }}
@@ -375,14 +362,14 @@ const FullScreenChat: React.FC<ChatProps> = ({
             >
               <IconButton
                 onClick={() => setIsHistoryOpen(false)}
-                sx={{ position: 'absolute', top: 8, right: 8, color: 'black' }}
+                sx={{ fontFamily: 'Lexend Mega', position: 'absolute', top: 0, right: 8, color: 'black', fontSize: '2rem' }}
               >
-                ✕
+                ☰
               </IconButton>
               <Typography
                 variant='h6'
                 gutterBottom
-                sx={{ fontFamily: 'Lexend Mega' }}
+                sx={{ fontFamily: 'Lexend Mega', fontSize: '2rem' }}
               >
                 Chat History
               </Typography>
@@ -413,7 +400,7 @@ const FullScreenChat: React.FC<ChatProps> = ({
             }}
           >
             <Typography
-              variant='h6'
+              variant='h3'
               gutterBottom
               sx={{ fontFamily: 'Lexend Mega' }}
             >

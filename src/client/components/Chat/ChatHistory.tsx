@@ -111,7 +111,7 @@ const ChatHistory: React.FC<ChatHistProps> = ({
   };
 
   // TODO - Polish unexpanded history view
-  // ! - Match Fonts 
+  
   // TODO - Spruce things up with an Icon?
   // TODO - Visual Indicator for Editing
   return (
@@ -147,7 +147,7 @@ const ChatHistory: React.FC<ChatHistProps> = ({
               {editingSessionId === session.sessionId ? (
                 <TextField
                   type="text"
-                  size="small"
+                  size="medium"
                   value={editedTitle}
                   onChange={(e) => setEditedTitle(e.target.value)}
                   onKeyDown={(e) => {
@@ -166,28 +166,56 @@ const ChatHistory: React.FC<ChatHistProps> = ({
                 />
               ) : (
                 <Box>
-                  <Typography variant="subtitle1" fontWeight="bold">
+                  <Typography variant='h4' fontWeight='bold'>
                     {session.conversationName || messages[0].userMessage}
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant='body2' sx={{ pt: 1 }}>
                     Last active: {new Date(session.lastActive).toLocaleString()}
                   </Typography>
                 </Box>
               )}
             </Box>
+            <Divider
+              sx={{ border: '2px solid black', borderRadius: 8 }}
+            />
             {/* Message List */}
             {expandedSessionId === session.sessionId && (
-              <List component='div' disablePadding sx={{ pl: 4, cursor: 'pointer' }}>
+              <List component='div' disablePadding sx={{ pt: 2, pl: 2, cursor: 'pointer' }}>
                 {messages.map(msg => (
-                  <ListItem key={msg.id} sx={{ pl: 0 }}>
-                    <ListItemText 
+                  <ListItem 
+                    key={msg.id} 
+                    alignItems="flex-start"
+                    sx={{ 
+                      pl: 0,
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      mb: 2,
+                      // p: 1,
+                      // border: '1px solid #ddd',
+                      // borderRadius: 2,
+                      // backgroundColor: '#f9f9f9',
+                    }}
+                  >
+                    {/* <ListItemText 
                       primary={`You: ${msg.userMessage}`}
                       secondary={`Gata: ${msg.botResponse}`}
                       slotProps = {{
-                        primary: {variant: 'body2',},
-                        secondary: {variant: 'body2',},
+                        primary: {variant: 'body1', color: 'gray'},
+                        secondary: {variant: 'body1', color: 'black'},
                       }}
-                      />
+                      /> */}
+                    <Typography variant='subtitle2' color='text.secondary' gutterBottom>
+                      You:
+                    </Typography>
+                    <Typography variant='body1' sx={{ mb: 1 }}>
+                      {msg.userMessage}
+                    </Typography>
+                    <Typography variant='subtitle2' color='text.secondary' gutterBottom>
+                      Gata:
+                    </Typography>
+                    <Typography variant='body1'>
+                      {msg.botResponse}
+                    </Typography>
                   </ListItem>
                 ))}
               </List>
