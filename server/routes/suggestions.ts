@@ -118,13 +118,13 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
     const chosenUserInterest: object =/*[{name: 'Adult:'}]*/
       await prisma.$queryRaw`SELECT name FROM interest WHERE id IN (SELECT interestId FROM userInterest WHERE userId = ${id})`;
     // let query;
-    // console.log('before it all comes down:', chosenUserInterest);
+    console.log('before it all comes down:', chosenUserInterest);
     // this is what comes out of the log above: before it all comes down: [ { name: 'Attractions' } ]
     if (chosenUserInterest[0]) {
       let returnString = '';
       // set an empty string that will eventually be what goes into the api search function
       // REFACTOR: query will now = a function that:
-      const name/*{ name }*/ = /*chosenUserInterest[0]*/'Food';
+      const { name } = chosenUserInterest[0];
       // 1. takes the name from userInterest. Use it to access the corresponding array
       const queryStack: string[] = interestCodes[name] //for testing, we can replace this line with hardcode.
       // 2. sets a math randomizer that runs up to the length of said array
@@ -157,71 +157,18 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
         })
       }
       }
-
-      ////query = name.toLowerCase();
-      // a separate location query doesn't seem to be needed in refactor
-      // since the detailed entries seem to have the same information as the regular place search..
-      // const locations: number[] = await getTripadvisorLocationIds(query)
-      // .then((locationArray) => {
-        // getAllEntries(locationArray).then((entries) => {
-          // looks like I didn't need saved suggestions after all..
-          // Object.values(savedSuggestions).map((sugg) => {
-          // });
-          // let newEntries = [];
-          // entries.forEach((entry) => {
-            // THIS LINE SORTS THEM CORRECTLY! ATTACH A FILTER TO IT, GIVE IT A VARIABLE AND SHIP IT OUT
-
-            // if (
-              // Oh WAIT! It's to check for duplicates.. I think I should keep this
-              // NOTE: If we set  db suggs to a filter on the client, dupes won't matter and this should go.
-              // Also: will forest it now, just for simplicity
-              // Object.values(savedSuggestions).every((sugg) => {
-                // title's been a crappy way to do this. Maybe I add a space in the suggestion
-                // schema for the foursquare Id, and compare those in this case.
-                // return sugg.title !== entry.title;
-                // })
-                // ) {
-                  // newEntries.push(entry);
-                  // }
-
-                  // setting up the new api search function right here with old values
-
-                  /**
-                   * suggestionRouter.get('/test', (req: any, res: any) => {
-                  getSuggestionsFromFoursquare('4bf58dd8d48988d16a941735').then((data) => {
-                    if (data) {
-                      console.log();
-                      res.status(200).send(data);
-                      } else {
-                        res.status(404).send('failed the test, yo');
-                    }
-                    }).catch((err) => {
-                      console.error('could not test', err);
-                      res.sendStatus(500);
-                      });
-
-                      });
-                      */
-                     // calling the api function from its file, with the returning string of 
-                     // category codes as the argument
                      getSuggestionsFromFoursquare(returnString).then((data) => {
                       if (data) {
-                        console.log('we did it, dammit', data);
+                        // console.log('we did it, dammit', data);
                         res.status(200).send(data);
                       } else {
-                        res.status(404).send('failed the test, yo');
+                        res.status(404).send('No suggestions found');
                       }
                      })
-
-                    // });
-                    // res.status(200).send(newEntries);
-                  // });
-                // })
                 .catch((err) => {
                   console.error("had a hard time", err);
                   res.sendStatus(500);
                 });
-                // }
               }
               } catch (err) {
                 throw err;
@@ -233,10 +180,27 @@ suggestionRouter.get(`/search/:id`, async (req: any, res: any) => {
 suggestionRouter.get('/check/:id', async (req: any, res: any) => {
   const { id } = req.params;
   try {
-    console.log('at the check endpoint')
-    const listOfItineraryIds = await prisma.$queryRaw`SELECT * FROM itinerary WHERE partyId IN (SELECT partyId FROM userParty WHERE userId = ${id})`;
-    console.log('this is my list of itinerary ids', listOfItineraryIds);
-    res.status(200).send(listOfItineraryIds);
+
+    const listOfPartyItineraries = await prisma.$queryRaw`SELECT * FROM itinerary WHERE partyId IN (SELECT partyId FROM userParty WHERE userId = ${id})`;
+
+    const listOfCreatorItineraries = await prisma.itinerary.findMany({
+      where: {
+        creatorId: +id,
+      }
+    });
+    const fullListOfItineraries = [];
+
+// make a function that feeds non-duplicate itineraries into the above array
+const siftItineraries = (itinArray) => {
+  itinArray.forEach((itin: object) => {
+    if (fullListOfItineraries.every((listedItinerary: object) => listedItinerary.id != itin.id)) 
+      fullListOfItineraries.push(itin);
+  })
+}
+siftItineraries(listOfCreatorItineraries);
+siftItineraries(listOfPartyItineraries);
+
+    res.status(200).send(fullListOfItineraries);
   } catch (err) {
     console.error('could not search for list', err);
     res.sendStatus(500);
