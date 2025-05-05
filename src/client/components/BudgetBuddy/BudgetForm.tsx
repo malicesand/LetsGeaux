@@ -47,7 +47,7 @@ const BudgetForm: React.FC<BudgetFormProps> = ({ selectedItineraryId, onBudgetAd
   };
 
   return (
-    // PSEUDO: purple card styling
+    //purple card styling
     <Box
       component="form"
       onSubmit={handleSubmit}

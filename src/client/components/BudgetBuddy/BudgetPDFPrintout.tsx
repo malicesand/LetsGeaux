@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Button, Typography, Box } from '@mui/material';
 import jsPDF from 'jspdf';
-//import your team logo
+//import team logo
 import logo from '../../../../dist/images/cropedLogo.b76a2a6588ff3c85caf6472b9b9b2477.png';
 
 interface BudgetCategory {

@@ -1,43 +1,53 @@
 import React, { createContext, useContext, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
-//define the notification type
+// define Notification with an id and a seen flag
 export interface Notification {
+  id: string;          //unique identifier
   message: string;
   timestamp: Date;
+  seen: boolean;       // has the user clicked/viewed it?
 }
 
-//define the shape of the context values
+// context shape now includes markAsSeen
 interface BudgetNotificationContextType {
   notifications: Notification[];
-  addNotification: (notification: Notification) => void;
+  addNotification: (notification: Omit<Notification, 'id' | 'seen'>) => void;
+  markAsSeen: (id: string) => void;
 }
 
-//create the context defaulting to undefined
 const BudgetNotificationContext = createContext<BudgetNotificationContextType | undefined>(undefined);
 
-//provider component to wrap your app
 export const BudgetNotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  // function to add a new notification
-  const addNotification = (notification: Notification) => {
-    // prepend the new notification so that the latest one is first
-    setNotifications(prev => [notification, ...prev]);
+  // add a new notification (automatically assigns id + seen=false)
+  const addNotification = ({ message, timestamp }: Omit<Notification, 'id' | 'seen'>) => {
+    const newNotif: Notification = {
+      id: uuidv4(),
+      message,
+      timestamp,
+      seen: false,
+    };
+    setNotifications(prev => [newNotif, ...prev]);
   };
 
-  // directly return the provider
+  //mark one notification as seen
+  const markAsSeen = (id: string) => {
+    setNotifications(prev =>
+      prev.map(n => (n.id === id ? { ...n, seen: true } : n))
+    );
+  };
+
   return (
-    <BudgetNotificationContext.Provider value={{ notifications, addNotification }}>
+    <BudgetNotificationContext.Provider value={{ notifications, addNotification, markAsSeen }}>
       {children}
     </BudgetNotificationContext.Provider>
   );
 };
 
-// custom hook to use the BudgetNotificationContext
 export const useBudgetNotifications = () => {
-  const context = useContext(BudgetNotificationContext);
-  if (context === undefined) {
-    throw new Error('useBudgetNotifications must be used within a Budget Notification Provider');
-  }
-  return context;
+  const ctx = useContext(BudgetNotificationContext);
+  if (!ctx) throw new Error('useBudgetNotifications must be used within a BudgetNotificationProvider');
+  return ctx;
 };
