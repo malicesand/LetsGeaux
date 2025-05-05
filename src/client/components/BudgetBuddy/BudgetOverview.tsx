@@ -161,7 +161,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
               backgroundColor: '#f9f9f9'
             }}
           >
-            {/* red trash icon in bottom-right */}
+            {/* red trash icon in bottom right */}
             <IconButton
               aria-label="delete entry"
               onClick={() => openDeleteModal(budget)}
@@ -185,7 +185,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
             <Stack direction="row" spacing={1} mt={2}>
               <Button
                 size="small"
-                variant="text" // Changed variant from outlined to text
+                variant="text"
                 sx={{ color: 'black' }} //make Edit button text black
                 onClick={() => openEditModal(budget)}
               >
@@ -200,13 +200,15 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
       {/* Edit Modal */}
       <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
         <DialogTitle sx={{ color: 'black' }}>Edit Budget Entry</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ pt: 2, pb: 2 }}>
+          {/* added padding top/bottom */}
           <TextField
             label="Category"
             fullWidth
             margin="dense"
             value={editForm.category}
             disabled
+            sx={{ mb: 2 }}                  //margin bottom
           />
           <TextField
             label="Limit"
@@ -215,6 +217,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
             margin="dense"
             value={editForm.limit}
             onChange={(e) => setEditForm({ ...editForm, limit: e.target.value })}
+            sx={{ mb: 2 }}                  //margin bottom
           />
           <TextField
             label="Spent"
@@ -223,6 +226,7 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
             margin="dense"
             value={editForm.spent}
             onChange={(e) => setEditForm({ ...editForm, spent: e.target.value })}
+            sx={{ mb: 2 }}                  //margin bottom
           />
           <TextField
             label="Notes"
@@ -231,16 +235,20 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
             multiline
             value={editForm.notes}
             onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+            sx={{ mb: 2 }}                  //margin bottom
           />
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => setEditOpen(false)}
-            sx={{ color: 'black' }} //make Cancel button text black
+            sx={{ color: 'black' }}         //make Cancel text black
           >
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleEditSave}>
+          <Button
+            variant="contained"
+            onClick={handleEditSave}
+          >
             Save
           </Button>
         </DialogActions>
@@ -249,19 +257,24 @@ const BudgetOverview: React.FC<Props> = ({ selectedItineraryId }) => {
       {/* confirmation modal */}
       <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <DialogTitle sx={{ color: 'black' }}>Confirm Delete</DialogTitle>
-        <DialogContent>
-          <Typography sx={{ color: 'black' }}>
+        <DialogContent sx={{ pt: 2, pb: 2 }}>
+          {/*added padding top/bottom */}
+          <Typography sx={{ color: 'black', mb: 2 }}>
             Are you sure you want to delete this entry?
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => setDeleteOpen(false)}
-            sx={{ color: 'black' }} //make Cancel button text black
+            sx={{ color: 'black' }}         //make Cancel text black
           >
             Cancel
           </Button>
-          <Button variant="outlined" color="error">
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleDeleteConfirm}   //wired up delete action
+          >
             Delete
           </Button>
         </DialogActions>
