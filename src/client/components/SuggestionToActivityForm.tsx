@@ -24,8 +24,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 type currentSuggestion = {
   title: string
   location: string
-  date: Date
-  time: Date
   address: string
   description: string
   image: string
@@ -64,8 +62,6 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
     title,
     location,
     address,
-    date,
-    time,
     description,
     image,
     link,
@@ -76,8 +72,8 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
       itinerary: "",
       title: "",
       description,
-      time,
-      date,
+      time: null,
+      date: null,
       location: title,
       image: image ? image : '',
       phone: link,
@@ -128,7 +124,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
     console.log('an attempt to parse the date:', parsedDate)
     const activityData = {
       itineraryId: itinerary.id,
-      name: '',
+      name: title,
       description,
       time,
       date: parsedDate.toISOString(),
@@ -142,6 +138,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
 
     // console.log('try to stringify:', dayjs(activityData.date).format('MMMM D, YYYY'))
     activityData.date = dayjs(activityData.date).format('MMMM D, YYYY')
+    console.log('goin in', activityData)
     try {
       // suggAct = suggestion-activity
       const suggAct = await axios.post('/api/activity', activityData);

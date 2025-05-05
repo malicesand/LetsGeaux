@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-// import { Link } from 'react-router-dom'
+import { Link as routerLink, useNavigate } from 'react-router-dom'
 import {
   Container,
   Box,
@@ -10,11 +10,7 @@ import {
   Button,
   Card,
   // CardMedia,
-  // Stack,
-  Fade,
-  Accordion,
-  // AccordionClasses,
-  // AccordionSummary,
+
   Typography,
   Dialog,
   DialogActions,
@@ -63,6 +59,9 @@ interface SuggestionProps {
     longitude: string
 
   }
+  to: string
+  children: React.ReactNode;
+
 
 }
 
@@ -70,14 +69,16 @@ interface SuggestionProps {
 const Suggestion: React.FC<SuggestionProps> = ({
   user,
   currentSuggestion,
-  getAllSuggestions,
+  to,
+  children,
   wishMode,
   isDb,
   getAllWishlistSuggestions,
 }) => {
   const [expanded, toggleExpanded] = useState(false);
-  const [isTesting, setIsTesting] = useState(false);
   const [open, setOpen] = useState(false);
+  const [navigateUrl, setNavigateUrl] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -93,12 +94,20 @@ const Suggestion: React.FC<SuggestionProps> = ({
     setOpen(false);
   }
 
+const handleDialogClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  event.preventDefault();
+  setNavigateUrl(to);
+  setDialogOpen(true);
+}
 
+const handleLeaveSite = () => {
+  window.location.href = navigateUrl
+}
 
   // This is what occurs when the add to wishlist button is pressed. Calling a post request with wish markers to post the Suggestion
   const addToWishlist = () => {
     // gather the needed values and put them into an axios post request in a similar way to activities
-    const { address, description, latitude, longitude, link, title } = currentSuggestion;
+    const { address, description, latitude, longitude, link, title, image } = currentSuggestion;
 
     const details = {
       data: {
@@ -117,90 +126,6 @@ const Suggestion: React.FC<SuggestionProps> = ({
       .then(() => { })
       .catch(err => console.error('unable to save suggestion', err))
   }
-
-  // const handleAddToActivities = () => {
-  //   setOpen(true);
-
-  // }
-  //   const details = {
-  //     data: {
-  //       address: currentSuggestion.address,
-  //       description: currentSuggestion.description,
-  //       phone: currentSuggestion.link,
-  //       name: currentSuggestion.title,
-  //     }
-  //   }
-  //   axios.post('/api/activity', details.data).then(() => {
-  //     if (wishMode) {
-  //       handleRemoveFromWishlist()
-  //     }
-  //   }).then(() => {
-  //     if (wishMode) {
-  //       getAllWishlistSuggestions();
-  //     }
-  //   }).catch((err) => {
-  //     console.error('unable to change suggestion', err);
-  //   })
-
-
-  // const openTestForm = () => {
-  //   setIsTesting(true);
-  // }
-
-  // const closeTestForm = () => {
-  //   setIsTesting(false);
-  // }
-
-
-  const handleVoteClick = (polarity: string) => {
-    const { id } = user;
-    const userId = id
-    const { id: suggestionId } = currentSuggestion;
-    const pol = polarity === 'up' ? 1 : 0
-    const vote = {
-      data: {
-        user: { connect: { id: +user.id } },
-        suggestion: { connect: { id: suggestionId } },
-        polarity: pol,
-      }
-    }
-    let voteDirection;
-    axios.post(`api/vote/${userId}/${suggestionId}/suggestion`, vote).then(() => {
-      if (polarity === 'up') {
-        voteDirection = 'upVotes';
-      } else {
-        voteDirection = 'downVotes';
-      }
-      axios.patch(`api/suggestions/${suggestionId}`, [voteDirection])
-      console.log('into the patch(post details)')
-    })
-      .then(() => alert("YOU VOTED!"))
-      .catch((err) => console.error('there is an issue with your vote', err));
-    // } else {
-    // alert('YOU ALREADY VOTED!!')
-    // }
-
-    /**
-     * set an axios request to vote with our existing userId and the current suggestion's
-     * id(maybe both in params?)
-     * At some point set a set of statements that would just check the polarity for
-     * the same vote and change it if need be instead of letting them vote ...
-     * maybe disable the vote button visibly on things they've already voted on..
-    */
-  }
-
-  //       const positiveForPastVotes = async () => {
-  //         const voteStatus = await axios.get(`api/vote/${user.id}/${currentSuggestion.id}/suggestion`)
-  //         console.log('this is what comes of voteStatusess')
-  //         if (voteStatus.data) {
-  //          const logging = await console.log('data true')
-  //           return true;
-  //         } else {
-  //           const logging = await console.log('no data, but what', voteStatus)
-  //           console.log('no data, but what?')
-  //           return false;
-  //         }
-  // }
 
 
   const handleRemoveFromWishlist = () => {
@@ -248,7 +173,27 @@ const Suggestion: React.FC<SuggestionProps> = ({
               // set typography to "body"
             )}
             <Typography>{description}</Typography>
-            <Typography><b>Contact website:</b> <Link color='inherit' href={link}>Go to {title}</Link></Typography>
+            <Typography><b>Contact website:</b> <Link color='inherit' href={link} style={{ cursor: 'pointer' }}>
+            Go to {title}
+            {children}
+            </Link>
+            </Typography>
+
+            {/* <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+              <DialogTitle>Before you Geaux</DialogTitle>
+              <DialogContent>
+                <Typography>
+                You're leaving the site. Would you like to add this suggestion to your wishlist before you leave?
+                </Typography>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+                  <Button onClick={addToWishlist}>Add to Wishlist and geaux</Button>
+                  <Button onClick={handleLeaveSite}>Just geaux</Button>
+                </DialogActions>
+            </Dialog> */}
+
+
             <Typography><b>address:</b> {address}</Typography>
             {hours
               ? (
