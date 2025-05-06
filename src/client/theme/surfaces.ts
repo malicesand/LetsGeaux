@@ -1,6 +1,6 @@
 import { Components, Theme } from '@mui/material/styles';
 import theme1 from './index';
-
+import { useMedia } from '../components/MediaQueryProvider.tsx';
 export const borderRadius = 8; 
 
 // Neo-brutalist shadows — mostly off or harsh
@@ -122,8 +122,13 @@ export const components: Components<Theme> = {
         backgroundColor: theme.palette.primary.main,
         transition: 'box-shadow 0.2s ease, background-color 0.2s ease',
         '@media (max-width:600px)': {
-          fontSize: 16,
-          padding: '12px 20px',
+          fontSize: '0.85rem',
+          padding: '8px 12px',
+          maxWidth: 'none',
+          minWidth: 'auto',
+          minHeight: 'auto',
+          maxHeight: 'none'
+          
         },
         
         '&:hover': {

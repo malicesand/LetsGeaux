@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import { createTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import {
+  Box,
+  Typography
+} from '@mui/material';
+// import Divider from '@mui/material/Divider';
 import CreateParty from './CreateParty';
 // import BudgetPieChart from './BudgetPieChart'
 import { user, userParty } from '../../../../types/models.ts';
-import ImageUpload from '../ImageUpload';
+import { useMedia } from '../MediaQueryProvider.tsx';
+// import ImageUpload from '../ImageUpload';
 import ImageDisplay from '../ImageDisplay';
 interface DashboardProps {
   user: user;
@@ -20,6 +22,7 @@ interface party {
 const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [partyInfo, setPartyInfo] = useState<{ id: number, name: string }[]>([])
   const userId = user.id
+  const { isMobile } = useMedia(); 
 
   useEffect(() => {
     getUserParties();
@@ -68,14 +71,17 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
       }}
     >
       {/* Travel Parties Box */}
+      
       <Box
         sx={{
           align: 'center',
           border: '4px solid black',
           borderRadius: 4,
+          boxShadow: '2px 2px 0px black',
+          m: 1,
           padding: 2,
           maxWidth: 400,
-          width: '100%',
+          width: isMobile? '91.5%' : '100%',
           textAlign: 'center',
         }}
       >
@@ -93,7 +99,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           <CreateParty user={user} onPartyCreated={getUserParties} />
         </Box>
       </Box>
-
+  
       {/* Image Upload Box */}
       <Box
       // sx={{
