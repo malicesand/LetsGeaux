@@ -133,11 +133,27 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     }
   }, [startDate, endDate]);
   //used then dates are updated
-  useEffect(() => {
-    if (passedName && !editingItinerary) {
+ // If passedName exists (solo trip) and not editing
+useEffect(() => {
+  if (!editingItinerary) {
+    if (passedName) {
       setItineraryName(passedName);
+    } else if (partyName) {
+      // If it's a party trip and no passedName, use "Trip name 
+      setItineraryName(`Trip with ${partyName}`);
     }
-  }, [passedName, editingItinerary]);
+  }
+}, [passedName, partyName, editingItinerary]);
+
+
+  useEffect(() => {
+    //if not party id and not itineraries
+    if (partyId && itineraries.length === 0) {
+      setShowCreateForm(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [partyId, itineraries]);
+  
 
   //fetch all itineraries
   useEffect(() => {
@@ -189,17 +205,17 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     setEndDate(end);
 
     // Create a list of Date objects between start and end
-    const range: Date[] = [];
-    let current = begin;
-    while (current.isSameOrBefore(end, 'day')) {
-      range.push(current.toDate()); // convert Dayjs to Date for selectedDates
-      current = current.add(1, 'day');
-    }
-    setSelectedDates(range);
+      const range: Date[] = [];
+      let current = begin;
+      while (current.isSameOrBefore(end, 'day')) {
+        range.push(current.toDate()); // convert Dayjs to Date for selectedDates
+        current = current.add(1, 'day');
+      }
+      setSelectedDates(range);
 
-    setShowCreateForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+      setShowCreateForm(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
   // handle edits to itinerary
   const handleEditSubmit = async () => {
@@ -522,15 +538,18 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                   display: 'inline-block',
                   backgroundColor: 'primary.main',
                   color: 'black',
-                  px: 2,
-                  py: 1,
-                  borderRadius: '9999px',
+                  // px: 2,
+                  px: { xs: 2, sm: 3 },
+                  // py: 1,
+                  py: { xs: 1, sm: 1.5 },
+                  borderRadius: '8px',
                   fontWeight: 700,
                   fontSize: '0.75rem',
                   textAlign: 'center',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                  width: { xs: '100%', sm: 'auto' }
 
-                }}
+                }}  
                 onClick={() => {
                   setSelectedViewCode(itinerary.viewCode);
                   setSelectedItineraryName(itinerary.name);
