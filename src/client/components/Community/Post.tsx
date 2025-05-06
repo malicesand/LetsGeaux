@@ -9,15 +9,15 @@ import {
   TextField,
   Grid,
   Button,
+  IconButton,
   Box,
 } from '@mui/material';
 // import * as dayjs from 'dayjs';
 import Comments from './Comments.tsx';
-import { PiHandHeartFill } from "react-icons/pi";
-import { PiHandPalmFill } from "react-icons/pi";
-import { PiBombFill } from "react-icons/pi";
+import { PiHeartStraightFill } from "react-icons/pi";
 import { PiNotePencilFill } from "react-icons/pi";
-
+import { PiTrash } from 'react-icons/pi';
+import { PiHeartBreakThin } from "react-icons/pi";
 import CommentForm from './CommentForm.tsx';
 import { user } from '../../../../types/models.ts';
 
@@ -163,22 +163,89 @@ const deletePost = () => {
   }).catch((err) => console.error('unable to delete post', err))
 }
 
-  return (
-    // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!!
-    <Container>
-      <Box sx={{ border: "4px solid black", borderRadius: "4", p: 2, mb: "8px" }}>
+return (
+  // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!!
+  <Container>
+      <Box sx={{
+        position: 'relative',
+        border: "4px solid black",
+        borderRadius: "4",
+        p: 2,
+        mb: "8px",
+      }}
+      >
+          {canEdit ? (
+            null
+          ) : (
+            <Button
+            // size="medium"
+            title="Edit this post"
+            sx={{
+              borderWidth: 4,
+              color: 'black',
+              // p: '6px',
+              marginRight: "4px",
+              marginBottom: "4px",
+              top: 1,
+              left: 1,
+              position: "relative",
+            }}
+            onClick={handleEditClick}
+            >
+              <PiNotePencilFill />
+            </Button>
+          )}
         <Typography variant='h3'>{currentPost.title}</Typography>
       <Typography> {body}</Typography>
       <Typography>By: {postName}</Typography>
-      <Typography>Likes: {currentPost.likes}</Typography>
+      <Box display="flex" alignItems="flex-start" gap={1}>
+
       {!hasLiked
        ? (
-         <Button title="Like this post" sx={{ borderWidth: 4, color: 'black', p: '6px', marginRight: "4px"}} onClick={handleVoteClick} >{currentPost.likes}<PiHandHeartFill /></Button>
+         <Button title="Like this post" sx={{
+           borderWidth: 4,
+           color: 'black',
+           p: '6px',
+           marginRight: "4px",
+           //  padding: "5px 5px",
+          }}
+          // size="medium"
+          onClick={handleVoteClick}
+          >
+          <span style={{ color:'black' }}>{currentPost.likes}</span><PiHeartStraightFill style={{ minWidth: 40 }}/>
+          </Button>
         ) : (
-          <Button title="remove like" sx={{ borderWidth: 4, color: 'black', p: '6px', marginRight: "4px"}}  onClick={handleVoteDeleteClick}>{currentPost.likes}<PiHandPalmFill /></Button>
-          // null
+          <Button title="remove like" sx={{
+            borderWidth: 4,
+            backgroundColor: "black",
+            color: '#bbf451',
+            p: '6px',
+            marginRight: "4px",
+            // padding: '5px 5px'
+          }}
+          // size="medium"
+          onClick={handleVoteDeleteClick}
+          >
+            <span style={{ color: "#bbf451" }}>{currentPost.likes}</span><PiHeartBreakThin />
+            </Button>
         )}
-      <Button sx={{ borderWidth: 4, color: 'black' , p: '6px', marginRight: "4px"}}  onClick={startComments}>see comments</Button>
+        {!isCommenting ? (
+
+          <Button sx={{
+            borderWidth: 4,
+            color: 'black' ,
+            p: '6px',
+            marginRight: "4px",
+          }}
+          // size="medium"
+          onClick={startComments}
+          >
+              see comments
+            </Button>
+          ) : (
+            null
+          )}
+          </Box>
       {isCommenting ? (
         <>
           <CommentForm
@@ -189,7 +256,7 @@ const deletePost = () => {
           editableComment={editableComment}
           commentEditMode={commentEditMode}
           postCredentialCheck={postCredentialCheck}
-
+          
           />
           <Comments
           user={user}
@@ -207,17 +274,19 @@ const deletePost = () => {
       : (
         null
       )}
-      {canEdit ? (
-        null
-      ) : (
-        <Button  title="Edit this post"sx={{ borderWidth: 4, color: 'black', p: '6px', marginRight: "4px"}}  onClick={handleEditClick}><PiNotePencilFill /></Button>
-      )}
       {isCredentialed ? (
-
-        <Button
+        
+        <IconButton
         title="delete post"
-        sx={{ borderWidth: 4, color: 'black', p: '6px' }}
-        onClick={deletePost}><PiBombFill /></Button>
+        sx={{
+          borderWidth: 4,
+          color: 'black',
+          p: '6px',
+          position: 'absolute',
+          bottom: 8,
+          right: 8,
+        }}
+        onClick={deletePost}><PiTrash /></IconButton>
       ) : (
         null
       )}
