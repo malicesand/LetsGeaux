@@ -500,7 +500,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         onClose={closeRename}
         slotProps={{
           paper: {
-            sx: { width: 500, borderRadius: 12, 
+            sx: { width: 500, borderRadius: 8, 
               boxShadow: "4px 4px 0px #A78BFA ",
               m: 0,
               // boxShadow: 'none', 

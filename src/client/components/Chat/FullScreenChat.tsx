@@ -48,9 +48,9 @@ const FullScreenChat: React.FC<ChatProps> = ({
   
   //* On Component Mount *//
   // Focus on Mount
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  // useEffect(() => {
+  //   inputRef.current?.focus();
+  // }, []);
   // Scroll Behavior
   useEffect(() => {
     const timeout = setTimeout(() => {
