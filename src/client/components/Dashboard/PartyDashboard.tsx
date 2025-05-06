@@ -1,38 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import { PiPencilBold, PiTrashDuotone } from "react-icons/pi";
-import Modal from '@mui/material/Modal';
-import Stack from '@mui/material/Stack';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import Container from '@mui/material/Container';
-import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import DialogActions from '@mui/material/DialogActions';
-import Checkbox from '@mui/material/Checkbox';
-import CircularProgress from '@mui/material/CircularProgress';
-import Paper from '@mui/material/Paper';
-import MessageBoard from './MessageBoard';
+import { 
+  PiPencilBold, 
+  PiTrashDuotone, 
+  PiCaretCircleDownBold
+} from "react-icons/pi";
+import { 
+  Button,
+  IconButton,
+  Container,
+  TextField,
+  ListItemAvatar,
+  Avatar,  
+  ListItem, 
+  ListItemText,  
+  FormControlLabel,
+  DialogActions,
+  Checkbox, 
+  CircularProgress, 
+  Box, 
+  Typography, 
+  Card,
+  CardContent,
+  Dialog, 
+  DialogContent,
+  Stack,
+  Collapse,
+  CardHeader
+} from '@mui/material';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
 import AddMember from './AddMember';
-import ManagePartyModal from './ManagePartyModal';
-import AddItinerary from './AddItinerary';
-// import Itinerary from './PartyItinerary.tsx';
+import ResponsiveToolTip from './../ResponsiveToolTip.tsx';
 import Itinerary from './DashItin.tsx';
 import { user, email, party } from '../../../../types/models.ts';
 import ImageUpload from '../ImageUpload';
+import { useMedia } from '../MediaQueryProvider.tsx';
+
 interface PartyDashboardProps {
   user: user;
 }
@@ -45,7 +49,6 @@ type PartyMember = {
 
 // TODO conditional on render so that only party members can access a dashboard
 const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
-  const theme = useTheme();
   const location = useLocation();
   const { partyId } = useParams();
   const navigate = useNavigate()
@@ -68,14 +71,24 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [leaveParty, setLeaveParty] = useState(false);
   const [renameOpen, setRenameOpen] = React.useState(false);
-  const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
-
+  // const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
+  //* Mobile Handling *//
+  const { isMobile } = useMedia(); 
+  const [infoExpanded, setInfoExpanded] = useState(false);
+  const [imageExpanded, setImageExpanded] = useState(false);
+  
+  // Expand Info and Image Containers 
+  const handleInfoExpandClick = () => {
+    setInfoExpanded(!infoExpanded);
+  };
+  const handleImageExpandClick = () => {
+    setImageExpanded(!imageExpanded);
+  };
 
   useEffect(() => {
     fetchViewCode(numericPartyId);
     getUsersForParty(numericPartyId);
     getEmailLog(partyId);
-    // fetchItinerary(partyId)
   }, [numericPartyId]);
 
   // Key Down for Enter & Esc //
@@ -95,6 +108,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
       cancelAction();
     }
   };
+  
 
   // GET REQUESTS //
   //* Member List *//
@@ -110,16 +124,6 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
       setPartyMembers(userObjects);
     } catch (error) {
       console.error('failed to find members for one or all parties');
-    }
-  };
-
-  //* Fetch Itinerary *//
-  const fetchItinerary = async (partyId: string) => {
-    console.log(`Fetching itinerary`);
-    try {
-      const response = await axios.get(`/api/itinerary/party/${partyId}`);
-    } catch (error) {
-      console.error(`Error occurred fetching party itinerary for party ${partyId}`)
     }
   };
 
@@ -187,13 +191,14 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     }
   };
 
+  
   // MANAGE PARTY //
   const renameModal = () => {
     setRenameOpen(true);
-  }
+  };
   const closeRename = () => {
     setRenameOpen(false);
-  }
+  };
 
   //* Toggle member removal *//
   const toggleMember = (id: number) => {
@@ -260,80 +265,94 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     }
   };
 
-
   return (
     <React.Fragment>
-      <ImageUpload userId={user.id} />
-      <Box>
+      {/* Party Page */}
+      <Box sx={{ p:2 }}>
         {/* Title */}
-        <Typography
-          variant='h1'
-          align='center'
-          sx={{ flexGrow: 1, textAlign: 'center', m: 5, p: '4px' }}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4 }}>
+          <Typography variant='h1'sx={{ textAlign: 'center', mr: 2 }}
+            >
+            {partyName}
+          </Typography>
+        </Box>
+        {/* Itin, Upload, Party Info */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
+            overflowX: 'auto',
+          }}
         >
-          {partyName}
-        </Typography>
-        {/* Manage Party Icon */}
-        <Tooltip title='Manage Party'>
-          <IconButton onClick={renameModal}>
-            <PiPencilBold />
-          </IconButton>
-        </Tooltip>
-      </Box>
-      {/* Content */}
-      <Box>
-        <Stack spacing={4} direction="row">
-          {/* Sidebar */}
-          <Box
+          {/* Itinerary */}
+          <Box>
+            <Itinerary
+              user={user}
+              partyId={numericPartyId}
+              partyName={partyName}
+            />
+          </Box> 
+          {/* Party Info */}
+          <Card
             sx={{
-              width: '100%',
-              maxWidth: '300px',
-              margin: '0',
+              minWidth: 300,
+              maxWidth: 350,
+              flexShrink: 0,
+              p: 2,
               border: '4px solid black',
-              borderRadius: 4,
-              padding: 3,
-              mt: 7,
-              pt: 4,
-              // boxShadow: 3,
-
+              borderRadius: 4,      
+              backgroundColor: '#C2A4F8',
+              alignSelf: 'flex-start',
+              
             }}
           >
-            <Stack spacing={4} sx={{ width: '100%' }}>
-              <Box
-                display='flex'
-                flexDirection='column'
-                alignItems='flex-start'
-                gap={2}
-                sx={{
-
-                  bgColor: '#a684ff',
-                }}
-              >
-                <Container
+            <CardHeader
+              title="Party Info"
+              action={
+                <IconButton
+                  onClick={handleInfoExpandClick}
+                  aria-expanded={infoExpanded}
+                  aria-label="show more"
+                >
+                  <PiCaretCircleDownBold/>
+                </IconButton>
+              }
+            />
+            <Collapse in={infoExpanded} timeout="auto" unmountOnExit>
+              <CardContent>
+                <Box
                   sx={{
-                    maxWidth: 500,
                     border: '4px solid black',
                     borderRadius: 4,
-                    margin: '0 auto',
-                    p: 2
+                    p: 2,
+                    mb: 2,
+                    boxShadow: '4px 4px 0px black',
                   }}
                 >
-                  <Typography variant='h5' textAlign='center'>
-                    Party Members
-                  </Typography>
+                  <Stack direction='row' justifyContent='center'>
+                    <Typography variant='h5' textAlign='center'>
+                      Party Members
+                    </Typography>
+                    <ResponsiveToolTip title="Manage Party" >
+                      <IconButton size="small" onClick={renameModal}>
+                        <PiPencilBold />
+                      </IconButton>
+                    </ResponsiveToolTip>
+                  </Stack>
                   <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
                     {partyMembers.map(member => (
                       <ListItem>
                         <ListItemAvatar>
-                          <Avatar src={member.avatar} />
+                          <Avatar src={member.avatar}/>
                         </ListItemAvatar>
-                        <Typography variant='body1' component='li' key={member.id}>
-                          {member.username}
-                        </Typography>
+                      <Typography variant='body1' component='li' key={member.id}>
+                        {member.username}
+                      </Typography>
                       </ListItem>
                     ))}
                   </Box>
-                </Container>
+                </Box>
                 <AddMember
                   user={user}
                   partyId={numericPartyId}
@@ -355,7 +374,10 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                   onClose={closeModal}
                   slotProps={{
                     paper: {
-                      sx: { width: 500, borderRadius: 12 },
+                      sx: { border: '2px solid black',
+                        borderRadius: 4,
+                        boxShadow: '4px 4px 0px black',
+                        },
                     }
                   }}
                 >
@@ -409,9 +431,10 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                     sx={{
                       maxWidth: 500,
                       border: '4px solid black',
-                      borderRadius: 4,
+                      borderRadius: 2,
                       margin: '0 auto',
-                      p: 2
+                      p: 2,
+                      boxShadow: '4px 4px 0px black',
                     }}
                   >
                     <Typography variant='h5' gutterBottom>
@@ -433,31 +456,42 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                       ))}
                     </Box>
                   </Container>
+                  
                 )}
-                <Box>
-
-                  {/* Message Board */}
-                  {/* <Box display="flex" justifyContent="center" alignItems="center">
-                  <Box sx={{ width: '60%' }}>
-                  <MessageBoard user={user} />
-                  </Box>
-                  </Box> */}
-                  {/* <Box display="flex" justifyContent="center"> */}
-                  {/* <Itinerary user={user}/> */}
-                </Box>
-              </Box>
-
-            </Stack>
-          </Box>
-          {/* Itinerary */}
-          <Box>
-            <Itinerary
-              user={user}
-              partyId={numericPartyId}
-              partyName={partyName}
+              </CardContent>
+            </Collapse>
+          </Card> 
+          {/* Image Stuff */}
+          <Card
+            sx={{
+              minWidth: 300,
+              maxWidth: 350,
+              flexShrink: 0,
+              p: 2,
+              border: '4px solid black',
+              borderRadius: 4,      
+              backgroundColor: '#C2A4F8',
+              alignSelf: 'flex-start',
+            }}
+          >
+            <CardHeader
+              title="Image"
+              action={
+                <IconButton
+                  onClick={handleImageExpandClick}
+                  aria-expanded={imageExpanded}
+                  aria-label="show more"
+                >
+                  <PiCaretCircleDownBold/>
+                </IconButton>
+              }
             />
-          </Box>
-        </Stack>
+            <Collapse in={imageExpanded} timeout="auto" unmountOnExit>
+              <ImageUpload userId={user.id} />
+            </Collapse>
+          </Card>
+
+       </Box>
       </Box>
       {/*  Manage Party Model */}
       <Dialog
@@ -466,7 +500,12 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         onClose={closeRename}
         slotProps={{
           paper: {
-            sx: { width: 500, borderRadius: 12 },
+            sx: { width: 500, borderRadius: 12, 
+              boxShadow: "4px 4px 0px #A78BFA ",
+              m: 0,
+              // boxShadow: 'none', 
+              border: "4px solid black "
+            },
             component: 'form',
             onKeyDown: (e: React.KeyboardEvent<HTMLFormElement>) => handleKeyDown(e, () => setConfirmOpen(true), closeRename),
           }
@@ -555,56 +594,107 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
           },
         }}
       >
-        {/* <Box
-          component="form"
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            handleConfirmActions();
-          }}
-          onKeyDown={(e: React.KeyboardEvent<HTMLFormElement>) =>
-            handleKeyDown(e, handleConfirmActions, () => setConfirmOpen(false))
-          }
-        > */}
         <Typography>Are you sure?</Typography>
-        <DialogContent>
-          <Typography>You are about to:</Typography>
-          <ul>
-            {/* Message for Name Change */}
-            {newName && (
+          <DialogContent>
+            <Typography>You are about to:</Typography>
+            <ul>
+              {/* Message for Name Change */}
+              {newName && (
               <Typography>
                 Rename the party to: <strong>{newName}</strong>
                 <Typography>(navigate to main dash for new name to render)</Typography>
               </Typography>)}
-            {/* Message for Deleting others */}
-            {membersToRemove.filter(id => id !== user.id).length > 0 && (
-              <Typography>
-                Remove {membersToRemove.length} member(s)
-              </Typography>)}
-            {/* Message for Leaving */}
-            {leaveParty && (
-              <Typography>Leave the party</Typography>)}
-          </ul>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant='contained'
-            onClick={() => setConfirmOpen(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant='contained'
-            type='submit'
-            onClick={handleConfirmActions}
-            disabled={loading}
-          >
+              {/* Message for Deleting others */}
+              {membersToRemove.filter(id => id !== user.id).length > 0 && (
+                <Typography>
+                  Remove {membersToRemove.length} member(s)
+                </Typography>)}
+              {/* Message for Leaving */}
+              {leaveParty && (
+                <Typography>Leave the party</Typography>)}
+            </ul>
+          </DialogContent>
+          <DialogActions>
+            <Button 
+              variant='contained' 
+              onClick={() => setConfirmOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant='contained'
+              type='submit'
+              onClick={handleConfirmActions}
+              disabled={loading}
+            >
             Confirm
           </Button>
         </DialogActions>
-        {/* </Box> */}
       </Dialog>
-
+      {/* Email Modal */}
+      <Dialog
+        open={open}
+        onClose={closeModal}
+        slotProps={{
+          paper: {
+            sx: { 
+              width: 500, 
+              borderRadius: 4, 
+              boxShadow: "4px 4px 0px #bbf451 ",
+              m: 0,
+              // boxShadow: 'none', 
+              border: "4px solid #A78BFA "
+            },
+          }
+        }}
+      >
+        <Box
+          component="form"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            if (emails.length > 0) {
+              setLoading(true);
+              sendEmail(emails, partyName, userId, partyId, viewCode)
+              .finally(() => setLoading(false));
+            }
+          }}
+        >
+          <Typography variant='subtitle1' sx={{ mt: 2 }}>
+            Invite your friends to join your travel party
+          </Typography>
+          <TextField
+            id='email'
+            placeholder='Enter Multiple Emails'
+            type='text'
+            fullWidth
+            value={inputValue}
+            onChange={event => {
+              const raw = event.target.value;
+              setInputValue(raw);
+              const parsedEmails = raw
+                .split(',')
+                .map(email => email.trim())
+                .filter(email => email.length > 0);
+              setEmails(parsedEmails);
+            }}
+          />
+          <Button
+            sx={{ mt: 1 }}
+            variant='contained'
+            type='submit'
+            disabled={emails.length === 0 || loading} 
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Invite'}
+          </Button>
+          {inviteSuccess && (
+            <Typography sx={{ mt: 1, color: 'green' }}>
+              Invite sent successfully!
+            </Typography>
+          )}
+        </Box>
+      </Dialog>
     </React.Fragment>
+          
   );
 };
 export default PartyDashboard;
