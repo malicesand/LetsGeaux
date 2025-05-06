@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Card, CardContent, Typography, Divider } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Card, CardContent, Typography, Divider, Box } from '@mui/material';
 import axios from 'axios';
 import { useItinerary } from './ItineraryContext';
 
@@ -66,7 +66,7 @@ const MapsModal: React.FC<MapsModalProps> = ({ open, onClose, onSelect }) => {
         {!selectedItineraryId ? (
           <>
             <Typography variant="h6" gutterBottom>Select an Itinerary:</Typography>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} justifyContent="center">
               {itineraries.map((itinerary) => (
                 <Grid item xs={12} sm={6} md={4} key={itinerary.id}>
                   <Card
@@ -121,21 +121,27 @@ const MapsModal: React.FC<MapsModalProps> = ({ open, onClose, onSelect }) => {
           </>
         )}
       </DialogContent>
-      <DialogActions>
-        {selectedItineraryId && (
-          <Button color="black" onClick={() => setSelectedItineraryId(null)}>Back to Itineraries</Button>
-        )}
-        <Button color="black" onClick={onClose}>Cancel</Button>
-        <Button
-          onClick={handleConfirm}
-          disabled={!startActivity || !endActivity}
-          variant="contained"
-          color="black"
-        >
-          Confirm Route
-        </Button>
+      <DialogActions sx={{ flexDirection: 'column', alignItems: 'center' }}>
+        <Box justifyContent='center' sx={{ display: 'flex', gap: 1, }}>
+          {selectedItineraryId && (
+            <Button color="black" onClick={() => setSelectedItineraryId(null)}>
+              Back
+            </Button>
+          )}
+          <Button color="black" onClick={onClose}>Cancel</Button>
+        </Box>
+        <Box sx={{ mt: 1 }}>
+          <Button
+            onClick={handleConfirm}
+            disabled={!startActivity || !endActivity}
+            variant="contained"
+            color="black"
+          >
+            Confirm Route
+          </Button>
+        </Box>
       </DialogActions>
-    </Dialog>
+    </Dialog >
   );
 };
 
