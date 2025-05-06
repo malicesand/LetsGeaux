@@ -9,7 +9,7 @@ import {
   Modal,
 } from '@mui/material';
 import { useImageContext } from './ImageContext';
-
+import axios from 'axios'
 interface Image {
   id: number;
   url: string;
@@ -23,7 +23,7 @@ interface ImageDisplayProps {
 const chunkArray = (arr: Image[], size: number): Image[][] => {
   const chunks = [];
   for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i + 0, i + size));
+    chunks.push(arr.slice(i, i + size));
   }
   return chunks;
 };
@@ -41,7 +41,7 @@ const modalStyle = {
 };
 
 const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
-  const { images, deleteImage, getAllImages } = useImageContext();
+  const { images, getAllImages } = useImageContext();
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
   const [autoFlip, setAutoFlip] = useState(true);
@@ -51,7 +51,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
 
   const imageChunks = chunkArray(images, 2);
-
+  const { setImages } = useImageContext();
   useEffect(() => {
     getAllImages(userId);
   }, [userId]);
@@ -88,10 +88,22 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
     setSelectedImage(image);
     setConfirmOpen(true);
   };
-
-  const handleConfirmDelete = () => {
+  const deleteImage = async (imageId: number) => {
+    try {
+      await axios.delete(`/api/image/${imageId}`);
+      setImages((prev) => prev.filter((img) => img.id !== imageId));
+      console.log(images)
+    } catch (err) {
+      console.error('Error deleting image:', err);
+    }
+  };
+  const handleConfirmDelete = async () => {
     if (selectedImage) {
-      deleteImage(selectedImage.id);
+      try {
+        await deleteImage(selectedImage.id);
+      } catch (error) {
+        console.error('Delete failed:', error);
+      }
     }
     setConfirmOpen(false);
     setSelectedImage(null);
@@ -206,7 +218,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
         </Box>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Modal */}
       <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)}>
         <Box sx={modalStyle}>
           <Typography variant="h6" gutterBottom>

@@ -68,7 +68,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
   const getAllImages = async () => {
     try {
       const response = await axios.get(`/api/image/${userId}`);
-      setImages(response.data);
+      setPictures(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -76,11 +76,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
 
   const deleteImage = async (imageId: number) => {
     try {
-      await axios.delete(`/api/image/${imageId}`);
+      await axios.delete(`/api/images/${imageId}`);
       setImages((prev) => prev.filter((img) => img.id !== imageId));
-    } catch (error) {
-      console.error('Error deleting image:', error);
-      enqueueSnackbar('Could not delete image.', { variant: 'error' });
+      console.log(images)
+    } catch (err) {
+      console.error('Error deleting image:', err);
     }
   };
 
