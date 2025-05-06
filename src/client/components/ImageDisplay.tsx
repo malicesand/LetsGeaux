@@ -6,6 +6,7 @@ import {
   Slider,
   Switch,
   FormControlLabel,
+  Modal,
 } from '@mui/material';
 import { useImageContext } from './ImageContext';
 
@@ -18,12 +19,25 @@ interface Image {
 interface ImageDisplayProps {
   userId: number;
 }
+
 const chunkArray = (arr: Image[], size: number): Image[][] => {
   const chunks = [];
   for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i, i + size));
+    chunks.push(arr.slice(i + 0, i + size));
   }
   return chunks;
+};
+
+const modalStyle = {
+  position: 'absolute' as const,
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 4,
 };
 
 const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
@@ -31,9 +45,16 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
   const [autoFlip, setAutoFlip] = useState(true);
-  const [flipInterval, setFlipInterval] = useState(7000); // milliseconds
+  const [flipInterval, setFlipInterval] = useState(7000);
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
 
   const imageChunks = chunkArray(images, 2);
+
+  useEffect(() => {
+    getAllImages(userId);
+  }, [userId]);
 
   useEffect(() => {
     if (!autoFlip || imageChunks.length <= 1) return;
@@ -44,10 +65,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
 
     return () => clearInterval(interval);
   }, [autoFlip, flipInterval, imageChunks.length]);
-  useEffect(() => {
-    getAllImages(userId)
-    console.log(userId)
-  }, [userId])
+
   const handleNext = () => {
     setIsFlipping(true);
     setTimeout(() => {
@@ -64,6 +82,19 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
       );
       setIsFlipping(false);
     }, 300);
+  };
+
+  const openConfirm = (image: Image) => {
+    setSelectedImage(image);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedImage) {
+      deleteImage(selectedImage.id);
+    }
+    setConfirmOpen(false);
+    setSelectedImage(null);
   };
 
   return (
@@ -85,7 +116,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
           variant="contained"
           onClick={handlePrev}
           disabled={imageChunks.length <= 1}
-          fullWidth={true}
+          fullWidth
         >
           Previous
         </Button>
@@ -93,7 +124,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
           variant="contained"
           onClick={handleNext}
           disabled={imageChunks.length <= 1}
-          fullWidth={true}
+          fullWidth
         >
           Next
         </Button>
@@ -162,7 +193,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
                 Notes: {image.notes}
               </Typography>
               <Button
-                onClick={() => deleteImage(image.id)}
+                onClick={() => openConfirm(image)}
                 variant="contained"
                 color="black"
                 sx={{ mt: 1 }}
@@ -174,8 +205,28 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
           ))}
         </Box>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <Box sx={modalStyle}>
+          <Typography variant="h6" gutterBottom>
+            Delete Image
+          </Typography>
+          <Typography>
+            Are you sure you want to delete{' '}
+            {selectedImage?.notes ? `"${selectedImage.notes}"` : 'this image'}?
+            This action cannot be undone.
+          </Typography>
+          <Box mt={3} display="flex" justifyContent="flex-end" gap={2}>
+            <Button color='black' onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button variant="contained" color="black" onClick={handleConfirmDelete}>
+              Delete
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
-}
+};
 
 export default ImageDisplay;
