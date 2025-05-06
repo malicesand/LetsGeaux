@@ -211,7 +211,7 @@ return (
           // size="medium"
           onClick={handleVoteClick}
           >
-          <Typography sx={{ color:'blue' }}>{currentPost.likes}</Typography><PiHeartStraightFill style={{ minWidth: 40 }}/>
+          <Typography sx={{ color:'#A78BFA' }}>{currentPost.likes}</Typography><PiHeartStraightFill style={{ minWidth: 40 }}/>
           </Button>
         ) : (
           <Button title="remove like" sx={{

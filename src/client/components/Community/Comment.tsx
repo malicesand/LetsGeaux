@@ -179,7 +179,7 @@ const commentCredentialCheck = () => {
           size="medium"
           onClick={handleVoteClick}
           >
-            <Typography sx={{ color: 'blue' }}>{currentComment.likes}</Typography><PiHeartStraightFill />
+            <Typography sx={{ color: '#A78BFA' }}>{currentComment.likes}</Typography><PiHeartStraightFill />
             </Button>
 
 )}
