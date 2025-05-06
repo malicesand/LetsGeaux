@@ -9,6 +9,7 @@ import {
   TextField,
   Grid,
   Button,
+  IconButton,
   Box,
 } from '@mui/material';
 // import * as dayjs from 'dayjs';
@@ -211,12 +212,13 @@ return (
           // size="medium"
           onClick={handleVoteClick}
           >
-          <Typography sx={{ color:'#A78BFA' }}>{currentPost.likes}</Typography><PiHeartStraightFill style={{ minWidth: 40 }}/>
+          <span style={{ color:'black' }}>{currentPost.likes}</span><PiHeartStraightFill style={{ minWidth: 40 }}/>
           </Button>
         ) : (
           <Button title="remove like" sx={{
             borderWidth: 4,
-            color: 'black',
+            backgroundColor: "black",
+            color: '#bbf451',
             p: '6px',
             marginRight: "4px",
             // padding: '5px 5px'
@@ -224,7 +226,7 @@ return (
           // size="medium"
           onClick={handleVoteDeleteClick}
           >
-            <Typography sx={{ color:'blue' }}>{currentPost.likes}</Typography><PiHeartBreakThin />
+            <span style={{ color: "#bbf451" }}>{currentPost.likes}</span><PiHeartBreakThin />
             </Button>
         )}
         {!isCommenting ? (
@@ -274,7 +276,7 @@ return (
       )}
       {isCredentialed ? (
         
-        <Button
+        <IconButton
         title="delete post"
         sx={{
           borderWidth: 4,
@@ -284,7 +286,7 @@ return (
           bottom: 8,
           right: 8,
         }}
-        onClick={deletePost}><PiTrash /></Button>
+        onClick={deletePost}><PiTrash /></IconButton>
       ) : (
         null
       )}

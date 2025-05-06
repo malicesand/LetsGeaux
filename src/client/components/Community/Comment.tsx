@@ -10,6 +10,7 @@ import {
   Grid,
   Box,
   Button,
+  IconButton,
 } from '@mui/material';
 import { PiTrash } from 'react-icons/pi';
 import { PiHeartStraightFill } from "react-icons/pi";
@@ -168,7 +169,7 @@ const commentCredentialCheck = () => {
           size="medium"
           onClick={handleVoteDeleteClick}
           >
-            <Typography sx={{ color: 'blue' }}>{currentComment.likes}</Typography><PiHeartBreakThin />
+            <span style={{ color: '#A78BFA' }}>{currentComment.likes}</span><PiHeartBreakThin />
             </Button>
         ) : (
           <Button title="Like comment" sx={{
@@ -179,7 +180,7 @@ const commentCredentialCheck = () => {
           size="medium"
           onClick={handleVoteClick}
           >
-            <Typography sx={{ color: '#A78BFA' }}>{currentComment.likes}</Typography><PiHeartStraightFill />
+            <span style={{ color: '#A78BFA' }}>{currentComment.likes}</span><PiHeartStraightFill />
             </Button>
 
 )}
@@ -195,7 +196,7 @@ const commentCredentialCheck = () => {
             </Button>
         )}
         {isCredentialed ? (
-          <Button title="Delete comment" sx={{
+          <IconButton title="Delete comment" sx={{
             borderWidth: 4,
             color: 'black',
             p: '6px',
@@ -207,7 +208,7 @@ const commentCredentialCheck = () => {
           onClick={deleteComment}
           >
             <PiTrash style={{ padding: "5px 5px" }}/>
-            </Button>
+            </IconButton>
         ) : (
           null
         )}
