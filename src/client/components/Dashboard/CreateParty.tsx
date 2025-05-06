@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import FilledInput from '@mui/material/FilledInput';
-import Divider from '@mui/material/Divider';
-
+import {
+  Button, 
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Typography,
+} from '@mui/material';
+// import FilledInput from '@mui/material/FilledInput';
+// import Divider from '@mui/material/Divider';
 import { user } from '../../../../types/models.ts'
 interface partyProps {
   user: user;
@@ -77,7 +77,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
     } catch (error) {
         console.error('could not send email', error)
     }
-  }
+  };
 
   return (
     <React.Fragment>
@@ -101,9 +101,9 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
           }
         }}
       >
-        <DialogTitle>Name Your Party</DialogTitle>
+        <DialogTitle variant='body1' sx={{mt: 1, mb: 0, pb: 1}}>Name Your Party</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText variant='body2' sx={{mt: 0, pt: 0, mb:3}}>
             Choose a name for your travel party!
           </DialogContentText>
           <TextField
@@ -116,6 +116,21 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
             type='string'
             fullWidth
             variant='standard'
+            slotProps={{
+              root: {
+                sx: {
+                  // '& .MuiInputLabel-root': {
+                  //   color: '#8257E5'
+                  // },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    
+                    color: '#612BDE',
+                    size: 'large'
+                  },
+                },
+              },
+            }}
+          
           />
           <DialogActions>
             <Button variant='contained' type='submit'>Create</Button>
