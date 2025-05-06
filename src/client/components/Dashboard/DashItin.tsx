@@ -68,6 +68,34 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
   useEffect(() => {
     fetchItinerary(partyId);
   }, []);
+  // If no itinerary is found after fetching and a partyId exists, redirect to itinerary creation page
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  //holds the list of itineraries
+const [itineraries, setItineraries] = useState<itinerary[]>([]);
+
+//get current info and navigation state
+  const location = useLocation(); 
+
+useEffect(() => {
+  //checks if route state included parttId and if no itinerary exists
+  if (location.state?.partyId && !itinerary) {
+    //show create form for new itinerary
+    setShowCreateForm(true);
+    // will bring the form up and scroll 
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  //location change or changes
+}, [location.state, itinerary]);
+
+//If there’s a partyId and no existing itineraries fetched
+useEffect(() => {
+  if (partyId && itineraries.length === 0) {
+    //Show the create form and scroll up smoothly
+    setShowCreateForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}, [partyId, itineraries]);
+
 
   const fetchItinerary = async (partyId: number) => {
     try {
@@ -179,18 +207,22 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
                           </Typography>
                           <Button
   variant="outlined"
+  size="small"
   sx={{
     display: 'inline-block',
     backgroundColor: 'primary.main',
     color: 'black',
-    px: 2,
-    py: 1,
-    borderRadius: '9999px',
+    // px: 2,
+    px: { xs: 2, sm: 3 },
+    // py: 1,
+    py: { xs: 1, sm: 1.5 },
+    borderRadius: '8x',
      border: '4px solid black',
     fontWeight: 700,
     fontSize: '0.75rem',
     textAlign: 'center',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+    boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+    width: { xs: '100%', sm: 'auto' }
   }}
   onClick={() => setInviteDialogOpen(true)}
 >
