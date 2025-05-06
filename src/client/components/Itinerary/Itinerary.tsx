@@ -538,16 +538,13 @@ useEffect(() => {
                   display: 'inline-block',
                   backgroundColor: 'primary.main',
                   color: 'black',
-                  // px: 2,
-                  px: { xs: 2, sm: 3 },
-                  // py: 1,
-                  py: { xs: 1, sm: 1.5 },
+                   px: 2,
+                  py: 1,
                   borderRadius: '8px',
                   fontWeight: 700,
                   fontSize: '0.75rem',
                   textAlign: 'center',
                   boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                  width: { xs: '100%', sm: 'auto' }
 
                 }}  
                 onClick={() => {
