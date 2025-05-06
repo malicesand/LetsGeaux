@@ -4,14 +4,10 @@ import axios from 'axios';
 import { 
   PiPencilBold, 
   PiTrashDuotone, 
-  PiSidebarBold,
-  PiSidebarThin,
-  PiImageSquareBold
+  PiCaretCircleDownBold
 } from "react-icons/pi";
-  // import { PiImageSquareBold } from "react-icons/pi";
 import { 
   Button,
-  ButtonGroup,
   IconButton,
   Container,
   TextField,
@@ -27,22 +23,13 @@ import {
   Typography, 
   Card,
   CardContent,
-  useTheme, 
-  useMediaQuery, 
   Dialog, 
   DialogContent,
-  DialogTitle, 
-  Tooltip,
-  Modal,
   Stack,
-  Paper,
-  Accordion, 
   Collapse,
   CardHeader
 } from '@mui/material';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; // TODO find Pi one
-// import AddItinerary from './AddItinerary';
 import AddMember from './AddMember';
 import ResponsiveToolTip from './../ResponsiveToolTip.tsx';
 import Itinerary from './DashItin.tsx';
@@ -62,7 +49,6 @@ type PartyMember = {
 
 // TODO conditional on render so that only party members can access a dashboard
 const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
-  // const theme = useTheme();
   const location = useLocation();
   const { partyId } = useParams();
   const navigate = useNavigate()
@@ -87,22 +73,22 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const [renameOpen, setRenameOpen] = React.useState(false);
   // const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
   //* Mobile Handling *//
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { isMobile } = useMedia(); 
-  const [showMobileHelp, setShowMobileHelp] = useState(false);
-  const [imageOpen, setImageOpen] = useState(false);
+  const [infoExpanded, setInfoExpanded] = useState(false);
+  const [imageExpanded, setImageExpanded] = useState(false);
   
-  const [expanded, setExpanded] = useState(false);
-  
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+  // Expand Info and Image Containers 
+  const handleInfoExpandClick = () => {
+    setInfoExpanded(!infoExpanded);
+  };
+  const handleImageExpandClick = () => {
+    setImageExpanded(!imageExpanded);
   };
 
   useEffect(() => {
     fetchViewCode(numericPartyId);
     getUsersForParty(numericPartyId);
     getEmailLog(partyId);
-    // fetchItinerary(partyId)
   }, [numericPartyId]);
 
   // Key Down for Enter & Esc //
@@ -140,16 +126,6 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
       console.error('failed to find members for one or all parties');
     }
   };
-
-  //* Fetch Itinerary *//
-  /* const fetchItinerary = async (partyId: string) => {
-    console.log(`Fetching itinerary`);
-    try {
-      const response = await axios.get(`/api/itinerary/party/${partyId}`);
-    } catch (error) {
-      console.error(`Error occurred fetching party itinerary for party ${partyId}`)
-    }
-  }; */
 
   //* Get Itinerary View Code *//
   const fetchViewCode = async (numericPartyId: number) => {
@@ -215,13 +191,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     }
   };
 
-  //* Image Upload Modal *//
-  const openUpload = () => {
-    setImageOpen(true);
-  }; 
-  const closeUpload = () => {
-    setImageOpen(false);
-  }
+  
   // MANAGE PARTY //
   const renameModal = () => {
     setRenameOpen(true);
@@ -295,7 +265,6 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     }
   };
 
-
   return (
     <React.Fragment>
       {/* Party Page */}
@@ -311,12 +280,19 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'row',
+            flexDirection: 'column',
             gap: 4,
             overflowX: 'auto',
-            
           }}
         >
+          {/* Itinerary */}
+          <Box>
+            <Itinerary
+              user={user}
+              partyId={numericPartyId}
+              partyName={partyName}
+            />
+          </Box> 
           {/* Party Info */}
           <Card
             sx={{
@@ -335,15 +311,15 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
               title="Party Info"
               action={
                 <IconButton
-                  onClick={handleExpandClick}
-                  aria-expanded={expanded}
+                  onClick={handleInfoExpandClick}
+                  aria-expanded={infoExpanded}
                   aria-label="show more"
                 >
-                  <ExpandMoreIcon />
+                  <PiCaretCircleDownBold/>
                 </IconButton>
               }
             />
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <Collapse in={infoExpanded} timeout="auto" unmountOnExit>
               <CardContent>
                 <Box
                   sx={{
@@ -482,18 +458,39 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                   </Container>
                   
                 )}
-                <ImageUpload userId={user.id} />
               </CardContent>
             </Collapse>
-          </Card>   
-          {/* Itinerary */}
-          <Box>
-            <Itinerary
-              user={user}
-              partyId={numericPartyId}
-              partyName={partyName}
+          </Card> 
+          {/* Image Stuff */}
+          <Card
+            sx={{
+              minWidth: 300,
+              maxWidth: 350,
+              flexShrink: 0,
+              p: 2,
+              border: '4px solid black',
+              borderRadius: 4,      
+              backgroundColor: '#C2A4F8',
+              alignSelf: 'flex-start',
+            }}
+          >
+            <CardHeader
+              title="Image"
+              action={
+                <IconButton
+                  onClick={handleImageExpandClick}
+                  aria-expanded={imageExpanded}
+                  aria-label="show more"
+                >
+                  <PiCaretCircleDownBold/>
+                </IconButton>
+              }
             />
-          </Box> 
+            <Collapse in={imageExpanded} timeout="auto" unmountOnExit>
+              <ImageUpload userId={user.id} />
+            </Collapse>
+          </Card>
+
        </Box>
       </Box>
       {/*  Manage Party Model */}
@@ -696,7 +693,6 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
           )}
         </Box>
       </Dialog>
-      {/* Image Modal */}
     </React.Fragment>
           
   );
