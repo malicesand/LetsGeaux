@@ -13,7 +13,8 @@ import {
   FormLabel,
   Box,
   Stack,
-  TextField
+  TextField,
+  IconButton
 } from '@mui/material';
 import ImageUpload from './ImageUpload';
 import { useUser } from './UserContext';
@@ -215,7 +216,14 @@ const Profile: React.FC = () => {
         </Box>
 
         {/* Avatar with Edit Button */}
-        <Box sx={{ position: 'relative', width: 150, height: 150 }}>
+        <Box
+          sx={{
+            position: 'relative',
+            width: 150,
+            height: 150,
+            mx: 'auto',
+          }}
+        >
           <Avatar
             src={contextUser.profilePic}
             alt="Profile Picture"
@@ -224,29 +232,28 @@ const Profile: React.FC = () => {
               height: 150,
               border: '4px solid black',
               boxShadow: 1,
-              transition: 'box-shadow 0.3s ease-in-out',
-              '&:hover': {
-                boxShadow: 6,
-              },
             }}
           />
-          <Button
-            variant="contained"
+
+          <IconButton
             onClick={handleUploadWidget}
             sx={{
               position: 'absolute',
-              bottom: 0,
-              right: 0,
-              minWidth: 0,
+              bottom: 8,
+              right: 8,
               width: 40,
               height: 40,
               borderRadius: '50%',
-              p: 0,
-              color: 'primary',
+              backgroundColor: 'primary.main',
+              color: 'black',
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+              },
+              boxShadow: 2,
             }}
           >
-            <PiPencilBold />
-          </Button>
+            <PiPencilBold size={20} />
+          </IconButton>
         </Box>
 
         {/* Email */}
