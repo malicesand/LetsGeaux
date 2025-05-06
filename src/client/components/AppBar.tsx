@@ -21,10 +21,10 @@ import { useUser } from './UserContext';
 import { useBudgetNotifications } from './BudgetBuddy/BudgetNotificationContext';
 import newLogo from '../theme/cropedLogo.png';
 import MenuItem from '@mui/material/MenuItem';
-
+import { user } from '../../../types/models.ts';
 interface MainAppBarProps {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
-  user: any;
+  user: user;
 }
 
 const MainAppBar: React.FC<MainAppBarProps> = ({ setIsAuthenticated, user }) => {
