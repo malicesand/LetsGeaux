@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { PiPencil, PiTrashDuotone } from 'react-icons/pi';
 import { useSnackbar } from 'notistack';
+import { useMedia } from '../MediaQueryProvider.tsx';
 
 interface ItineraryProps {
   user: user; 
@@ -43,11 +44,12 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
   const [editingItinerary, setEditingItinerary] = useState<any | null>(null);
   const [error, setError] = useState<string>('');
   // const location = useLocation();
-   //delete confirmation state
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    //state for email itinerary
-    const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
-    const [emailToInvite, setEmailToInvite] = useState('');
+  //delete confirmation state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  //state for email itinerary
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const [emailToInvite, setEmailToInvite] = useState('');
+  const { isMobile } = useMedia(); 
     
 
 
@@ -131,12 +133,29 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
   
 
   return (  
-    <Container>
-      <Box mt={4}>
+    <Container
+      sx={{
+        p: 0,
+        px: 0
+      }}
+    >
+      <Box 
+        my={2}
+        // mx={2}
+        sx={{
+          m: 0,
+          backgroundColor: '#C2A4F8',
+          padding: '16px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}
+      >
         <Typography variant='h3'>Party Itinerary</Typography>
         {/* Show Itinerary or Button to create */}
         {itinerary ? (
           <Card sx={{ 
+            maxWidth: isMobile ? '85%' : 'auto%',
+            m: 0,
             position: 'relative',
             mb: 2,
             backgroundColor: '#C2A4F8',
@@ -158,43 +177,43 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
             </CardContent>
 
             <Typography
-                            variant='caption'
-                            color='secondary'
-                            sx={{
-                              display: 'inline-block',
-                              backgroundColor: 'primary.main',
-                              color: 'black',
-                              px: 2,
-                              py: 1,
-                              borderRadius: '9999px',
-                               border: '4px solid black',
-                              fontWeight: 700,
-                              fontSize: '0.75rem',
-                              textAlign: 'center',
-                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
-                            }}
-                          >
-                            View Code: {itinerary.viewCode}     
-                          </Typography>
-                          <Button
-  variant="outlined"
-  sx={{
-    display: 'inline-block',
-    backgroundColor: 'primary.main',
-    color: 'black',
-    px: 2,
-    py: 1,
-    borderRadius: '9999px',
-     border: '4px solid black',
-    fontWeight: 700,
-    fontSize: '0.75rem',
-    textAlign: 'center',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
-  }}
-  onClick={() => setInviteDialogOpen(true)}
->
-Share Itinerary
-</Button>
+              variant='caption'
+              color='secondary'
+              sx={{
+                display: 'inline-block',
+                backgroundColor: 'primary.main',
+                color: 'black',
+                px: 2,
+                py: 1,
+                borderRadius: '9999px',
+                  border: '4px solid black',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+                textAlign: 'center',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+              }}
+            >
+              View Code: {itinerary.viewCode}     
+            </Typography>
+              <Button
+                variant="outlined"
+                sx={{
+                  display: 'inline-block',
+                  backgroundColor: 'primary.main',
+                  color: 'black',
+                  px: 2,
+                  py: 1,
+                  borderRadius: '9999px',
+                  border: '4px solid black',
+                  fontWeight: 700,
+                  fontSize: '0.75rem',
+                  textAlign: 'center',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                }}
+                onClick={() => setInviteDialogOpen(true)}
+              >
+                Share Itinerary
+              </Button>
                               
 
 
@@ -225,7 +244,7 @@ Share Itinerary
                 itineraryCreatorId={itinerary.creatorId}
                 user={user}
                 itineraryBegin={dayjs(itinerary.begin).format('YYYY-MM-DD')}
-                                itineraryEnd={dayjs(itinerary.end).format('YYYY-MM-DD')}
+                itineraryEnd={dayjs(itinerary.end).format('YYYY-MM-DD')}
               />
             )}
           </Card>

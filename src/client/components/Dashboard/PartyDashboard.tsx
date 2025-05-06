@@ -35,10 +35,13 @@ import {
   Tooltip,
   Modal,
   Stack,
-  Paper
+  Paper,
+  Accordion, 
+  Collapse,
+  CardHeader
 } from '@mui/material';
 import BudgetPieChart from '../BudgetBuddy/BudgetPieChart';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; // TODO find Pi one
 // import AddItinerary from './AddItinerary';
 import AddMember from './AddMember';
 import ResponsiveToolTip from './../ResponsiveToolTip.tsx';
@@ -88,6 +91,12 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const { isMobile } = useMedia(); 
   const [showMobileHelp, setShowMobileHelp] = useState(false);
   const [imageOpen, setImageOpen] = useState(false);
+  
+  const [expanded, setExpanded] = useState(false);
+  
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
 
   useEffect(() => {
     fetchViewCode(numericPartyId);
@@ -289,8 +298,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
 
   return (
     <React.Fragment>
-
-      
+      {/* Party Page */}
       <Box sx={{ p:2 }}>
         {/* Title */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4 }}>
@@ -299,47 +307,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
             {partyName}
           </Typography>
         </Box>
-        {/* Content */}
-        <ButtonGroup
-          sx={{
-            // display: 'flex',
-            flexDirection: 'column',
-            gap: 1.5,
-        /*   //   // position: 'relative', 
-          //   top: 0,
-          //   left: 0,
-          //   zIndex: 10,
-            
-          //   // borderRadius: 3,
-          //   p: 1,
-          //   // boxShadow: 3, */
-          }}
-        >
-          {/* <ResponsiveToolTip title="Manage Party" >
-            <IconButton size="small" onClick={renameModal}>
-              <PiPencilBold />
-            </IconButton>
-          </ResponsiveToolTip> */}
-
-          <ResponsiveToolTip title="Send Invite">
-            <IconButton size="small" onClick={openModal}>
-              <PiPencilBold />
-            </IconButton>
-          </ResponsiveToolTip>
-
-          <ResponsiveToolTip title="Photo Gallery">
-            <IconButton size="small">
-              <PiImageSquareBold />
-            </IconButton>
-          </ResponsiveToolTip>
-
-          <ResponsiveToolTip title={sidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}>
-            <IconButton size="small"
-             onClick={() => setSidebarOpen(prev => !prev)}>
-              {sidebarOpen ? <PiSidebarBold /> : <PiSidebarThin />}
-            </IconButton>
-          </ResponsiveToolTip>
-        </ButtonGroup>
+        {/* Itin, Upload, Party Info */}
         <Box
           sx={{
             display: 'flex',
@@ -349,21 +317,33 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
             
           }}
         >
-          {/* Party Info Sidebar */}
-          {sidebarOpen && (
-            <Card
-              sx={{
-                minWidth: 300,
-                maxWidth: 350,
-                flexShrink: 0,
-                p: 2,
-                border: '4px solid black',
-                borderRadius: 4,      
-                backgroundColor: '#C2A4F8',
-                alignSelf: 'flex-start',
-                
-              }}
-            >
+          {/* Party Info */}
+          <Card
+            sx={{
+              minWidth: 300,
+              maxWidth: 350,
+              flexShrink: 0,
+              p: 2,
+              border: '4px solid black',
+              borderRadius: 4,      
+              backgroundColor: '#C2A4F8',
+              alignSelf: 'flex-start',
+              
+            }}
+          >
+            <CardHeader
+              title="Party Info"
+              action={
+                <IconButton
+                  onClick={handleExpandClick}
+                  aria-expanded={expanded}
+                  aria-label="show more"
+                >
+                  <ExpandMoreIcon />
+                </IconButton>
+              }
+            />
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
               <CardContent>
                 <Box
                   sx={{
@@ -503,10 +483,9 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                   
                 )}
                 <ImageUpload userId={user.id} />
-                  </CardContent>
-            </Card>       
-          )} 
-          
+              </CardContent>
+            </Collapse>
+          </Card>   
           {/* Itinerary */}
           <Box>
             <Itinerary
