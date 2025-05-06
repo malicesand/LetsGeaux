@@ -253,7 +253,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
                   color: 'black',
                   px: 2,
                   py: 1,
-                  borderRadius: '9999x',
+                  borderRadius: '8px',
                   border: '4px solid black',
                   fontWeight: 700,
                   fontSize: '0.75rem',
