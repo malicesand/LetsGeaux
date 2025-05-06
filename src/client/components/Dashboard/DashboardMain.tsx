@@ -77,9 +77,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           align: 'center',
           border: '4px solid black',
           borderRadius: 4,
+          boxShadow: '2px 2px 0px black',
+          m: 1,
           padding: 2,
           maxWidth: 400,
-          width: '100%',
+          width: isMobile? '91.5%' : '100%',
           textAlign: 'center',
         }}
       >
