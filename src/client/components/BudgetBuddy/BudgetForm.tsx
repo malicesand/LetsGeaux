@@ -5,10 +5,10 @@ import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 interface BudgetFormProps {
   selectedItineraryId: number | null;
-
- //callback that the parent can supply to refresh data after a budget is added
- onBudgetAdded?: () => void;
+  //callback that the parent can supply to refresh data after a budget is added
+  onBudgetAdded?: () => void;
 }
+
 const BudgetForm: React.FC<BudgetFormProps> = ({ selectedItineraryId, onBudgetAdded }) => {
   const [limit, setLimit] = useState('');
   const [spent, setSpent] = useState('');
@@ -39,17 +39,26 @@ const BudgetForm: React.FC<BudgetFormProps> = ({ selectedItineraryId, onBudgetAd
       setSpent('');
       setCategory('');
       setNotes('');
-   // call the parents callback to re fetch budgets immediately
-   if (onBudgetAdded) {
-    onBudgetAdded();
-  }
-} catch (err) {
-  console.error('Failed to submit budget:', err);
-}
-};
+      // notify parent to re fetch budgets
+      if (onBudgetAdded) onBudgetAdded();
+    } catch (err) {
+      console.error('Failed to submit budget:', err);
+    }
+  };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ p: 2 }}>
+    //purple card styling
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        p: 2,
+        backgroundColor: '#c4a1ff',              //purple pop
+        border: '2px solid black',
+        borderRadius: 4,
+        boxShadow: '4px 4px 0px black'
+      }}
+    >
       <Stack spacing={2}>
         <TextField
           label="Total Budget"
@@ -66,21 +75,21 @@ const BudgetForm: React.FC<BudgetFormProps> = ({ selectedItineraryId, onBudgetAd
           fullWidth
           onChange={(e) => setSpent(e.target.value)}
         />
-<FormControl fullWidth required>
-  <InputLabel>Category</InputLabel>
-  <Select
-    value={category}
-    label="Category"
-    onChange={(e) => setCategory(e.target.value)}
-  >
-    {['Food', 'Travel', 'Lodging', 'Exploring', 'Misc'].map((option) => (
-      <MenuItem key={option} value={option}>
-        {option}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
-  <TextField
+        <FormControl fullWidth required>
+          <InputLabel>Category</InputLabel>
+          <Select
+            value={category}
+            label="Category"
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            {['Food', 'Travel', 'Lodging', 'Exploring', 'Misc'].map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
           label="Notes"
           value={notes}
           multiline
