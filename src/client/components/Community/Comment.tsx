@@ -12,9 +12,8 @@ import {
   Button,
 } from '@mui/material';
 import { PiTrash } from 'react-icons/pi';
-import { PiHandHeartFill } from "react-icons/pi";
-import { PiHandPalmFill } from "react-icons/pi";
-import { PiXFill } from "react-icons/pi";
+import { PiHeartStraightFill } from "react-icons/pi";
+import { PiHeartBreakThin } from "react-icons/pi";
 import { PiNotePencilFill } from "react-icons/pi";
 import { user } from '../../../../types/models.ts';
 
@@ -159,16 +158,17 @@ const commentCredentialCheck = () => {
       >
         <Typography>{body}</Typography>
         <Typography>By: {postName}</Typography>
-        <Typography>Likes: {currentComment.likes}</Typography>
+        <Box display="flex" alignItems="flex-start" gap={1}>
         {hasLiked ? (
           <Button title="Remove like" sx={{
             borderWidth: 4,
             color: 'black',
             marginRight: "4px"
           }}
+          size="medium"
           onClick={handleVoteDeleteClick}
           >
-            {currentComment.likes}<PiHandPalmFill />
+            <Typography sx={{ color: 'blue' }}>{currentComment.likes}</Typography><PiHeartBreakThin />
             </Button>
         ) : (
           <Button title="Like comment" sx={{
@@ -176,16 +176,23 @@ const commentCredentialCheck = () => {
             color: 'black',
             marginRight: "4px"
           }}
+          size="medium"
           onClick={handleVoteClick}
           >
-            {currentComment.likes}<PiHandHeartFill />
+            <Typography sx={{ color: 'blue' }}>{currentComment.likes}</Typography><PiHeartStraightFill />
             </Button>
 
-        )}
+)}
        {canEdit ? (
          null
         ) : (
-          <Button title="Edit this comment" sx={{ borderWidth: 4, color: 'black' }}  onClick={handleEditClick}>< PiNotePencilFill/></Button>
+          <Button
+          title="Edit this comment"
+          sx={{ borderWidth: 4, color: 'black' }}
+          onClick={handleEditClick}
+          >
+            < PiNotePencilFill />
+            </Button>
         )}
         {isCredentialed ? (
           <Button title="Delete comment" sx={{
@@ -195,10 +202,16 @@ const commentCredentialCheck = () => {
             position: 'absolute',
             bottom: 8,
             right: 8,
-          }}  onClick={deleteComment} ><PiTrash /></Button>
+          }}
+          size="medium"
+          onClick={deleteComment}
+          >
+            <PiTrash style={{ padding: "5px 5px" }}/>
+            </Button>
         ) : (
           null
         )}
+        </Box>
 
     </Box>
   )
