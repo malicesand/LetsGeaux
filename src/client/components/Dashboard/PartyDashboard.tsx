@@ -54,7 +54,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const navigate = useNavigate()
   const searchParams = new URLSearchParams(location.search);
   const numericPartyId = parseInt(partyId || '', 10);
-  const partyName = searchParams.get('name')
+  // const partyName = searchParams.get('name')
+  const [partyName, setPartyName] = useState<party['name']>('');
   const userId = user.id;
   //* Members and Emails Constants *//
   const [partyMembers, setPartyMembers] = useState<PartyMember[]>([]);
@@ -89,6 +90,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     fetchViewCode(numericPartyId);
     getUsersForParty(numericPartyId);
     getEmailLog(partyId);
+    getPartyName(partyId);
   }, [numericPartyId]);
 
   // Key Down for Enter & Esc //
@@ -111,6 +113,17 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   
 
   // GET REQUESTS //
+  //* Party Name *//
+  const getPartyName = async (partyId: string) => {
+    try {
+      const response = await axios.get(`/api/party/${partyId}`);
+      console.log(`party info from dash ${response.data.name}`)
+      setPartyName(response.data.name);
+
+    } catch (error) {
+      console.error(`Failed to retrieve name for ${partyId}`)
+    };
+  };
   //* Member List *//
   const getUsersForParty = async (partyId: number) => {
     try {
@@ -124,7 +137,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
       setPartyMembers(userObjects);
     } catch (error) {
       console.error('failed to find members for one or all parties');
-    }
+    };
   };
 
   //* Get Itinerary View Code *//
@@ -268,7 +281,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   return (
     <React.Fragment>
       {/* Party Page */}
-      <Box sx={{ p:2 }}>
+      <Box sx={{ p:2, flexDirection: isMobile ? 'column' : 'row'}}>
         {/* Title */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4 }}>
           <Typography variant='h1'sx={{ textAlign: 'center', mr: 2 }}
@@ -280,9 +293,10 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'column',
+            // flexDirection: 'column',
             gap: 4,
             overflowX: 'auto',
+            flexDirection: isMobile ? 'column' : 'row'
           }}
         >
           {/* Itinerary */}
@@ -465,7 +479,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
           <Card
             sx={{
               minWidth: 300,
-              maxWidth: 350,
+              // maxWidth: 350,
               flexShrink: 0,
               p: 2,
               border: '4px solid black',
