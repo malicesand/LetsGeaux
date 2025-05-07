@@ -133,26 +133,12 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     }
   }, [startDate, endDate]);
   //used then dates are updated
- // If passedName exists (solo trip) and not editing
-useEffect(() => {
-  if (!editingItinerary) {
-    if (passedName) {
-      setItineraryName(passedName);
-    } else if (partyName) {
-      // If it's a party trip and no passedName, use "Trip name 
-      setItineraryName(`Trip with ${partyName}`);
-    }
-  }
-}, [passedName, partyName, editingItinerary]);
-
-
   useEffect(() => {
-    //if not party id and not itineraries
-    if (partyId && itineraries.length === 0) {
-      setShowCreateForm(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (passedName && !editingItinerary) {
+      setItineraryName(passedName);
     }
-  }, [partyId, itineraries]);
+  }, [passedName, editingItinerary]);
+
   
 
   //fetch all itineraries
@@ -456,13 +442,13 @@ useEffect(() => {
         Itineraries
       </Typography>
       <Box
-        my={2}
-        sx={{
-          backgroundColor: '#C2A4F8',
-          padding: '16px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-        }}
+        // my={2}
+        // sx={{
+        //   backgroundColor: '#C2A4F8',
+        //   padding: '16px',
+        //   borderRadius: '8px',
+        //   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        // }}
       >
         {itineraries.map((itinerary, index) => (
           <Card
@@ -480,6 +466,7 @@ useEffect(() => {
           >
 
             <CardContent>
+            <Box sx={{ textAlign: 'center' }}>
               <Typography variant='h3'>{itinerary.name}</Typography>
               {itinerary.partyName && (
                 <Typography variant='caption'
@@ -491,7 +478,7 @@ useEffect(() => {
                     color: 'black',
                     px: 2,
                     py: 1,
-                    // borderRadius: '8px',
+                    borderRadius: '8px',
                     // border: '4px solid black',
                     fontWeight: 700,
                     fontSize: '0.75rem',
@@ -510,7 +497,15 @@ useEffect(() => {
               <Typography variant='body1'>
                 End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY h:mm A')}
               </Typography>
-
+              <Box
+  sx={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center', 
+    gap: 1,
+    mt: 2
+  }}
+>
               <Typography
                 variant='caption'
                 color='secondary'
@@ -520,7 +515,7 @@ useEffect(() => {
                   color: 'black',
                   px: 2,
                   py: 1,
-                  //borderRadius: '8px',
+                  borderRadius: '8px',
                   //border: '4px solid black',
                   fontWeight: 700,
                   fontSize: '0.75rem',
@@ -557,14 +552,16 @@ useEffect(() => {
 
                 Share Itinerary
               </Button>
+              </Box>
               {itinerary.message && (
                 <Alert severity='success'>{itinerary.message}</Alert>
               )}
-            </CardContent>
+                </Box>
+            </CardContent>  
             <CardActions sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
               <IconButton
                 onClick={() => handleEditClick(itinerary)}
-                sx={{ position: 'absolute', top: 8, right: 8, color: 'black' }}
+                sx={{ position: 'absolute', bottom: 8, right: 40, color: 'black' }}
               >
                 <PiPencil />
               </IconButton>
@@ -587,6 +584,7 @@ useEffect(() => {
               {/* {console.log('routes', routes)}
               {console.log('itinID', itineraryId)}
               {console.log('itin.id', itinerary.id)} */}
+              
               {/* rendering Routes  */}
               <Typography variant='h3'> Routes Between Activities:</Typography>
 
@@ -695,7 +693,6 @@ useEffect(() => {
           </Button>
         </DialogActions>
       </Dialog>
-
     </Container>
   );
 };
