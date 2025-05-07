@@ -747,7 +747,7 @@ for (const activity of sortedActivities) {
         )} */}
 
         <Box textAlign='center' mb={2}>
-          <Typography variant='h5' gutterBottom>
+          <Typography variant='h3' gutterBottom>
             Activities List
           </Typography>
           <Box>
@@ -765,7 +765,7 @@ for (const activity of sortedActivities) {
     // loops over each group of activities for each date
 Object.entries(groupedByDate).map(([date, activities]) => (
   <Box key={date} mb={4}>
-     <Typography variant="h6" gutterBottom>
+     <Typography variant="h4" gutterBottom>
                     {new Date(date).toLocaleDateString(undefined, {
                 weekday: 'long',
                 month: 'long',
@@ -775,7 +775,7 @@ Object.entries(groupedByDate).map(([date, activities]) => (
     {/* <Typography variant="h6" gutterBottom>
       {date}
     </Typography> */}
-    <Box display="flex" flexWrap="wrap" gap={2}>
+    <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">
       {/* loops over each group of activities for each date */}
       {activities.map(activity => (
               
@@ -813,14 +813,14 @@ Object.entries(groupedByDate).map(([date, activities]) => (
                       }}
                     />
                   )}
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant='h5'>{activity.name}</Typography>
-                    <Typography variant='body2'>{activity.description}</Typography>
-                    <Typography variant='body2'>{activity.time}</Typography>
-                    <Typography variant='body2'>{activity.date}</Typography>
-                    <Typography variant='body2'>{activity.location}</Typography>
-                    <Typography variant='body2'>{activity.phone}</Typography>
-                    <Typography variant='body2'>{activity.address}</Typography>
+                  <CardContent sx={{ flexGrow: 1 , textAlign: 'left' }} >
+                    <Typography variant='h4'>{activity.name}</Typography>
+                    <Typography variant='body1'>{activity.description}</Typography>
+                    <Typography variant='body1'>{activity.time}</Typography>
+                    <Typography variant='body1'>{activity.date}</Typography>
+                    <Typography variant='body1'>{activity.location}</Typography>
+                    <Typography variant='body1'>{activity.phone}</Typography>
+                    <Typography variant='body1'>{activity.address}</Typography>
                   </CardContent>
 
                   <IconButton
@@ -828,7 +828,8 @@ Object.entries(groupedByDate).map(([date, activities]) => (
                     sx={{
                       position: 'absolute',
                       bottom: 8,
-                      left: 8,
+                      right: 40,
+
                       color: 'black'
                     }}
                   >
