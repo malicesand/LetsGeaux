@@ -40,6 +40,18 @@ const interestCodes = {
     '4bf58dd8d48988d17f941735',
     '63be6904847c3692a84b9b25',
   ],
+  'Outdoor Activities': [
+    '52e81612bcbc57f1066b79ea',
+    '4bf58dd8d48988d193941735',
+    '5744ccdfe4b0c0459246b4d9',
+    '5267e4d9e4b0ec79466e48d1',
+    '4d4b7105d754a06377d81259',
+    '56aa371be4b08b9a8d57355e',
+    '4bf58dd8d48988d159941735',
+    '52e81612bcbc57f1066b7a13',
+    '4bf58dd8d48988d162941735',
+    '4bf58dd8d48988d1e7941735',
+  ],
   'Sports': [
   '63be6904847c3692a84b9c07',
   '63be6904847c3692a84b9c05',
@@ -181,7 +193,7 @@ const interestCodes = {
     '4bf58dd8d48988d13a941735',
     '56aa371be4b08b9a8d5734f6',
   ],
-  'Major': [
+  'Major Events': [
     '4bf58dd8d48988d184941735',
     '63be6904847c3692a84b9b21',
     '4eb1daf44b900d56c88a4600',
