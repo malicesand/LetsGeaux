@@ -110,7 +110,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
   };
 
   return (
-    <Box p={2}>
+    <Box p={2} border='4px solid black'>
       <Typography variant="h4" align="center" gutterBottom>
         Uploaded Images
       </Typography>
@@ -128,7 +128,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
           variant="contained"
           onClick={handlePrev}
           disabled={imageChunks.length <= 1}
-          fullWidth
+
         >
           Previous
         </Button>
@@ -136,7 +136,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
           variant="contained"
           onClick={handleNext}
           disabled={imageChunks.length <= 1}
-          fullWidth
+
         >
           Next
         </Button>
