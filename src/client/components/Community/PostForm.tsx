@@ -104,6 +104,9 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
         height: '50px',
         width: '500px',
         padding: '15px',
+       '& .MuiOutlinedInput-root': {
+          borderRadius: 4,
+        }
       }}
       variant="outlined"{...register("title")}
       size='small'
@@ -113,7 +116,13 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
       >
       </TextField>
       <TextField
-      sx= {{mb: '5px', mt: '10px'}}
+      sx= {{
+        mb: '5px',
+        mt: '10px',
+        '& .MuiOutlinedInput-root': {
+          borderRadius: 4,
+        }
+      }}
       rows="4"
       cols="100"
       {...register("body", {
