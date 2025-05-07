@@ -14,7 +14,8 @@ import {
 } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+// import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { useForm, Controller } from 'react-hook-form';
 // import { error } from 'console';
@@ -244,7 +245,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
             rules={{required: 'Must specify time'}}
             control={control}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <TimePicker
+              <MobileTimePicker
               label="Choose a time"
               value={value ?? null}
               onChange={onChange}
