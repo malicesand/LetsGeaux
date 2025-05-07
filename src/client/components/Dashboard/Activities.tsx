@@ -378,8 +378,8 @@
           {/* Conditional if Activities Exist */}
           {activities.length ? (
             <>
-              <Box>
-                <Typography variant='h5' gutterBottom>
+              <Box textAlign='center' mb={2}>
+                <Typography variant='h4' gutterBottom>
                   Activities List
                 </Typography>
                   {/* {sortedActivities.map(activity => ( */}
@@ -393,7 +393,7 @@
                           year: 'numeric',
                         })}
                       </Typography>
-                      <Box display="flex" flexWrap="wrap" gap={2}>
+                      <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">
                         {activities.map(activity => (
                           <Box key={activity.id}  sx={{
                             width: 300,
@@ -428,8 +428,8 @@
                                 />
                               )}
                               
-                              <CardContent sx={{ flexGrow: 1 }}>
-                                <Typography variant='h6'>{activity.name}</Typography>
+                              <CardContent sx={{ flexGrow: 1 , textAlign: 'left' }}>
+                                <Typography variant='h4'>{activity.name}</Typography>
                                 <Typography>{activity.description}</Typography>
                                 <Typography>{activity.time}</Typography>
                                 <Typography>{activity.date}</Typography>
