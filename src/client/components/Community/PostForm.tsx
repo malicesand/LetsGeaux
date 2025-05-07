@@ -5,17 +5,17 @@ import {
   Typography,
   List,
   Card,
-  Paper,
+  Box,
   Grid,
   TextField,
-  Input,
+  IconButton,
   Button,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { PiPencilLineBold } from "react-icons/pi";
 import { PiNotePencilFill } from "react-icons/pi";
 import { PiXFill } from "react-icons/pi";
-
+import SendRounded from '@mui/icons-material/SendRounded';
 import { user } from '../../../../types/models.ts';
 
 
@@ -94,9 +94,10 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
 
 
   return (
-    <Container>
+    <Container >
       <Grid container spacing={3}>
         <form onSubmit={handleSubmit(submitForm)} >
+
       <TextField
       sx={{
         mb: '10px',
@@ -104,7 +105,7 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
         height: '50px',
         width: '500px',
         padding: '15px',
-       '& .MuiOutlinedInput-root': {
+        '& .MuiOutlinedInput-root': {
           borderRadius: 4,
         }
       }}
@@ -139,30 +140,40 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
           borderWidth: 4,
           color: 'black',
           p: '4px'
-         }}
-         onClick={abortEdit}><PiXFill /></Button>
+        }}
+        onClick={abortEdit}><PiXFill /></Button>
       ) : (
         null
       )}
         {postEditMode ? (
-          <Button title="Amend post" sx={{borderWidth: 4,
+          <IconButton title="Amend post" sx={{borderWidth: 4,
             color: 'black',
             p: '4px'
           }}
           type="submit" disabled={isSubmitting}
           >
-            {isSubmitting ? "Saving..." : <PiNotePencilFill />}
-            </Button>
+            {isSubmitting ? "Saving..." : <SendRounded sx={{
+              color: "#bbf451",
+              position:"absolute",
+              bottom: 8,
+              right: 8,
+            }} />}
+            </IconButton>
 
-        ) : (
-          <Button title="Send post"  sx={{borderWidth: 4,
-            color: 'black',
-            p: '4px'
-          }}
-          type="submit" disabled={isSubmitting}
-          >
-            {isSubmitting ? "Saving..." : <PiPencilLineBold />}
-            </Button>
+) : (
+  <IconButton title="Send post"  sx={{borderWidth: 4,
+    color: 'black',
+    p: '4px'
+  }}
+  type="submit" disabled={isSubmitting}
+  >
+            {isSubmitting ? "Saving..." : <SendRounded sx={{
+              color: "#bbf451",
+              position:"absolute",
+              bottom: 8,
+              right: 8,
+            }} />}
+            </IconButton>
         ) }
         </form>
       </Grid>

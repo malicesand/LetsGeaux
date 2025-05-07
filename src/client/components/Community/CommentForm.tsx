@@ -85,6 +85,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ user, postId, commentEditMode
   return (
     <Container>
       <Grid container spacing={3}>
+        
         {/* <Typography>Leave a comment</Typography> */}
         <form onSubmit={handleSubmit(submitComment)}>
           <TextField
