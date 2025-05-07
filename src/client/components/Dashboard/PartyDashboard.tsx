@@ -181,17 +181,17 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     partyName: string,
     userId: number,
     partyId: string,
-    viewCode: string,
+    // viewCode: string,
   ) => {
     // console.log(`${partyName} @ send email party dash`)
-    console.log(`view code at evite ${viewCode}`)
+    // console.log(`view code at evite ${viewCode}`)
     try {
       await axios.post('/api/party/sendInvite', {
         emails: emailList,
         partyName: partyName,
         userId: userId,
         partyId: partyId,
-        viewCode: viewCode
+        // viewCode: viewCode
       });
       setInviteSuccess(true);
       setInputValue('');
