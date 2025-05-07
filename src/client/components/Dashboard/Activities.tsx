@@ -15,6 +15,9 @@
     CardActions,
     CardContent,
     Autocomplete,
+    Tooltip,
+    IconButton,
+    Fab
   } from '@mui/material';
   import axios from 'axios';
   import { user } from '../../../../types/models';
@@ -23,13 +26,11 @@
   import { DatePicker } from '@mui/x-date-pickers/DatePicker';
   import { TimePicker } from '@mui/x-date-pickers/TimePicker';
   import dayjs from 'dayjs';
-  import IconButton from '@mui/material/IconButton';
-  import { PiTrash } from 'react-icons/pi';
-  import Fab from '@mui/material/Fab';
   import { useSnackbar } from 'notistack';
+  import { PiTrash } from 'react-icons/pi';
   import { PiPlusBold } from 'react-icons/pi';
   import { PiPencil } from 'react-icons/pi';
-  import Tooltip from '@mui/material/Tooltip';
+  
 
   interface Activity {
     id: string;
@@ -377,104 +378,103 @@
           {/* Conditional if Activities Exist */}
           {activities.length ? (
             <>
-              <Box>
-                <Typography variant='h5' gutterBottom>
+              <Box textAlign='center' mb={2}>
+                <Typography variant='h4' gutterBottom>
                   Activities List
                 </Typography>
                   {/* {sortedActivities.map(activity => ( */}
                   {Object.entries(groupedByDate).map(([date, activities]) => (
                     <Box key={date} mb={4}>
                       <Typography variant="h6" gutterBottom>
-      {new Date(date).toLocaleDateString(undefined, {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      })}
-    </Typography>
-
-    <Box display="flex" flexWrap="wrap" gap={2}>
-      {activities.map(activity => (
-                    <Box key={activity.id}  sx={{
-                      width: 300,
-                      minHeight: 300,
-                      position: 'relative',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between'
-                    }}>
-                      
-                      <Card
-                        sx={{
-                          backgroundColor: '#C2A4F8',
-                          padding: '16px',
-                          borderRadius: '24px',
-                          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                          position: 'relative'
-                        }}
-                      >
-                        {activity.image && (
-                          <Box
-                            component='img'
-                            src={activity.image}
-                            alt={activity.name}
-                            sx={{
-                              width: '100%',
-                              height: 200,
-                              objectFit: 'cover',
-                              borderRadius: '16px',
-                              mb: 2
-                            }}
-                          />
-                        )}
-                        
-                        <CardContent sx={{ flexGrow: 1 }}>
-                          <Typography variant='h6'>{activity.name}</Typography>
-                          <Typography>{activity.description}</Typography>
-                          <Typography>{activity.time}</Typography>
-                          <Typography>{activity.date}</Typography>
-                          <Typography>{activity.location}</Typography>
-                          <Typography>{activity.phone}</Typography>
-                          <Typography>{activity.address}</Typography>
-                        </CardContent>
-                        <CardActions>
-                          <Tooltip title='Edit Activity'>
-                            <IconButton
-                              onClick={() => handleUpdateClick(activity)}
-                              // color='secondary'
-                              sx={{ 
-                                position: 'absolute',
-                                bottom: 8,
-                                right: 40,
-                                color: 'black' 
-                              }}
-                            >
-                              <PiPencil/>
-                            </IconButton>
-                          </Tooltip>
-                          {user.id === itineraryCreatorId && (
-                            <Tooltip title='Delete Activity'>
-                              <IconButton
-                              onClick={() => handleOpenDeleteDialog(activity)}
+                        {new Date(date).toLocaleDateString(undefined, {
+                          weekday: 'long',
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </Typography>
+                      <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">
+                        {activities.map(activity => (
+                          <Box key={activity.id}  sx={{
+                            width: 300,
+                            minHeight: 300,
+                            position: 'relative',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between'
+                          }}>
+                                        
+                            <Card
                               sx={{
-                                position: 'absolute',
-                                bottom: 8,
-                                right: 8,
-                                color: 'black'
+                                backgroundColor: '#C2A4F8',
+                                padding: '16px',
+                                borderRadius: '24px',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                position: 'relative'
                               }}
                             >
-                              <PiTrash />
-                              </IconButton>
-                            </Tooltip>
-                          )}
-                        </CardActions>
-                      </Card>
+                              {activity.image && (
+                                <Box
+                                  component='img'
+                                  src={activity.image}
+                                  alt={activity.name}
+                                  sx={{
+                                    width: '100%',
+                                    height: 200,
+                                    objectFit: 'cover',
+                                    borderRadius: '16px',
+                                    mb: 2
+                                  }}
+                                />
+                              )}
+                              
+                              <CardContent sx={{ flexGrow: 1 , textAlign: 'left' }}>
+                                <Typography variant='h4'>{activity.name}</Typography>
+                                <Typography>{activity.description}</Typography>
+                                <Typography>{activity.time}</Typography>
+                                <Typography>{activity.date}</Typography>
+                                <Typography>{activity.location}</Typography>
+                                <Typography>{activity.phone}</Typography>
+                                <Typography>{activity.address}</Typography>
+                              </CardContent>
+                              <CardActions>
+                                <Tooltip title='Edit Activity'>
+                                  <IconButton
+                                    onClick={() => handleUpdateClick(activity)}
+                                    // color='secondary'
+                                    sx={{ 
+                                      position: 'absolute',
+                                      bottom: 8,
+                                      right: 40,
+                                      color: 'black' 
+                                    }}
+                                  >
+                                    <PiPencil/>
+                                  </IconButton>
+                                </Tooltip>
+                                {user.id === itineraryCreatorId && (
+                                  <Tooltip title='Delete Activity'>
+                                    <IconButton
+                                    onClick={() => handleOpenDeleteDialog(activity)}
+                                    sx={{
+                                      position: 'absolute',
+                                      bottom: 8,
+                                      right: 8,
+                                      color: 'black'
+                                    }}
+                                  >
+                                    <PiTrash />
+                                    </IconButton>
+                                  </Tooltip>
+                                )}
+                              </CardActions>
+                            </Card>
+                          </Box>
+                          ))}
+                      </Box>
                     </Box>
                   ))}
-                </Box>
-                </Box>
-                  ))}
-                  </Box>
+              </Box>
             <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
               <DialogTitle>Confirm Deletion</DialogTitle>
                 <DialogContent>
@@ -560,13 +560,20 @@
                         margin="normal"
                         fullWidth
                         required
-                        InputLabelProps={{
-                          sx: {
-                            '&.Mui-focused': {
-                              color: 'black'
+                        slotProps={{
+                          root: {
+                            sx: {
+                              '& .MuiInputLabel-root': {
+                                top: 0,
+                              },
+                              '& .MuiInputLabel-root.MuiInputLabel-shrink': {
+                                top: -9, // floating label
+                              },
+                              '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'black',
+                              },
                             },
-                            top: -6
-                          }
+                          },
                         }}
                       />
                     )}
@@ -592,40 +599,44 @@
                       },
                     }}
                   /> */}
-
-
-
                     <Autocomplete
-                    freeSolo
-                    options={descriptionOptions}
-                    value={formData.description}
-                    onInputChange={(event, newInputValue) => {
-                      setFormData(prev => ({ ...prev, description: newInputValue }));
-                    }}
-                    onChange={(event, newValue) => {
-                      if (typeof newValue === 'string') {
-                        setFormData(prev => ({ ...prev, description: newValue }));
-                      }
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Description"
-                        margin="normal"
-                        fullWidth
-                        required
-                        InputLabelProps={{
-                          sx: {
-                            '&.Mui-focused': {
-                              color: 'black'
+                      freeSolo
+                      options={descriptionOptions}
+                      value={formData.description}
+                      onInputChange={(event, newInputValue) => {
+                        setFormData(prev => ({ ...prev, description: newInputValue }));
+                      }}
+                      onChange={(event, newValue) => {
+                        if (typeof newValue === 'string') {
+                          setFormData(prev => ({ ...prev, description: newValue }));
+                        }
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Description"
+                          margin="normal"
+                          fullWidth
+                          required
+                          slotProps={{
+                            root: {
+                              sx: {
+                                '& .MuiInputLabel-root.MuiInputLabel-shrink': {
+                                  top: -9, // floating label
+                                },
+                                '& .MuiInputLabel-root': {
+                                  top: 0,
+                                },
+                                '& .MuiInputLabel-root.Mui-focused': {
+                                  color: 'black',
+                                  
+                                },
+                              },
                             },
-                            top: -6
-                          }
-                        }}
-                      />
-                    )}
-                  />
-                  
+                          }}
+                        />
+                      )}
+                    />
                   {/* <TextField
                     label='Description'
                     name='description'
@@ -663,11 +674,11 @@
                     minDate={dayjs(itineraryBegin)}
                     maxDate={dayjs(itineraryEnd)}
                     shouldDisableDate={(date) => {
-                                        const begin = dayjs(itineraryBegin);
-                                        const end = dayjs(itineraryEnd);
-                                      
-                                        return !date.isBetween(begin, end, 'day', '[]'); // include date range
-                                      }}
+                      const begin = dayjs(itineraryBegin);
+                      const end = dayjs(itineraryEnd);
+                    
+                      return !date.isBetween(begin, end, 'day', '[]'); // include date range
+                    }}
                     slotProps={{
                       actionBar: {
                         sx: {
@@ -734,7 +745,7 @@
                       }
                     }}
                   />
-  {/* auto complete for places */}
+                  {/* auto complete for places */}
                   <Autocomplete
                     // allows any type of text
                     freeSolo
@@ -745,15 +756,12 @@
                       if (typeof option === 'string') return option;
                       return option?.label ?? '';
                     }}
-                    
                     //will display selected value
                     value={
                       placeOptions.find(opt => opt.label === formData.location) || formData.location
                     }
-                    
-                                      //updates types and runs whenuser types in input box
+                    //updates types and runs whenuser types in input box
                     onInputChange={(event, newInputValue) => {
-                      
                       //updates form state
                       setFormData(prev => ({ ...prev, location: newInputValue }));
                       //when more than 2 characters is typed, fetch suggestion
@@ -781,12 +789,16 @@
                           // drop down arrow and clear icons
                           endAdornment: params.InputProps.endAdornment
                         }}
-                        InputLabelProps={{
-                          sx: {
-                            '&.Mui-focused': {
-                              color: 'black'
-                            },
-                            top: -9
+                        slotProps={{
+                          root: {
+                            sx: {
+                              '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'black',
+                              },
+                              '& .MuiInputLabel-root.MuiInputLabel-shrink': {
+                                top: -9, // floating label
+                              },
+                            }
                           }
                         }}
                       />

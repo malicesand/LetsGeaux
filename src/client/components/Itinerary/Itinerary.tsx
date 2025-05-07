@@ -139,6 +139,8 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     }
   }, [passedName, editingItinerary]);
 
+  
+
   //fetch all itineraries
   useEffect(() => {
     const fetchItineraries = async () => {
@@ -189,17 +191,17 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     setEndDate(end);
 
     // Create a list of Date objects between start and end
-    const range: Date[] = [];
-    let current = begin;
-    while (current.isSameOrBefore(end, 'day')) {
-      range.push(current.toDate()); // convert Dayjs to Date for selectedDates
-      current = current.add(1, 'day');
-    }
-    setSelectedDates(range);
+      const range: Date[] = [];
+      let current = begin;
+      while (current.isSameOrBefore(end, 'day')) {
+        range.push(current.toDate()); // convert Dayjs to Date for selectedDates
+        current = current.add(1, 'day');
+      }
+      setSelectedDates(range);
 
-    setShowCreateForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+      setShowCreateForm(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
   // handle edits to itinerary
   const handleEditSubmit = async () => {
@@ -440,13 +442,13 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
         Itineraries
       </Typography>
       <Box
-        my={2}
-        sx={{
-          backgroundColor: '#C2A4F8',
-          padding: '16px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-        }}
+        // my={2}
+        // sx={{
+        //   backgroundColor: '#C2A4F8',
+        //   padding: '16px',
+        //   borderRadius: '8px',
+        //   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        // }}
       >
         {itineraries.map((itinerary, index) => (
           <Card
@@ -464,22 +466,24 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
           >
 
             <CardContent>
+            <Box sx={{ textAlign: 'center' }}>
               <Typography variant='h3'>{itinerary.name}</Typography>
               {itinerary.partyName && (
                 <Typography variant='caption'
                   color='secondary'
                   sx={{
+                    mt: 1,
                     display: 'inline-block',
-                    backgroundColor: 'primary.main',
+                     backgroundColor: '#fff085',
                     color: 'black',
                     px: 2,
                     py: 1,
-                    borderRadius: '9999px',
-                    border: '4px solid black',
+                    borderRadius: '8px',
+                    // border: '4px solid black',
                     fontWeight: 700,
                     fontSize: '0.75rem',
                     textAlign: 'center',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                     boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
                   }}>
                   Party: {itinerary.partyName}
                 </Typography>
@@ -493,18 +497,26 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               <Typography variant='body1'>
                 End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY h:mm A')}
               </Typography>
-
+              <Box
+  sx={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center', 
+    gap: 1,
+    mt: 2
+  }}
+>
               <Typography
                 variant='caption'
                 color='secondary'
                 sx={{
                   display: 'inline-block',
-                  backgroundColor: 'primary.main',
+                  backgroundColor: '#fff085',
                   color: 'black',
                   px: 2,
                   py: 1,
-                  borderRadius: '9999px',
-                  border: '4px solid black',
+                  borderRadius: '8px',
+                  //border: '4px solid black',
                   fontWeight: 700,
                   fontSize: '0.75rem',
                   textAlign: 'center',
@@ -521,15 +533,15 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
                   display: 'inline-block',
                   backgroundColor: 'primary.main',
                   color: 'black',
-                  px: 2,
+                   px: 2,
                   py: 1,
-                  borderRadius: '9999px',
+                  borderRadius: '8px',
                   fontWeight: 700,
                   fontSize: '0.75rem',
                   textAlign: 'center',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
 
-                }}
+                }}  
                 onClick={() => {
                   setSelectedViewCode(itinerary.viewCode);
                   setSelectedItineraryName(itinerary.name);
@@ -540,14 +552,16 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
 
                 Share Itinerary
               </Button>
+              </Box>
               {itinerary.message && (
                 <Alert severity='success'>{itinerary.message}</Alert>
               )}
-            </CardContent>
+                </Box>
+            </CardContent>  
             <CardActions sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
               <IconButton
                 onClick={() => handleEditClick(itinerary)}
-                sx={{ position: 'absolute', top: 8, right: 8, color: 'black' }}
+                sx={{ position: 'absolute', bottom: 8, right: 40, color: 'black' }}
               >
                 <PiPencil />
               </IconButton>
@@ -570,6 +584,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               {/* {console.log('routes', routes)}
               {console.log('itinID', itineraryId)}
               {console.log('itin.id', itinerary.id)} */}
+              
               {/* rendering Routes  */}
               <Typography variant='h3'> Routes Between Activities:</Typography>
 
@@ -678,7 +693,6 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
           </Button>
         </DialogActions>
       </Dialog>
-
     </Container>
   );
 };

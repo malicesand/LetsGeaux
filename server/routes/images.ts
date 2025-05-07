@@ -1,14 +1,14 @@
 import express from 'express';
-
+import cloudinary from '../cloudinary';
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 const imageRoute = express.Router()
 
-imageRoute.post('/', async (req:any, res:any) => {
+imageRoute.post('/', async (req: any, res: any) => {
   const { url, notes } = req.body;
-  const userId = req.user?.id; 
- 
+  const userId = req.user?.id;
+
 
   if (!url || !userId) {
     return res.status(400).json({ error: 'Missing image URL or user ID' });
@@ -31,12 +31,12 @@ imageRoute.post('/', async (req:any, res:any) => {
 });
 
 imageRoute.get('/:userId', async (req, res) => {
-  const {userId} = req.params
+  const { userId } = req.params
   try {
     const images = await prisma.image.findMany({
-      where:{userId: +userId},
+      where: { userId: +userId },
       orderBy: {
-        id: 'desc', 
+        id: 'desc',
       },
     });
 
@@ -47,12 +47,28 @@ imageRoute.get('/:userId', async (req, res) => {
   }
 });
 
-imageRoute.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-
+imageRoute.delete('/:imageId', async (req, res) => {
+  const { imageId } = req.params;
+  //console.log(`Looking up image with ID ${imageId}`);
   try {
+    const image = await prisma.image.findUnique({
+      where: { id: parseInt(imageId) },
+    });
+
+
+    if (!image) {
+      return res.status(404).json({ error: 'Image not found' });
+    }
+
+    // Extract Cloudinary public_id
+    const publicId = getCloudinaryPublicId(image.url);
+
+    // Delete from Cloudinary
+    await cloudinary.uploader.destroy(publicId);
+
+    // Delete from database
     const deleted = await prisma.image.delete({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(imageId) },
     });
 
     res.status(200).json({ success: true, deleted });
@@ -62,6 +78,11 @@ imageRoute.delete('/:id', async (req, res) => {
   }
 });
 
-
-
+// Helper: Extract public_id from full Cloudinary URL
+function getCloudinaryPublicId(url: string) {
+  const parts = url.split('/');
+  const filename = parts.pop()?.split('.')[0]; // remove .jpg/.png
+  const folder = parts.slice(parts.indexOf('upload') + 1).join('/');
+  return `${folder}/${filename}`;
+}
 export default imageRoute

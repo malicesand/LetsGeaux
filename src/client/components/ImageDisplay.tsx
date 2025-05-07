@@ -6,9 +6,10 @@ import {
   Slider,
   Switch,
   FormControlLabel,
+  Modal,
 } from '@mui/material';
 import { useImageContext } from './ImageContext';
-
+import axios from 'axios'
 interface Image {
   id: number;
   url: string;
@@ -18,6 +19,7 @@ interface Image {
 interface ImageDisplayProps {
   userId: number;
 }
+
 const chunkArray = (arr: Image[], size: number): Image[][] => {
   const chunks = [];
   for (let i = 0; i < arr.length; i += size) {
@@ -26,14 +28,33 @@ const chunkArray = (arr: Image[], size: number): Image[][] => {
   return chunks;
 };
 
+const modalStyle = {
+  position: 'absolute' as const,
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 4,
+};
+
 const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
-  const { images, deleteImage, getAllImages } = useImageContext();
+  const { images, getAllImages } = useImageContext();
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
   const [autoFlip, setAutoFlip] = useState(true);
-  const [flipInterval, setFlipInterval] = useState(3000); // milliseconds
+  const [flipInterval, setFlipInterval] = useState(7000);
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
 
   const imageChunks = chunkArray(images, 2);
+  const { setImages } = useImageContext();
+  useEffect(() => {
+    getAllImages(userId);
+  }, [userId]);
 
   useEffect(() => {
     if (!autoFlip || imageChunks.length <= 1) return;
@@ -44,10 +65,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
 
     return () => clearInterval(interval);
   }, [autoFlip, flipInterval, imageChunks.length]);
-  useEffect(() => {
-    getAllImages(userId)
-    console.log(userId)
-  }, [userId])
+
   const handleNext = () => {
     setIsFlipping(true);
     setTimeout(() => {
@@ -66,17 +84,60 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
     }, 300);
   };
 
+  const openConfirm = (image: Image) => {
+    setSelectedImage(image);
+    setConfirmOpen(true);
+  };
+  const deleteImage = async (imageId: number) => {
+    try {
+      await axios.delete(`/api/image/${imageId}`);
+      setImages((prev) => prev.filter((img) => img.id !== imageId));
+      console.log(images)
+    } catch (err) {
+      console.error('Error deleting image:', err);
+    }
+  };
+  const handleConfirmDelete = async () => {
+    if (selectedImage) {
+      try {
+        await deleteImage(selectedImage.id);
+      } catch (error) {
+        console.error('Delete failed:', error);
+      }
+    }
+    setConfirmOpen(false);
+    setSelectedImage(null);
+  };
+
   return (
-    <Box>
-      <Typography variant="h3" align="center">
+    <Box p={2}>
+      <Typography variant="h4" align="center" gutterBottom>
         Uploaded Images
       </Typography>
 
-      <Box display="flex" justifyContent="center" alignItems="center" gap={2} mt={2}>
-        <Button variant="contained" onClick={handlePrev} disabled={imageChunks.length <= 1}>
+      <Box
+        display="flex"
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        justifyContent="center"
+        alignItems="center"
+        gap={2}
+        flexWrap="wrap"
+        mt={2}
+      >
+        <Button
+          variant="contained"
+          onClick={handlePrev}
+          disabled={imageChunks.length <= 1}
+          fullWidth
+        >
           Previous
         </Button>
-        <Button variant="contained" onClick={handleNext} disabled={imageChunks.length <= 1}>
+        <Button
+          variant="contained"
+          onClick={handleNext}
+          disabled={imageChunks.length <= 1}
+          fullWidth
+        >
           Next
         </Button>
         <FormControlLabel
@@ -87,13 +148,14 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
             />
           }
           label="Auto Flip"
+          sx={{ whiteSpace: 'nowrap' }}
         />
-        <Box width={200}>
+        <Box width={{ xs: '100%', sm: 200 }}>
           <Typography variant="caption">Speed (ms)</Typography>
           <Slider
             value={flipInterval}
             onChange={(_, value) => setFlipInterval(value as number)}
-            step={500}
+            step={800}
             min={1000}
             max={10000}
             disabled={!autoFlip}
@@ -111,21 +173,21 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
           sx={{
             display: 'flex',
             flexWrap: 'wrap',
-            gap: 3,
+            gap: 2,
             justifyContent: 'center',
-            mt: 2,
+            mt: 3,
             transition: 'transform 0.3s',
-            transformStyle: 'preserve-3d',
           }}
         >
           {imageChunks[currentChunkIndex]?.map((image) => (
             <Box
               key={image.id}
               sx={{
-                border: '2px solid black',
-                borderRadius: 4,
-                padding: 2,
-                maxWidth: 220,
+                border: '4px solid black',
+                borderRadius: 2,
+                p: 1,
+                maxWidth: 200,
+                width: '100%',
                 textAlign: 'center',
                 backgroundColor: 'white',
               }}
@@ -133,16 +195,21 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
               <img
                 src={image.url}
                 alt="Uploaded"
-                style={{ width: '100%', borderRadius: '4px' }}
+                style={{
+                  width: '100%',
+                  borderRadius: '4px',
+                  objectFit: 'cover',
+                }}
               />
-              <Typography variant="body1" sx={{ fontWeight: 500, mt: 1 }}>
+              <Typography variant="body2" sx={{ fontWeight: 500, mt: 1 }}>
                 Notes: {image.notes}
               </Typography>
               <Button
-                onClick={() => deleteImage(image.id)}
+                onClick={() => openConfirm(image)}
                 variant="contained"
-                color="primary"
+                color="black"
                 sx={{ mt: 1 }}
+                fullWidth
               >
                 Delete
               </Button>
@@ -150,6 +217,26 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
           ))}
         </Box>
       )}
+
+      {/* Modal */}
+      <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <Box sx={modalStyle}>
+          <Typography variant="h6" gutterBottom>
+            Delete Image
+          </Typography>
+          <Typography>
+            Are you sure you want to delete{' '}
+            {selectedImage?.notes ? `"${selectedImage.notes}"` : 'this image'}?
+            This action cannot be undone.
+          </Typography>
+          <Box mt={3} display="flex" justifyContent="flex-end" gap={2}>
+            <Button color='black' onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button variant="contained" color="black" onClick={handleConfirmDelete}>
+              Delete
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
 };

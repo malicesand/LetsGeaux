@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'
-
-import TextField from '@mui/material/TextField';
-import Modal  from '@mui/material/Modal';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import { 
+  TextField,
+  Modal,
+  Button,
+  Typography,
+  Fade,
+  Backdrop,
+  Box,
+} from '@mui/material';
 import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
-import Fade from '@mui/material/Fade';
-import Backdrop from '@mui/material/Backdrop';
-import Box from '@mui/material/Box';
-// import { styled } from '@mui/material/styles';
-
 import { user } from '../../../../types/models.ts'
+// import { styled } from '@mui/material/styles';
  
 const filter = createFilterOptions<user>();
 
@@ -90,7 +90,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
           renderInput={(params) => 
             <TextField 
               {...params} 
-              placeholder="Add an existing user to your party" 
+              placeholder="Add user to your party" 
           />}
         />
       </Box>
@@ -154,6 +154,5 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
       </Modal>
     </React.Fragment>
   ) 
-}
-
+};
 export default AddMember;
