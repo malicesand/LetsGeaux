@@ -158,17 +158,19 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
         //   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
         // }}
       >
-        <Typography variant='h3'sx={{ mt: 3, mb: 2, textAlign: 'center' }}>Party Itinerary</Typography>
+        {/* <Typography variant='h3'sx={{ mt: 3, mb: 2, textAlign: 'center' }}>Party Itinerary</Typography> */}
         {/* Show Itinerary or Button to create */}
         {itinerary ? (
           <Card
             sx={{
-              maxWidth: isMobile ? '85%' : 'auto%',
+              maxWidth: isMobile ? 300 : 'auto%',
+              minWidth: 300,
+              // maxWidth: 300,
               m: 0,
               position: 'relative',
               mb: 2,
               backgroundColor: '#C2A4F8',
-              borderRadius: '24px',
+              borderRadius: 4,
               padding: 2,
               boxShadow: 'none',
               border: '4px solid black',
