@@ -247,6 +247,13 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <MobileTimePicker
               label="Choose a time"
+              sx={{ color: 'black', actionBar: {
+
+                '& .MuiButton-textPrimary': {
+                  color: 'black',
+              },
+            },
+              }}
               value={value ?? null}
               onChange={onChange}
               slotProps={{
