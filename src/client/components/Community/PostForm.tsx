@@ -30,6 +30,7 @@ interface PostFormProps {
 
 type FormFields = {
   body: String,
+  title: String,
 }
 
 
@@ -74,7 +75,7 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
   } else {
     const { id } = editablePost;
     const patchwork = {
-      
+
         body: data.body,
         title: data.title,
     }
@@ -97,13 +98,20 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
       <Grid container spacing={3}>
         <form onSubmit={handleSubmit(submitForm)} >
       <TextField
-      sx={{ mb: '10px', mt: '5px', height: '50px', width: '200px' }}
+      sx={{
+        mb: '10px',
+        mt: '5px',
+        height: '50px',
+        width: '500px',
+        padding: '15px',
+      }}
       variant="outlined"{...register("title")}
       size='small'
       name="title"
       type="text"
       placeholder="Title Post here"
-      ></TextField>
+      >
+      </TextField>
       <TextField
       sx= {{mb: '5px', mt: '10px'}}
       rows="4"
@@ -118,16 +126,34 @@ const submitForm: SubmitHandler<FormFields> = (data:any) => {
       />
       {errors.body && <div>{errors.body.message}</div>}
       {postEditMode ? (
-        <Button title="Cancel Edit" sx={{ borderWidth: 4, color: 'black', p: '4px' }} onClick={abortEdit}><PiXFill /></Button>
+        <Button title="Cancel Edit" sx={{
+          borderWidth: 4,
+          color: 'black',
+          p: '4px'
+         }}
+         onClick={abortEdit}><PiXFill /></Button>
       ) : (
         null
       )}
         {postEditMode ? (
-          <Button title="Amend post" sx={{ borderWidth: 4, color: 'black', p: '4px'}}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : <PiNotePencilFill />}</Button>
+          <Button title="Amend post" sx={{borderWidth: 4,
+            color: 'black',
+            p: '4px'
+          }}
+          type="submit" disabled={isSubmitting}
+          >
+            {isSubmitting ? "Saving..." : <PiNotePencilFill />}
+            </Button>
 
         ) : (
-          <Button title="Send post"  sx={{ borderWidth: 4, color: 'black', p: '4px'}}  type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : <PiPencilLineBold />}</Button>
-
+          <Button title="Send post"  sx={{borderWidth: 4,
+            color: 'black',
+            p: '4px'
+          }}
+          type="submit" disabled={isSubmitting}
+          >
+            {isSubmitting ? "Saving..." : <PiPencilLineBold />}
+            </Button>
         ) }
         </form>
       </Grid>

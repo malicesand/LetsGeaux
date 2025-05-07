@@ -21,6 +21,7 @@ import { PiArrowSquareRightBold } from "react-icons/pi";
 import { PiMapTrifoldBold } from "react-icons/pi";
 import { PiLightbulbBold } from "react-icons/pi";
 import { PiChatsBold } from "react-icons/pi";
+import { PiShootingStarFill } from "react-icons/pi";
 import { PiCalendarPlusBold } from "react-icons/pi";
 import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';
 import { PiListHeartBold } from "react-icons/pi";
@@ -143,7 +144,7 @@ const NavDrawer: React.FC = () => {
           <ListItem key={'wishlist'} disablePadding>
             <ListItemButton component={Link} to='/wishlist' onClick={handleDrawerClose}>
               <ListItemIcon>
-                <PiListHeartBold size={30} style={{ color: 'black' }} />
+              <PiShootingStarFill size={30} style={{ color: 'black' }} />
               </ListItemIcon>
               <ListItemText primary={'Wishlist'} />
             </ListItemButton>

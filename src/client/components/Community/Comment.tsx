@@ -10,11 +10,11 @@ import {
   Grid,
   Box,
   Button,
+  IconButton,
 } from '@mui/material';
-import { PiHandHeartFill } from "react-icons/pi";
-import { PiHandPalmFill } from "react-icons/pi";
-import { PiBombFill } from "react-icons/pi";
-import { PiXFill } from "react-icons/pi";
+import { PiTrash } from 'react-icons/pi';
+import { PiHeartStraightFill } from "react-icons/pi";
+import { PiHeartBreakThin } from "react-icons/pi";
 import { PiNotePencilFill } from "react-icons/pi";
 import { user } from '../../../../types/models.ts';
 
@@ -149,26 +149,70 @@ const commentCredentialCheck = () => {
 
   return (
     // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!
-    <Box sx={{border: "4px solid black", borderRadius: "4", p: 4, mb: "8px"}}>
+    <Box sx={{
+      position: 'relative',
+      border: "4px solid black",
+      borderRadius: "4",
+      p: 4,
+      mb: "8px"
+      }}
+      >
         <Typography>{body}</Typography>
         <Typography>By: {postName}</Typography>
-        <Typography>Likes: {currentComment.likes}</Typography>
+        <Box display="flex" alignItems="flex-start" gap={1}>
         {hasLiked ? (
-          <Button title="Remove like" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={handleVoteDeleteClick}>{currentComment.likes}<PiHandPalmFill /></Button>
+          <Button title="Remove like" sx={{
+            borderWidth: 4,
+            color: 'black',
+            marginRight: "4px"
+          }}
+          size="medium"
+          onClick={handleVoteDeleteClick}
+          >
+            <span style={{ color: '#A78BFA' }}>{currentComment.likes}</span><PiHeartBreakThin />
+            </Button>
         ) : (
-          <Button title="Like comment" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={handleVoteClick}>{currentComment.likes}<PiHandHeartFill /></Button>
+          <Button title="Like comment" sx={{
+            borderWidth: 4,
+            color: 'black',
+            marginRight: "4px"
+          }}
+          size="medium"
+          onClick={handleVoteClick}
+          >
+            <span style={{ color: '#A78BFA' }}>{currentComment.likes}</span><PiHeartStraightFill />
+            </Button>
 
-        )}
+)}
        {canEdit ? (
          null
         ) : (
-          <Button title="Edit this comment" sx={{ borderWidth: 4, color: 'black' }}  onClick={handleEditClick}>< PiNotePencilFill/></Button>
+          <Button
+          title="Edit this comment"
+          sx={{ borderWidth: 4, color: 'black' }}
+          onClick={handleEditClick}
+          >
+            < PiNotePencilFill />
+            </Button>
         )}
         {isCredentialed ? (
-          <Button title="Delete comment" sx={{ borderWidth: 4, color: 'black', marginRight: "4px" }}  onClick={deleteComment} ><PiBombFill /></Button>
+          <IconButton title="Delete comment" sx={{
+            borderWidth: 4,
+            color: 'black',
+            p: '6px',
+            position: 'absolute',
+            bottom: 8,
+            right: 8,
+          }}
+          size="medium"
+          onClick={deleteComment}
+          >
+            <PiTrash style={{ padding: "5px 5px" }}/>
+            </IconButton>
         ) : (
           null
         )}
+        </Box>
 
     </Box>
   )

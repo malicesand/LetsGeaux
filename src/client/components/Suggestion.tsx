@@ -79,6 +79,8 @@ const Suggestion: React.FC<SuggestionProps> = ({
   const [open, setOpen] = useState(false);
   const [navigateUrl, setNavigateUrl] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [hasVotedUp, setHasVotedUp] = useState(false);
+  const [hasVotedDown, setHasVotedDown] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -139,6 +141,35 @@ const handleLeaveSite = () => {
       })
       .catch((err) => console.error('sorry, tex', err));
   }
+
+  const handleVoteClick = (polarity: string) => {
+    const { id } = user;
+    const userId = id
+    const { id: suggestionId } = currentSuggestion;
+    const pol = polarity === 'up' ? 1 : 0
+    const vote = {
+      data: {
+        user: { connect: { id: +user.id } },
+        suggestion: { connect: { id: suggestionId } },
+        polarity: pol,
+      }
+    }
+    let voteDirection;
+    axios.post(`api/vote/${userId}/${suggestionId}/suggestion`, vote).then(() => {
+      if (polarity === 'up') {
+        voteDirection = 'upVotes';
+      } else {
+        voteDirection = 'downVotes';
+      }
+      axios.patch(`api/suggestions/${suggestionId}`, [voteDirection])
+      console.log('into the patch(post details)')
+    })
+      .then(() => alert("YOU VOTED!"))
+      .catch((err) => console.error('there is an issue with your vote', err));
+    // } else {
+    // alert('YOU ALREADY VOTED!!')
+    }
+
 
   // when I want to add a link to another page, just import Link, then<Link to="/wherever"> The word to link</Link>
   const { fsq_id, title, description, link, upVotes, downVotes, hours, address, image } = currentSuggestion;
@@ -219,27 +250,37 @@ const handleLeaveSite = () => {
             {isDb ? (
               <Grid>
                 <Typography>Vote on this suggestion</Typography>
-                <Button
-                title="vote suggestion up"
-                sx={{
-                  borderWidth: 4,
-                  color: 'black',
-                p: '6px',
-                marginRight: "4px"
-                }}
-                onClick={() => handleVoteClick('up')}>
-                  {upVotes}<PiThumbsUpFill />
+                {hasVotedUp ? (
+                  null
+                ) : (
+
+                  <Button
+                  title="vote suggestion up"
+                  sx={{
+                    borderWidth: 4,
+                    color: 'black',
+                    p: '6px',
+                    marginRight: "4px"
+                  }}
+                  onClick={() => handleVoteClick('up')}>
+                  <span style={{ color: "black" }}>{upVotes}</span><PiThumbsUpFill />
                   </Button>
-                <Button
-                title="vote suggestion down"sx={{
-                  borderWidth: 4,
-                  color: 'black',
-                  p: '6px',
-                  marginRight: "4px"
+                )}
+                {hasVotedDown ? (
+                  null
+                ) : (
+
+                  <Button
+                  title="vote suggestion down"sx={{
+                    borderWidth: 4,
+                    color: 'black',
+                    p: '6px',
+                    marginRight: "4px"
                   }}
                   onClick={() => handleVoteClick('down')}>
-                    {downVotes}<PiThumbsDownFill />
+                    <span style={{ color: "black" }}>{downVotes}</span><PiThumbsDownFill />
                     </Button>
+                  )}
               </Grid>
             ) : (null)}
           </ImageListItem>
