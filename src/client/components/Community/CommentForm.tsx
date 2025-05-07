@@ -91,6 +91,11 @@ const CommentForm: React.FC<CommentFormProps> = ({ user, postId, commentEditMode
             cols="50"
             rows="5"
             {...register("body")}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+          borderRadius: 4,
+        }
+            }}
             name="body"
             type="textarea"
             placeholder="Write your own comment"

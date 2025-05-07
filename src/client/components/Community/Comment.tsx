@@ -152,24 +152,25 @@ const commentCredentialCheck = () => {
     <Box sx={{
       position: 'relative',
       border: "4px solid black",
-      borderRadius: "4",
+      borderRadius: 4,
       p: 4,
       mb: "8px"
       }}
       >
         <Typography>{body}</Typography>
         <Typography>By: {postName}</Typography>
-        <Box display="flex" alignItems="flex-start" gap={1}>
+        <Box sx={{ borderRadius: 4 }} display="flex" alignItems="flex-start" gap={1}>
         {hasLiked ? (
           <Button title="Remove like" sx={{
             borderWidth: 4,
-            color: 'black',
-            marginRight: "4px"
+            color: '#bbf451',
+            marginRight: "4px",
+            backgroundColor: "black"
           }}
           size="medium"
           onClick={handleVoteDeleteClick}
           >
-            <span style={{ color: '#A78BFA' }}>{currentComment.likes}</span><PiHeartBreakThin />
+            <span style={{ color: '#bbf451' }}>{currentComment.likes}</span><PiHeartBreakThin />
             </Button>
         ) : (
           <Button title="Like comment" sx={{
@@ -180,7 +181,7 @@ const commentCredentialCheck = () => {
           size="medium"
           onClick={handleVoteClick}
           >
-            <span style={{ color: '#A78BFA' }}>{currentComment.likes}</span><PiHeartStraightFill />
+            <span style={{ color: 'black' }}>{currentComment.likes}</span><PiHeartStraightFill />
             </Button>
 
 )}
