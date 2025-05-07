@@ -125,11 +125,11 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
     console.log('an attempt to parse the date:', parsedDate)
     const activityData = {
       itineraryId: itinerary.id,
-      name: location,
+      name: title,
       description,
       time,
       date: parsedDate.toISOString(),
-      location: title,
+      location,
       image,
       phone,
       address,
