@@ -30,7 +30,6 @@ import {
 } from 'react-icons/pi';
 import { useSnackbar } from 'notistack';
 import { useMedia } from '../MediaQueryProvider.tsx';
-import { useLocation } from 'react-router-dom';
 
 interface ItineraryProps {
   user: user;
@@ -79,33 +78,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
   useEffect(() => {
     fetchItinerary(partyId);
   }, []);
-  // If no itinerary is found after fetching and a partyId exists, redirect to itinerary creation page
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  //holds the list of itineraries
-  const [itineraries, setItineraries] = useState<itinerary[]>([]);
-
-  //get current info and navigation state
-  const location = useLocation();
-
-  useEffect(() => {
-    //checks if route state included parttId and if no itinerary exists
-    if (location.state?.partyId && !itinerary) {
-      //show create form for new itinerary
-      setShowCreateForm(true);
-      // will bring the form up and scroll
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    //location change or changes
-  }, [location.state, itinerary]);
-
-  //If there’s a partyId and no existing itineraries fetched
-  useEffect(() => {
-    if (partyId && itineraries.length === 0) {
-      //Show the create form and scroll up smoothly
-      setShowCreateForm(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [partyId, itineraries]);
+ 
 
   const fetchItinerary = async (partyId: number) => {
     try {
@@ -175,17 +148,17 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
       }}
     >
       <Box
-        my={2}
-        // mx={2}
-        sx={{
-          m: 0,
-          backgroundColor: '#C2A4F8',
-          padding: '16px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-        }}
+        // my={2}
+        // // mx={2}
+        // sx={{
+        //   m: 0,
+        //   backgroundColor: '#C2A4F8',
+        //   padding: '16px',
+        //   borderRadius: '8px',
+        //   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        // }}
       >
-        <Typography variant='h3'>Party Itinerary</Typography>
+        <Typography variant='h3'sx={{ mt: 3, mb: 2, textAlign: 'center' }}>Party Itinerary</Typography>
         {/* Show Itinerary or Button to create */}
         {itinerary ? (
           <Card
@@ -215,17 +188,25 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
               }
             />
             <Collapse in={expanded} timeout='auto' unmountOnExit>
-              <CardContent>
+              <CardContent sx={{ textAlign: 'center' }}>
                 <Typography variant='h3'>{itinerary.name}</Typography>
                 <Typography variant='body1'>{itinerary.notes}</Typography>
-                <Typography variant='body2'>
+                <Typography variant='body1'>
                   Begin: {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY')}
                 </Typography>
-                <Typography variant='body2'>
+                <Typography variant='body1'>
                   End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY')}
                 </Typography>
               </CardContent>
-
+                <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center', 
+                  gap: 1,
+                  mt: 2
+                }}
+              >
               <Typography
                 variant='caption'
                 color='secondary'
@@ -235,7 +216,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
                   color: 'black',
                   px: 2,
                   py: 1,
-                  // borderRadius: '8px',
+                   borderRadius: '8px',
                   // border: '4px solid black',
                   fontWeight: 700,
                   fontSize: '0.75rem',
@@ -264,7 +245,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
               >
                 Share Itinerary
               </Button>
-
+                </Box>
               <CardActions>
                 <Tooltip title='Edit Itinerary'>
                   <IconButton onClick={() => handleEditClick(itinerary)}>
