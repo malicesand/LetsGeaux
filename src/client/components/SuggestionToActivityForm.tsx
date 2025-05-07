@@ -124,7 +124,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
     console.log('an attempt to parse the date:', parsedDate)
     const activityData = {
       itineraryId: itinerary.id,
-      name: title,
+      name: location,
       description,
       time,
       date: parsedDate.toISOString(),
@@ -139,6 +139,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
     // console.log('try to stringify:', dayjs(activityData.date).format('MMMM D, YYYY'))
     activityData.date = dayjs(activityData.date).format('MMMM D, YYYY')
     console.log('goin in', activityData)
+    console.log('is this the location?', location)
     try {
       // suggAct = suggestion-activity
       const suggAct = await axios.post('/api/activity', activityData);
@@ -157,7 +158,7 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
 
-      <Container>
+      <Container sx={{ backgroundColor: "#A78BFA" }}>
         <Grid container spacing={4}>
           <form className="activity-form" onSubmit={handleSubmit(postActivity)}>
             {/* itinerary Id */}

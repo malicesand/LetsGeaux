@@ -179,7 +179,11 @@ const handleLeaveSite = () => {
         {/* <Card> */}
         {/* <Typography variant="h3">Featured Foray:</Typography> */}
         {/* <Button variant="filled">Next attraction</Button> */}
-        <Box display="flex" alignItems="flex-start" gap={1}>
+        <Box
+        sx={{ borderRadius: 8 }}
+        display="flex"
+        alignItems="flex-start"
+        gap={1}>
 
         <Button
           variant="filled"
@@ -192,7 +196,7 @@ const handleLeaveSite = () => {
           :
           <Button title="add to wishlist" sx={{ borderWidth: 4, color: "black" }} onClick={addToWishlist} variant="filled"> <PiShootingStarFill /> </Button>
         }
-        </Box>
+        </Box >
         <ImageList>
           <ImageListItem key="ItemText" cols={4}>
             <ListItemText >
@@ -237,7 +241,7 @@ const handleLeaveSite = () => {
             <Typography><b>address:</b> {address}</Typography>
             {hours
               ? (
-                <Box>
+                <Box sx={{ borderRadius: 8 }}>
                   <Typography><b>Hours of operation:</b></Typography>
                   {hours.split(';').map((day, i) => (
                     <Typography key={`${fsq_id}${i}`}>{day}</Typography>
@@ -292,13 +296,20 @@ const handleLeaveSite = () => {
         <Dialog
         open={open}
         onClose={handleCloseClick}
+        PaperProps={{
+          sx: {
+            backgroundColor: '#A78BFA'
+          }
+        }}
         >
-          <DialogTitle>
+          <DialogTitle sx={{ backgroundColor: "#A78BFA" }}>
             <Typography>
               Make an Activity
               </Typography>
               </DialogTitle>
-              <DialogContent sx={{ width: "100%" }}>
+              <DialogContent sx={{ width: "100%", '& .MuiOutlinedInput-root': {
+          backgroundColor: '#A78BFA',
+        } }}>
               <DialogContentText>
                 Add to suggestion information and add it to an itinerary
               </DialogContentText>

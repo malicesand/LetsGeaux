@@ -169,7 +169,7 @@ return (
       <Box sx={{
         position: 'relative',
         border: "4px solid black",
-        borderRadius: "4",
+        borderRadius: 4,
         p: 2,
         mb: "8px",
       }}
@@ -198,7 +198,7 @@ return (
         <Typography variant='h3'>{currentPost.title}</Typography>
       <Typography> {body}</Typography>
       <Typography>By: {postName}</Typography>
-      <Box display="flex" alignItems="flex-start" gap={1}>
+      <Box sx={{ borderRadius: 4 }} display="flex" alignItems="flex-start" gap={1}>
 
       {!hasLiked
        ? (
