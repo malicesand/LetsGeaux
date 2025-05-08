@@ -154,8 +154,8 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
   const touchItinerary = (itinerary: object) => {
     setChosenItinerary(itinerary);
   }
-  
-  
+
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
 
@@ -169,8 +169,8 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
               //  {...register('itinerary', { required: 'Must select itinerary' })}
               label="Itinerary"
               defaultValue=""
-              //  variant="outlined"
-              >
+            //  variant="outlined"
+            >
               <InputLabel id="itinerary-dropdown-label">Select an itinerary</InputLabel>
               <Controller
                 name="itinerary"
@@ -180,12 +180,12 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
                 defaultValue={''}
                 render={(field) => (
                   <Select
-                  // onChange={onChange}
-                  labelId="itinerary-label"
-                  {...field}
-                  // name="itinerary"
-                  {...register('itinerary', { required: 'Must select itinerary' })}
-                  defaultValue=""
+                    // onChange={onChange}
+                    labelId="itinerary-label"
+                    {...field}
+                    // name="itinerary"
+                    {...register('itinerary', { required: 'Must select itinerary' })}
+                    defaultValue=""
                   // control={control}
                   // name={name}
                   //  error={!!errors.itinerary}
@@ -195,12 +195,17 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
                   >
                     {itineraryList.map((itinerary: any) => (
                       <MenuItem
-                      value={itinerary}
-                      key={itinerary.fsq_id}
-                      onClick={() => touchItinerary(itinerary)}
+                        value={itinerary}
+                        key={itinerary.fsq_id}
+                        onClick={() => touchItinerary(itinerary)}
                       >
                         {/* <Typography>{itinerary.name}: </Typography> */}
-                        <Typography><b>{itinerary.name}</b>: {dayjs(itinerary.begin).format('MMMM D, YYYY')} - {dayjs(itinerary.end).format('MMMM D, YYYY')}</Typography>
+                        <Typography>
+                          <b>
+                            {itinerary.name}
+                          </b>
+                          : {dayjs(itinerary.begin).format('MMMM D, YYYY')} - {dayjs(itinerary.end).format('MMMM D, YYYY')}
+                        </Typography>
                       </MenuItem>
                     ))}
                   </Select>
@@ -241,32 +246,33 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
               helperText={errors.time?.message}
             /> */}
             <Controller
-            name="time"
-            rules={{required: 'Must specify time'}}
-            control={control}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <MobileTimePicker
-              label="Choose a time"
-              sx={{ color: 'black', actionBar: {
+              name="time"
+              rules={{ required: 'Must specify time' }}
+              control={control}
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <MobileTimePicker
+                  label="Choose a time"
+                  value={value ?? null}
+                  onChange={onChange}
+                  slotProps={{
+                    actionBar: {
+                      actions: ['cancel', 'accept'],
+                      sx: {
+                        '& .MuiButton-root': {
+                          color: 'black',
+                        },
+                      },
+                    },
+                    textField: {
+                      fullWidth: true,
+                      margin: 'normal',
+                      error: !!error,
+                      helperText: error?.message,
+                    }
+                  }}
 
-                '& .MuiButton-textPrimary': {
-                  color: 'black',
-              },
-            },
-              }}
-              value={value ?? null}
-              onChange={onChange}
-              slotProps={{
-                textField: {
-                  fullWidth: true,
-                  margin: 'normal',
-                  error: !!error,
-                  helperText: error?.message,
-                }
-              }}
-
-              />
-            )}
+                />
+              )}
             />
 
 
@@ -286,12 +292,12 @@ const SuggestionToActivityForm: React.FC<SuggestionToActivityFormProps> = ({ cur
                   minDate={dayjs(chosenItinerary.begin)}
                   maxDate={dayjs(chosenItinerary.end)}
                   slotProps={{
-                   textField: {
-                    fullWidth: true,
-                    margin: 'normal',
-                    error: !!error,
-                    helperText: error?.message
-                  }
+                    textField: {
+                      fullWidth: true,
+                      margin: 'normal',
+                      error: !!error,
+                      helperText: error?.message
+                    }
 
                     //   {...params}
                     //   fullWidth
